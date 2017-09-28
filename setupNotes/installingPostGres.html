@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<title>installingPostGres.html</title>
+
+</head>
+
+<body>
+
+<h1>Installing on Linux</h1>
+
+<p>Specifically Arch Linux because it's what I'm using, most of this should be
+similar for Mac OSX. If you're on windows then you're on your own and why do you
+hate yourself?</p>
+
+<h1>Install for your OS</h1>
+
+<p>On my system this is simply</p>
+
+<p><code>
+sudo pacman -S postgresql
+</code></p>
+
+<p>On Mac this is</p>
+
+<p><code>
+brew install postgresql
+</code></p>
+
+<p>If you don't have brew installed then what are you even doing? Just run this and
+then run the above command for mac.</p>
+
+<p><code>
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+</code></p>
+
+<h1>Post Installation</h1>
+
+<p>After you install we need to switch the postgres user called <code>postgres</code>. On 
+mac or linux you can run this only if you are a sudoer (you can run admin stuff)</p>
+
+<p><code>
+sudo -u postgres -i
+</code></p>
+
+<p>If not then run this</p>
+
+<p><code>
+su
+su -l postgres
+</code></p>
+
+<p>After that is done your prompt should look like:
+Where Voltron is your computer's name or hostname if you're on linux</p>
+
+<p><code>
+[postgres@Voltron ~]$
+</code></p>
+
+<p>Now we must initialize the database cluster by running the following</p>
+
+<p><code>
+[postgres@Voltron ~]$ initdb --locale $LANG -E UTF8 -D '/var/lib/postgres/data'
+</code></p>
+
+<p>You may want to make sure your LANG environment variable is set with</p>
+
+<p><code>
+echo $LANG
+</code></p>
+
+<p>Here is what mine returned: <code>en_US.UTF-8</code></p>
+
+<p>if it was successful it should look like this:</p>
+
+<pre><code>The files belonging to this database system will be owned by user "postgres".
+This user must also own the server process.
+
+The database cluster will be initialized with locale "en_US.UTF-8".
+The default text search configuration will be set to "english".
+
+Data page checksums are disabled.
+
+fixing permissions on existing directory /var/lib/postgres/data ... ok
+creating subdirectories ... ok
+selecting default max_connections ... 100
+selecting default shared_buffers ... 128MB
+selecting dynamic shared memory implementation ... posix
+creating configuration files ... ok
+running bootstrap script ... ok
+performing post-bootstrap initialization ... ok
+syncing data to disk ... ok
+
+WARNING: enabling "trust" authentication for local connections
+You can change this by editing pg_hba.conf or using the option -A, or
+--auth-local and --auth-host, the next time you run initdb.
+
+Success. You can now start the database server using:
+
+pg_ctl -D /var/lib/postgres/data -l logfile start
+</code></pre>
+
+<p>Now exit the <code>su</code> from the postgres user like this: </p>
+
+<p><code>
+[postgres@Voltron ~]$ exit
+logout
+</code></p>
+
+<h1>Simple Commands</h1>
+
+<p>See ref 3 for a cheatsheet</p>
+
+<h2>Login</h2>
+
+<p>I've created user names for all of you, here is a list of them:</p>
+
+<pre><code>Role name |                         Attributes                         | Member of 
+-----------|------------------------------------------------------------|-----------
+ Dan       | Superuser, Create role, Create DB                          | {}
+ Jeff      | Superuser, Create role, Create DB                          | {}
+ Mihai     | Superuser, Create role, Create DB                          | {}
+ Ra        | Superuser, Create role, Create DB                          | {}
+ Spencer   | Superuser, Create role, Create DB                          | {}
+ postgres  | Superuser, Create role, Create DB, Replication, Bypass RLS | {}
+</code></pre>
+
+<p>To login you need to run this command:</p>
+
+<p><code>
+psql -d mydb -U myuser
+</code></p>
+
+<p>The Db is named <code>tldrDb</code> so if I were Rahul I would do this from a shell
+<code>
+psql -d tldrDb -U Ra
+</code></p>
+
+<h1>Other Commands</h1>
+
+<p>You can see other commands by typing <code>help</code>. Nothing complicated. See the sql 
+directory in src/ for some examples. I'll add them as I go.</p>
+
+<h1>Importing and Exporting</h1>
+
+<p>See ref 2 for more info. There is a bunch of things we can do here.</p>
+
+<h2>Exporting</h2>
+
+<p>We need to synchronize databases for development. Our needs aren't that complex
+So I think we can just perform SQL dumps. An SQL dump spits out a bunch of sql
+that when loaded into a database will recreate that database.</p>
+
+<p>The dump is output to stdout, so the command is like this:</p>
+
+<p><code>
+pg_dumpall -l tldrDb -U Jeff &gt; tldrDb_bkup_9272017
+</code></p>
+
+<p>or in general:</p>
+
+<p><code>
+pg_dumpall -l dbname -U username &gt; outfilename
+</code></p>
+
+<h2>Importing</h2>
+
+<p>To import we just feed the sql file back into the database
+<code>
+psql dbname &lt; infile
+</code></p>
+
+<h1>References</h1>
+
+<ol>
+<li>https://wiki.archlinux.org/index.php/PostgreSQL</li>
+<li>https://www.postgresql.org/docs/9.1/static/backup-dump.html</li>
+<li>https://gist.github.com/Kartones/dd3ff5ec5ea238d4c546</li>
+<li>https://wiki.postgresql.org/wiki/First_steps</li>
+</ol>
+
+</body>
+</html>
