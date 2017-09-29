@@ -94,8 +94,40 @@ Now exit the `su` from the postgres user like this:
 [postgres@Voltron ~]$ exit
 logout
 ```
+
+To take advantage of our scripts in the project directory you'll want to set
+your postgresql data directory as a environment variable. This is dependent on 
+your operating system and shell. For me, on Arch Linux, using a zsh I simply 
+added this
+
+```
+export PGDATA="/var/lib/postgres/data"
+```
+
+to my .zshenv, for mac and bash you probably want to add that to .bashenv. You 
+may be able to get away with adding it to your .bashrc but be careful. If you're
+on windows then you can add this by going to Control Panel -> System -> Advanced
+Tab -> Click Environment Variables and then add it either to user or globally 
+your choice.
+
+In order to set this variable, you'll need to figure out where the data directory
+is. This can be done using the db, below is an example on my machine:
+
+    ~ | sudo -u postgres -i
+    [postgres@Voltron ~]$ psql
+    psql (9.6.5)
+    Type "help" for help.
+    
+    postgres=# show data_directory;
+         data_directory     
+    ------------------------
+     /var/lib/postgres/data
+    (1 row)
+    
+    postgres=# 
+
 # Simple Commands
-See ref 3 for a cheatsheet
+See ref 3 for a cheatsheet, and the postgresAdminCmds.md file 
 
 ## Login
 I've created user names for all of you, here is a list of them:
@@ -144,6 +176,22 @@ or in general:
 ```
 pg_dumpall -l dbname -U username > outfilename
 ```
+
+I've written a script to automate the time date stuff for us. You can find it in
+$PROJECTROOT/lib/scripts. Run it __in the script directory__, I know that is 
+annoying but until we have django setup we won't have the $PROJECTROOT variable
+set. Thus I had to hardcode the outfile path. Here is an example usage
+
+    (tldrResearchPaper) SE/tldrResearchPaper | cd lib/scripts
+    (tldrResearchPaper) lib/scripts | ls
+    Dbdump.py
+    (tldrResearchPaper) lib/scripts | ls ../../bkups
+    tldr_bkup_Jeff_28_09_2017_163052
+    (tldrResearchPaper) lib/scripts | python Dbdump.py Jeff
+    All done!
+    (tldrResearchPaper) lib/scripts | ls ../../bkups
+    tldr_bkup_Jeff_28_09_2017_163052  tldr_bkup_Jeff_28_09_2017_165721
+
 
 ## Importing
 To import we just feed the sql file back into the database
