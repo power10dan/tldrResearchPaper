@@ -10,6 +10,8 @@ from uploads.core import views
 
 urlpatterns = [
     url(r'^api/uploadFile/(?P<filename>[^/]+)$', views.FileUploadView.as_view()),
+    url(r'^api/getAllFiles/$', views.GetAllFiles.as_view()),
+    url(r'^api/deleteFile/(?P<filename>[^/]+)$', views.DeleteFile.as_view()),
     url(r'^admin/', admin.site.urls),
 ]
 
