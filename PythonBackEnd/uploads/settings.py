@@ -79,8 +79,12 @@ WSGI_APPLICATION = 'uploads.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'tldrDb',
+        'USER': 'postgres', # This is probably bad practice
+        'PASSWORD': 'iamthepostgresuserpassword', # also bad practice most likely
+        'HOST': '127.0.0.1',
+        'PORT': '5432'
     }
 }
 
