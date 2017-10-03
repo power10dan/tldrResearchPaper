@@ -12,6 +12,11 @@ sudo -u postgres -i
 psql -d mydb -U username
 ```
 
+## Define the postgres user password.
+I've set this to "iamthepostgresuserpassword". See https://xkcd.com/936/ for why
+```
+\password postgres
+```
 # psql commands
 
 ## Create a schema
