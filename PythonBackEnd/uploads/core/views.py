@@ -25,7 +25,7 @@ class FileUploadView(APIView):
         # request.FILES['file'] contains the file that is uploaded
         fileUploaded = request.FILES['file']
         #TODO: Change this to project base dir and not coupled with my machine
-        path = "/Users/daniellin/Desktop/tldrApp/tldrResearchPaper/PythonBackEnd/media/documents/"+filename
+        path = "/Users/Mihai Dan/Desktop/tldrResearchPaper/PythonBackEnd/media/documents/"+filename
         with open(path, 'w') as fileToSave:
             for chunk in fileUploaded.read():
                 fileToSave.write(chunk)
@@ -35,7 +35,7 @@ class FileUploadView(APIView):
 
 class GetAllFiles(APIView):
     def get(self, request):
-        fileRoot = "/Users/daniellin/Desktop/tldrApp/tldrResearchPaper/PythonBackEnd/media/documents/"
+        fileRoot = "/Users/Mihai Dan/Desktop/tldrResearchPaper/PythonBackEnd/media/documents/"
         fileNames = [fileRoot+ fileName for fileName in os.listdir(fileRoot) if fileName != ".DS_Store"]
         # get the link to the PDF instead of transfering YUGE PDFs
         fileData = {"Files": [{'File': filename } for filename in fileNames]}
@@ -45,7 +45,7 @@ class GetAllFiles(APIView):
 class DeleteFile(APIView):
     def delete(self, request, filename, format=None):
         fileToBeDel = filename 
-        filePath = "/Users/daniellin/Desktop/tldrApp/tldrResearchPaper/PythonBackEnd/media/documents/" + filename
+        filePath = "/Users/Mihai Dan/Desktop/tldrResearchPaper/PythonBackEnd/media/documents/" + filename
         if(os.path.isfile(filePath)):
             os.remove(filePath)
             return Response(status=204)  
