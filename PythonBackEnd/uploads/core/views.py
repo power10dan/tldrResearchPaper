@@ -19,13 +19,13 @@ import json
 #RESTful API view for Django 
 class FileUploadView(APIView):
     parser_classes=(MultiPartParser,)
-    # gets the uploaded file and saves it in "media/documents" folder. TODO: Parse to PDF, and outsource this to Amazon or 
+    # gets the uploaded file and saves it in "media/documents" folder.
+    # TODO: Parse to PDF, and outsource this to Amazon or 
     # some file storage solution
     def post(self, request, filename, format=None):
         # request.FILES['file'] contains the file that is uploaded
         fileUploaded = request.FILES['file']
-        #TODO: Change this to project base dir and not coupled with my machine
-        path = "/Users/Mihai Dan/Desktop/tldrResearchPaper/PythonBackEnd/media/documents/"+filename
+        path = settings.MEDIA_DOCS + filename
         with open(path, 'w') as fileToSave:
             for chunk in fileUploaded.read():
                 fileToSave.write(chunk)
@@ -35,20 +35,23 @@ class FileUploadView(APIView):
 
 class GetAllFiles(APIView):
     def get(self, request):
-        fileRoot = "/Users/Mihai Dan/Desktop/tldrResearchPaper/PythonBackEnd/media/documents/"
-        fileNames = [fileRoot+ fileName for fileName in os.listdir(fileRoot) if fileName != ".DS_Store"]
+        fileRoot = settings.MEDIA_DOCS
+        fileNames = [fileRoot+ fileName for fileName
+                     in os.listdir(fileRoot)
+                     if fileName != ".DS_Store"]
         # get the link to the PDF instead of transfering YUGE PDFs
         fileData = {"Files": [{'File': filename } for filename in fileNames]}
-        response = HttpResponse(json.dumps(fileData), content_type="application/json")
+        response = HttpResponse(json.dumps(fileData),
+                                content_type="application/json")
         return response
 
 class DeleteFile(APIView):
     def delete(self, request, filename, format=None):
-        fileToBeDel = filename 
-        filePath = "/Users/Mihai Dan/Desktop/tldrResearchPaper/PythonBackEnd/media/documents/" + filename
+        fileToBeDel = filename
+        filePath = settings.MEDIA_DOCS + filename
         if(os.path.isfile(filePath)):
             os.remove(filePath)
-            return Response(status=204)  
+            return Response(status=204)
         else:
-            return Response("File can't be found", status=404)      
+            return Response("File can't be found", status=404)
 
