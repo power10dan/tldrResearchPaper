@@ -1,5 +1,6 @@
 # tldrApp this time with a sane directory structure
 
+```
 .
 ├── bkups                               # To hold DB backups
 │   ├── tldr_bkup_Jeff_05_10_2017_192032
@@ -48,5 +49,4 @@
 										# deleted at anytime and it would be ok
     ├── urls.py
     └── wsgi.py
-
-15 directories, 31 files
+```
