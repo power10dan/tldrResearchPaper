@@ -6,7 +6,7 @@ from rest_framework.parsers import FileUploadParser, MultiPartParser
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from uploads.core.models import Document
+from uploads.models.models import Document
 
 from django.contrib import messages
 from django.http import HttpResponse
@@ -16,11 +16,11 @@ from wsgiref.util import FileWrapper
 import os
 import json
 
-#RESTful API view for Django 
+#RESTful API view for Django
 class FileUploadView(APIView):
     parser_classes=(MultiPartParser,)
     # gets the uploaded file and saves it in "media/documents" folder.
-    # TODO: Parse to PDF, and outsource this to Amazon or 
+    # TODO: Parse to PDF, and outsource this to Amazon or
     # some file storage solution
     def post(self, request, filename, format=None):
         # request.FILES['file'] contains the file that is uploaded

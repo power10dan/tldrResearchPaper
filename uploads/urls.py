@@ -5,7 +5,7 @@ from django.conf.urls.static import static
 from django.views.decorators.csrf import csrf_exempt
 
 
-from uploads.core import views
+from views import views
 
 
 urlpatterns = [
