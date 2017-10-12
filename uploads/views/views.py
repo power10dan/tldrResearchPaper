@@ -6,8 +6,7 @@ from rest_framework.parsers import FileUploadParser, MultiPartParser
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from uploads.core.models import Document
-from uploads.core.forms import DocumentForm
+from uploads.models.models import Document
 
 from django.contrib import messages
 from django.http import HttpResponse
