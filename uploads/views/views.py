@@ -25,19 +25,17 @@ class FileUploadView(APIView):
     # some file storage solution
     def post(self, request, filename, format=None):
         fileUploaded = request.body
-        #TODO: Change this to project base dir and not coupled with my machine
         newString = fileUploaded.split(",")
-        path = "/Users/daniellin/Desktop/tldrApp/PythonBackEnd/media/documents/"+filename
+        path = settings.MEDIA_DOCS + filename
         with open(path, 'w') as fileopened:
             fileopened.write(base64.decodestring(newString[1]))
         fileopened.close()
-        #print("file upload")
         return Response(status=204)
 
 class GetAllFiles(APIView):
     def get(self, request):
-        fileRoot = "/Users/daniellin/Desktop/tldrApp/PythonBackEnd/media/documents/"
-        fileNames = [fileRoot+ fileName for fileName in os.listdir(fileRoot) if fileName != ".DS_Store"]
+        fileRoot = settings.MEDIA_DOCS
+        fileNames = [fileRoot + fileName for fileName in os.listdir(fileRoot) if fileName != ".DS_Store"]
         # get the link to the PDF instead of transfering YUGE PDFs
         fileData = {"Files": [{'File': filename } for filename in fileNames]}
         response = HttpResponse(json.dumps(fileData), content_type="application/json")
@@ -46,7 +44,7 @@ class GetAllFiles(APIView):
 class DeleteFile(APIView):
     def delete(self, request, filename, format=None):
         fileToBeDel = filename
-        filePath = "/Users/daniellin/Desktop/tldrApp/PythonBackEnd/media/documents/" + filename
+        filePath = settings.MEDIA_DOCS + filename
         if(os.path.isfile(filePath)):
             os.remove(filePath)
             return Response(status=204)
