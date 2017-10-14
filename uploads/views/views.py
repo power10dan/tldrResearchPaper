@@ -35,7 +35,9 @@ class FileUploadView(APIView):
 class GetAllFiles(APIView):
     def get(self, request):
         fileRoot = settings.MEDIA_DOCS
-        fileNames = [fileRoot + fileName for fileName in os.listdir(fileRoot) if fileName != ".DS_Store"]
+        fileNames = [fileRoot + fileName for
+                     fileName in
+                     os.listdir(fileRoot) if fileName != ".DS_Store"]
         # get the link to the PDF instead of transfering YUGE PDFs
         fileData = {"Files": [{'File': filename } for filename in fileNames]}
         response = HttpResponse(json.dumps(fileData), content_type="application/json")
