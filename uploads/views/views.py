@@ -27,7 +27,7 @@ class FileUploadView(APIView):
         fileUploaded = request.body
         newString = fileUploaded.split(",")
         path = settings.MEDIA_DOCS + filename
-        with open(path, 'w') as fileopened:
+        with open(path, 'wb') as fileopened:
             fileopened.write(base64.decodestring(newString[1]))
         fileopened.close()
         return Response(status=204)
