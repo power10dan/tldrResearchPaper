@@ -91,5 +91,7 @@ ENV/
 .DS_Store
 
 staticfiles
-media
 *.sqlite3
+
+# hiding node modules
+node_modules/*
