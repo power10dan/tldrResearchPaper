@@ -7,6 +7,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from uploads.models.models import Document
+from uploads.permissions.permissions import isAdminOrReadOnly
 
 from django.contrib import messages
 from django.http import HttpResponse
@@ -27,6 +28,7 @@ class FileUploadView(APIView):
         fileUploaded = request.body
         newString = fileUploaded.split(",")
         path = settings.MEDIA_DOCS + filename
+        permission_classes = (isAdminOrReadOnly, )
         with open(path, 'wb') as fileopened:
             fileopened.write(base64.decodestring(newString[1]))
         fileopened.close()
@@ -39,6 +41,7 @@ class GetAllFiles(APIView):
                      fileName in
                      os.listdir(fileRoot) if fileName != ".DS_Store"]
         # get the link to the PDF instead of transfering YUGE PDFs
+        permission_classes = (isAdminOrReadOnly, )
         fileData = {"Files": [{'File': filename } for filename in fileNames]}
         response = HttpResponse(json.dumps(fileData), content_type="application/json")
         return response
@@ -47,6 +50,7 @@ class DeleteFile(APIView):
     def delete(self, request, filename, format=None):
         fileToBeDel = filename
         filePath = settings.MEDIA_DOCS + filename
+        permission_classes = (isAdminOrReadOnly, )
         if(os.path.isfile(filePath)):
             os.remove(filePath)
             return Response(status=204)
