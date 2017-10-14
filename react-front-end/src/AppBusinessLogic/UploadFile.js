@@ -6,40 +6,40 @@ class UploadFile extends React.Component{
 	constructor(props){
 		super(props);
 		this.state = {
-			file: null,
+			file: null
 		};
 	}
 
 	handleClick = (fileObj) =>{
-		//console.log(fileObj.fileList[0])
-		var djangoURL = "http://127.0.0.1:8000/api/uploadFile/".concat("test.pdf");
+    var fileName = fileObj.fileList[0].name;
+		var djangoURL = "http://127.0.0.1:8000/api/uploadFile/".concat(fileName);
 		var blob = fileObj.base64;
 		this.uploadFiles(djangoURL, blob);
 	}
 
 	uploadFiles = (url, file) => {
-		var jsonData = file 
-		console.log(jsonData)
+		  var jsonData = file;
+		  console.log(jsonData);
 		//var jsonObj = JSON.parse(jsonData)
 		fetch(url, {
 			method: 'post',
 			body: jsonData ,
 			dataType: 'json',
-			mode: 'no-cors',
+			mode: 'cors',
 			headers: {
-        	    'Content-Type': 'application/json',
+        	    'Content-Type': 'application/json'
         	}
 		}).then((response) => {
-			console.log(response)
-			return response.json();
+			  console.log(response.status);
+			  return response.status;
 
 		}).then((data)=>{
-			console.log("data")
+			  console.log("data");
 		}).catch((err)=>{
-			console.log(err)
+			  console.log(err);
 		});
 	}
- 
+
 
 	render(){
 		return(
