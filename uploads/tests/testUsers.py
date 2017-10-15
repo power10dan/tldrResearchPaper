@@ -20,9 +20,9 @@ class AccountsTest(APITestCase):
         Ensure we can create a new user and a valid token is created with it.
         """
         data = {
-            'username': 'foo',
-            'email': ' foobar@example.com',
-            'password': 'somepassword'
+            'username': 'someUser',
+            'email': 'someUsersEmail@example.com',
+            'password': 'someUsersPassword'
         }
 
         response = self.client.post(self.create_url , data, format='json')
