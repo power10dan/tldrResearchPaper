@@ -4,7 +4,7 @@ python:
   - "2.7"
   - "3.2"
   - "3.4"
- install:
+install:
   - pip install -r ./uploads/requirements/requirements.txt
 script:
   - py.test
