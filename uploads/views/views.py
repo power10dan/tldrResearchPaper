@@ -6,6 +6,7 @@ from rest_framework.parsers import FileUploadParser, MultiPartParser
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.authtoken.models import Token
 
 from uploads.models.models import Document
 from uploads.permissions.permissions import isAdminOrReadOnly
@@ -68,10 +69,19 @@ class CreateUser(APIView):
     def post(self, request, format="json"):
         serializer = UserSerializer(data=request.data)
 
-        # if serializer succeeds then save and change the response to success
+        # if serializer succeeds create user and save
         if serializer.is_valid():
             user = serializer.save()
+
+            # if user is created
             if user:
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
+                # create a new token for the user
+                token = Token.objects.create(user=user)
+
+                # handle token in response data
+                resData = serializer.data # var to hold the response data
+                resData['token'] = token.key # add new token to response data
+
+                return Response(resData, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
