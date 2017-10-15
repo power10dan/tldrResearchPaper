@@ -8,5 +8,13 @@ install:
   - pip install -r ./uploads/requirements/requirements_dev.txt
 notifications:
   email: false
+services:
+  - postgresql
+before_script:
+  - psql -c "CREATE DATABASE mydb;" -U postgres
 script:
+  - python manage.py syncdb --noinput
+  - cd ./react-front-end/
+  - npm install
+  - npm start
   - py.test
