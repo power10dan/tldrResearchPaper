@@ -95,3 +95,6 @@ staticfiles
 
 # hiding node modules
 node_modules/*
+
+# hiding actual files in media/docs
+uploads/media/documents/*
