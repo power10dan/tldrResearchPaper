@@ -5,11 +5,14 @@ from django.core.files.storage import FileSystemStorage
 from rest_framework.parsers import FileUploadParser, MultiPartParser
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework import status
 
 from uploads.models.models import Document
 from uploads.permissions.permissions import isAdminOrReadOnly
+from uploads.serializers.serializers import UserSerializer
 
 from django.contrib import messages
+from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.core import serializers
 
@@ -57,3 +60,16 @@ class DeleteFile(APIView):
         else:
             return Response("File can't be found", status=404)
 
+class CreateUser(APIView):
+    """
+    Create a user
+    """
+
+    def post(self, request, format="json"):
+        serializer = UserSerializer(data=request.data)
+
+        if serializer.is_valid():
+            user = serializer.save()
+
+        if user:
+            return Response(serializer.data, status=status.HTTP_201_CREATED)

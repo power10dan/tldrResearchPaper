@@ -14,7 +14,9 @@ urlpatterns = [
     url(r'^api/getAllFiles/$', views.GetAllFiles.as_view()),
     url(r'^api/deleteFile/(?P<filename>[^/]+)$', views.DeleteFile.as_view()),
     url(r'^admin/', admin.site.urls),
-    url(r'^api-token-auth/', obtain_auth_token)
+    url(r'^api-token-auth/', obtain_auth_token),
+    url(r'api/users^$', views.CreateUser.as_view(), name='create_account'),
+    url(r'^users/', include('uploads.urls'))
 ]
 
 if settings.DEBUG:
