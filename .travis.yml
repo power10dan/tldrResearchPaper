@@ -5,6 +5,6 @@ python:
   - "3.2"
   - "3.4"
 install:
-  - pip install -r ./uploads/requirements/requirements.txt
+  - pip install -r /home/travis/build/power10dan/tldrResearchPaper/uploads/requirements/requirements.txt
 script:
   - py.test
