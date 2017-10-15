@@ -13,7 +13,8 @@ services:
 before_script:
   - psql -c "CREATE DATABASE mydb;" -U postgres
 script:
-  - python manage.py syncdb --noinput
+  - python manage.py migrate
+  - python manage.py runserver
   - cd ./react-front-end/
   - npm install
   - npm start
