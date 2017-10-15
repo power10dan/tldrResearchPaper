@@ -1,9 +1,6 @@
 language: python
 python:
-  - "2.6"
   - "2.7"
-  - "3.2"
-  - "3.4"
 install:
   - pip install -r ./uploads/requirements/requirements_dev.txt
 notifications:
@@ -11,7 +8,7 @@ notifications:
 services:
   - postgresql
 before_script:
-  - psql -c "CREATE DATABASE mydb;" -U postgres
+  - psql -c "CREATE DATABASE travisci;" -U postgres
 script:
   - python manage.py migrate
   - python manage.py runserver
