@@ -29,7 +29,7 @@ class UserSerializer(serializers.ModelSerializer):
         )
 
     # pass must be >= 12 chars
-    password = serializers.CharField(min_length = 12) 
+    password = serializers.CharField(min_length = 12, write_only=True)
 
     # now supply methods to actually create the user
     def create(self, validated_data):

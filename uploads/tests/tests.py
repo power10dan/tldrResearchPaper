@@ -1,9 +1,12 @@
 from django.test import TestCase
-from django.core.files import File 
+from django.core.files import File
 
-import requests
-import json 
-# TODO: Still working on this 
+from django.core.urlresolvers import reverse
+from rest_framework.test import APITestCase
+from django.contrib.auth.models import User
+from rest_framework import status
+
+# TODO: Still working on this
 class APITest(TestCase):
 	def setup(self):
 		myFile = open("/Users/daniellin/Desktop/VerbTenseGuideLine.pdf", "rb")
@@ -23,15 +26,3 @@ class APITest(TestCase):
 
 	def makeDel(self):
 		r = requests.delete(self.urlDel)
-
-
-#print(json.loads(r.text))
-#print(rDel)
-#print(json.loads(r.text))
-#print(r.fileData)
-
-
-#myFile.close()
-#fileUp.close()
-# Create your tests here.
-
