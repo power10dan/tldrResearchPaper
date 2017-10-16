@@ -14,11 +14,11 @@ urlpatterns = [
     url(r'^api/getAllFiles/$', views.GetAllFiles.as_view()),
     url(r'^api/deleteFile/(?P<filename>[^/]+)$', views.DeleteFile.as_view()),
     url(r'^admin/', admin.site.urls),
-    url(r'^api-token-auth/', obtain_auth_token),
+    url(r'^api/login/', obtain_auth_token, name='login'),
     # the name parameter allows us to refer to the url in our code, see TestUser
     url(r'^api/createUser/$'
         , views.CreateUser.as_view()
-        , name='account-create')
+        , name='account-create'),
 ]
 
 if settings.DEBUG:
