@@ -17,8 +17,16 @@ export default class SideNavCustom extends Component{
 		return(
 			<div>
 				<Menu styles= {styles}  isOpen={true} noOverlay width={'180px'}>
-					<img src="https://png.icons8.com/user/androidL/96" className="user" title="User" width="96" height="96" />
-					 <a id="userEmail" className="menu-item" href="/">Welcome Stranger!</a>
+					<img src="https://png.icons8.com/user/androidL/96" 
+					      className="user" 
+					      title="User" 
+					      width="96" 
+					      height="96" />
+
+					 <a id="userEmail" 
+					    className="menu-item" 
+					    href="/">Welcome Stranger!
+					 </a>
 					 <NestedList />
 				</Menu>
 			 </div>

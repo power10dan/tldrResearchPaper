@@ -12,25 +12,29 @@ import ReactFileReader from 'react-file-reader';
 const AppTopBar = (props) =>{
 	return (
 	    <div className={props.classes.root} >
-	      <AppBar position="static" >
-	        <Toolbar>
-	          <Typography type="title" color="inherit" >
-	            TL ; DR Please?
-	          </Typography>
+		      <AppBar position="static" >
+		        <Toolbar>
+		          <Typography type="title" color="inherit" >
+		            TL ; DR Please?
+		          </Typography>
 
-	          <Button color="contrast" className = {props.classes.menuButton} >Login</Button>
-	          
-	          <ReactFileReader base64={true} fileTypes=".pdf" handleFiles={props.uploadFile}>
-	          	    <Button color="contrast"  
-			          	component="span" 
-			          	className = {props.classes.menuButton} >
-		          	   Upload Files
-		             </Button>
-		       </ReactFileReader>
-	          
-	          <Button color="contrast" className = {props.classes.menuButton} >About This App</Button>
-	        </Toolbar>
-	      </AppBar>
+		          <Button color="contrast" className = {props.classes.menuButton} >
+		               Login
+		          </Button>		
+			          <ReactFileReader 
+			                 base64={true} 
+			                 fileTypes=".pdf" 
+			                 handleFiles={props.uploadFile}>
+
+			          	    <Button color="contrast"  
+					          	component="span" 
+					          	className = {props.classes.menuButton} >
+				          	   Upload Files
+				             </Button>
+				       </ReactFileReader>		          
+		          <Button color="contrast" className = {props.classes.menuButton} >About This App</Button>
+		        </Toolbar>
+		      </AppBar>
 	    </div>
 	  );
 };

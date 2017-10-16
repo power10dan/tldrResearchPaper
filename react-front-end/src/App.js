@@ -3,7 +3,7 @@ import logo from './logo.svg';
 import './App.css';
 import SideNavCustom from './AppComponents/AppSideBar.js';
 import UploadFile from './AppBusinessLogic/UploadFile.js';
-import LoginComp from './AppComponents/LoginComp.js';
+import LoginOperations from './AppBusinessLogic/LoginOp.js';
 
 class App extends Component {
   render() {
@@ -11,7 +11,7 @@ class App extends Component {
       <div className="App">
         <SideNavCustom />
         <UploadFile />
-        <LoginComp />
+        <LoginOperations />
       </div>
     );
   }

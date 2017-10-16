@@ -5,58 +5,60 @@ import Card, { CardActions, CardContent, CardMedia, CardHeader } from 'material-
 import Button from 'material-ui/Button';
 import Typography from 'material-ui/Typography';
 import TextField from 'material-ui/TextField';
-
+import CreateNewProfileComp from '../AppComponents/CreateProfile.js';
 
 const styles = theme => ({
-  card: {
-      width:'50%',
+    card: {
+        width:'50%',
+        height:'160px',
+        marginTop: "55px",
+        padding: "2px",
+        marginLeft: "425px",
+        background: "#5C6BC0",
+        position: "center",
+    },
+
+    textField: {
+    	marginTop: "-8px",
+      marginLeft: theme.spacing.unit,
+      marginRight: theme.spacing.unit,
+      width: 350,
+    },
+
+    textFieldPass: {
+    	marginTop: "2px",
+      marginLeft: theme.spacing.unit,
+      marginRight: theme.spacing.unit,
+      width: 350,
+    },
+
+    inputCard:{
+    	width:'50%',
       height:'180px',
-      marginTop: "55px",
+      marginTop: "0px",
       padding: "2px",
-      marginLeft: "475px",
-      background: "#5C6BC0",
+      marginLeft: "425px",
+    	color: "#FFFFFF",
       position: "center",
-  },
+    },
 
-  textField: {
-  	marginTop: "-5px",
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit,
-    width: 350,
-  },
+    title: {
+    	fontSize: 45,  
+    	marginTop: 60,
+    	color: "#FFFFFF",
+    },
 
-  textFieldPass: {
-  	marginTop: "2px",
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit,
-    width: 350,
-  },
+    containerDiv:{
+      position: "absolute",
+    },
 
-  inputCard:{
-  	width:'50%',
-    height:'180px',
-    marginTop: "0px",
-    padding: "2px",
-    marginLeft: "475px",
-  	color: "#FFFFFF",
-    position: "center",
-  },
-
-  title: {
-  	fontSize: 45,  
-  	marginTop: 60,
-  	color: "#FFFFFF",
-  },
-
-  containerDiv:{
-
-    position: "absolute",
-  }
+    cardActionContainer: {
+      marginLeft: "30px"
+    }
 });
 
 const SimpleCard = (props) => {
   const classes = props.classes;
- 
   return (
     <div className={classes.containerDiv}>
       <Card className={classes.card}>
@@ -74,7 +76,12 @@ const SimpleCard = (props) => {
   			          className={classes.textField}
   			          type="account"
   			          margin="normal"
-  		    	   />
+                  onChange={props.getAcc}
+                  required
+                  error = {props.isErrorAcc}
+  		    	   >
+
+               </TextField>
 
 	          	 <TextField
   			          id="password"
@@ -82,22 +89,24 @@ const SimpleCard = (props) => {
   			          className={classes.textFieldPass}
   			          type="password"
   			          margin="normal"
-		    	     />
-		    	<CardActions>
-			          <Button dense color="primary">
+                  onChange={props.passWordHand}
+                  required
+                  error = {props.isErrorPass}
+		    	     >
+
+
+
+               </TextField>
+		    	<CardActions className={classes.cardActionContainer}>
+			          <Button dense color="primary" onClick={props.submitHandler}>
 			            Login 
 			          </Button>
 			          <Button dense color="primary">
 			            Forgot Password / Account 
 			          </Button>
-			          <Button dense color="primary">
-			            Create Account
-			          </Button>
-
+  			        <CreateNewProfileComp />
 		        </CardActions>
-		    
 	        </CardContent>
-
         </Card>
     </div>
     

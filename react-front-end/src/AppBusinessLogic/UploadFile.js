@@ -5,23 +5,19 @@ import Button from 'material-ui/Button';
 class UploadFile extends React.Component{
 	constructor(props){
 		super(props);
-		this.state = {
-			file: null,
-		};
 	}
 
-	handleClick = (fileObj) =>{
-		//console.log(fileObj.fileList[0])
-		var djangoURL = "http://127.0.0.1:8000/api/uploadFile/".concat("test.pdf");
-		var blob = fileObj.base64;
-		this.uploadFiles(djangoURL, blob);
+	handleClick = (fileObj) => {
+		var fileName = fileObj.fileList[0].name;
+		var djangoURL = "http://127.0.0.1:8000/api/uploadFile/".concat(fileName);
+		var djangoGETURL = "http://127.0.0.1:8000/api/getAllFiles/"
+		this.uploadFiles(djangoURL, djangoGETURL, fileObj.base64);
+		
 	}
 
-	uploadFiles = (url, file) => {
-		var jsonData = file 
-		console.log(jsonData)
-		//var jsonObj = JSON.parse(jsonData)
-		fetch(url, {
+	uploadFiles = (urlPOST, urlGET, file) => {
+		var jsonData =  file
+		fetch(urlPOST, {
 			method: 'post',
 			body: jsonData ,
 			dataType: 'json',
@@ -30,17 +26,30 @@ class UploadFile extends React.Component{
         	    'Content-Type': 'application/json',
         	}
 		}).then((response) => {
-			console.log(response)
-			return response.json();
-
+			this.getAllFiles(urlGET);
 		}).then((data)=>{
 			console.log("data")
 		}).catch((err)=>{
 			console.log(err)
 		});
 	}
- 
 
+	getAllFiles = ( url ) =>{
+		var myInit = {
+			method: 'get',
+		};
+		fetch(url, myInit).then((response) =>{
+			
+			return response.json()
+		}).then((data) =>{
+			console.log(data);
+
+
+		}).catch((err) =>{
+			console.log(err);
+		})
+	}
+ 
 	render(){
 		return(
 			<AppTopBar  uploadFile={this.handleClick} />
