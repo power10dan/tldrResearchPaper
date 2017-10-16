@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'uploads',
     'rest_framework',
     'rest_framework.authtoken',
+    'rest_auth',
     'corsheaders'
 ]
 
