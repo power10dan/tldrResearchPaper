@@ -230,7 +230,7 @@ class LoginTests(APITestCase):
                                                   , 'testpassword')
 
         # # URL for creating an account.
-        self.create_url = reverse('login')
+        self.create_url = reverse('rest_login')
         self.token = Token.objects.create(user=self.test_user)
 
     # tests must start with "test" or else Django will not find it
@@ -283,16 +283,38 @@ class LoginTests(APITestCase):
         # And that we're returning a 401 UNAUTH code.
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_login_token(self):
+
+class LogoutTests(APITestCase):
+    def setUp(self):
+
+        # Create a test user
+        self.test_user = User.objects.create_user('testuser'
+                                                  , 'test@example.com'
+                                                  , 'testpassword')
+
+        # see the urls.py file, this name is based on the 
+        self.create_url = reverse('rest_logout')
+
+    def test_logout_token(self):
         """
-        If we have a well formed token, then we can use that to login
+        if we are logged in we can log out and get a 200 OK response
         """
 
         client = APIClient()
-        client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
-        data = {}
+        client.login(username='testuser'
+                     , password='testpassword'
+                     , email='test@example.com')
 
-        # response = self.client.post(self.create_url , data, format='json')
-        response = client.post(self.create_url , data, format='json', HTTP_AUTHORIZATION='Token ' + self.token.key)
+        response = client.post(self.create_url, {})
 
-        print(response.status_code)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_logout_not_logged_in(self):
+        """
+        If we try to logout a user who is not logged in then nothing happens
+        """
+
+        client = APIClient()
+        response = client.post(self.create_url, {})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
