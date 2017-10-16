@@ -1,5 +1,6 @@
 from django.core.urlresolvers import reverse
 from rest_framework.test import APITestCase
+from rest_framework.test import APIClient
 from django.contrib.auth.models import User
 from rest_framework import status
 from rest_framework.authtoken.models import Token
@@ -218,3 +219,80 @@ class AccountsTest(APITestCase):
 
         #make sure that the token in the response is the user's token
         self.assertEqual(response.data['token'], token.key)
+
+
+class LoginTests(APITestCase):
+    def setUp(self):
+
+        # Create a test user
+        self.test_user = User.objects.create_user('testuser'
+                                                  , 'test@example.com'
+                                                  , 'testpassword')
+
+        # # URL for creating an account.
+        self.create_url = reverse('login')
+        self.token = Token.objects.create(user=self.test_user)
+
+    # tests must start with "test" or else Django will not find it
+    def test_login_user(self):
+        """
+        Ensure we can login a user who already exists in the db
+        """
+
+        # the data to send to the server
+        data = {
+            'username': 'testuser',
+            'password': 'testpassword'
+        }
+
+        # send the data to the server in json form with request POST
+        response = self.client.post(self.create_url , data, format='json')
+
+        # And that we're returning a 200 OK code.
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_login_badusername(self):
+        """
+        If a user name is unrecognized then we get back a 401 Unauthorized
+        """
+
+        data = {
+            'username': 'testuserbadusername',
+            'password': 'testpassword'
+        }
+
+        # send the data to the server in json form with request POST
+        response = self.client.post(self.create_url , data, format='json')
+
+        # And that we're returning a 401 UNAUTH code.
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_login_password(self):
+        """
+        If a users password is unrecognized then we get back a 401 Unauthorized
+        """
+
+        data = {
+            'username': 'testuser',
+            'password': 'testpasswordbadpassword'
+        }
+
+        # send the data to the server in json form with request POST
+        response = self.client.post(self.create_url , data, format='json')
+
+        # And that we're returning a 401 UNAUTH code.
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_login_token(self):
+        """
+        If we have a well formed token, then we can use that to login
+        """
+
+        client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
+        data = {}
+
+        # response = self.client.post(self.create_url , data, format='json')
+        response = client.post(self.create_url , data, format='json', HTTP_AUTHORIZATION='Token ' + self.token.key)
+
+        print(response.status_code)
