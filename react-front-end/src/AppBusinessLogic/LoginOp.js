@@ -10,8 +10,10 @@ class LoginOperations extends React.Component{
 			isLogState: false,
 			userAccount: " ",
 			userPass: " ",
+			userName: " ",
 			errorStateAcc: false,
-			errorStatePass: false
+			errorStatePass: false,
+			errorStateName: false
 		}
 	}
 
@@ -23,10 +25,16 @@ class LoginOperations extends React.Component{
 		this.setState({userPass: pass});
 	}
 
+	saveUserName = (userName) =>{
+		this.setState({userName: userName.target.value});
+	}
+
 	saveUserPass = (passWord) => {
 		this.setState({userPass: passWord.target.value});
 	}
-	submitButton = () =>{
+
+	// button for submitting to create user account
+	submitButtonCreateCred = () =>{
 		if(!this.state.userAccount || /^\s*$/.test(this.state.userAccount)){
 			this.setState({errorStateAcc: true});
 		}  else {
@@ -38,8 +46,18 @@ class LoginOperations extends React.Component{
 		} else {
 			this.setState({errorStatePass: false})
 		}
-	
-		if(this.state.errorStateAcc == false && this.state.errorStatePass == false){
+
+		if(!this.state.userPass || /^\s*$/.test(this.state.userPass)){
+			this.setState({errorStateName: true});
+		} else{
+			this.setState({errorStateName: false})
+		}
+		
+		console.log(this.state.userName)
+		console.log(this.state.userAccount)
+		if(this.state.errorStateAcc == false 
+			  && this.state.errorStatePass == false
+			  && this.state.errorStateName == false){
 			 bcrypt.hash(this.state.userPass, 10, this.storeHash);
 			 this.createUserCredentials(this.state.userAccount, this.state.userPass);
 		}	
@@ -47,6 +65,7 @@ class LoginOperations extends React.Component{
 
 
 	createUserCredentials = (userName, userPassword) =>{
+
 		// send the user name and password to the 
 		// db 
 		var url = "https://127.0.0.1:8000/api/createCred";
@@ -68,6 +87,7 @@ class LoginOperations extends React.Component{
 		});
 	}
 
+	// button to login  
 	logIntoSystem = (userID, userPass) =>{
 		var url = "https://127.0.0.1/api/login";
 		var initParams = {  method: 'get', 
@@ -89,15 +109,15 @@ class LoginOperations extends React.Component{
 		}).catch((err)=>{
 			console.log(err);
 		});	
-		
 	}
 
 	render(){
 		return(
 			<LoginComp 
 			      passWordHand = {this.saveUserPass}
+			      userNameGet = {this.saveUserName}
 			      getAcc = {this.saveUserAcc}
-			      submitHandler = {this.submitButton}
+			      submitHandler = {this.submitButtonCreateCred}
 			      isErrorAcc = {this.state.errorStateAcc}
 			      isErrorPass = {this.state.errorStatePass}
 			/>

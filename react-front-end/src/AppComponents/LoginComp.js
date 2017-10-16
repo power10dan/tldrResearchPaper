@@ -93,18 +93,20 @@ const SimpleCard = (props) => {
                   required
                   error = {props.isErrorPass}
 		    	     >
-
-
-
                </TextField>
 		    	<CardActions className={classes.cardActionContainer}>
-			          <Button dense color="primary" onClick={props.submitHandler}>
+			          <Button dense color="primary">
 			            Login 
 			          </Button>
 			          <Button dense color="primary">
 			            Forgot Password / Account 
 			          </Button>
-  			        <CreateNewProfileComp />
+  			        <CreateNewProfileComp 
+                    nameGetter = {props.userNameGet}
+                    passWordGetter = {props.passWordHand}
+                    accountGetter = {props.getAcc}
+                    submitHandler = {props.submitHandler}
+                />
 		        </CardActions>
 	        </CardContent>
         </Card>

@@ -36,6 +36,7 @@ const styles = theme =>({
 class CreateNewProfileComp extends React.Component{
 	constructor(props){
 		super(props);
+		console.log(props);
 		this.state = {
 			open: false
 		};
@@ -50,6 +51,7 @@ class CreateNewProfileComp extends React.Component{
   	};
 
   	render() {
+  		console.log(this.props)
   		return(
 			<div>
 				<Button dense color="primary" onClick = {this.handleClickOpen}>
@@ -63,13 +65,21 @@ class CreateNewProfileComp extends React.Component{
 						</Typography>
 					</DialogTitle>
 					<DialogContent>
+						<TextField
+								autoFocus
+								margin="dense"
+								id="name"
+								label="Name"
+								fullWidth
+								onChange={this.props.nameGetter}
+							/>
 							<TextField
 								autoFocus
 								margin="dense"
 								id="name"
 								label="Account Name"
-								type="accountNumber"
 								fullWidth
+								onChange={this.props.accountGetter}
 							/>
 							            
 							 <TextField
@@ -79,6 +89,7 @@ class CreateNewProfileComp extends React.Component{
 			  			          margin = "dense"
 			  			          type="password"
 			  			          fullWidth
+			  			          onChange = {this.props.passwordGetter}
 				    	     />
 
 				    	     <TextField
@@ -88,10 +99,11 @@ class CreateNewProfileComp extends React.Component{
 			  			          margin = "dense"
 			  			          type="password"
 			  			          fullWidth
+			  			          onChange ={this.props.passwordGetter}
 				    	     />
 
 							<DialogActions>
-							   	<Button  onClick= {this.handleRequestClose}>
+							   	<Button  onClick= {this.props.submitHandler}>
 							   		Create Account 
 							   	</Button>
 
