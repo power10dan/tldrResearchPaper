@@ -80,7 +80,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
-  if 'TRAVIS' in os.environ:
+if 'TRAVIS' in os.environ:
     DATABASES = {
         'default': {
             'ENGINE':   'django.db.backends.postgresql_psycopg2',
