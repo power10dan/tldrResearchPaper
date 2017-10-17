@@ -51,7 +51,6 @@ class CreateNewProfileComp extends React.Component{
   	};
 
   	render() {
-  		console.log(this.props)
   		return(
 			<div>
 				<Button dense color="primary" onClick = {this.handleClickOpen}>

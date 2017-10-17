@@ -13,7 +13,7 @@ class LoginOperations extends React.Component{
 			userName: " ",
 			errorStateAcc: false,
 			errorStatePass: false,
-			errorStateName: false
+			errorStateName: false,
 		}
 	}
 
@@ -35,37 +35,52 @@ class LoginOperations extends React.Component{
 
 	// button for submitting to create user account
 	submitButtonCreateCred = () =>{
-		if(!this.state.userAccount || /^\s*$/.test(this.state.userAccount)){
-			this.setState({errorStateAcc: true});
+		if( /^\s*$/.test(this.state.userAccount)){
+			this.state.errorStateAcc = true;
 		}  else {
+			//his.state.errorStateAcc = false;
 			this.setState({errorStateAcc: false})
 		}
 
-		if (!this.state.userPass || /^\s*$/.test(this.state.userPass) ){
-			this.setState({errorStatePass: true})
+		if ( /^\s*$/.test(this.state.userPass) ){
+			this.state.errorStatePass = true
+			//this.setState({errorStatePass: true})
 		} else {
+			//this.state.errorStatePass = false;
 			this.setState({errorStatePass: false})
 		}
 
-		if(!this.state.userPass || /^\s*$/.test(this.state.userPass)){
+		if( /^\s*$/.test(this.state.userPass)){
 			this.setState({errorStateName: true});
 		} else{
-			this.setState({errorStateName: false})
+			//this.state.errorStateName = false;
+			this.setState({errorStateName: false}, ()=> {
+				if(this.state.errorStateName === false 
+					  && this.state.errorStatePass === false 
+					  && this.state.errorStateAcc === false){
+					console.log("hi ")
+				}
+			})
 		}
+
+		/*if(this.state.errorStateName === false 
+			  && this.state.errorStatePass === false 
+			  && this.state.errorStateAcc === false){
+			console.log("hi ")
+		}*/
+
 		
-		console.log(this.state.userName)
-		console.log(this.state.userAccount)
-		if(this.state.errorStateAcc == false 
-			  && this.state.errorStatePass == false
-			  && this.state.errorStateName == false){
+		/*if(this.state.errorStateAcc == false 
+		    && this.state.errorStatePass == false
+		    && this.state.errorStateName == false){
+			
 			 bcrypt.hash(this.state.userPass, 10, this.storeHash);
 			 this.createUserCredentials(this.state.userAccount, this.state.userPass);
-		}	
+		}	*/
 	}
 
 
 	createUserCredentials = (userName, userPassword) =>{
-
 		// send the user name and password to the 
 		// db 
 		var url = "https://127.0.0.1:8000/api/createCred";
@@ -97,6 +112,7 @@ class LoginOperations extends React.Component{
 		  				    	'Content-Type': 'application/json'
 		  				    },
 		  				 };
+
 		fetch(url, initParams).then((response) =>{
 			var hash = bcrypt.hash(userPass, this.salt)
 			if(bcrypt.compareSync(userPass, response.passWord) == false){

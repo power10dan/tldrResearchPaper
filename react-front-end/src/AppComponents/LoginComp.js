@@ -95,7 +95,7 @@ const SimpleCard = (props) => {
 		    	     >
                </TextField>
 		    	<CardActions className={classes.cardActionContainer}>
-			          <Button dense color="primary">
+			          <Button dense color="primary" onClick={props.submitHandler}>
 			            Login 
 			          </Button>
 			          <Button dense color="primary">
