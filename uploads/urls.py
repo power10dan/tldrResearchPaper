@@ -1,11 +1,12 @@
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework.authtoken.views import obtain_auth_token
 
 
-from uploads.core import views
+from views import views
 
 
 urlpatterns = [
@@ -13,6 +14,12 @@ urlpatterns = [
     url(r'^api/getAllFiles/$', views.GetAllFiles.as_view()),
     url(r'^api/deleteFile/(?P<filename>[^/]+)$', views.DeleteFile.as_view()),
     url(r'^admin/', admin.site.urls),
+    url(r'^api/createUser/$'
+        , views.CreateUser.as_view()
+        , name='account-create'),
+    # use /rest-auth/logout/ or /rest-auth/login/, this imports a bunch of urls
+    # see here: http://django-rest-auth.readthedocs.io/en/latest/api_endpoints.html
+    url(r'^rest-auth/', include('rest_auth.urls')),
 ]
 
 if settings.DEBUG:
