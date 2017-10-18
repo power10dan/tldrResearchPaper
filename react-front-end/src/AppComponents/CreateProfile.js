@@ -68,7 +68,7 @@ class CreateNewProfileComp extends React.Component{
 								autoFocus
 								margin="dense"
 								id="name"
-								label="Name"
+								label="User Name"
 								fullWidth
 								onChange={this.props.nameGetter}
 							/>
@@ -76,7 +76,7 @@ class CreateNewProfileComp extends React.Component{
 								autoFocus
 								margin="dense"
 								id="name"
-								label="Account Name"
+								label="Email Address"
 								fullWidth
 								onChange={this.props.accountGetter}
 							/>

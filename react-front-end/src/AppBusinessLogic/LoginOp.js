@@ -27,9 +27,11 @@ class LoginOperations extends React.Component{
 
 	saveUserName = (userName) =>{
 		this.setState({userName: userName.target.value});
+		//console.log(userName);
 	}
 
 	saveUserPass = (passWord) => {
+		console.log(passWord.target.value);
 		this.setState({userPass: passWord.target.value});
 	}
 
@@ -80,16 +82,20 @@ class LoginOperations extends React.Component{
 	}
 
 
-	createUserCredentials = (userName, userPassword) =>{
+	createUserCredentials = (userName, userPassword,userAccount) =>{
 		// send the user name and password to the 
-		// db 
-		var url = "https://127.0.0.1:8000/api/createCred";
+		// db
+		console.log(this.state.userName)
+		console.log(this.state.userAccount)
+		console.log(this.state.userPassword) 
+		var url = "http://127.0.0.1:8000/api/createUser/";
 		fetch(url, {
 			method: 'post',
-			userAcc: userName ,
-			userPass: userPassword,
+			username: 'spencer' ,
+			email: 'kresges@oregonstate.edu',
+			password: 'iamlongpassword',
 			dataType: 'json',
-			mode: 'no-cors',
+			mode: 'cors',
 			headers: {
         	    'Content-Type': 'application/json',
         	}
@@ -133,7 +139,7 @@ class LoginOperations extends React.Component{
 			      passWordHand = {this.saveUserPass}
 			      userNameGet = {this.saveUserName}
 			      getAcc = {this.saveUserAcc}
-			      submitHandler = {this.submitButtonCreateCred}
+			      submitHandler = {this.createUserCredentials}
 			      isErrorAcc = {this.state.errorStateAcc}
 			      isErrorPass = {this.state.errorStatePass}
 			/>
