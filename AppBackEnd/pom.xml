@@ -193,7 +193,7 @@
             <id>process_pdf_to_xml</id>
             <activation>
                 <property>
-                    <name>process_header_bibtex</name>
+                    <name>process_pdfs</name>
                 </property>
             </activation>
             <build>
@@ -207,7 +207,7 @@
                             <arguments>
                                 <argument>-classpath</argument>
 								<classpath/>
-                                <argument>src.main.java.org.grobidExample.PDFXML</argument>
+                                <argument>org.grobidExample.PDFXML</argument>
                             </arguments>
                         </configuration>
                     </plugin>
