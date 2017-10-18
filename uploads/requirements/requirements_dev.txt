@@ -33,4 +33,5 @@ Pygments==2.2.0             # syntax highlighting
 requests==2.18.4
 urllib3==1.22
 django-extensions==1.9.1    # provides useful utils like ./manage.py show_urls
+django-rest-auth==0.9.2	    # Required for rest_auth urls, and authentication.
 ##############################################################################
