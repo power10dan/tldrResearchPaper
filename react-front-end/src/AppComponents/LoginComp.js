@@ -10,7 +10,7 @@ import CreateNewProfileComp from '../AppComponents/CreateProfile.js';
 const styles = theme => ({
     card: {
         width:'50%',
-        height:'160px',
+        height:'150px',
         marginTop: "55px",
         padding: "2px",
         marginLeft: "425px",
@@ -34,7 +34,7 @@ const styles = theme => ({
 
     inputCard:{
     	width:'50%',
-      height:'180px',
+      height:'220px',
       marginTop: "0px",
       padding: "2px",
       marginLeft: "425px",
@@ -64,7 +64,7 @@ const SimpleCard = (props) => {
       <Card className={classes.card}>
         <CardContent>
            		<Typography type="body1" className={classes.title}>
-		           " Hi. "
+		           " Welcome! "
 		        </Typography>
         </CardContent>
       </Card>
@@ -72,15 +72,26 @@ const SimpleCard = (props) => {
 	        <CardContent>
   	      		<TextField
   			          id="account"
-  			          label="ID"
+  			          label="User Name"
   			          className={classes.textField}
   			          type="account"
   			          margin="normal"
-                  onChange={props.getAcc}
+                  onChange={props.userNameGet}
                   required
                   error = {props.isErrorAcc}
   		    	   >
+		</TextField>
 
+		<TextField
+			id="account"
+			label="Email"
+			className={classes.textField}
+			type="account"
+			margin="normal"
+			onChange={props.getAcc}
+			required
+			error={props.isErrorAcc}
+				>
                </TextField>
 
 	          	 <TextField
@@ -95,7 +106,7 @@ const SimpleCard = (props) => {
 		    	     >
                </TextField>
 		    	<CardActions className={classes.cardActionContainer}>
-			          <Button dense color="primary" onClick={props.submitHandler}>
+			          <Button dense color="primary" onClick={props.loginHandler}>
 			            Login 
 			          </Button>
 			          <Button dense color="primary">

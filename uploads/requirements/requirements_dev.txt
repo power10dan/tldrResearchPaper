@@ -17,7 +17,7 @@ pycodestyle==2.3.1
 pyflakes==1.5.0
 service-factory==0.1.5      # Required for Django RESTful API
 django-cors-headers==2.1.0  # Required for making cross domain requests
-attrs==18.2.0
+attrs==17.2.0
 autoflake==0.7
 certifi==2017.7.27.1
 chardet==3.0.4

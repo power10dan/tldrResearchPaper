@@ -9,7 +9,9 @@ class LoginOperations extends React.Component{
 		this.state = {
 			isLogState: false,
 			userAccount: " ",
+			userPassword: " ",
 			userPass: " ",
+			userPass2: " ",
 			userName: " ",
 			errorStateAcc: false,
 			errorStatePass: false,
@@ -22,7 +24,7 @@ class LoginOperations extends React.Component{
 	}
 
 	storeHash = (err, pass) =>{
-		this.setState({userPass: pass});
+		this.setState({userPassword: pass});
 	}
 
 	saveUserName = (userName) =>{
@@ -32,7 +34,7 @@ class LoginOperations extends React.Component{
 
 	saveUserPass = (passWord) => {
 		console.log(passWord.target.value);
-		this.setState({userPass: passWord.target.value});
+		this.setState({userPassword: passWord.target.value});
 	}
 
 	// button for submitting to create user account
@@ -87,15 +89,18 @@ class LoginOperations extends React.Component{
 		// db
 		console.log(this.state.userName)
 		console.log(this.state.userAccount)
-		console.log(this.state.userPassword) 
-		var url = "http://127.0.0.1:8000/api/createUser/";
+		console.log(this.state.userPassword)
+		var jsonData = {username: this.state.userName,
+				account_emailaddress: this.state.userAccount,
+				password1: this.state.userPass,
+				password2: this.state.userPass
+				}; 
+		var url = "http://127.0.0.1:8000/rest-auth/registration/";
 		fetch(url, {
 			method: 'post',
-			username: 'spencer' ,
-			email: 'kresges@oregonstate.edu',
-			password: 'iamlongpassword',
-			dataType: 'json',
-			mode: 'cors',
+			body: JSON.stringify(jsonData),
+			dataType: "json",
+			mode: "cors",
 			headers: {
         	    'Content-Type': 'application/json',
         	}
@@ -110,24 +115,27 @@ class LoginOperations extends React.Component{
 
 	// button to login  
 	logIntoSystem = (userID, userPass) =>{
-		var url = "https://127.0.0.1/api/login";
-		var initParams = {  method: 'get', 
-		  				    dataType: 'json',
-		  				    mode: 'no-cors',
-		  				    headers: { 
-		  				    	'Content-Type': 'application/json'
-		  				    },
-		  				 };
+		var jsonData = {username: this.state.userName,
+				account_emailaddress: this.state.userAccount,
+				password: this.state.userPassword
+				};
+		var url = "http://127.0.0.1:8000/rest-auth/login/";
+		var initParams = {  method: 'post', 
+				    body: JSON.stringify(jsonData),
+		  		    mode: 'cors',
+				    headers: {'Content-Type': 'application/json'},
+		  		  };
 
 		fetch(url, initParams).then((response) =>{
-			var hash = bcrypt.hash(userPass, this.salt)
-			if(bcrypt.compareSync(userPass, response.passWord) == false){
-				console.log("Can't log in here");
-				this.setState(this.isLogin.isLogState: false);
-			} else{
-				console.log("Login successful");
-				this.setState(this.isLogin.isLogState: true);
-			}
+			return response.json();
+			//var hash = bcrypt.hash(userPass, this.salt)
+			//if(bcrypt.compareSync(userPass, response.passWord) == false){
+			//	console.log("Can't log in here");
+			//	this.setState(this.isLogin.isLogState: false);
+			//} else{
+			//	console.log("Login successful");
+			//	this.setState(this.isLogin.isLogState: true);
+			//}
 		}).catch((err)=>{
 			console.log(err);
 		});	
@@ -140,6 +148,7 @@ class LoginOperations extends React.Component{
 			      userNameGet = {this.saveUserName}
 			      getAcc = {this.saveUserAcc}
 			      submitHandler = {this.createUserCredentials}
+			      loginHandler = {this.logIntoSystem}
 			      isErrorAcc = {this.state.errorStateAcc}
 			      isErrorPass = {this.state.errorStatePass}
 			/>
