@@ -53,12 +53,13 @@ public class PDFXML {
 	}
 	
 	public static void main(String args[]){
-		GatewayServer gatewayServer = new GatewayServer(new PDFXML());
-		gatewayServer.start();
-		System.out.println("Gateway Server Started");
+		//String pdfGroup = "/Users/daniellin/Desktop/tldrApp/tldrResearchPaper/AppBackEnd/InputTests";
+		//String pdfOutput = "/Users/daniellin/Desktop/tldrApp/tldrResearchPaper/AppBackEnd/OutputTest";
+		PDFXML pdfconv = new PDFXML();
+		GatewayServer server = new GatewayServer(pdfconv);
+    	server.start();
+		//int finish = pdfconv.PDFXMLConverter(pdfGroup, pdfOutput, false, false);
+		//pdfconv.close();
 
 	}
-
-
-	
 }

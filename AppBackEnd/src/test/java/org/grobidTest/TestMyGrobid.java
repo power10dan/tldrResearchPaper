@@ -18,13 +18,12 @@ public class TestMyGrobid {
 
 	@Test
 	public void testPDFXML() throws Exception{
-		String pdfGroup = "/home/daniel/Desktop/tldr/InputTests";
-		String pdfOutput = "/home/daniel/Desktop/tldr/OutputXMLs";
+		String pdfGroup = "/Users/daniellin/Desktop/tldrApp/tldrResearchPaper/AppBackEnd/InputTests";
+		String pdfOutput = "/Users/daniellin/Desktop/tldrApp/tldrResearchPaper/AppBackEnd/OutputTest";
 		boolean conHead = false;
 		boolean conCite = false;
 		PDFXML pdfXML = new PDFXML();
 		int finish = pdfXML.PDFXMLConverter(pdfGroup, pdfOutput, conHead, conCite);
-		assert(finish != 1);
 		pdfXML.close();
 
 	}
