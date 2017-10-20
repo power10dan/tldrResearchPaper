@@ -10,6 +10,7 @@ GROBID="mvn exec:exec -Dprocess_pdfs"
 # in production we can solicit the virtual env, from this script as long as it
 # is consistent. The &> /dev/null sends all output to null thereby suppressing
 # all output, change this if you want output
+(echo "Booting Django")
 (exec $DJANGO) &> /dev/null &
 
 # Execute GROBID in a subshell, if these paths change this will break
@@ -17,4 +18,6 @@ GROBID="mvn exec:exec -Dprocess_pdfs"
 # in bash enclosing in parenthesis creates a child process, that is how these
 # are detached and not blocking
 # the & is to run these in parallel without overtaking the parent process
+(echo "Booting GROBID!")
 (cd AppBackEnd && $GROBID) &> /dev/null &
+(echo "All Done!")
