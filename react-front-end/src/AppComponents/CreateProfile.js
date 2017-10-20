@@ -36,6 +36,7 @@ const styles = theme =>({
 class CreateNewProfileComp extends React.Component{
 	constructor(props){
 		super(props);
+		console.log(props);
 		this.state = {
 			open: false
 		};
@@ -73,7 +74,6 @@ class CreateNewProfileComp extends React.Component{
 								required
 								error = {this.props.isCreateErrorName}
 							/>
-
 							<TextField
 								autoFocus
 								margin="dense"
@@ -83,9 +83,6 @@ class CreateNewProfileComp extends React.Component{
 								onChange={this.props.createEmailGetter}
 								required
 								error ={this.props.isCreateErrorEmail}
-								label="Account Name"
-								type="accountNumber"
-								fullWidth
 							/>
 							            
 							 <TextField
@@ -98,10 +95,6 @@ class CreateNewProfileComp extends React.Component{
 			  			          onChange = {this.props.createPasswordGetter}
 			  			          required
 			  			          error = {this.props.isCreateErrorPassword1}
-			  			          label="Password"
-			  			          margin = "dense"
-			  			          type="password"
-			  			          fullWidth
 				    	     />
 
 				    	     <TextField
@@ -117,12 +110,7 @@ class CreateNewProfileComp extends React.Component{
 				    	     />
 
 							<DialogActions>
-							   	<Button  onClick= {this.props.createAccountSubmitHandler} />
-
-				    	     </DialogActions>
-
-							<DialogActions>
-							   	<Button  onClick= {this.handleRequestClose}>
+							   	<Button  onClick= {this.props.createAccountSubmitHandler}>
 							   		Create Account 
 							   	</Button>
 
@@ -137,5 +125,6 @@ class CreateNewProfileComp extends React.Component{
 
   	}
 }  
+
 
 export default withStyles(styles)(CreateNewProfileComp);
