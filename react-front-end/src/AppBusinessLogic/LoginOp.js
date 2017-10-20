@@ -78,6 +78,9 @@ class LoginOperations extends React.Component{
 					  && this.state.errorLoginStatePassword === false 
 					  && this.state.errorLoginStateEmail === false){
 					this.APICall_login();
+					this.setState({userName: " "})
+					this.setState({userPassword: " "})
+					this.setState({userEmail: " "})
 				}
 			})
 		}
@@ -111,6 +114,9 @@ class LoginOperations extends React.Component{
 					  && this.state.errorCreateStatePassword === false 
 					  && this.state.errorCreateStateEmail === false){
 					this.APICall_createUser();
+					this.setState({newUserEmail: " "})
+					this.setState({newUserPassword: " "})
+					this.setState({newUserName: " "})
 				}
 			})
 		}

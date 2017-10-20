@@ -18,10 +18,12 @@ from django.http import HttpResponse
 from django.core import serializers
 
 from wsgiref.util import FileWrapper
+from py4j.java_gateway import JavaGateway 
 
 import os
 import json
 import base64
+
 
 #RESTful API view for Django
 class FileUploadView(APIView):
@@ -36,6 +38,15 @@ class FileUploadView(APIView):
         with open(path, 'wb') as fileopened:
             fileopened.write(base64.decodestring(newString[1]))
         fileopened.close()
+
+        # GROBID STUFF USING PY4J
+        inputDir = "/Users/daniellin/Desktop/tldrApp/tldrResearchPaper/uploads/media/documents"
+        outputDir = "/Users/daniellin/Desktop/tldrApp/tldrResearchPaper/uploads/media/xmlFiles"
+        grobidClass = gateway.entry_point
+        consolidateHead = False
+        consolidateCite = False
+        status = grobidClass.PDFXMLConverter(inputDir, outputDir, consolidateHead, consolidateCite)
+
         return Response(status=204)
 
 class GetAllFiles(APIView):
@@ -44,7 +55,7 @@ class GetAllFiles(APIView):
         fileNames = [fileRoot + fileName for
                      fileName in
                      os.listdir(fileRoot) if fileName != ".DS_Store"]
-        # get the link to the PDF instead of transfering YUGE PDFs
+        
         permission_classes = (isAdminOrReadOnly, )
         fileData = {"Files": [{'File': filename } for filename in fileNames]}
         response = HttpResponse(json.dumps(fileData), content_type="application/json")
