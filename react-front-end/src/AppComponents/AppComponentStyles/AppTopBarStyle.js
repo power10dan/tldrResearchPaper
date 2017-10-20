@@ -2,7 +2,7 @@ const stylesAppTopBar = theme =>({
 	 root: {
 	    marginTop: theme.spacing.unit * 1,
 	    width: '100%',
-	    left: '225px',
+	    marginLeft: '225px',
 	    position:'relative',
 
 	  }, 

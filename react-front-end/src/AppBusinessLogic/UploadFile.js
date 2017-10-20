@@ -11,7 +11,7 @@ class UploadFile extends React.Component{
 	}
 
 	handleClick = (fileObj) =>{
-    var fileName = fileObj.fileList[0].name;
+    		var fileName = fileObj.fileList[0].name;
 		var djangoURL = "http://127.0.0.1:8000/api/uploadFile/".concat(fileName);
 		var blob = fileObj.base64;
 		this.uploadFiles(djangoURL, blob);
@@ -32,7 +32,6 @@ class UploadFile extends React.Component{
 		}).then((response) => {
 			  console.log(response.status);
 			  return response.status;
-
 		}).then((data)=>{
 			  console.log("data");
 		}).catch((err)=>{
@@ -40,7 +39,22 @@ class UploadFile extends React.Component{
 		});
 	}
 
+	getAllFiles = ( url ) =>{
+		var myInit = {
+			method: 'get',
+		};
+		fetch(url, myInit).then((response) =>{
+			
+			return response.json()
+		}).then((data) =>{
+			console.log(data);
 
+
+		}).catch((err) =>{
+			console.log(err);
+		})
+	}
+ 
 	render(){
 		return(
 			<AppTopBar  uploadFile={this.handleClick} />

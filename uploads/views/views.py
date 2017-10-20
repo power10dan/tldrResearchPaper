@@ -78,6 +78,7 @@ class CreateUser(APIView):
     """
 
     def post(self, request, format="json"):
+	print request.data
         serializer = UserSerializer(data=request.data)
 
         # if serializer succeeds create user and save
