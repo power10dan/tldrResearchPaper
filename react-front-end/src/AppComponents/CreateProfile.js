@@ -117,9 +117,9 @@ class CreateNewProfileComp extends React.Component{
 				    	     />
 
 							<DialogActions>
-							   	<Button  onClick= {this.props.createAccountSubmitHandler}>
+							   	<Button  onClick= {this.props.createAccountSubmitHandler} />
 
-				    	     />
+				    	     </DialogActions>
 
 							<DialogActions>
 							   	<Button  onClick= {this.handleRequestClose}>
