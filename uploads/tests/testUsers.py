@@ -1,5 +1,6 @@
 from django.core.urlresolvers import reverse
 from rest_framework.test import APITestCase
+from rest_framework.test import APIClient
 from django.contrib.auth.models import User
 from rest_framework import status
 from rest_framework.authtoken.models import Token
@@ -218,3 +219,102 @@ class AccountsTest(APITestCase):
 
         #make sure that the token in the response is the user's token
         self.assertEqual(response.data['token'], token.key)
+
+
+class LoginTests(APITestCase):
+    def setUp(self):
+
+        # Create a test user
+        self.test_user = User.objects.create_user('testuser'
+                                                  , 'test@example.com'
+                                                  , 'testpassword')
+
+        # # URL for creating an account.
+        self.create_url = reverse('rest_login')
+        self.token = Token.objects.create(user=self.test_user)
+
+    # tests must start with "test" or else Django will not find it
+    def test_login_user(self):
+        """
+        Ensure we can login a user who already exists in the db
+        """
+
+        # the data to send to the server
+        data = {
+            'username': 'testuser',
+            'password': 'testpassword'
+        }
+
+        # send the data to the server in json form with request POST
+        response = self.client.post(self.create_url , data, format='json')
+
+        # And that we're returning a 200 OK code.
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_login_badusername(self):
+        """
+        If a user name is unrecognized then we get back a 401 Unauthorized
+        """
+
+        data = {
+            'username': 'testuserbadusername',
+            'password': 'testpassword'
+        }
+
+        # send the data to the server in json form with request POST
+        response = self.client.post(self.create_url , data, format='json')
+
+        # And that we're returning a 401 UNAUTH code.
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_login_password(self):
+        """
+        If a users password is unrecognized then we get back a 401 Unauthorized
+        """
+
+        data = {
+            'username': 'testuser',
+            'password': 'testpasswordbadpassword'
+        }
+
+        # send the data to the server in json form with request POST
+        response = self.client.post(self.create_url , data, format='json')
+
+        # And that we're returning a 401 UNAUTH code.
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+class LogoutTests(APITestCase):
+    def setUp(self):
+
+        # Create a test user
+        self.test_user = User.objects.create_user('testuser'
+                                                  , 'test@example.com'
+                                                  , 'testpassword')
+
+        # see the urls.py file, this name is based on the 
+        self.create_url = reverse('rest_logout')
+
+    def test_logout_token(self):
+        """
+        if we are logged in we can log out and get a 200 OK response
+        """
+
+        client = APIClient()
+        client.login(username='testuser'
+                     , password='testpassword'
+                     , email='test@example.com')
+
+        response = client.post(self.create_url, {})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_logout_not_logged_in(self):
+        """
+        If we try to logout a user who is not logged in then nothing happens
+        """
+
+        client = APIClient()
+        response = client.post(self.create_url, {})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
