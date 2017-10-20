@@ -1,0 +1,97 @@
+19 Oct 2017 02:30.07 [INFO ] LibraryLoader             - Loading external native CRF library
+19 Oct 2017 02:30.07 [INFO ] LibraryLoader             - Loading Wapiti native library...
+19 Oct 2017 02:30.07 [INFO ] LibraryLoader             - Library crfpp loaded
+19 Oct 2017 02:33.48 [INFO ] WapitiModel               - Loading model: /Users/daniellin/Desktop/tldrApp/tldrResearchPaper/grobid-grobid-parent-0.4.4/grobid-home/models/fulltext/model.wapiti (size: 20462507)
+19 Oct 2017 02:33.51 [INFO ] WapitiModel               - Loading model: /Users/daniellin/Desktop/tldrApp/tldrResearchPaper/grobid-grobid-parent-0.4.4/grobid-home/models/segmentation/model.wapiti (size: 15755692)
+19 Oct 2017 02:33.54 [INFO ] Lexicon                   - Initiating dictionary
+19 Oct 2017 02:33.54 [INFO ] Lexicon                   - End of Initialization of dictionary
+19 Oct 2017 02:33.54 [INFO ] Lexicon                   - Initiating names
+19 Oct 2017 02:33.54 [INFO ] Lexicon                   - End of initialization of names
+19 Oct 2017 02:33.54 [INFO ] Lexicon                   - Initiating country codes
+19 Oct 2017 02:33.54 [INFO ] Lexicon                   - End of initialization of country codes
+19 Oct 2017 02:33.56 [INFO ] WapitiModel               - Loading model: /Users/daniellin/Desktop/tldrApp/tldrResearchPaper/grobid-grobid-parent-0.4.4/grobid-home/models/figure/model.wapiti (size: 680116)
+19 Oct 2017 02:33.56 [INFO ] WapitiModel               - Loading model: /Users/daniellin/Desktop/tldrApp/tldrResearchPaper/grobid-grobid-parent-0.4.4/grobid-home/models/table/model.wapiti (size: 1337378)
+19 Oct 2017 02:33.57 [INFO ] WapitiModel               - Loading model: /Users/daniellin/Desktop/tldrApp/tldrResearchPaper/grobid-grobid-parent-0.4.4/grobid-home/models/header/model.wapiti (size: 36094028)
+19 Oct 2017 02:34.03 [INFO ] WapitiModel               - Loading model: /Users/daniellin/Desktop/tldrApp/tldrResearchPaper/grobid-grobid-parent-0.4.4/grobid-home/models/name/header/model.wapiti (size: 2225578)
+19 Oct 2017 02:34.03 [INFO ] WapitiModel               - Loading model: /Users/daniellin/Desktop/tldrApp/tldrResearchPaper/grobid-grobid-parent-0.4.4/grobid-home/models/name/citation/model.wapiti (size: 393118)
+19 Oct 2017 02:34.03 [INFO ] WapitiModel               - Loading model: /Users/daniellin/Desktop/tldrApp/tldrResearchPaper/grobid-grobid-parent-0.4.4/grobid-home/models/affiliation-address/model.wapiti (size: 2646298)
+19 Oct 2017 02:34.06 [INFO ] CrossrefRequestTask       - works/10.1145/2568225.2568313 (): New request in the pool
+19 Oct 2017 02:34.06 [INFO ] CrossrefRequestTask       - timedSemaphore acquire... current total: 0, still available: 1
+19 Oct 2017 02:34.06 [INFO ] CrossrefRequestTask       - works/10.1145/2568225.2568313 (): .. executing
+19 Oct 2017 02:34.08 [INFO ] Consolidation             - Success request 10.1145/2568225.2568313
+19 Oct 2017 02:34.08 [INFO ] WapitiModel               - Loading model: /Users/daniellin/Desktop/tldrApp/tldrResearchPaper/grobid-grobid-parent-0.4.4/grobid-home/models/citation/model.wapiti (size: 16235248)
+19 Oct 2017 02:34.11 [INFO ] WapitiModel               - Loading model: /Users/daniellin/Desktop/tldrApp/tldrResearchPaper/grobid-grobid-parent-0.4.4/grobid-home/models/reference-segmenter/model.wapiti (size: 4829569)
+19 Oct 2017 02:34.28 [INFO ] WapitiModel               - Loading model: /Users/daniellin/Desktop/tldrApp/tldrResearchPaper/grobid-grobid-parent-0.4.4/grobid-home/models/date/model.wapiti (size: 102435)
+19 Oct 2017 02:34.43 [INFO ] CrossrefRequestTask       - works/10.1145/2568225.2568313 (): New request in the pool
+19 Oct 2017 02:34.43 [INFO ] CrossrefRequestTask       - timedSemaphore acquire... current total: 0, still available: 25
+19 Oct 2017 02:34.43 [INFO ] CrossrefRequestTask       - works/10.1145/2568225.2568313 (): .. executing
+19 Oct 2017 02:34.44 [INFO ] Consolidation             - Success request 10.1145/2568225.2568313
+19 Oct 2017 02:35.05 [INFO ] CrossrefRequestTask       - works/10.1145/2568225.2568313 (): New request in the pool
+19 Oct 2017 02:35.05 [INFO ] CrossrefRequestTask       - timedSemaphore acquire... current total: 0, still available: 25
+19 Oct 2017 02:35.05 [INFO ] CrossrefRequestTask       - works/10.1145/2568225.2568313 (): .. executing
+19 Oct 2017 02:35.06 [INFO ] Consolidation             - Success request 10.1145/2568225.2568313
+19 Oct 2017 13:02.08 [INFO ] LibraryLoader             - Loading external native CRF library
+19 Oct 2017 13:02.08 [INFO ] LibraryLoader             - Loading Wapiti native library...
+19 Oct 2017 13:02.08 [INFO ] LibraryLoader             - Library crfpp loaded
+19 Oct 2017 19:47.21 [INFO ] LibraryLoader             - Loading external native CRF library
+19 Oct 2017 19:47.21 [INFO ] LibraryLoader             - Loading Wapiti native library...
+19 Oct 2017 19:47.21 [INFO ] LibraryLoader             - Library crfpp loaded
+19 Oct 2017 19:50.25 [INFO ] LibraryLoader             - Loading external native CRF library
+19 Oct 2017 19:50.25 [INFO ] LibraryLoader             - Loading Wapiti native library...
+19 Oct 2017 19:50.25 [INFO ] LibraryLoader             - Library crfpp loaded
+19 Oct 2017 19:55.05 [INFO ] LibraryLoader             - Loading external native CRF library
+19 Oct 2017 19:55.05 [INFO ] LibraryLoader             - Loading Wapiti native library...
+19 Oct 2017 19:55.05 [INFO ] LibraryLoader             - Library crfpp loaded
+19 Oct 2017 19:56.18 [INFO ] LibraryLoader             - Loading external native CRF library
+19 Oct 2017 19:56.18 [INFO ] LibraryLoader             - Loading Wapiti native library...
+19 Oct 2017 19:56.18 [INFO ] LibraryLoader             - Library crfpp loaded
+19 Oct 2017 20:01.06 [INFO ] LibraryLoader             - Loading external native CRF library
+19 Oct 2017 20:01.06 [INFO ] LibraryLoader             - Loading Wapiti native library...
+19 Oct 2017 20:01.06 [INFO ] LibraryLoader             - Library crfpp loaded
+19 Oct 2017 21:41.59 [INFO ] WapitiModel               - Loading model: /Users/daniellin/Desktop/tldrApp/tldrResearchPaper/grobid-grobid-parent-0.4.4/grobid-home/models/fulltext/model.wapiti (size: 20462507)
+19 Oct 2017 21:42.07 [INFO ] WapitiModel               - Loading model: /Users/daniellin/Desktop/tldrApp/tldrResearchPaper/grobid-grobid-parent-0.4.4/grobid-home/models/segmentation/model.wapiti (size: 15755692)
+19 Oct 2017 21:42.12 [INFO ] Lexicon                   - Initiating dictionary
+19 Oct 2017 21:42.12 [INFO ] Lexicon                   - End of Initialization of dictionary
+19 Oct 2017 21:42.12 [INFO ] Lexicon                   - Initiating names
+19 Oct 2017 21:42.12 [INFO ] Lexicon                   - End of initialization of names
+19 Oct 2017 21:42.13 [INFO ] Lexicon                   - Initiating country codes
+19 Oct 2017 21:42.13 [INFO ] Lexicon                   - End of initialization of country codes
+19 Oct 2017 21:42.27 [INFO ] WapitiModel               - Loading model: /Users/daniellin/Desktop/tldrApp/tldrResearchPaper/grobid-grobid-parent-0.4.4/grobid-home/models/figure/model.wapiti (size: 680116)
+19 Oct 2017 21:42.28 [INFO ] WapitiModel               - Loading model: /Users/daniellin/Desktop/tldrApp/tldrResearchPaper/grobid-grobid-parent-0.4.4/grobid-home/models/table/model.wapiti (size: 1337378)
+19 Oct 2017 21:42.30 [INFO ] WapitiModel               - Loading model: /Users/daniellin/Desktop/tldrApp/tldrResearchPaper/grobid-grobid-parent-0.4.4/grobid-home/models/header/model.wapiti (size: 36094028)
+19 Oct 2017 21:42.40 [INFO ] WapitiModel               - Loading model: /Users/daniellin/Desktop/tldrApp/tldrResearchPaper/grobid-grobid-parent-0.4.4/grobid-home/models/affiliation-address/model.wapiti (size: 2646298)
+19 Oct 2017 21:42.45 [INFO ] WapitiModel               - Loading model: /Users/daniellin/Desktop/tldrApp/tldrResearchPaper/grobid-grobid-parent-0.4.4/grobid-home/models/citation/model.wapiti (size: 16235248)
+19 Oct 2017 21:42.49 [INFO ] WapitiModel               - Loading model: /Users/daniellin/Desktop/tldrApp/tldrResearchPaper/grobid-grobid-parent-0.4.4/grobid-home/models/reference-segmenter/model.wapiti (size: 4829569)
+19 Oct 2017 21:43.05 [INFO ] LibraryLoader             - Loading external native CRF library
+19 Oct 2017 21:43.05 [INFO ] LibraryLoader             - Loading Wapiti native library...
+19 Oct 2017 21:43.05 [INFO ] LibraryLoader             - Library crfpp loaded
+19 Oct 2017 21:43.17 [INFO ] LibraryLoader             - Loading external native CRF library
+19 Oct 2017 21:43.17 [INFO ] LibraryLoader             - Loading Wapiti native library...
+19 Oct 2017 21:43.17 [INFO ] LibraryLoader             - Library crfpp loaded
+19 Oct 2017 21:43.19 [INFO ] LibraryLoader             - Loading external native CRF library
+19 Oct 2017 21:43.19 [INFO ] LibraryLoader             - Loading Wapiti native library...
+19 Oct 2017 21:43.19 [INFO ] LibraryLoader             - Library crfpp loaded
+19 Oct 2017 21:43.27 [INFO ] WapitiModel               - Loading model: /Users/daniellin/Desktop/tldrApp/tldrResearchPaper/grobid-grobid-parent-0.4.4/grobid-home/models/name/header/model.wapiti (size: 2225578)
+19 Oct 2017 21:43.28 [INFO ] WapitiModel               - Loading model: /Users/daniellin/Desktop/tldrApp/tldrResearchPaper/grobid-grobid-parent-0.4.4/grobid-home/models/name/citation/model.wapiti (size: 393118)
+19 Oct 2017 21:43.28 [INFO ] WapitiModel               - Loading model: /Users/daniellin/Desktop/tldrApp/tldrResearchPaper/grobid-grobid-parent-0.4.4/grobid-home/models/date/model.wapiti (size: 102435)
+19 Oct 2017 21:43.59 [INFO ] LibraryLoader             - Loading external native CRF library
+19 Oct 2017 21:43.59 [INFO ] LibraryLoader             - Loading Wapiti native library...
+19 Oct 2017 21:43.59 [INFO ] LibraryLoader             - Library crfpp loaded
+19 Oct 2017 21:44.10 [INFO ] LibraryLoader             - Loading external native CRF library
+19 Oct 2017 21:44.10 [INFO ] LibraryLoader             - Loading Wapiti native library...
+19 Oct 2017 21:44.10 [INFO ] LibraryLoader             - Library crfpp loaded
+19 Oct 2017 21:44.35 [INFO ] LibraryLoader             - Loading external native CRF library
+19 Oct 2017 21:44.35 [INFO ] LibraryLoader             - Loading Wapiti native library...
+19 Oct 2017 21:44.35 [INFO ] LibraryLoader             - Library crfpp loaded
+19 Oct 2017 21:45.05 [INFO ] LibraryLoader             - Loading external native CRF library
+19 Oct 2017 21:45.05 [INFO ] LibraryLoader             - Loading Wapiti native library...
+19 Oct 2017 21:45.05 [INFO ] LibraryLoader             - Library crfpp loaded
+19 Oct 2017 21:45.25 [INFO ] LibraryLoader             - Loading external native CRF library
+19 Oct 2017 21:45.25 [INFO ] LibraryLoader             - Loading Wapiti native library...
+19 Oct 2017 21:45.25 [INFO ] LibraryLoader             - Library crfpp loaded
+19 Oct 2017 21:45.33 [INFO ] LibraryLoader             - Loading external native CRF library
+19 Oct 2017 21:45.33 [INFO ] LibraryLoader             - Loading Wapiti native library...
+19 Oct 2017 21:45.33 [INFO ] LibraryLoader             - Library crfpp loaded
+19 Oct 2017 21:46.14 [INFO ] LibraryLoader             - Loading external native CRF library
+19 Oct 2017 21:46.14 [INFO ] LibraryLoader             - Loading Wapiti native library...
+19 Oct 2017 21:46.14 [INFO ] LibraryLoader             - Library crfpp loaded

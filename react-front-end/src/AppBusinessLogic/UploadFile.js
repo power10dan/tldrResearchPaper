@@ -5,37 +5,32 @@ import Button from 'material-ui/Button';
 class UploadFile extends React.Component{
 	constructor(props){
 		super(props);
-		this.state = {
-			file: null
-		};
 	}
 
-	handleClick = (fileObj) =>{
-    		var fileName = fileObj.fileList[0].name;
+	handleClick = (fileObj) => {
+		var fileName = fileObj.fileList[0].name;
 		var djangoURL = "http://127.0.0.1:8000/api/uploadFile/".concat(fileName);
-		var blob = fileObj.base64;
-		this.uploadFiles(djangoURL, blob);
+		var djangoGETURL = "http://127.0.0.1:8000/api/getAllFiles/"
+		this.uploadFiles(djangoURL, djangoGETURL, fileObj.base64);
+		
 	}
 
-	uploadFiles = (url, file) => {
-		  var jsonData = file;
-		  console.log(jsonData);
-		//var jsonObj = JSON.parse(jsonData)
-		fetch(url, {
+	uploadFiles = (urlPOST, urlGET, file) => {
+		var jsonData =  file
+		fetch(urlPOST, {
 			method: 'post',
 			body: jsonData ,
 			dataType: 'json',
-			mode: 'cors',
+			mode: 'no-cors',
 			headers: {
-        	    'Content-Type': 'application/json'
+        	    'Content-Type': 'application/json',
         	}
 		}).then((response) => {
-			  console.log(response.status);
-			  return response.status;
+			this.getAllFiles(urlGET);
 		}).then((data)=>{
-			  console.log("data");
+			console.log("data")
 		}).catch((err)=>{
-			  console.log(err);
+			console.log(err)
 		});
 	}
 

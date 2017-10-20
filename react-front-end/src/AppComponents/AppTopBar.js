@@ -17,10 +17,7 @@ const AppTopBar = (props) =>{
 		          <Typography type="title" color="inherit" >
 		            TL ; DR Please?
 		          </Typography>
-
-		          <Button color="contrast" className = {props.classes.menuButton} >
-		               Login
-		          </Button>		
+	
 			          <ReactFileReader 
 			                 base64={true} 
 			                 fileTypes=".pdf" 

@@ -40,13 +40,15 @@ class FileUploadView(APIView):
         fileopened.close()
 
         # GROBID STUFF USING PY4J
+        print("Grobid Working")
         inputDir = "/Users/daniellin/Desktop/tldrApp/tldrResearchPaper/uploads/media/documents"
         outputDir = "/Users/daniellin/Desktop/tldrApp/tldrResearchPaper/uploads/media/xmlFiles"
+        gateway = JavaGateway()
         grobidClass = gateway.entry_point
         consolidateHead = False
         consolidateCite = False
         status = grobidClass.PDFXMLConverter(inputDir, outputDir, consolidateHead, consolidateCite)
-
+        print("Grobid Finished")
         return Response(status=204)
 
 class GetAllFiles(APIView):
