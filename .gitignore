@@ -66,6 +66,8 @@ docs/_build/
 # PyBuilder
 target/
 
+!/AppBackEnd/target/
+
 # IPython Notebook
 .ipynb_checkpoints
 
