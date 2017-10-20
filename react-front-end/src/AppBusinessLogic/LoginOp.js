@@ -1,16 +1,18 @@
 import React from 'react';
 import LoginComp from '../AppComponents/LoginComp.js';
 import bcrypt from 'bcryptjs';
+import ErrSnack from '../AppComponents/ErrDialog.js';
 
 class LoginOperations extends React.Component{
 	//salt = bcrypt.getSaltSync(24);
 	constructor(props){
 		super(props);
 		this.state = {
-			isLogState: false,
+			notLogState: null,
 			newUserName: " ",
 			newUserEmail: " ",
 			newUserPassword: " ",
+			errorMess: " ",
 
 			userName: " ",
 			userEmail: " ",
@@ -48,8 +50,6 @@ class LoginOperations extends React.Component{
 	userNameGet = (userName) => {
 		this.setState({userName : userName.target.value});
 	}
-
-
 
 	//storeHash = (err, pass) =>{
 	//	this.setState({userPassword: pass});
@@ -135,9 +135,18 @@ class LoginOperations extends React.Component{
         	    'Content-Type': 'application/json',
         	}
 		}).then((response) => {
-			return response.json();
+			var resp = [response.json(), response.status];
+			return resp
 		}).then((data)=>{
-			console.log("data")
+			if(data[1] == 400){
+				this.setState({notLogState: true})
+			}
+
+			if(data[1] == 200){
+				this.setState({notLogState: false});
+			}
+
+			console.log(data)
 		}).catch((err)=>{
 			console.log(err)
 		});
@@ -155,7 +164,8 @@ class LoginOperations extends React.Component{
 		  		  };
 	
 		fetch(url, initParams).then((response) =>{
-			return response.json();
+			var resp = [response.json(), response.status]
+			return resp;
 			//var hash = bcrypt.hash(userPass, this.salt)
 			//if(bcrypt.compareSync(userPass, response.passWord) == false){
 			//	console.log("Can't log in here");
@@ -164,36 +174,91 @@ class LoginOperations extends React.Component{
 			//	console.log("Login successful");
 			//	this.setState(this.isLogin.isLogState: true);
 			//}
+		}).then((data) =>{
+			if(data[1] == 400){
+				this.setState({notLogState: true})
+			}
+
+
+			if(data[1] == 200){
+				this.setState({notLogState: false})
+			}
+
 		}).catch((err)=>{
 			console.log(err);
 		});	
 	}
 
 	render(){
+		let state = null
+		if(this.state.notLogState == true){
+			state = 
+				<div>
+					<ErrSnack openDialog ={this.state.notLogState} 
+					          message={"Wrong Credentials, please try again"} />
+					<LoginComp
+				      		//props for Create User Interface
+					      createPasswordGet = {this.newUserPasswordGet}
+					      createUserNameGet = {this.newUserNameGet}
+					      createEmailGet = {this.newUserEmailGet}
+					      createAccountSubmitHandler = {this.createNewUser}
+					      
+					      //props for Login Interface
+					      loginPasswordGet = {this.userPasswordGet}
+					      loginNameGet = {this.userNameGet}
+					      loginEmailGet = {this.userEmailGet}
+					      loginSubmitHandler = {this.userLogin}
+
+					      isErrorEmail = {this.state.errorLoginStateEmail}
+					      isErrorPassword = {this.state.errorLoginStatePassword}
+					      isErrorName = {this.state.errorLoginStateName}
+
+					      isCreateErrorEmail = {this.state.errorCreateStateEmail}
+					      isCreateErrorPassword1 = {this.state.errorCreateStatePassword1}
+					      isCreateErrorPassword2 = {this.state.errorCreateStatePassword2}
+					      isCreateErrorName = {this.state.errorCreateStateName}
+					/>
+				</div>
+			
+		} 
+
+		if(this.state.notLogState == false){
+			state = <ErrSnack openDialog ={true} 
+			                  message={"You have successfully Logged in"} 
+			         />
+		}
+
+		if(this.state.notLogState == null){
+			state = <LoginComp
+				      //props for Create User Interface
+				      createPasswordGet = {this.newUserPasswordGet}
+				      createUserNameGet = {this.newUserNameGet}
+				      createEmailGet = {this.newUserEmailGet}
+				      createAccountSubmitHandler = {this.createNewUser}
+				      
+				      //props for Login Interface
+				      loginPasswordGet = {this.userPasswordGet}
+				      loginNameGet = {this.userNameGet}
+				      loginEmailGet = {this.userEmailGet}
+				      loginSubmitHandler = {this.userLogin}
+
+				      isErrorEmail = {this.state.errorLoginStateEmail}
+				      isErrorPassword = {this.state.errorLoginStatePassword}
+				      isErrorName = {this.state.errorLoginStateName}
+
+				      isCreateErrorEmail = {this.state.errorCreateStateEmail}
+				      isCreateErrorPassword1 = {this.state.errorCreateStatePassword1}
+				      isCreateErrorPassword2 = {this.state.errorCreateStatePassword2}
+				      isCreateErrorName = {this.state.errorCreateStateName}
+				/>
+		}
+
 		return(
-			<LoginComp
-			      //props for Create User Interface
-			      createPasswordGet = {this.newUserPasswordGet}
-			      createUserNameGet = {this.newUserNameGet}
-			      createEmailGet = {this.newUserEmailGet}
-			      createAccountSubmitHandler = {this.createNewUser}
-			      
-			      //props for Login Interface
-			      loginPasswordGet = {this.userPasswordGet}
-			      loginNameGet = {this.userNameGet}
-			      loginEmailGet = {this.userEmailGet}
-			      loginSubmitHandler = {this.userLogin}
+			<div>
+				{state}
+			</div>
 
-			      isErrorEmail = {this.state.errorLoginStateEmail}
-			      isErrorPassword = {this.state.errorLoginStatePassword}
-			      isErrorName = {this.state.errorLoginStateName}
-
-			      isCreateErrorEmail = {this.state.errorCreateStateEmail}
-			      isCreateErrorPassword1 = {this.state.errorCreateStatePassword1}
-			      isCreateErrorPassword2 = {this.state.errorCreateStatePassword2}
-			      isCreateErrorName = {this.state.errorCreateStateName}
-			/>
-		);
+		);	
 	}
 
 }

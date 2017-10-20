@@ -88,7 +88,7 @@ class CreateNewProfileComp extends React.Component{
 							 <TextField
 							 	   autoFocus
 			  			          id="password"
-			  			          label="Password"
+			  			          label="Password, must be at least 8 characters"
 			  			          margin = "dense"
 			  			          type="password"
 			  			          fullWidth

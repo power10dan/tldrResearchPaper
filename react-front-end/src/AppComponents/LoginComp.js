@@ -10,7 +10,7 @@ import CreateNewProfileComp from '../AppComponents/CreateProfile.js';
 const styles = theme => ({
     card: {
         width:'50%',
-        height:'150px',
+        height:'160px',
         marginTop: "55px",
         padding: "2px",
         marginLeft: "425px",
@@ -34,7 +34,7 @@ const styles = theme => ({
 
     inputCard:{
     	width:'50%',
-      height:'220px',
+      height:'240px',
       marginTop: "0px",
       padding: "2px",
       marginLeft: "425px",
