@@ -76,9 +76,9 @@ const SimpleCard = (props) => {
   			          className={classes.textField}
   			          type="account"
   			          margin="normal"
-                  onChange={props.userNameGet}
+                  onChange={props.loginNameGet}
                   required
-                  error = {props.isErrorAcc}
+                  error = {props.isErrorName}
   		    	   >
 		</TextField>
 
@@ -88,9 +88,9 @@ const SimpleCard = (props) => {
 			className={classes.textField}
 			type="account"
 			margin="normal"
-			onChange={props.getAcc}
+			onChange={props.loginEmailGet}
 			required
-			error={props.isErrorAcc}
+			error={props.isErrorEmail}
 				>
                </TextField>
 
@@ -100,23 +100,28 @@ const SimpleCard = (props) => {
   			          className={classes.textFieldPass}
   			          type="password"
   			          margin="normal"
-                  onChange={props.passWordHand}
+                  onChange={props.loginPasswordGet}
                   required
-                  error = {props.isErrorPass}
+                  error = {props.isErrorPassword}
 		    	     >
                </TextField>
 		    	<CardActions className={classes.cardActionContainer}>
-			          <Button dense color="primary" onClick={props.loginHandler}>
+			          <Button dense color="primary" onClick={props.loginSubmitHandler}>
 			            Login 
 			          </Button>
 			          <Button dense color="primary">
 			            Forgot Password / Account 
 			          </Button>
   			        <CreateNewProfileComp 
-                    nameGetter = {props.userNameGet}
-                    passWordGetter = {props.passWordHand}
-                    accountGetter = {props.getAcc}
-                    submitHandler = {props.submitHandler}
+                    createNameGetter = {props.createUserNameGet}
+                    createPasswordGetter = {props.createPasswordGet}
+                    createEmailGetter = {props.createEmailGet}
+                    createAccountSubmitHandler = {props.createAccountSubmitHandler}
+
+                    isCreateErrorEmail = {props.isCreateErrorEmail}
+                    isCreateErrorPassword1 = {props.isCreateErrorPassword1}
+                    isCreateErrorPassword2 = {props.isCreateErrorPassword2}
+                    isCreateErrorName = {props.isCreateErrorName}
                 />
 		        </CardActions>
 	        </CardContent>

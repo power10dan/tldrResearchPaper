@@ -8,92 +8,122 @@ class LoginOperations extends React.Component{
 		super(props);
 		this.state = {
 			isLogState: false,
-			userAccount: " ",
-			userPassword: " ",
-			userPass: " ",
-			userPass2: " ",
+			newUserName: " ",
+			newUserEmail: " ",
+			newUserPassword: " ",
+
 			userName: " ",
-			errorStateAcc: false,
-			errorStatePass: false,
-			errorStateName: false,
+			userEmail: " ",
+			userPassword: " ",
+
+			errorLoginStateEmail: false,
+			errorLoginStatePassword: false,
+			errorLoginStateName: false,
+
+			errorCreateStateEmail: false,
+			errorCreateStatePassword1: false,
+			errorCreateStatePassword2: false,
+			errorCreateStateName: false,
 		}
 	}
-
-	saveUserAcc = (userAcc) =>{
-		this.setState({userAccount: userAcc.target.value});
+	
+	//create user Get methods.
+	newUserEmailGet = (userEmail) => {
+		this.setState({newUserEmail : userEmail.target.value});
+	}
+	newUserPasswordGet = (userPassword) => {
+		this.setState({newUserPassword : userPassword.target.value});
+	}
+	newUserNameGet = (userName) => {
+		this.setState({newUserName : userName.target.value});
 	}
 
-	storeHash = (err, pass) =>{
-		this.setState({userPassword: pass});
+	//login Get methods.
+	userEmailGet = (userEmail) => {
+		this.setState({userEmail : userEmail.target.value});
+	}
+	userPasswordGet = (userPass) => {
+		this.setState({userPassword : userPass.target.value}); 
+	}
+	userNameGet = (userName) => {
+		this.setState({userName : userName.target.value});
 	}
 
-	saveUserName = (userName) =>{
-		this.setState({userName: userName.target.value});
-		//console.log(userName);
-	}
 
-	saveUserPass = (passWord) => {
-		console.log(passWord.target.value);
-		this.setState({userPassword: passWord.target.value});
-	}
+
+	//storeHash = (err, pass) =>{
+	//	this.setState({userPassword: pass});
+	//}
+
 
 	// button for submitting to create user account
-	submitButtonCreateCred = () =>{
-		if( /^\s*$/.test(this.state.userAccount)){
-			this.state.errorStateAcc = true;
+	userLogin = () =>{
+		if( /^\s*$/.test(this.state.userEmail)){
+			this.state.errorLoginStateEmail = true;
 		}  else {
-			//his.state.errorStateAcc = false;
-			this.setState({errorStateAcc: false})
+			this.setState({errorLoginStateEmail: false})
 		}
 
-		if ( /^\s*$/.test(this.state.userPass) ){
-			this.state.errorStatePass = true
-			//this.setState({errorStatePass: true})
+		if ( /^\s*$/.test(this.state.userPassword) ){
+			this.state.errorLoginStatePassword = true
 		} else {
-			//this.state.errorStatePass = false;
-			this.setState({errorStatePass: false})
+			this.setState({errorLoginStatePassword: false})
 		}
 
-		if( /^\s*$/.test(this.state.userPass)){
-			this.setState({errorStateName: true});
+		if( /^\s*$/.test(this.state.userName)){
+			this.setState({errorLoginStateName: true});
 		} else{
-			//this.state.errorStateName = false;
-			this.setState({errorStateName: false}, ()=> {
-				if(this.state.errorStateName === false 
-					  && this.state.errorStatePass === false 
-					  && this.state.errorStateAcc === false){
-					console.log("hi ")
+			this.setState({errorLoginStateName: false}, ()=> {
+				if(this.state.errorLoginStateName === false 
+					  && this.state.errorLoginStatePassword === false 
+					  && this.state.errorLoginStateEmail === false){
+					this.APICall_login();
 				}
 			})
 		}
-
-		/*if(this.state.errorStateName === false 
-			  && this.state.errorStatePass === false 
-			  && this.state.errorStateAcc === false){
-			console.log("hi ")
-		}*/
-
-		
-		/*if(this.state.errorStateAcc == false 
-		    && this.state.errorStatePass == false
-		    && this.state.errorStateName == false){
-			
+		/*	
 			 bcrypt.hash(this.state.userPass, 10, this.storeHash);
 			 this.createUserCredentials(this.state.userAccount, this.state.userPass);
 		}	*/
 	}
 
 
-	createUserCredentials = (userName, userPassword,userAccount) =>{
+	// button for submitting to create user account
+	createNewUser = () =>{
+		if( /^\s*$/.test(this.state.newUserEmail)){
+			this.state.errorCreateStateEmail = true;
+		}  else {
+			this.setState({errorCreateStateEmail: false})
+		}
+
+		if ( /^\s*$/.test(this.state.newUserPassword) ){
+			this.state.errorCreateStatePassword1 = true
+			this.state.errorCreateStatePassword2 = true
+		} else {
+			this.setState({errorCreateStatePassword: false})
+		}
+
+		if( /^\s*$/.test(this.state.newUserName)){
+			this.setState({errorCreateStateName: true});
+		} else{
+			this.setState({errorCreateStateName: false}, ()=> {
+				if(this.state.errorCreateStateName === false 
+					  && this.state.errorCreateStatePassword === false 
+					  && this.state.errorCreateStateEmail === false){
+					this.APICall_createUser();
+				}
+			})
+		}
+	}
+
+
+	APICall_createUser = () =>{
 		// send the user name and password to the 
 		// db
-		console.log(this.state.userName)
-		console.log(this.state.userAccount)
-		console.log(this.state.userPassword)
-		var jsonData = {username: this.state.userName,
-				account_emailaddress: this.state.userAccount,
-				password1: this.state.userPass,
-				password2: this.state.userPass
+		var jsonData = {username: this.state.newUserName,
+				account_emailaddress: this.state.newUserEmail,
+				password1: this.state.newUserPassword,
+				password2: this.state.newUserPassword
 				}; 
 		var url = "http://127.0.0.1:8000/rest-auth/registration/";
 		fetch(url, {
@@ -112,20 +142,18 @@ class LoginOperations extends React.Component{
 			console.log(err)
 		});
 	}
-
-	// button to login  
-	logIntoSystem = (userID, userPass) =>{
+ 
+	APICall_login = (userID, userPass) =>{
 		var jsonData = {username: this.state.userName,
-				account_emailaddress: this.state.userAccount,
-				password: this.state.userPassword
-				};
+				account_emailaddress: this.state.userEmail,
+				password: this.state.userPassword };
 		var url = "http://127.0.0.1:8000/rest-auth/login/";
 		var initParams = {  method: 'post', 
 				    body: JSON.stringify(jsonData),
-		  		    mode: 'cors',
+		 		    mode: 'cors',
 				    headers: {'Content-Type': 'application/json'},
 		  		  };
-
+	
 		fetch(url, initParams).then((response) =>{
 			return response.json();
 			//var hash = bcrypt.hash(userPass, this.salt)
@@ -143,14 +171,27 @@ class LoginOperations extends React.Component{
 
 	render(){
 		return(
-			<LoginComp 
-			      passWordHand = {this.saveUserPass}
-			      userNameGet = {this.saveUserName}
-			      getAcc = {this.saveUserAcc}
-			      submitHandler = {this.createUserCredentials}
-			      loginHandler = {this.logIntoSystem}
-			      isErrorAcc = {this.state.errorStateAcc}
-			      isErrorPass = {this.state.errorStatePass}
+			<LoginComp
+			      //props for Create User Interface
+			      createPasswordGet = {this.newUserPasswordGet}
+			      createUserNameGet = {this.newUserNameGet}
+			      createEmailGet = {this.newUserEmailGet}
+			      createAccountSubmitHandler = {this.createNewUser}
+			      
+			      //props for Login Interface
+			      loginPasswordGet = {this.userPasswordGet}
+			      loginNameGet = {this.userNameGet}
+			      loginEmailGet = {this.userEmailGet}
+			      loginSubmitHandler = {this.userLogin}
+
+			      isErrorEmail = {this.state.errorLoginStateEmail}
+			      isErrorPassword = {this.state.errorLoginStatePassword}
+			      isErrorName = {this.state.errorLoginStateName}
+
+			      isCreateErrorEmail = {this.state.errorCreateStateEmail}
+			      isCreateErrorPassword1 = {this.state.errorCreateStatePassword1}
+			      isCreateErrorPassword2 = {this.state.errorCreateStatePassword2}
+			      isCreateErrorName = {this.state.errorCreateStateName}
 			/>
 		);
 	}

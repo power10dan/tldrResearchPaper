@@ -70,7 +70,9 @@ class CreateNewProfileComp extends React.Component{
 								id="name"
 								label="User Name"
 								fullWidth
-								onChange={this.props.nameGetter}
+								onChange={this.props.createNameGetter}
+								required
+								error = {this.props.isCreateErrorName}
 							/>
 							<TextField
 								autoFocus
@@ -78,7 +80,9 @@ class CreateNewProfileComp extends React.Component{
 								id="name"
 								label="Email Address"
 								fullWidth
-								onChange={this.props.accountGetter}
+								onChange={this.props.createEmailGetter}
+								required
+								error ={this.props.isCreateErrorEmail}
 							/>
 							            
 							 <TextField
@@ -88,7 +92,9 @@ class CreateNewProfileComp extends React.Component{
 			  			          margin = "dense"
 			  			          type="password"
 			  			          fullWidth
-			  			          onChange = {this.props.passwordGetter}
+			  			          onChange = {this.props.createPasswordGetter}
+			  			          required
+			  			          error = {this.props.isCreateErrorPassword1}
 				    	     />
 
 				    	     <TextField
@@ -98,11 +104,13 @@ class CreateNewProfileComp extends React.Component{
 			  			          margin = "dense"
 			  			          type="password"
 			  			          fullWidth
-			  			          onChange ={this.props.passwordGetter}
+			  			          onChange ={this.props.createPasswordGetter}
+			  			          required
+			  			          error = {this.props.isCreateErrorPassword2}
 				    	     />
 
 							<DialogActions>
-							   	<Button  onClick= {this.props.submitHandler}>
+							   	<Button  onClick= {this.props.createAccountSubmitHandler}>
 							   		Create Account 
 							   	</Button>
 
