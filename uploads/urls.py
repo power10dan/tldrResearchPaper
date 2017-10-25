@@ -6,7 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authtoken.views import obtain_auth_token
 
 
-from views import views
+from uploads.views import views
 
 
 urlpatterns = [
