@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import AppBar from 'material-ui/AppBar';
 import Toolbar from 'material-ui/Toolbar';
@@ -17,18 +16,18 @@ const AppTopBar = (props) =>{
 		          <Typography type="title" color="inherit" >
 		            TL ; DR Please?
 		          </Typography>
-	
-			          <ReactFileReader 
-			                 base64={true} 
-			                 fileTypes=".pdf" 
+
+			          <ReactFileReader
+			                 base64={true}
+			                 fileTypes=".pdf"
 			                 handleFiles={props.uploadFile}>
 
-			          	    <Button color="contrast"  
-					          	component="span" 
+			          	    <Button color="contrast"
+					          	component="span"
 					          	className = {props.classes.menuButton} >
 				          	   Upload Files
 				             </Button>
-				       </ReactFileReader>		          
+				       </ReactFileReader>
 		          <Button color="contrast" className = {props.classes.menuButton} >About This App</Button>
 		        </Toolbar>
 		      </AppBar>

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
-import Card, { CardActions, CardContent, CardMedia, CardHeader } from 'material-ui/Card';
+import Card, { CardActions, CardContent } from 'material-ui/Card';
 import Button from 'material-ui/Button';
 import Typography from 'material-ui/Typography';
 import TextField from 'material-ui/TextField';
@@ -43,7 +43,7 @@ const styles = theme => ({
     },
 
     title: {
-    	fontSize: 45,  
+    	fontSize: 45,
     	marginTop: 60,
     	color: "#FFFFFF",
     },
@@ -107,12 +107,12 @@ const SimpleCard = (props) => {
                </TextField>
 		    	<CardActions className={classes.cardActionContainer}>
 			          <Button dense color="primary" onClick={props.loginSubmitHandler}>
-			            Login 
+			            Login
 			          </Button>
 			          <Button dense color="primary">
-			            Forgot Password / Account 
+			            Forgot Password / Account
 			          </Button>
-  			        <CreateNewProfileComp 
+  			        <CreateNewProfileComp
                     createNameGetter = {props.createUserNameGet}
                     createPasswordGetter = {props.createPasswordGet}
                     createEmailGetter = {props.createEmailGet}
@@ -127,7 +127,7 @@ const SimpleCard = (props) => {
 	        </CardContent>
         </Card>
     </div>
-    
+
   );
 }
 

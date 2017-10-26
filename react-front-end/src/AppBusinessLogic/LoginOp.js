@@ -1,6 +1,6 @@
 import React from 'react';
 import LoginComp from '../AppComponents/LoginComp.js';
-import bcrypt from 'bcryptjs';
+/* import bcrypt from 'bcryptjs';*/
 import ErrSnack from '../AppComponents/ErrDialog.js';
 
 class LoginOperations extends React.Component{
@@ -28,7 +28,7 @@ class LoginOperations extends React.Component{
 			errorCreateStateName: false,
 		}
 	}
-	
+
 	//create user Get methods.
 	newUserEmailGet = (userEmail) => {
 		this.setState({newUserEmail : userEmail.target.value});
@@ -45,7 +45,7 @@ class LoginOperations extends React.Component{
 		this.setState({userEmail : userEmail.target.value});
 	}
 	userPasswordGet = (userPass) => {
-		this.setState({userPassword : userPass.target.value}); 
+		this.setState({userPassword : userPass.target.value});
 	}
 	userNameGet = (userName) => {
 		this.setState({userName : userName.target.value});
@@ -59,13 +59,13 @@ class LoginOperations extends React.Component{
 	// button for submitting to create user account
 	userLogin = () =>{
 		if( /^\s*$/.test(this.state.userEmail)){
-			this.state.errorLoginStateEmail = true;
-		}  else {
+        this.setState({errorLoginStateEmail: true})
+		} else {
 			this.setState({errorLoginStateEmail: false})
 		}
 
-		if ( /^\s*$/.test(this.state.userPassword) ){
-			this.state.errorLoginStatePassword = true
+		if ( /^\s*$/.test(this.state.userPassword)){
+        this.setState({errorLoginStatePassword: true})
 		} else {
 			this.setState({errorLoginStatePassword: false})
 		}
@@ -74,8 +74,8 @@ class LoginOperations extends React.Component{
 			this.setState({errorLoginStateName: true});
 		} else{
 			this.setState({errorLoginStateName: false}, ()=> {
-				if(this.state.errorLoginStateName === false 
-					  && this.state.errorLoginStatePassword === false 
+				if(this.state.errorLoginStateName === false
+					  && this.state.errorLoginStatePassword === false
 					  && this.state.errorLoginStateEmail === false){
 					this.APICall_login();
 					this.setState({userName: " "})
@@ -84,7 +84,7 @@ class LoginOperations extends React.Component{
 				}
 			})
 		}
-		/*	
+		/*
 			 bcrypt.hash(this.state.userPass, 10, this.storeHash);
 			 this.createUserCredentials(this.state.userAccount, this.state.userPass);
 		}	*/
@@ -94,14 +94,15 @@ class LoginOperations extends React.Component{
 	// button for submitting to create user account
 	createNewUser = () =>{
 		if( /^\s*$/.test(this.state.newUserEmail)){
-			this.state.errorCreateStateEmail = true;
+        this.setState({errorCreateStateEmail: true});
+			  /* this.state.errorCreateStateEmail = true;*/
 		}  else {
 			this.setState({errorCreateStateEmail: false})
 		}
 
-		if ( /^\s*$/.test(this.state.newUserPassword) ){
-			this.state.errorCreateStatePassword1 = true
-			this.state.errorCreateStatePassword2 = true
+		if ( /^\s*$/.test(this.state.newUserPassword) ) {
+        this.setState({errorCreateStatePassword1: true});
+        this.setState({errorCreateStatePassword2: true});
 		} else {
 			this.setState({errorCreateStatePassword: false})
 		}
@@ -110,8 +111,8 @@ class LoginOperations extends React.Component{
 			this.setState({errorCreateStateName: true});
 		} else{
 			this.setState({errorCreateStateName: false}, ()=> {
-				if(this.state.errorCreateStateName === false 
-					  && this.state.errorCreateStatePassword === false 
+				if(this.state.errorCreateStateName === false
+					  && this.state.errorCreateStatePassword === false
 					  && this.state.errorCreateStateEmail === false){
 					this.APICall_createUser();
 					this.setState({newUserEmail: " "})
@@ -124,13 +125,13 @@ class LoginOperations extends React.Component{
 
 
 	APICall_createUser = () =>{
-		// send the user name and password to the 
+		// send the user name and password to the
 		// db
 		var jsonData = {username: this.state.newUserName,
 				account_emailaddress: this.state.newUserEmail,
 				password1: this.state.newUserPassword,
 				password2: this.state.newUserPassword
-				}; 
+				};
 		var url = "http://127.0.0.1:8000/rest-auth/registration/";
 		fetch(url, {
 			method: 'post',
@@ -144,11 +145,11 @@ class LoginOperations extends React.Component{
 			var resp = [response.json(), response.status];
 			return resp
 		}).then((data)=>{
-			if(data[1] == 400){
+			if(data[1] === 400){
 				this.setState({notLogState: true})
 			}
 
-			if(data[1] == 200){
+			if(data[1] === 200){
 				this.setState({notLogState: false});
 			}
 
@@ -157,18 +158,18 @@ class LoginOperations extends React.Component{
 			console.log(err)
 		});
 	}
- 
+
 	APICall_login = (userID, userPass) =>{
 		var jsonData = {username: this.state.userName,
 				account_emailaddress: this.state.userEmail,
 				password: this.state.userPassword };
 		var url = "http://127.0.0.1:8000/rest-auth/login/";
-		var initParams = {  method: 'post', 
+		var initParams = {  method: 'post',
 				    body: JSON.stringify(jsonData),
 		 		    mode: 'cors',
 				    headers: {'Content-Type': 'application/json'},
 		  		  };
-	
+
 		fetch(url, initParams).then((response) =>{
 			var resp = [response.json(), response.status]
 			return resp;
@@ -181,26 +182,26 @@ class LoginOperations extends React.Component{
 			//	this.setState(this.isLogin.isLogState: true);
 			//}
 		}).then((data) =>{
-			if(data[1] == 400){
+			if(data[1] === 400){
 				this.setState({notLogState: true})
 			}
 
 
-			if(data[1] == 200){
+			if(data[1] === 200){
 				this.setState({notLogState: false})
 			}
 
 		}).catch((err)=>{
 			console.log(err);
-		});	
+		});
 	}
 
 	render(){
 		let state = null
-		if(this.state.notLogState == true){
-			state = 
+		if(this.state.notLogState === true){
+			state =
 				<div>
-					<ErrSnack openDialog ={this.state.notLogState} 
+					<ErrSnack openDialog ={this.state.notLogState}
 					          message={"Wrong Credentials, please try again"} />
 					<LoginComp
 				      		//props for Create User Interface
@@ -208,7 +209,7 @@ class LoginOperations extends React.Component{
 					      createUserNameGet = {this.newUserNameGet}
 					      createEmailGet = {this.newUserEmailGet}
 					      createAccountSubmitHandler = {this.createNewUser}
-					      
+
 					      //props for Login Interface
 					      loginPasswordGet = {this.userPasswordGet}
 					      loginNameGet = {this.userNameGet}
@@ -225,12 +226,12 @@ class LoginOperations extends React.Component{
 					      isCreateErrorName = {this.state.errorCreateStateName}
 					/>
 				</div>
-			
-		} 
 
-		if(this.state.notLogState == false){
-			state = <ErrSnack openDialog ={true} 
-			                  message={"You have successfully Logged in"} 
+		}
+
+		if(this.state.notLogState === false){
+			state = <ErrSnack openDialog ={true}
+			                  message={"You have successfully Logged in"}
 			         />
 		}
 
@@ -241,7 +242,7 @@ class LoginOperations extends React.Component{
 				      createUserNameGet = {this.newUserNameGet}
 				      createEmailGet = {this.newUserEmailGet}
 				      createAccountSubmitHandler = {this.createNewUser}
-				      
+
 				      //props for Login Interface
 				      loginPasswordGet = {this.userPasswordGet}
 				      loginNameGet = {this.userNameGet}
@@ -264,7 +265,7 @@ class LoginOperations extends React.Component{
 				{state}
 			</div>
 
-		);	
+		);
 	}
 
 }
