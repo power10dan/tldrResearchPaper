@@ -75,12 +75,8 @@ class DeleteFile(APIView):
             return Response("File can't be found", status=404)
 
 class CreateUser(APIView):
-    """
-    Create a user
-    """
-
     def post(self, request, format="json"):
-	print request.data
+        print(request.data)
         serializer = UserSerializer(data=request.data)
 
         # if serializer succeeds create user and save
