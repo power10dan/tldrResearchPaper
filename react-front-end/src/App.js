@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import SideNavCustom from './AppComponents/AppSideBar.js';
 import UploadFile from './AppBusinessLogic/UploadFile.js';

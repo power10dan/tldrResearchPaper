@@ -1,9 +1,6 @@
 import React from 'react';
 import {withStyles} from 'material-ui/styles';
-import List, {ListItem, ListItemText, ListSubheader, ListItemIcon} from 'material-ui/List';
-import Collapse from 'material-ui/transitions/Collapse';
-import ExpandLess from 'material-ui-icons/ExpandLess';
-import ExpandMore from 'material-ui-icons/ExpandMore';
+import List, {ListItem, ListItemText, ListItemIcon} from 'material-ui/List';
 import Favorite from 'material-ui-icons/Favorite';
 import InsertDriveFile from 'material-ui-icons/InsertDriveFile';
 import RemovedRedEye from 'material-ui-icons/RemoveRedEye';
@@ -19,23 +16,23 @@ const NestedList = (props) => {
 					          </ListItemIcon>
 				          	  <ListItemText primary="Favorite"  />
 				        </ListItem>
-				       
+
 				        <ListItem button onClick={this.handleClick} >
 				        	  <ListItemIcon>
 					            <InsertDriveFile />
 					          </ListItemIcon>
 				          <ListItemText primary="Papers"  />
-	
+
 				        </ListItem>
 				        	<ListItem button onClick={this.handleClick} >
 				        		<ListItemIcon>
 					            	<RemovedRedEye />
-					          	</ListItemIcon>			          
+					          	</ListItemIcon>
 				          	<ListItemText primary="Reading List"  />
 				        </ListItem>
 		        	</List>
 		    </div>
-		
+
 		);
 
 }
