@@ -7,9 +7,7 @@ import {
     DELETEFILE
 } from '../Actions/LoginActions.js';
 
-import {
-    combineReducers
-} from 'redux';
+import {combineReducers} from 'redux';
 /*
  *  initial state: { 
  *      userProfile: { 
@@ -32,14 +30,26 @@ import {
  * 
  *
  */
+
+
+/* initial state is an empty state obj. which consists of an empty user and an
+ * empty file array
+ */ 
 const initialState = {
     userProfile: {},
     fileUploaded: []
 };
 
 
+/* The login reducer dispatches actions given a previous state, and returns a
+ * new state that performs the actions on the previous state
+ */
 function loginReducer(state = initialState, action) {
     switch (action.type) {
+        /* if we have a Login then we create a new state, by copying the old
+         * state and by copying the login information from the action to the
+         * new state
+         */
         case LOGIN:
             return Object.assign({}, state, {
                 isLogin: action.isLogin,
@@ -47,16 +57,25 @@ function loginReducer(state = initialState, action) {
                 userPass: action.pass
             });
 
+        /* if we have a forgotten password then we grab the recoverEmail input
+         * from the action and pass it to the new state
+         */
         case FORGOTPass:
             return Object.assign({}, state, {
-                userPass: action.pass
+                userPass: action.recoverEmail
             });
 
+        /* if we have a forgotten account then we grab the recoverEmail input
+         * from the action and pass it to the new state.
+         */
         case FORGOTACC:
             return Object.assign({}, state, {
-                userAcc: action.account
+                userAcc: action.recoverEmail
             });
 
+        /* if we have fall through then we just do nothing and return the last
+         * state
+         */
         default:
             return state;
     }
@@ -67,6 +86,10 @@ function loginReducer(state = initialState, action) {
 
 function fileUpload(state = initialState, action) {
     switch (action.type) {
+
+        /* if we have an action to upload a file then we create an newstate that
+         * holds the relevant file information
+         */
         case UPLOADFILE:
             return Object.assign({}, state, {
                 fileUploaded: [
@@ -79,6 +102,8 @@ function fileUpload(state = initialState, action) {
                 ]
             });
 
+    default:
+        return state;
     }
 }
 

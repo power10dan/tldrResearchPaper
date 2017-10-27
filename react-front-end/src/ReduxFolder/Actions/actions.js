@@ -27,8 +27,3 @@ import * as types from '../Constants/ActionTypes';
  export function DELETEFILE(fileToDelete){
  	return {type: types.DELETEFILE, fileDel: fileToDelete};
  }
-
-
-
-
-
