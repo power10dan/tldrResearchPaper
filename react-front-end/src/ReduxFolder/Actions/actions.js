@@ -1,45 +1,31 @@
-/*
- *	Action types, currently at
- *  create account, forgot password, 
- *  and login and authenticate
- *
- *
- */
-
-export const LOGIN = 'LOGIN';
-export const FORGOTPass = 'FORGOTPass';
-export const FORGOTACC = 'FORGOTAcc';
-export const CREATEACC = 'CREATEACC';
-export const UPLOADFILE = 'UPLOADFILE';
-export const DELETEFILE = 'DELETEFILE';
-
+import * as types from '../Constants/ActionTypes';
 /*
  * Action creators
  *
  */
 
  export function LogIn(userName, passWord, success){
- 	return {type: LOGIN, account: userName, pass: passWord, isLogin: success};
+ 	return {type: types.LOGIN, account: userName, pass: passWord, isLogin: success};
  }
 
  export function ForgotPass(email){
- 	return {type: FORGOTPass, recoverEmail: email};
+ 	return {type: types.FORGOTPass, recoverEmail: email};
  }
 
  export function ForgotAcc(email){
- 	return {type: FORGOTACC, recoverEmail: email};
+ 	return {type: types.FORGOTACC, recoverEmail: email};
  }
 
  export function CreateAcc(accountDetails){
- 	return {type: CREATEACC, accDetail: accountDetails};
+ 	return {type: types.CREATEACC, accDetail: accountDetails};
  }
 
  export function UploadFile(fileToUpload){
- 	return {type: UPLOADFILE, fileInfo: fileToUpload};
+ 	return {type: types.UPLOADFILE, fileInfo: fileToUpload};
  }
 
  export function DELETEFILE(fileToDelete){
- 	return {type: DELETEFILE, fileDel: fileToDelete};
+ 	return {type: types.DELETEFILE, fileDel: fileToDelete};
  }
 
 
