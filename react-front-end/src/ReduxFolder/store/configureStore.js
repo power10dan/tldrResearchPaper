@@ -1,5 +1,5 @@
 import { createStore, applyMiddleware } from 'redux';
-import thunkMiddleware from 'redux-thunk'
+import thunkMiddleware from 'redux-thunk';
 import tldrApp from "../Reducers/reducer.js";
 
 // apply redux thunk here

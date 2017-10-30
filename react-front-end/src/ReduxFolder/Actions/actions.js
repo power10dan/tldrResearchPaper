@@ -4,7 +4,7 @@ import * as types from '../Constants/ActionTypes';
  *
  */
  // ================ Async Operations, Converting them to Redux Thunk ============================
- // action dispatch for when login succeds 
+ // action dispatch for when login succeds
  export function LogInSuccess(successStatus){
  	return {
  		type: LOGIN_SUCCESS,
@@ -16,19 +16,19 @@ import * as types from '../Constants/ActionTypes';
  export function LogInFailed(failureStatus, failureMessage){
  	return {
  		type: LOGIN_FAIL,
- 		isLogin: false 
- 		message: failureMessage
+ 		  isLogin: false;
+ 		  message: failureMessage;
  	};
- }
+ };
 // simple actions when app is loading
 export function isLoading(isLoadingStats){
 	return{
 		type: LOADING,
 		isLoading: isLoadingStats
-	}
+	};
 }
 
-//  make LogIn action return a function; THUNK! 
+//  make LogIn action return a function; THUNK!
 export function LogInOp(url){
  	return (dispatch) =>{
  		dispatch(isLoading(true))
@@ -36,13 +36,13 @@ export function LogInOp(url){
  			if(!response.ok){
  				throw Error(response.statusText);
  			}
- 			dispatch(isLoading(false))
- 			return response
+ 			  dispatch(isLoading(false));
+ 			  return response;
  		}).then((response)=> response.json())
  		  .then(()=> dispatch(LogInSuccess(true)))
- 		  .catch((err)=> dispatch(LogInFailed(false, err)))
+ 		      .catch((err)=> dispatch(LogInFailed(false, err)));
 
- 	}
+ 	};
  }
 
  /*export function ForgotPass(email){
