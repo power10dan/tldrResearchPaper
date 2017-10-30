@@ -24,7 +24,7 @@ import {combineReducers} from 'redux';
 const initialState = {
     logIn: {
         logStatus: false,
-        errMessage: " ",
+        errMessage: " ";
     },
 
     isLoading: false,
@@ -45,11 +45,11 @@ function loginReducer(state = initialState, action) {
         // error message
         case LOGIN_FAIL:
             return Object.assign({}, state, {
-                logIn: { 
+                logIn: {
                          logStatus: action.isLogin,
                          errMessage: action.message.
                 }
-            }); 
+            });
         // default to returning initial state if none of these actions
         // apply
         default:
@@ -64,10 +64,13 @@ function isLoadingReducer(state = initialState, action){
     switch (action.type){
         case LOADING:
             return Object.assign({}, state, {
-                isLoading: action.isLoading, 
+                isLoading: action.isLoading
             });
+
+    default:
+        return state;
     }
-}
+};
 
 
 //function fileUpload(state = initialState, action) {
