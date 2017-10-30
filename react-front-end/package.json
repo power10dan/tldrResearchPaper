@@ -14,7 +14,7 @@
     "scripts": {
         "start": "react-scripts start",
         "build": "react-scripts build && babel src -d lib",
-        "test": "react-scripts test --env=jsdom",
+        "test": "react-scripts test --env=jsdom && mocha",
         "eject": "react-scripts eject"
     },
     "devDependencies": {
