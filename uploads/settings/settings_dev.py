@@ -164,3 +164,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 MEDIA_DOCS = os.path.join(MEDIA_ROOT, 'documents/')
 XML_DOCS = os.path.join(MEDIA_ROOT, 'xmlFiles/')
+
+# Setting max upload size in bytes (10 MB)
+DATA_UPLOAD_MAX_MEMORY_SIZE = 4 * 2621440
