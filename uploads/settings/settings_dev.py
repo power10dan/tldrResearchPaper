@@ -163,3 +163,4 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 MEDIA_DOCS = os.path.join(MEDIA_ROOT, 'documents/')
+XML_DOCS = os.path.join(MEDIA_ROOT, 'xmlFiles/')
