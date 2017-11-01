@@ -5,7 +5,6 @@ import Typography from 'material-ui/Typography';
 import Dialog, {
 	DialogActions,
 	DialogContent,
-	DialogContentText,
 	DialogTitle
 } from 'material-ui/Dialog';
 
@@ -26,7 +25,7 @@ const styles = theme =>({
   	},
 
   	title: {
-    	fontSize: 40,  
+    	fontSize: 40,
     	marginTop: 20,
     	color: "#FFFFFF",
     },
@@ -58,9 +57,9 @@ class CreateNewProfileComp extends React.Component{
 		  		</Button>
 
 				<Dialog open ={this.state.open} onRequestClose={this.handleRequest}>
-					<DialogTitle className={ this.props.classes.titleStyle}> 
-						<Typography className={ this.props.classes.title} > 
-								Create Account 
+					<DialogTitle className={ this.props.classes.titleStyle}>
+						<Typography className={ this.props.classes.title} >
+								Create Account
 						</Typography>
 					</DialogTitle>
 					<DialogContent>
@@ -84,7 +83,7 @@ class CreateNewProfileComp extends React.Component{
 								required
 								error ={this.props.isCreateErrorEmail}
 							/>
-							            
+
 							 <TextField
 							 	   autoFocus
 			  			          id="password"
@@ -111,7 +110,7 @@ class CreateNewProfileComp extends React.Component{
 
 							<DialogActions>
 							   	<Button  onClick= {this.props.createAccountSubmitHandler}>
-							   		Create Account 
+							   		Create Account
 							   	</Button>
 
 							   	<Button onClick= {this.handleRequestClose} >
@@ -124,7 +123,7 @@ class CreateNewProfileComp extends React.Component{
 		)
 
   	}
-}  
+}
 
 
 export default withStyles(styles)(CreateNewProfileComp);
