@@ -1,49 +1,56 @@
-import * as types from '../Constants/ActionTypes';
+import * as types from '../Constants/Actiontypess';
+
 /*
  * Action creators
  *
  */
- // ================ Async Operations, Converting them to Redux Thunk ============================
- // action dispatch for when login succeds 
- export function LogInSuccess(successStatus){
- 	return {
- 		type: LOGIN_SUCCESS,
- 		isLogin: successStatus
- 	};
- }
 
- // action dispatch when loading failed
- export function LogInFailed(failureStatus, failureMessage){
- 	return {
- 		type: LOGIN_FAIL,
- 		isLogin: false 
- 		message: failureMessage
- 	};
- }
-// simple actions when app is loading
-export function isLoading(isLoadingStats){
-	return{
-		type: LOADING,
-		isLoading: isLoadingStats
-	}
-}
-
-//  make LogIn action return a function; THUNK! 
+ // Async Operations, Converting them to Redux Thunk 
 export function LogInOp(url){
  	return (dispatch) =>{
  		dispatch(isLoading(true))
  		fetch(url).then((response)=>{
  			if(!response.ok){
  				throw Error(response.statusText);
+ 				dispatch(isLoading(false))
  			}
  			dispatch(isLoading(false))
- 			return response
- 		}).then((response)=> response.json())
- 		  .then(()=> dispatch(LogInSuccess(true)))
- 		  .catch((err)=> dispatch(LogInFailed(false, err)))
-
- 	}
+ 			return response;
+ 		}).then((response)=> {
+ 				response.json()
+ 		}).then(()=> {
+ 		  	dispatch(LogInSuccess(true));
+ 		}).catch((err)=> {
+ 		  	   dispatch(LogInFailed(false, err))
+ 		})
+ 	};
  }
+
+ // action dispatch for when login succeds 
+export function LogInSuccess(successStatus){
+ 	return {
+ 		type: types.LOGIN_SUCCESS,
+ 		isLogin: successStatus
+ 	};
+ }
+
+ // action dispatch when loading failed
+export function LogInFailed(failureStatus, failureMessage){
+ 	return {
+ 		type: types.LOGIN_FAIL,
+ 		isLogin: false 
+ 		message: failureMessage
+ 	};
+ }
+// simple actions when app is loading
+export function isLoading(isLoadingStats){
+	return {
+		type: types.LOADING,
+		isLoading: isLoadingStats
+	};
+}
+
+
 
  /*export function ForgotPass(email){
  	return {type: types.FORGOTPass, recoverEmail: email};
