@@ -41,8 +41,8 @@ class FileUploadView(APIView):
 
         # GROBID STUFF USING PY4J
         print("Grobid Working")
-        inputDir = MEDIA_DOCS
-        outputDir = XML_DOCS
+        inputDir = settings.MEDIA_DOCS
+        outputDir = settings.XML_DOCS
         gateway = JavaGateway()
         grobidClass = gateway.entry_point
         consolidateHead = False
