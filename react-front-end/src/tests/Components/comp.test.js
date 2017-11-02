@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import SideNavCustom from '../../src/AppComponents/AppSideBar.js';
+import SideNavCustom from '../../AppComponents/AppSideBar.js';
 
 describe('Side Navigator', () => {
     it('renders the app side bar with crashing', () => {
