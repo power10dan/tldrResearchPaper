@@ -100,3 +100,10 @@ node_modules/*
 
 # hiding actual files in media/docs
 uploads/media/documents/*
+
+# python stuff
+*.pyx
+__init*
+
+# hide any logs
+*.logs
