@@ -3,10 +3,13 @@ import  {
     LOGIN_FAIL
 } from '../Constants/ActionTypes';
 
+let user = JSON.parse(localStorage.getItem('user'));
+const initialState = user ? { loggedIn: true, user } : {};
+
 /* The login reducer dispatches actions given a previous state, and returns a
  * new state that performs the actions on the previous state
  */
-function loginReducer(state = {}, action) {
+function loginReducer(state = initialState, action) {
     switch (action.type) {
         // if login checks out, we update the loginStatus state tree
         case LOGIN_SUCCESS:
@@ -14,22 +17,20 @@ function loginReducer(state = {}, action) {
                 logIn: {logStatus: action.isLogin}
             });
 
-        // if login fails, we update the logStatus tree and save the 
+        // if login fails, we update the logStatus tree and save the
         // error message
         case LOGIN_FAIL:
             return Object.assign({}, state, {
-                logIn: { 
+                logIn: {
                          logStatus: action.isLogin,
-                         errMessage: action.message.
+                         errMessage: action.message
                 }
-            }); 
+            });
         // default to returning initial state if none of these actions
         // apply
         default:
             return state;
     }
-
-    return state;
 }
 
 export default loginReducer;
