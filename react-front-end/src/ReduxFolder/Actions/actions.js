@@ -45,6 +45,7 @@ function _login(username, password) {
         .then(response => {
 
             // if response is bad then return the status text
+            console.log("sending request");
             if (!response.ok) {
                 return Promise.reject(response.statusText);
             }
@@ -70,7 +71,11 @@ function _login(username, password) {
 */
 export function login(username, password) {
     return dispatch => {
-        dispatch(request({ username }));
+        dispatch(() => { return {
+                type: types.REQUEST,
+                username
+        };
+                       });
 
         _login(username, password)
             .then(
@@ -78,7 +83,7 @@ export function login(username, password) {
                     dispatch(LogInSuccess(true));
                 },
                 error => {
-                    dispatch(LogInFailed(false, err));
+                    dispatch(LogInFailed(false, error));
                 });
         
     };
