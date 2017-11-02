@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import LoginComp from '../AppComponents/LoginComp.js';
 /* import bcrypt from 'bcryptjs';*/
 import ErrSnack from '../AppComponents/ErrDialog.js';
@@ -10,28 +11,51 @@ class LoginOperations extends React.Component{
 	constructor(props){
 		super(props);
 
-    const { dispatch } = this.props;
+      /* const { dispatch } = this.props;*/
 		this.state = {
-			notLogState: null,
-			newUserName: " ",
-			newUserEmail: " ",
-			newUserPassword: " ",
-			errorMess: " ",
+			  /* notLogState: null,
+			     newUserName: " ",
+			     newUserEmail: " ",
+			     newUserPassword: " ",
+			     errorMess: " ",
 
-			userName: " ",
-			userEmail: " ",
-			userPassword: " ",
+			     userName: " ",
+			     userEmail: " ",
+			     userPassword: " ",
 
-			errorLoginStateEmail: false,
-			errorLoginStatePassword: false,
-			errorLoginStateName: false,
+			     errorLoginStateEmail: false,
+			     errorLoginStatePassword: false,
+			     errorLoginStateName: false,
 
-			errorCreateStateEmail: false,
-			errorCreateStatePassword1: false,
-			errorCreateStatePassword2: false,
-			errorCreateStateName: false,
-		}
+			     errorCreateStateEmail: false,
+			     errorCreateStatePassword1: false,
+			     errorCreateStatePassword2: false,
+			     errorCreateStateName: false,*/
+        username: "",
+        password: "",
+        submitted: false
+		};
+
+      this.handleChange = this.handleChange.bind(this);
+      this.handleSubmit = this.handleSubmit.bind(this);
 	}
+
+    handleChange(e) {
+        const { name, value } = e.target;
+        this.setState({ [name]: value });
+    }
+
+    handleSubmit(e) {
+        e.preventDefault();
+
+        this.setState({ submitted: true });
+        const { username, password } = this.state;
+        const { dispatch } = this.props;
+
+        if (username && password) {
+            dispatch(login(username, password));
+        }
+    }
 
 	//create user Get methods.
 	newUserEmailGet = (userEmail) => {
@@ -164,11 +188,8 @@ class LoginOperations extends React.Component{
 	}
 
 	APICall_login = (userID, userPass) =>{
-		  var jsonData = {username: this.state.userName,
-				              account_emailaddress: this.state.userEmail,
-				              password: this.state.userPassword };
-      const { dispatch } = this.props;
-      dispatch(login( jsonData.username, jsonData.password));
+      /* const { dispatch } = this.props;
+       * dispatch(login( jsonData.username, jsonData.password));*/
 		  /* var url = "http://127.0.0.1:8000/rest-auth/login/";
 		     var initParams = {  method: 'post',
 				 body: JSON.stringify(jsonData),
@@ -203,77 +224,100 @@ class LoginOperations extends React.Component{
 	}
 
 	render(){
-		let state = null
-		if(this.state.notLogState === true){
-			state =
-				<div>
-					<ErrSnack openDialog ={this.state.notLogState}
-					          message={"Wrong Credentials, please try again"} />
-					<LoginComp
-				      		//props for Create User Interface
-					      createPasswordGet = {this.newUserPasswordGet}
-					      createUserNameGet = {this.newUserNameGet}
-					      createEmailGet = {this.newUserEmailGet}
-					      createAccountSubmitHandler = {this.createNewUser}
+		  /* let state = null
+		     if(this.state.notLogState === true){
+			   state =
+				 <div>
+				 <ErrSnack openDialog ={this.state.notLogState}
+				 message={"Wrong Credentials, please try again"} />
+				 <LoginComp
+				 //props for Create User Interface
+				 createPasswordGet = {this.newUserPasswordGet}
+				 createUserNameGet = {this.newUserNameGet}
+				 createEmailGet = {this.newUserEmailGet}
+				 createAccountSubmitHandler = {this.createNewUser}
 
-					      //props for Login Interface
-					      loginPasswordGet = {this.userPasswordGet}
-					      loginNameGet = {this.userNameGet}
-					      loginEmailGet = {this.userEmailGet}
-					      loginSubmitHandler = {this.userLogin}
+				 //props for Login Interface
+				 loginPasswordGet = {this.userPasswordGet}
+				 loginNameGet = {this.userNameGet}
+				 loginEmailGet = {this.userEmailGet}
+				 loginSubmitHandler = {this.userLogin}
 
-					      isErrorEmail = {this.state.errorLoginStateEmail}
-					      isErrorPassword = {this.state.errorLoginStatePassword}
-					      isErrorName = {this.state.errorLoginStateName}
+				 isErrorEmail = {this.state.errorLoginStateEmail}
+				 isErrorPassword = {this.state.errorLoginStatePassword}
+				 isErrorName = {this.state.errorLoginStateName}
 
-					      isCreateErrorEmail = {this.state.errorCreateStateEmail}
-					      isCreateErrorPassword1 = {this.state.errorCreateStatePassword1}
-					      isCreateErrorPassword2 = {this.state.errorCreateStatePassword2}
-					      isCreateErrorName = {this.state.errorCreateStateName}
-					/>
-				</div>
+				 isCreateErrorEmail = {this.state.errorCreateStateEmail}
+				 isCreateErrorPassword1 = {this.state.errorCreateStatePassword1}
+				 isCreateErrorPassword2 = {this.state.errorCreateStatePassword2}
+				 isCreateErrorName = {this.state.errorCreateStateName}
+				 />
+				 </div>
 
-		}
+		     }
 
-		if(this.state.notLogState === false){
-			state = <ErrSnack openDialog ={true}
-			                  message={"You have successfully Logged in"}
-			         />
-		}
+		     if(this.state.notLogState === false){
+			   state = <ErrSnack openDialog ={true}
+			   message={"You have successfully Logged in"}
+			   />
+		     }
 
-		if(this.state.notLogState == null){
-			state = <LoginComp
-				      //props for Create User Interface
-				      createPasswordGet = {this.newUserPasswordGet}
-				      createUserNameGet = {this.newUserNameGet}
-				      createEmailGet = {this.newUserEmailGet}
-				      createAccountSubmitHandler = {this.createNewUser}
+		     if(this.state.notLogState == null){
+			   state = <LoginComp
+				 //props for Create User Interface
+				 createPasswordGet = {this.newUserPasswordGet}
+				 createUserNameGet = {this.newUserNameGet}
+				 createEmailGet = {this.newUserEmailGet}
+				 createAccountSubmitHandler = {this.createNewUser}
 
-				      //props for Login Interface
-				      loginPasswordGet = {this.userPasswordGet}
-				      loginNameGet = {this.userNameGet}
-				      loginEmailGet = {this.userEmailGet}
-				      loginSubmitHandler = {this.userLogin}
+				 //props for Login Interface
+				 loginPasswordGet = {this.userPasswordGet}
+				 loginNameGet = {this.userNameGet}
+				 loginEmailGet = {this.userEmailGet}
+				 loginSubmitHandler = {this.userLogin}
 
-				      isErrorEmail = {this.state.errorLoginStateEmail}
-				      isErrorPassword = {this.state.errorLoginStatePassword}
-				      isErrorName = {this.state.errorLoginStateName}
+				 isErrorEmail = {this.state.errorLoginStateEmail}
+				 isErrorPassword = {this.state.errorLoginStatePassword}
+				 isErrorName = {this.state.errorLoginStateName}
 
-				      isCreateErrorEmail = {this.state.errorCreateStateEmail}
-				      isCreateErrorPassword1 = {this.state.errorCreateStatePassword1}
-				      isCreateErrorPassword2 = {this.state.errorCreateStatePassword2}
-				      isCreateErrorName = {this.state.errorCreateStateName}
-				/>
-		}
-
-		return(
-			<div>
-				{state}
-			</div>
-
-		);
-	}
-
+				 isCreateErrorEmail = {this.state.errorCreateStateEmail}
+				 isCreateErrorPassword1 = {this.state.errorCreateStatePassword1}
+				 isCreateErrorPassword2 = {this.state.errorCreateStatePassword2}
+				 isCreateErrorName = {this.state.errorCreateStateName}
+				 />
+		     }
+       */
+      const { loggingIn } = this.props;
+      const { username, password, submitted } = this.state;
+		  return(
+          <div className="col-md-6 col-md-offset-3">
+              <h2>Login</h2>
+              <form name="form" onSubmit={this.handleSubmit}>
+                  <div className={'form-group' + (submitted && !username ? ' has-error' : '')}>
+                      <label htmlFor="username">Username</label>
+                      <input type="text" className="form-control" name="username" value={username} onChange={this.handleChange} />
+                      {submitted && !username &&
+                       <div className="help-block">Username is required</div>
+                      }
+                  </div>
+          <div className={'form-group'
+                        + (submitted && !password ? ' has-error' : '')}>
+                      <label htmlFor="password">Password</label>
+                      <input type="password" className="form-control" name="password" value={password} onChange={this.handleChange} />
+                      {submitted && !password &&
+                       <div className="help-block">Password is required</div>
+                      }
+                  </div>
+                  <div className="form-group">
+                      <button className="btn btn-primary">Login</button>
+                      { loggingIn && <img src= "data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+                      }
+                        <Link to="/register" className="btn btn-link">Register</Link>
+                    </div>
+                </form>
+            </div>
+        );
+    }
 }
 
 function mapStateToProps(state) {
@@ -284,5 +328,4 @@ function mapStateToProps(state) {
 }
 
 const connectedLogin = connect(mapStateToProps)(LoginOperations);
-
 export { connectedLogin as LoginOps };
