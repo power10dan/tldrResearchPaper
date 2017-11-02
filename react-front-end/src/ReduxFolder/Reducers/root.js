@@ -1,6 +1,6 @@
 import loginReducer from "./LoginReducer.js";
 import isLoadingReducer from "./isLoadingReducer.js";
-import authentication from "./authentication"
+import authentication from "./authentication";
 import { combineReducers } from 'redux';
 
 const tldrApp = combineReducers({
