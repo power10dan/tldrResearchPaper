@@ -14,22 +14,28 @@
     "scripts": {
         "start": "react-scripts start",
         "build": "react-scripts build && babel src -d lib",
-        "test": "react-scripts test --env=jsdom && mocha",
+        "test": "react-scripts test --env=jsdom && jest",
+        "test:watch": "npm test --watch",
         "eject": "react-scripts eject"
     },
     "devDependencies": {
         "babel-cli": "^6.26.0",
+        "babel-jest": "^21.2.0",
         "babel-preset-env": "^1.6.1",
+        "babel-preset-es2015": "^6.24.1",
         "babel-preset-react": "^6.24.1",
         "chai": "^4.1.2",
         "fantasy-land": "^3.4.0",
         "folktale": "^2.0.1",
+        "jest": "^21.2.1",
         "material-ui": "^1.0.0-beta.16",
         "material-ui-icons": "^1.0.0-beta.15",
         "mocha": "^4.0.1",
         "react-burger-menu": "^2.1.6",
         "react-file-reader": "^1.1.2",
         "react-materialize": "^1.0.14",
-        "react-tree-menu": "^1.5.0"
+        "react-test-renderer": "^16.0.0",
+        "react-tree-menu": "^1.5.0",
+        "regenerator-runtime": "^0.11.0"
     }
 }
