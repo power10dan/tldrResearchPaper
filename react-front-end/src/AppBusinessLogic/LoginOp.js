@@ -1,12 +1,16 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import LoginComp from '../AppComponents/LoginComp.js';
 /* import bcrypt from 'bcryptjs';*/
 import ErrSnack from '../AppComponents/ErrDialog.js';
+import { login } from '../ReduxFolder/Actions/actions.js'
 
 class LoginOperations extends React.Component{
 	//salt = bcrypt.getSaltSync(24);
 	constructor(props){
 		super(props);
+
+    const { dispatch } = this.props;
 		this.state = {
 			notLogState: null,
 			newUserName: " ",
@@ -160,40 +164,42 @@ class LoginOperations extends React.Component{
 	}
 
 	APICall_login = (userID, userPass) =>{
-		var jsonData = {username: this.state.userName,
-				account_emailaddress: this.state.userEmail,
-				password: this.state.userPassword };
-		var url = "http://127.0.0.1:8000/rest-auth/login/";
-		var initParams = {  method: 'post',
-				    body: JSON.stringify(jsonData),
-		 		    mode: 'cors',
-				    headers: {'Content-Type': 'application/json'},
-		  		  };
+		  var jsonData = {username: this.state.userName,
+				              account_emailaddress: this.state.userEmail,
+				              password: this.state.userPassword };
+      const { dispatch } = this.props;
+      dispatch(login( jsonData.username, jsonData.password));
+		  /* var url = "http://127.0.0.1:8000/rest-auth/login/";
+		     var initParams = {  method: 'post',
+				 body: JSON.stringify(jsonData),
+		 		 mode: 'cors',
+				 headers: {'Content-Type': 'application/json'},
+		     };
 
-		fetch(url, initParams).then((response) =>{
-			var resp = [response.json(), response.status]
-			return resp;
-			//var hash = bcrypt.hash(userPass, this.salt)
-			//if(bcrypt.compareSync(userPass, response.passWord) == false){
-			//	console.log("Can't log in here");
-			//	this.setState(this.isLogin.isLogState: false);
-			//} else{
-			//	console.log("Login successful");
-			//	this.setState(this.isLogin.isLogState: true);
-			//}
-		}).then((data) =>{
-			if(data[1] === 400){
-				this.setState({notLogState: true})
-			}
+		     fetch(url, initParams).then((response) =>{
+			   var resp = [response.json(), response.status]
+			   return resp;
+			   //var hash = bcrypt.hash(userPass, this.salt)
+			   //if(bcrypt.compareSync(userPass, response.passWord) == false){
+			   //	console.log("Can't log in here");
+			   //	this.setState(this.isLogin.isLogState: false);
+			   //} else{
+			   //	console.log("Login successful");
+			   //	this.setState(this.isLogin.isLogState: true);
+			   //}
+		     }).then((data) =>{
+			   if(data[1] === 400){
+				 this.setState({notLogState: true})
+			   }
 
 
-			if(data[1] === 200){
-				this.setState({notLogState: false})
-			}
+			   if(data[1] === 200){
+				 this.setState({notLogState: false})
+			   }
 
-		}).catch((err)=>{
-			console.log(err);
-		});
+		     }).catch((err)=>{
+			   console.log(err);
+		     });*/
 	}
 
 	render(){
@@ -270,4 +276,13 @@ class LoginOperations extends React.Component{
 
 }
 
-export default LoginOperations;
+function mapStateToProps(state) {
+    const { loggingIn } = state.authentication;
+    return {
+        loggingIn
+    };
+}
+
+const connectedLogin = connect(mapStateToProps)(LoginOperations);
+
+export { connectedLogin as LoginOps };

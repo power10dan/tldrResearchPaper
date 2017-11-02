@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 import SideNavCustom from './AppComponents/AppSideBar.js';
 import UploadFile from './AppBusinessLogic/UploadFile.js';
-import LoginOperations from './AppBusinessLogic/LoginOp.js';
+import { LoginOps } from './AppBusinessLogic/LoginOp.js';
 
 class App extends Component {
   render() {
@@ -10,7 +10,7 @@ class App extends Component {
       <div className="App">
         <SideNavCustom />
         <UploadFile />
-        <LoginOperations />
+        <LoginOps />
       </div>
     );
   }
