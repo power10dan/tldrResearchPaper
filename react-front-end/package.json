@@ -49,5 +49,8 @@
         "react-test-renderer": "^15.6.2",
         "react-tree-menu": "^1.5.0",
         "regenerator-runtime": "^0.11.0"
+    },
+    "jest": {
+        "setupTest": "tests/setup.js"
     }
 }
