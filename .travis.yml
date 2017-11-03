@@ -1,6 +1,6 @@
 language: python
 python:
-  - "2.7"
+  - "3.6"
 install:
   - pip install -r ./uploads/requirements/requirements_dev.txt
 notifications:
