@@ -3,9 +3,9 @@ import * as types from '../Constants/ActionTypes';
 let user = JSON.parse(localStorage.getItem('user'));
 const initialState = user ? { loggedIn: true, user } : {};
 
-export function authentication(state = initialState, action) {
+function authentication(state = initialState, action) {
     switch (action.type) {
-    case types.LOGIN_REQUEST:
+    case types.REQUEST:
         return {
             loggingIn: true,
             user: action.user
@@ -15,7 +15,7 @@ export function authentication(state = initialState, action) {
             loggedIn: true,
             user: action.user
         };
-    case types.LOGIN_FAILURE:
+    case types.LOGIN_FAIL:
         return {};
     case types.LOGOUT:
         return {};
@@ -23,3 +23,5 @@ export function authentication(state = initialState, action) {
         return state;
     }
 }
+
+export default authentication;

@@ -1,5 +1,5 @@
-import loginReducer from "./LoginReducer.js";
-import isLoadingReducer from "./isLoadingReducer.js";
+import loginReducer from "./LoginReducer";
+import isLoadingReducer from "./isLoadingReducer";
 import authentication from "./authentication";
 import { combineReducers } from 'redux';
 
