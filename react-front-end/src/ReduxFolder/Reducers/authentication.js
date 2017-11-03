@@ -5,7 +5,7 @@ const initialState = user ? { loggedIn: true, user } : {};
 
 export default function authentication(state = initialState, action) {
     switch (action.type) {
-    case types.LOGIN_REQUEST:
+    case types.REQUEST:
         return {
             loggingIn: true,
             user: action.user
@@ -15,7 +15,7 @@ export default function authentication(state = initialState, action) {
             loggedIn: true,
             user: action.user
         };
-    case types.LOGIN_FAILURE:
+    case types.LOGIN_FAIL:
         return {};
     case types.LOGOUT:
         return {};
@@ -23,3 +23,5 @@ export default function authentication(state = initialState, action) {
         return state;
     }
 }
+
+export default authentication;

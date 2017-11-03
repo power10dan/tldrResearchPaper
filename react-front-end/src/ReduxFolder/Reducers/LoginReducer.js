@@ -4,8 +4,8 @@ import  {
 } from '../Constants/ActionTypes';
 
 // init the local storage
-import { LocalStorage } from 'node-localstorage';
-let localStorage = new LocalStorage('./scratch');
+// import { LocalStorage } from 'node-localstorage';
+// let localStorage = new LocalStorage('./scratch');
 
 localStorage.setItem('user', JSON.stringify({ "user": "a simple user"}));
 
