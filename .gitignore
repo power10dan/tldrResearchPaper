@@ -107,3 +107,6 @@ uploads/media/documents/*
 
 # hide any logs
 *.logs
+
+# hide any .snap files from jest testing
+*.snap
