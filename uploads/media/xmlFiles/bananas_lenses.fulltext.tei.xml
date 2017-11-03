@@ -1,0 +1,777 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/doyougnu/tmp/grobid-grobid-parent-0.4.4/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.4.5-dummy" ident="GROBID" when="2017-11-01T17:54+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Functional Programming with Bananas, Lenses, Envelopes and Barbed Wire</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Erik</forename><surname>Meijer</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Maarten</forename><surname>Fokkinga</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ross</forename><surname>Paterson</surname></persName>
+						</author>
+						<title level="a" type="main">Functional Programming with Bananas, Lenses, Envelopes and Barbed Wire</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+				<p>We develop a calculus for lazy functional programming based on recursion operators associated with data type deenitions. For these operators we derive various algebraic laws that are useful in deriving and manipulating programs. We shall show that all example functions in Bird and Wadler&apos;s \Introduction to Functional Programming&quot; can be expressed using these operators.</p>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>Among the many styles and methodologies for the construction of computer programs the Squiggol style in our opinion deserves attention from the functional programming community. The overall goal of Squiggol is to calculate programs from their speciication in the way a math- ematician calculates solutions to diierential equations, or uses arithmetic to solve numerical problems.</p><p>It is not hard to state, prove and use laws for well-known operations such as addition, multi- plication and |at the function level| composition. It is, however, quite hard to state, prove and use laws for arbitrarily recursively deened functions, mainly because it is diicult to refer to the recursion scheme in isolation. The algorithmic structure is obscured by using unstructured recursive deenitions. We crack this problem by treating various recursion schemes as separate higher order functions, giving each a notation of its own independent of the ingredients with which it constitutes a recursively deened function.</p><p>This philosophy is similar in spirit to thèstructured programming' methodology for imperative programming. The use of arbitrary goto's is abandoned in favour of structured control ow primitives such as conditionals and while-loops that replace xed patterns of goto's, so that rea- soning about programs becomes feasible and sometimes even elegant. For functional programs the question is which recursion schemes are to be chosen as a basis for a calculus of programs. We shall consider several recursion operators that are naturally associated with algebraic type deenitions. A number of general theorems are proven about these operators and subsequently used to transform programs and prove their correctness. <ref type="bibr">Bird and Meertens 4, 18]</ref> have identiied several laws for speciic data types (most notably nite lists) using which they calculated solutions to various programming problems. By embedding the calculus into a categorical framework, Bird and Meertens' work on lists can be extended to arbitrary, inductively deened data types <ref type="bibr" target="#b16">17,</ref><ref type="bibr" target="#b11">12]</ref>. Recently the group of <ref type="bibr">Backhouse 1]</ref> has extended the calculus to a relational framework, thus covering indeterminancy.</p><p>Independently, <ref type="bibr">Paterson 21]</ref> has developed a calculus of functional programs similar in contents but very dissimilar in appearance (like many Australian animals) to the work referred to above. Actually if one pricks through the syntactic diierences the laws derived by Paterson are the same and in some cases slightly more general than those developped by the Squiggolers.</p><p>This paper gives an extension of the theory to the context of lazy functional programming, i.e., for us a type is an !-cpo and we consider only continuous functions between types (categorically, we are working in the category CPO). Working in the category SET as done by for example <ref type="bibr">Malcolm 17]</ref> or <ref type="bibr">Hagino 14]</ref> means that nite data types (deened as initial algebras) and innnite data types (deened as nal co-algebras) constitute two diierent worlds. In that case it is not possible to deene functions by induction (catamorphisms) that are applicable to both nite and innnite data types, and arbitrary recursive deenitions are not allowed. Working in CPO has the advantage that the carriers of initial algebras and nal co-algebras coincide, thus there is a single data type that comprises both nite and innnite elements. The price to be paid however is that partiality of both functions and values becomes unavoidable.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">The data type of lists</head><p>We shall illustrate the recursion patterns of interest by means of the speciic data type of cons- lists. So, the deenitions given here are actually speciic instances of those given in x4. Modern functional languages allow the deenition of cons-lists over some type A by putting:</p><p>A ::= Nil j Cons (AkA)</p><p>The recursive structure of this deenition is employed when writing functions 2 A ! B that destruct a list; these have been called catamorphisms (from the greek preposition meaning \downwards" as in \catastrophe"). Anamorphisms are functions 2 B ! A (from the greek preposition meaning \upwards" as in \anabolism") that generate a list of type A from a seed from B. Functions of type A ! B whose call-tree has the shape of a cons-list are called hylomorphisms (from the Aristotelian philosophy that form and matter are one, oo meaning \dust" or \matter"). </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Catamorphisms</head><formula xml:id="formula_0">h = d b(g; p) e c<label>(4)</label></formula><p>Many important list-valued functions are anamorphisms; for example zip 2 AkB ! <ref type="bibr">(AkB)</ref> which`zipswhich`zips' a pair of lists into a list of pairs. Since a list appears at both sides of its type, we might suspect that map can be written both as a catamorphism and as an anamorphisms. Indeed this is the case. As catamorphism: f = ( jNil; j ) where a bs = Cons (f a; bs), and as anamorphism f = d b(g; p) e c where p as = (as = Nil) and g (Cons (a; as)) = (f a; as). </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Hylomorphisms</head><p>A hylomorphism corresponds to the composition of an anamorphism that builds the call-tree as an explicit data structure and a catamorphism that reduces this data object into the required value.</p><p>(c; ); (g; p)] ] = ( jc; j ) d b(g; p) e c A proof of this equality will be given in x15.</p><p>An archetypical hylomorphism is the factorial function:</p><formula xml:id="formula_2">fac = (1; ); (g; p)] ] p n = n = 0 g (1 + n) = (1 + n; n)</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Paramorphisms</head><p>The hylomorphism deenition of the factorial maybe correct but is unsatisfactory from a theoretic point of view since it is not inductively deened on the data type num ::= 0 j 1 + num. There is however nòsimple' ' such that fac = ( j'j ). The problem with the factorial is that it \eats its argument and keeps it too" 27], the brute force catamorphic solution would therefore have fac 0 return a pair (n; n!) to be able to compute (n + 1)!.</p><p>Paramorphisms were investigated by <ref type="bibr">Meertens 19]</ref> to cover this pattern of primitive recursion.</p><p>For type num a paramorphism is a function h of the form: h 0 = b <ref type="bibr" target="#b6">(7)</ref> h (1 + n) = n (h n) <ref type="bibr">For</ref>  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Algebraic data types</head><p>In the preceding section we have given speciic notations for some recursion patterns in connec- tion with the particular type of cons-lists. In order to deene the notions of cata-, ana-, hylo- and paramorphism for arbitrary data types, we now present a generic theory of data types and functions on them. For this we consider a recursive data type (also calledàlgebraic' data type in Miranda) to be deened as the least xed point of a functor 1 .</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Functors A bifunctor y is a binary operation taking types into types and functions into functions such that if f 2 A ! B and g 2 C ! D then f y g 2 A y C ! B y D, and which preserves identities</head><p>and composition: id y id = id f y g h y j = (f h) y (g j) Bifunctors are denoted by y; z; x; : : :</p><p>A monofunctor is a unary type operation F, which is also an operation on functions, F 2 (A ! B) ! (AF ! BF) that preserves the identity and composition. We use F; G; : : : to denote monofunctors. In view of the notation A we write the application of a functor as a posttx: AF. In x5 we will show that is a functor indeed.</p><p>The data types found in all current functional languages can be deened by using the following basic functors.   </p><formula xml:id="formula_3">D j D 0 = (f0gkD) (f1gkD 0 ) f?g (f j g) ? = ? (f j g) (0; x) = (0; f x) (f j g) (1; x 0 ) = (1; g x 0 )</formula><p>The arbitrarily chosen numbers 0 and 1 are used tòtag' the values of the two summands so that they can be distinguished. Closely related to the functor j are the injection and selection combinators: <ref type="bibr">(1;</ref> y) = g y with which we can write f j g = ( { f) 5 ( { g). Using r which removes the tags from its argument, r ? = ? and r (i; x) = x, we can deene f 5 g = r f j g. </p><formula xml:id="formula_4">{ x = (0; x) { y = (1; y) (f 5 g) ? = ? (f 5 g) (0; x) = f x (f 5 g)</formula><formula xml:id="formula_5">! g) (h ! j) = (h f) ! (g j).</formula><p>Identity for both types and functions x. In view of the rst equation we need not write parenthesis in xFG. Notice that in (FyG) the bi-functor y isìifted' to act on functors rather than on objects; <ref type="bibr">(FyG)</ref> is itself a mono-functor.</p><p>Sectioning Analogous to the sectioning of binary operators, (a) b = a b and (b) a = a b we deene sectioning of bi-functors y;</p><p>(Ay) = AyI (fy) = f y id hence B(Ay) = A y B and f(Ay) = id y f. Similarly we can deene sectioning of y in its second argument, i.e. (yB) and (yf).</p><p>It is not too diicult to verify the following two properties of sectioned functors:</p><p>(fy) g(Ay) = g(By) (fy) for all f 2 A ! B <ref type="bibr" target="#b7">(8)</ref> (fy) (gy) = ((f g)y) <ref type="bibr">(</ref></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>9)</head><p>Taking f y g = g ! f, thus (fy) = (f) gives some nice laws for function composition.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Laws for the basic combinators</head><p>There are various equations involving the above combinators, we state nothing but a few of these. In parsing an expression function composition has least binding power while k binds stronger than j. states that any function deenable in the polymorphic -calculus is a natural transformation. If ' is deened using , one can only conclude that (11) holds for strict f.</p><formula xml:id="formula_6">fkg = f f j g { = { f f 4 g = f f 5 g { = f fkg = g f j g { = { g f 4 g = g f 5 g { = g ( h) 4 ( h) = h (h {) 5 (h {) = h ( h strict 4 = id { 5 { = id fkg h 4 j = (f h) 4 (g j) f 5 g h j j = (f h) 5 (g j) f 4 g h = (f h) 4 (g h) f g 5 h = (f g) 5 (f h) ( f strict fkg = hkj f = h ^ g = j f j g = h j j f = h ^ g = j f 4 g = h 4 j f = h ^ g = j f 5 g = h 5 j f = h ^ g = j A</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Recursive types</head><p>After all this stuu on functors we have nally armed ourselves suuciently to abstract from the peculiarities of cons-lists, and formalize recursively deened data types in general.</p><p>Let F be a monofunctor whose operation of functions is continuous, i.e., all monofunctors deened using the above basic functors or any of the map-functors introduced in x5. </p><p>'; ] ] F = (' F ) <ref type="bibr" target="#b13">(14)</ref> hi ] F = (f: (id 4 f)F out)</p><p>When no confusion can arise we omit the F subscripts.</p><p>Deenition <ref type="formula" target="#formula_7">(13)</ref> agrees with the deenition given in x2; where we wrote ( je; j ) we now write ( je 5 ()j ).</p><p>Deenition <ref type="formula" target="#formula_0">(14)</ref>  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Program Calculation Laws</head><p>Rather than letting the programmer use explicit recursion, we encourage the use of the above xed recursion patterns by providing a shopping list of laws that hold for these patterns. For each -morphism, with 2 fcata, ana, parag, we give an evaluation rule, which shows how such a morphism can be evaluated, a Uniqueness Property, a canned induction proof for a given function to be a -morphism, and a fusion law, which shows when the composition of some function with an -morphism is again an -morphism. All these laws can be proved by mere equational reasoning using the following properties of general recursive functions. The rst one is a `free theorem' for the xed point operator 2 (</p><formula xml:id="formula_9">A ! A) ! A f (g) = h ( f strict ^ f g = h f<label>(16)</label></formula><p>Theorem (16) appears under diierent names in many places <ref type="bibr">2 20, 8, 2, 15, 7, 25, 13, 31]</ref>. In this paper it will be called xed point fusion.</p><p>The strictness condition in (16) can sometimes be relaxed by using</p><formula xml:id="formula_10">f (g) = f 0 (g 0 ) ( f ? = f 0 ? ^ f g = h f ^ f 0 g 0 = h f 0<label>(17)</label></formula><p>Fixed point induction over the predicate P(g; g 0 ) f g = f 0 g 0 will prove (17).</p><p>For hylomorphisms we prove that they can be split into an ana-and a catamorphism and show how computation may be shifted within a hylomorphism. A number of derived laws show the relation between certain cata-and anamorphisms. These laws are not valid in SET. The hylomorphism laws follow from the following theorem:</p><formula xml:id="formula_11">(f F g) (h F j) = (f F j) ( g h = id<label>(18)</label></formula><p>Catamorphisms Evaluation rule The evaluation rule for catamorphisms follows from the xed point property </p><formula xml:id="formula_12">x = f ) x = f x: ( j'j ) in = ' ( j'j )L<label>(CataEval</label></formula><p>i.e. the variable free formulation of (1). Notice that the constructors, here Nil 5 Cons are used for parameter pattern matching.</p><p>UP for catamorphisms The Uniqueness Property can be used to prove the equality of two functions without using induction explicitly. to conclude that f = ( j'j ). The schematic set-up of such a proof is done once and for all, and built into law (CataUP). We are thus saved from the standard ritual steps; the last two lines in the above calculation, plus the declaration that`bythat`by induction' the proof is complete.</p><p>The ) part of the proof for (CataUP) follows directly from the evaluation rule for cata- morphisms. For the ( part we use the xed point fusion theorem <ref type="formula" target="#formula_10">(17)</ref>  Using this latter result we can write out in terms of in since out = ( jout in inLj ) = ( jinLj ).</p><p>Catamorphisms preserve strictness The given laws for catamorphisms all demonstrate the importance of strictness, or generally of the behaviour of a function with respect to ?. The following \poor man's strictness analyser" for that reason can often be put into good use.</p><p>F ? = ? ( 8f :: F f ? = ?</p><p>(23)</p><p>The proof of <ref type="formula">(23)</ref>  where a as = as + + (Cons (a; Nil)), we can derive a linear time algorithm by instantiating (24) with := + + and := Cons to get a function which accumulates the list being reversed as an additional argument: ( jid 5 j ) where (a as) bs = as (Cons (a; bs)). Here + + is the function that appends two lists, deened as as + + bs = ( jid 5 j ) as bs where a f bs = Cons (a; f bs). </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Hylomorphisms</head><p>Splitting Hylomorphisms In order to prove that a hylomorphism can be split into an anamor- phism followed by a catamorphism</p><formula xml:id="formula_14">'; ] ] = ( j'j ) d b() e c (HyloSplit)</formula><p>we can use the total fusion theorem (18).</p><p>Shifting law Hylomorphisms are nice since their decomposability into a cata-and an anamor- phism allows us to use the respective fusion laws to shift computation in or out of a hylomor- phism. The following shifting law shows how computations can be shifted within a hylomor- phism.</p><formula xml:id="formula_15">' ; ] ] L = '; ] ] M ( 2 L ! M (HyloShift)</formula><p>The proof of this theorem is straightforward. </p><formula xml:id="formula_16">( j' j ) L = ( j'j ) M d b( out L ) e c M ( 2 L ! M (28) = ( j'j ) M ( jin M j ) L ( 2 L ! M (29) d b(' ) e c M = ( jin M 'j ) L d b() e c L ( ' 2 L ! M (30) = d b(' out L ) e c M d b() e c L ( ' 2 L ! M (31)</formula><p>This set of laws will be used in x5.</p><p>From the total fusion theorem (18) we can derive:</p><formula xml:id="formula_17">d b() e c L ( j'j ) L = id ( ' = id (32)</formula><p>Example: Reeecting binary trees </p><formula xml:id="formula_18">h'i ] in = ' (id 4 h'i ])L (ParaEval)</formula><p>The UP for paramorphisms is similar to that of catamorphisms:</p><formula xml:id="formula_19">f = h'i ] f ? = h'i ] ? ^ f in = ' (id 4 f)L (ParaUP)</formula><p>The fusion law for paramorphisms reads</p><formula xml:id="formula_20">f h'i ] = hi ] ( f strict ^ f ' = (idkf)L (ParaFusion)</formula><p>Any function f (of the right type of course!) is a paramorphism.</p><formula xml:id="formula_21">f = hf in Li ]</formula><p>The usefulness of this theorem can be read from its proof. </p><formula xml:id="formula_22">preds = d b(L out L ) e c M</formula><p>For the naturals we get preds = d b(id j out) e c, that is given a natural number N = n, the expression preds N yields the list n -1; : : :; 0]. Using preds we start calculating:  g iterate f = iterate h g ( g f = h g <ref type="bibr">(38)</ref> Law <ref type="formula">(38)</ref> is an immediate consequence of the promotion law for anamorphisms <ref type="bibr">(37</ref>  <ref type="formula" target="#formula_0">(34)</ref> shows that catamorphisms on a free type can be factored into a map followed by a reduce. join= tau = id join= tau = id join= join= = join= join= <ref type="bibr">Wadler 29]</ref> gives a thorough discussion on the concepts of monads and their use in functional programming.</p><formula xml:id="formula_23">( j'j ) M preds = ( j'j ) M d b(L out L ) e c M = (f:' fM L out L ) = (f:' (idkf)L (id 4 id)L out L ) = (f:' (id 4 f)L out L ) = h'i ] L Thus h'i ] L = ( j'j ) M preds.</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Conclusion</head><p>We have considered various patterns of recursive deenitions, and have presented a lot of laws that hold for the functions so deened. Although we have illustrated the laws and the recursion operators with examples, the usefulness for practical program calculation might not be evident to every reader. Unfortunately we have not enough space here to give more elaborate examples.</p><p>There are more aspects to program calculation than just a series of combining forms (like Another aspect of program calculation is machine assistance. Our experience |including that of our colleagues| shows that the size of formal manipulations is much greater than in most textbooks of mathematics; it may well be comparable in size to \computer algebra" as done in systems like MACSYMA, Maple, Mathematica etc. Fortunately, it also appears that most manipulations are easily automated and, moreover, that quite a few equalities depend on natural transformations. Thus in several cases type checking alone suuces. Clearly machine assistance is fruitful and does not seem to be too diicult.</p><p>Finally we observe that category theory has provided several notions and concepts that were indispensable to get a clean and smooth theory; for example, the notions of functor and natural transformation. (While reading this paper, a category theorist may recognize several other notions that we silently used). Without doubt there is much more categorical knowledge that can be useful for program calculation; we are just at the beginning of an exciting development.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>zip = d b(g; p) e c p (as; bs) = (as = Nil) _ (bs = Nil) g (Cons (a; as); Cons (b; bs)) = ((a; b); (as; bs)) Another anamorphism is iterate f which given a, constructs the innnite list of iterated appli- cations of f to a. iterate f = d b(g; false ) e c where g a = (a; f a) We use c to denote the constant function x:c. Given f 2 A ! B, the map function f 2 A ! B applies f to every element in a given list. fNil = Nil f(Cons (a; as)) = Cons (f a; fas)</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Product</head><label></label><figDesc>The (lazy) product DkD 0 of two types D and D 0 and its operation k on functions are deened as: DkD 0 = f(d; d 0 ) j d 2 D; d 0 2 D 0 g 1 We give the deenitions of various concepts of category theory only for the special case of the category CPO. Alsòfunctors' are really endo-functors, and so on.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>(</head><label></label><figDesc>fkg) (x; x 0 ) = (f x; g x 0 ) Closely related to the functor k are the projection and tupling combinators: (x; y) = x (x; y) = y (f 4 g) x = (f x; g x) Using ; and 4 we can express fkg as fkg = (f ) 4 (g</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Arrow</head><label></label><figDesc>The operation ! that forms the function space D ! D 0 of continuous functions from D to D 0 , has as action on functions thèwrapping' function: (f ! g) h = g h f Often we will use the alternative notation (g f) h = g h f, where we have swapped the arrow already so that upon application the arguments need not be moved, thus localizing the changes occurring during calculations. The functional (f F g) h = f hF g wraps its F-ed argument between f and g. Closely related to the ! are the combinators: curry f x y = f (x; y) uncurry f (x; y) = f x y eval (f; x) = f x Note that ! is contra-variant in its rst argument, i.e. (f</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head></head><label></label><figDesc>agrees with the informal one given earlier on; the notation d b(g; p) e c of x2 now becomes d b((VOID j g) p?) e c. Deenition (15) agrees with the earlier one in the sense that taking ' = c 5 and = (VOID j g) p? makes (c ; ); (g; p)] ] equal to '; ] ]. Deenition (15) agrees with the description of paramorphisms as given in x2 in the sense that hb; i ] equals hb 5 ()i ] here.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>f</head><label></label><figDesc>= ( j'j ) f ? = ( j'j ) ? ^ f in = ' fL (CataUP) A typical induction proof for showing f = ( j'j ) takes the following steps. Check the induction base: f ? = ( j'j ) ?. Assuming the induction hypothesis fL = ( j'j )L proceed by calculating: f in = : : : = ' fL = induction hypothesis ' ( j'j )L = evaluation rule (CataEval) ( j'j ) in</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head></head><label></label><figDesc>In general catamorphisms of higher type L ! (I ! S) form an interesting class by themselves as they correspond to attribute grammars 11]. Anamorphisms Evaluation rule The evaluation rule for anamorphisms is given by: out d b() e c = d b() e cL (AnaEval) It says what the result of an arbitrary application of d b() e c looks like: the constituents produced by applying out can equivalently be obtained by rst applying and then applying d b() e cL recursively to the result. Anamorphisms are real old fusspots to explain. To instantiate (AnaEval) for cons list we deene: hd = ? 5 out tl = ? 5 out is nil = true 5 false out Assuming that f = d b(VOID j (h 4 t) p?) e c we nd after a little calculation that: is nil f = p hd f = h ( :p tl f = t ( :p which corresponds to the characterization of unfold given by Bird and Wadler 5] on page 173. UP for anamorphisms The UP for anamorphisms is slightly simpler than the one for cata- morphisms, since the base case does not have to be checked. f = d b(') e c out f = fL ' (AnaUP) To prove it we can use xed point fusion theorem (16) with f := (f), g := in L out and h := in L . This gives us (in L out) f = (in L ) and again since (in L out) = id we are done. Fusion law for anamorphisms The strictness requirement that was needed for catamor- phisms can be dropped in the anamorphism case. The dual condition of f ? = ? for strictness is ? f = ? which is vacuously true. d b(') e c f = d b() e c ( ' f = fL (AnaFusion) This law can be proved by xed point fusion theorem (16) with f := (f), g := in L ' and h := in L . Any surjective function is an anamorphism The results (21) and (22) can be dualized for anamorphisms. Let f 2 B ! A a surjective function with right-inverse g, then for any 2 A ! AL we have d b() e c f = d b(gL f) e c ( f g = id (25) since f = fL (gL f). The special case where equals out yields that any surjective function can be written as an anamorphism. f = d b(gL out f) e c L ( f g = id (26) As in has right-inverse out, we can express in using out by in = d b(outL out in) e c = d b(outL) e c. Examples Reformulated in the lense notation, the function iterate f becomes: iterate f = d b( { id 4 f) e c We have d b( { id 4 f) e c = d b(VOID j id 4 f false ?) e c(= d b(id 4 f; false ) e c in the notation of section 2). Another useful list-processing function is takewhile p which selects the longest initial segment of a list all whose elements satisfy p. In conventional notation: takewhile p Nil = Nil takewhile p (Cons a as) = Nil; :p a = Cons a (takewhile p as); otherwise The anamorphism deenition may look a little daunting at rst: takewhile p = d b( { 5 (VOID j id (:p )?) out) e c The function f while p contains all repeated applications of f as long as predicate p holds: f while p = takewhile p iterate f Using the fusion law (after a rather long calculation) we can show that f while p = d b(VOID j (id 4 f) :p?) e c.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head></head><label></label><figDesc>Example: composing paramorphisms from ana-and catamorphisms A nice result is that any paramorphism can be written as the composition of a cata-and an anamorphism. Let (L; in) = L be given, then deene XM = (LkX)L hM = (idkh)L (M; IN) = M For natural numbers we get XM = (NumkX)L = 1 j NumkX, i.e. (Num; in) = M, which is the type of lists of natural numbers. Now deene preds 2 L ! M as follows:</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head>For</head><label></label><figDesc>cons-list (A; Nil 5 Cons) = (Ay) with A y X = 1 j AkX and f y g = id j fkg we get f = d b(f y id out) e c. From the UP for catas we nd that this conforms to the usual deenition of map. f Nil = Nil f Cons = Cons fkf Other important laws for maps are factorization 26] and promotion 4]. ( j'j ) f = ( j' (fy)j ) (34) f d b() e c = d b((fy) ) e c (35) ( j'j ) f = g ( jj ) ( g = ' f y g ^ g strict (36) f d b() e c = d b() e c g ( g = f y g (37) Now we know that is a functor, we can recognize that in 2 Iyy ! and out 2 ! Iyy are natural transformations. f in = in f y f out f = f y f out Iterate promotion Recall the function iterate f = d b( { id 4 f) e c, the following law turns an O(n 2 ) algorithm into an O(n) algorithm, under the assumption that evaluating g f n takes n steps.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_9"><head></head><label></label><figDesc>The fact that tau and join are natural transformations give evaluation rules for f and '= on free types. f tau = tau f '= tau = id f join = join fF '= join = ' ('=)F Early Squiggol was based completely on map-reduce factorization. Some of these laws from the good old days; reduce promotion and map promotion. '= join= = '= ('=) f join= = join= f Monads Any free type gives rise to a monad 17], in the above notation, (; tau 2 I ! ; join= 2 ! ) since:</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_10"><head>(</head><label></label><figDesc>j j ),d b( ) e c, h i ], ; ]]) and laws about them. For calculating large programs one certainly needs high level algorithmic theorems. The work reported here provides the necessary tools to develop such theorems. For the theory of lists Bird 3] has started to do so, and with success.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_7" validated="false"><head>)</head><label></label><figDesc></figDesc><table>It states how to evaluate an application of ( j'j ) to an arbitrary element of L (returned by the 
+constructor in); namely, apply ( j'j ) recursively to the argument of in and then ' to the result. 
+For cons lists (A; Nil 5 Cons) = L where XL = 1 j AkX and fL = id j idkf with 
+catamorphism ( jc 5 j ) the evaluation rule reads: 
+
+( jc 5 j ) Nil = c 
+
+(19) 
+
+( jc 5 j ) Cons = idk(jc 5 j ) 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_9" validated="false"><head></head><label></label><figDesc>Accumulating Arguments An important item in the functional programmer's bag of tricks is the technique of accumulating arguments where an extra parameter is added to a function to accumulate the result of the computation. Though stated here in terms of catamorphisms over cons-lists, the same technique is applicable to other data types and other kind of morphisms as well.</figDesc><table>is by xed point induction over P(F) F ? = ?. 
+
+Speciically for catamorphisms we have 
+
+( j'j ) L ? = ? ' ? = ? 
+
+if L is strictness preserving. The ( part of the proof directly follows from (23) and the deenition 
+
+of catamorphisms. The other way around is shown as follows 
+
+? 
+
+= 
+
+premise 
+
+( j'j ) ? 
+
+= 
+
+in ? = ? 
+
+( j'j ) in ? 
+
+= 
+
+evaluation rule 
+
+' ( j'j )L ? 
+
+= 
+
+L preserves strictness 
+
+' ? 
+
+Examples 
+
+Unfold-Fold Many transformations usually accomplished by the unfold-simplify-fold tech-
+nique can be restated using fusion. Let (Num; Nil 5 Cons) = L, where XL = 1 j NumkX 
+and fL = id j idkf be the type of lists of natural numbers. Using fusion we derive an eecient 
+version of sum squares where sum = ( j0 5 +j ) and squares = ( jNil 5 (Cons SQkid)j ). 
+Since sum is strict we just start calculating aiming at the discovery of a that satisses the 
+
+condition of (CataFusion'). 
+
+sum Nil 5 (Cons Skid) 
+
+= 
+
+(sum Nil) 5 (sum Cons SQkid) 
+
+= 
+
+Nil 5 ((+) idksum SQkid) 
+
+= 
+
+Nil 5 ((+) SQkid idksum) 
+
+= 
+
+Nil 5 ((+) SQkid) sumL and conclude that sum squares = ( jNil 5 ((+) SQkid)j ). 
+
+A slightly more complicated problem is to derive a one-pass solution for 
+
+average = DIV sum 4 length 
+
+Using the tupling lemma of Fokkinga 10] 
+
+( j'j ) L 4 ( jj ) L = ( j(' 
+
+L) 4 ( 
+L)j ) 
+
+a simple calculation shows that average = DIV ( j(0 5 (+) idk ) 4 (0 5 (+1) 
+j ). 
+
+( jc 
+
+5 j ) l = ( j(c) 
+5 j ) l where (a f) b = f (a b) 
+
+(24) 
+
+( 
+
+a = a ^ ? a = ? ^ (a b) c = b (a c) 
+
+Theorem (24) follows from the fusion law by taking Accu ( jc 5 j ) = ( j(c) 5 j ) with 
+Accu a b = a b. 
+
+Given the naive quadratic deenition of reverse 2 A ! A as a catamorphism ( jNil 5 j ) 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_13" validated="false"><head>) .</head><label>.</label><figDesc></figDesc><table>Interestingly we may also deene iterate as a cyclic list: 
+iterate f x = (xs:Cons (x; fxs)) 
+
+and use xed point fusion to prove (38). Map-Reduce factorization 
+
+A data type (A; in) = (Ay) with A y X = A j XF is called a free F-type over A. For a free 
+type we can always write strict catas ( jj ) as ( jf 5 'j ) by taking f = { and ' = {. For 
+f we get 
+f = ( jin f j idj ) 
+
+= ( jtau j join f j idj ) 
+= ( jtau f 5 joinj ) 
+where tau = in { and join = in {. 
+If we deene the reduction with ' as 
+'= = ( jid 5 'j ) 
+
+(39) 
+the factorization law </table></figure>
+
+			<note place="foot" n="2"> Other references are welcome.</note>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+			</div>
+
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">A relational theory of types</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Roland</forename><surname>Backhouse</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jaap</forename><surname>Van Der Woude</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ed</forename><surname>Voermans</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Grant</forename><surname>Malcolm</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1991" />
+			<publisher>TUE</publisher>
+		</imprint>
+	</monogr>
+<note type="report_type">Technical Report</note>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">On the use of composition in transformational programming</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Rudolf</forename><surname>Berghammer</surname></persName>
+		</author>
+		<idno>TUM-I8512</idno>
+		<imprint>
+			<date type="published" when="1985" />
+		</imprint>
+		<respStmt>
+			<orgName>TU MM unchen</orgName>
+		</respStmt>
+	</monogr>
+<note type="report_type">Technical Report</note>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">Logic of Programming and Calculi of Discrete Design</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Bird</surname></persName>
+		</author>
+		<editor>M. Broy</editor>
+		<imprint>
+			<date type="published" when="1986" />
+			<publisher>Springer Verlag</publisher>
+			<biblScope unit="page" from="3" to="42" />
+		</imprint>
+		<respStmt>
+			<orgName>Oxford University</orgName>
+		</respStmt>
+	</monogr>
+	<note>Also Technical Monograph PRG-56</note>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Constructive functional programming</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Richard</forename><surname>Bird</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Marktoberdorf International Summer school on Constructive Methods in Computer Science, NATO Advanced Science Institute Series</title>
+		<editor>M. Broy</editor>
+		<imprint>
+			<publisher>Springer Verlag</publisher>
+			<date type="published" when="1989" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Introduction to Functional Programming</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Richard</forename><surname>Bird</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Phil</forename><surname>Wadler</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1988" />
+			<publisher>Prentice-Hall</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">An introduction to the category-theoretic solution of recursive domain equations</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Bos</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Hemerik</surname></persName>
+		</author>
+		<idno>TRCSN 88/15</idno>
+		<imprint>
+			<date type="published" when="1988-10" />
+		</imprint>
+		<respStmt>
+			<orgName>Eindhoven University of Technology</orgName>
+		</respStmt>
+	</monogr>
+<note type="report_type">Technical Report</note>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Transformation parallel ablaufender Programme</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Manfred</forename><surname>Broy</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">TU MM unchen, MM unchen</title>
+		<imprint>
+			<date type="published" when="1980" />
+		</imprint>
+	</monogr>
+<note type="report_type">PhD thesis</note>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Retractions in comparing Prolog semantics</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>De Bruin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><forename type="middle">P</forename><surname>De Vink</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Computer Science in the Netherlands 1989, pages 71{90. SION</title>
+		<imprint>
+			<date type="published" when="1989" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Naturalness of polymorphism</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Peter De Bruin</surname></persName>
+		</author>
+		<idno>CS 8916</idno>
+	</analytic>
+	<monogr>
+		<title level="j">RUG</title>
+		<imprint>
+			<date type="published" when="1989" />
+		</imprint>
+	</monogr>
+<note type="report_type">Technical Report</note>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Tupling and mutumorphisms</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Maarten</forename><surname>Fokkinga</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Squiggolist</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<date type="published" when="1989" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Translating attribute grammars into catamorphisms</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Maarten</forename><surname>Fokkinga</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Johan</forename><surname>Jeuring</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Lambert</forename><surname>Meertens</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Erik</forename><surname>Meijer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Squiggolist</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<date type="published" when="1991" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<title level="m" type="main">Program calculation properties of continuous algebras</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Maarten</forename><surname>Fokkinga</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Erik</forename><surname>Meijer</surname></persName>
+		</author>
+		<idno>91-4</idno>
+		<imprint>
+			<date type="published" when="1991" />
+			<publisher>CWI</publisher>
+		</imprint>
+	</monogr>
+<note type="report_type">Technical Report</note>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Semantic domains and denotational semantics</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Gunter</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Mosses</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Scott</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Marktoberdorf International Summer school on Logic, Algebra and Computation</title>
+		<imprint>
+			<date type="published" when="1989" />
+		</imprint>
+		<respStmt>
+			<orgName>Handbook of Theoretical Computer Science, North Holland</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Codatatypes in ML</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Tasuya</forename><surname>Hagino</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Symbolic Computation</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="page" from="629" to="650" />
+			<date type="published" when="1989" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Some techniques for recursion removal</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Arsac</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Kodratoo</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ACM Toplas</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="295" to="322" />
+			<date type="published" when="1982" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Algebraic speciication of data types: a synthetic approach</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">J</forename><surname>Lehmann</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">B</forename><surname>Smyth</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Math. Systems Theory</title>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="page" from="97" to="139" />
+			<date type="published" when="1981" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<monogr>
+		<title level="m" type="main">Algebraic Types and Program Transformation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Grant</forename><surname>Malcolm</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1990" />
+			<pubPlace>The Netherlands</pubPlace>
+		</imprint>
+		<respStmt>
+			<orgName>University of Groningen</orgName>
+		</respStmt>
+	</monogr>
+<note type="report_type">PhD thesis</note>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Algorithmics | towards programming as a mathematical activity</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Lambert</forename><surname>Meertens</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the CWI symposium on Mathematics and Computer Science, pages 289{334</title>
+		<meeting>the CWI symposium on Mathematics and Computer Science, pages 289{334<address><addrLine>North-Holland</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="1986" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<monogr>
+		<title level="m" type="main">To appear in Formal Aspects of Computing</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Lambert</forename><surname>Meertens</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Paramorphisms</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1990" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<monogr>
+		<title level="m" type="main">Programming calculi based on xed point transformations: semantics and applications</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jules</forename><surname>John-</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Ch</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Meyer</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1985" />
+			<pubPlace>Amsterdam</pubPlace>
+		</imprint>
+		<respStmt>
+			<orgName>Vrije Universiteit</orgName>
+		</respStmt>
+	</monogr>
+<note type="report_type">PhD thesis</note>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<monogr>
+		<title level="m" type="main">Reasoning about Functional Programs</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ross</forename><surname>Paterson</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1988" />
+			<pubPlace>Brisbane</pubPlace>
+		</imprint>
+		<respStmt>
+			<orgName>University of Queensland</orgName>
+		</respStmt>
+	</monogr>
+<note type="report_type">PhD thesis</note>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Types abstraction and parametric polymorphism</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">John</forename><forename type="middle">C</forename><surname>Reynolds</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Information Processing &apos;83</title>
+		<imprint>
+			<publisher>North Holland</publisher>
+			<date type="published" when="1983" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<monogr>
+		<title level="m" type="main">Denotational Semantics. Allyn and Bacon</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">David</forename><forename type="middle">A</forename><surname>Schmidt</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1986" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">The category-theoretic solution of recursive domain equations</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">B</forename><surname>Smyth</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><forename type="middle">D</forename><surname>Plotkin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">SIAM Journal on Computing</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="761" to="785" />
+			<date type="published" when="1982-11" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<monogr>
+		<title level="m" type="main">Denotational Semantics, The Scott-Strachey Approach to Programming Language Theory</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Joseph</forename><forename type="middle">E</forename><surname>Stoy</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1977" />
+			<publisher>The MIT press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Homomorphisms, factorisation and promotion</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Nico</forename><surname>Verwer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Squiggolist</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<date type="published" when="1990" />
+		</imprint>
+		<respStmt>
+			<orgName>Utrecht University</orgName>
+		</respStmt>
+	</monogr>
+	<note>Also technical report RUU-CS-90-5</note>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<monogr>
+		<title level="m" type="main">Views: A way for pattern matching to cohabit with data abstraction</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Phil</forename><surname>Wadler</surname></persName>
+		</author>
+		<idno>34</idno>
+		<imprint>
+			<date type="published" when="1987-03" />
+		</imprint>
+		<respStmt>
+			<orgName>Programming Methodology Group, University of GG oteborg and Chalmers University of Technology</orgName>
+		</respStmt>
+	</monogr>
+<note type="report_type">Technical Report</note>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Theorems for free !</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Philip</forename><surname>Wadler</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proc. 1989 ACM Conference on Lisp and Functional Programming</title>
+		<meeting>1989 ACM Conference on Lisp and Functional Programming</meeting>
+		<imprint>
+			<date type="published" when="1989" />
+			<biblScope unit="page" from="347" to="359" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">Comprehending monads</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Philip</forename><surname>Wadler</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proc. 1990 ACM Conference on Lisp and Functional Programming</title>
+		<meeting>1990 ACM Conference on Lisp and Functional Programming</meeting>
+		<imprint>
+			<date type="published" when="1990" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">Fixed point constructions in order enriched categories</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Wand</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Theoretical Computer Science</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<date type="published" when="1979" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<monogr>
+		<title level="m" type="main">Programmierung mit funktionsobjecten: Konstruktive erzeugung semantische bereiche und anwendung auf die partielle auswertung</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Hans</forename><surname>Zierer</surname></persName>
+		</author>
+		<idno>TUM-I8803</idno>
+		<imprint>
+			<date type="published" when="1988" />
+		</imprint>
+		<respStmt>
+			<orgName>TU MM unchen</orgName>
+		</respStmt>
+	</monogr>
+<note type="report_type">Technical Report</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>
+
