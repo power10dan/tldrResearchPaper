@@ -18,11 +18,11 @@ describe('Create New Profile: ', () => {
 
         // This is what we expect the component to be, shallow just renders the
         // component without doing a deep render of its children
-        const output = mount(<CreateNewProfileComp />);
+        const wrapper = shallow(<CreateNewProfileComp />);
 
         // this is the actual test, we render it and output that to JSON so we
         // can inspect it, this is held in the snapshots folder
-        expect(shallowToJson(output)).toMatchSnapshot();
+        expect(shallowToJson(wrapper)).toMatchSnapshot();
     });
 
 
