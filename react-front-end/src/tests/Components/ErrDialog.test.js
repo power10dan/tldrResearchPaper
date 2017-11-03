@@ -8,7 +8,7 @@ import TestUtils from 'react-dom/test-utils';
 
 configure({ adapter: new Adapter() });
 
-describe('Error Dialog', () => {
+describe('Error Dialog: ', () => {
 
     it('renders the create new profile component without crashing', () => {
         const output = shallow(<ErrSnack />);

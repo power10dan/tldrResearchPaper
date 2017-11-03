@@ -11,7 +11,7 @@ configure({ adapter: new Adapter() });
 
 const mockStore = configureStore();
 
-describe('Create New Profile Component', () => {
+describe('Create New Profile: ', () => {
 
     // render test
     it('renders the create new profile component without crashing', () => {

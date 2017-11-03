@@ -10,7 +10,7 @@ configure({ adapter: new Adapter() });
 
 const mockStore = configureStore();
 
-describe('Side Navigator', () => {
+describe('Side Navigator: ', () => {
     it('renders the app side bar with crashing', () => {
       const wrapper = shallow(<SideNavCustom/>, { context: { store: mockStore() } });
       /* expect(wrapper.contains(<div title="User" />)).toBe(true);*/
