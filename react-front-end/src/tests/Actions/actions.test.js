@@ -10,4 +10,13 @@ describe('actions', () => {
         };
         expect(actions.UploadFile(text)).toEqual(expectedAction);
     });
+
+    it('should create an action to delete a file', () => {
+        const text = 'fileToDelete';
+        const expectedAction = {
+            type: types.DELETEFILE,
+            fileDel: text
+        };
+        expect(actions.DeleteFile(text)).toEqual(expectedAction);
+    });
 });

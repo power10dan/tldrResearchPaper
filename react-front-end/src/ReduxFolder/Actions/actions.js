@@ -132,7 +132,7 @@ export function isLoading(isLoadingStats){
  	return {type: types.UPLOADFILE, fileInfo: fileToUpload};
  }
 
- export function DELETEFILE(fileToDelete){
+ export function DeleteFile(fileToDelete){
  	return {type: types.DELETEFILE, fileDel: fileToDelete};
  }
 // =================================================================================================
