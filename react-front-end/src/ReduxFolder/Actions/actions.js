@@ -18,7 +18,7 @@ function _Login(username, password) {
     };
 
     // set the url and use fetch to send request
-    let url = "http://127.0.0.1:8000/rest-auth/login/";
+    let url = "http://127.0.0.1:8000/login/";
     return fetch(url, requestOptions);
 }
 
