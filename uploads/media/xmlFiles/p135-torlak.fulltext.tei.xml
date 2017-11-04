@@ -1,0 +1,918 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/doyougnu/tmp/grobid-grobid-parent-0.4.4/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.4.5-dummy" ident="GROBID" when="2017-11-01T17:53+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Growing solver-aided languages with rosette</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher>ACM Press</publisher>
+				<availability status="unknown"><p>Copyright ACM Press</p>
+				</availability>
+				<date type="published" when="2013">2013</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Emina</forename><surname>Torlak</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Rastislav</forename><surname>Bodik</surname></persName>
+						</author>
+						<title level="a" type="main">Growing solver-aided languages with rosette</title>
+					</analytic>
+					<monogr>
+						<title level="m">Proceedings of the 2013 ACM international symposium on New ideas, new paradigms, and reflections on programming &amp; software - Onward! &apos;13</title>
+						<meeting>the 2013 ACM international symposium on New ideas, new paradigms, and reflections on programming &amp; software - Onward! &apos;13						</meeting>
+						<imprint>
+							<publisher>ACM Press</publisher>
+							<date type="published" when="2013" />
+						</imprint>
+					</monogr>
+					<idno type="DOI">10.1145/2509578.2509586</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>D22 [Software Engi-neering]: Design Tools and Techniques</term>
+					<term>D33 [Program-ming Languages]: Language Constructs and Features General Terms Design</term>
+					<term>Languages Keywords Solver-Aided Languages</term>
+				</keywords>
+			</textClass>
+			<abstract>
+				<p>SAT and SMT solvers have automated a spectrum of programming tasks, including program synthesis, code checking, bug localization, program repair, and programming with oracles. In principle, we obtain all these benefits by translating the program (once) to a constraint system understood by the solver. In practice, however, compiling a language to logical formulas is a tricky process, complicated by having to map the solution back to the program level and extend the language with new solver-aided constructs, such as symbolic holes used in synthesis. This paper introduces ROSETTE, a framework for designing solver-aided languages. ROSETTE is realized as a solver-aided language embedded in Racket, from which it inherits extensive support for meta-programming. Our framework frees designers from having to compile their languages to constraints: new languages, and their solver-aided constructs, are defined by shallow (library-based) or deep (interpreter-based) embedding in ROSETTE itself. We describe three case studies, by ourselves and others, of using ROSETTE to implement languages and synthesizers for web scraping, spatial programming, and superoptimization of bitvector programs.</p>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">Introduction</head><p>A few times in the evolution of programming languages, extra-linguistic advances enabled adoption of new program- Permission to make digital or hard copies of all or part of this work for personal or classroom use is granted without fee provided that copies are not made or distributed for profit or commercial advantage and that copies bear this notice and the full citation on the first page. Copyrights for components of this work owned by others than the author(s) must be honored. Abstracting with credit is permitted. To copy otherwise, or republish, to post on servers or to redistribute to lists, requires prior specific permission and/or a fee. Request permissions from permissions@acm.org. <ref type="bibr">Onward! 2013</ref><ref type="bibr">, October 29-31, 2013</ref> ming constructs: efficient garbage collection led to automatic memory management; transactional hardware gave rise to atomics; and JIT compilation helped popularize dynamically typed languages. SAT and SMT solvers may be on the cusp of enabling another class of language constructs. Reduction to constraint solving has already automated a spectrum of programming tasks-including program checking, program synthesis, and program grading-and more problems previ- ously solved with tricky deterministic algorithms may follow suit. This versatility of solvers encourages us to integrate solver capabilities into programming languages.</p><p>We argue that most applications of solvers in programming can be reduced to four elementary solver queries:</p><p>• (S) synthesizing a code fragment that implements a de- sired behavior <ref type="bibr" target="#b20">[23,</ref><ref type="bibr" target="#b31">34]</ref>;</p><p>• (V ) checking that an implementation satisfies a desired property <ref type="bibr" target="#b7">[8,</ref><ref type="bibr" target="#b9">10,</ref><ref type="bibr" target="#b11">12,</ref><ref type="bibr" target="#b14">15,</ref><ref type="bibr">21,</ref><ref type="bibr" target="#b34">37,</ref><ref type="bibr" target="#b37">40]</ref>;</p><p>• (L) localizing code fragments that cause an undesired behavior <ref type="bibr" target="#b19">[22]</ref>; and</p><p>• (A) runtime nondeterminism, which asks an angelic or- acle to divine values that make the execution satisfy a specification <ref type="bibr" target="#b20">[23,</ref><ref type="bibr" target="#b23">26,</ref><ref type="bibr" target="#b25">28,</ref><ref type="bibr" target="#b29">32</ref>].</p><p>An advanced application may combine several of these queries. For example, a solver-aided tool for program re- pair <ref type="bibr" target="#b6">[7,</ref><ref type="bibr" target="#b38">41]</ref> might first localize repair candidates (L), then replace a candidate code fragment with an angelically chosen value that makes the program pass a failing test (A), and finally, if the chosen value heuristically appears like a value that a correct program would produce, the repair tool might use it to synthesize a replacement for the candidate code fragment (S). In principle, these queries can be supported by translating the program (once) to constraints and invoking the solver on these constraints. Depending on the context, the solver searches for a desired value or program, acting as a bidirec- tional program interpreter (in S and A); falsifies a formula, acting as a verifier (V ); or produces an unsatisfiable core, acting as a fault localizer <ref type="bibr">(L)</ref>.</p><p>Existing systems have demonstrated the benefits of using a solver to answer individual queries in the context of a specific language. Extending these benefits to other languages requires development of a symbolic compiler from the new language to logic constraints. Compiling a language to logical constraints is a tricky process, additionally complicated by having to map the solution back to the program level and having to extend the language with solver-aided constructs, such as symbolic holes <ref type="bibr" target="#b31">[34]</ref> that define the space of candidate programs considered by a synthesizer. This paper describes ROSETTE, a framework for con- struction of solver-aided domain-specific languages (SDSLs). ROSETTE is a small extension of Racket <ref type="bibr" target="#b36">[39]</ref> equipped with a symbolic compiler. Because ROSETTE is itself solver-aided, languages embedded into ROSETTE inherit the four queries, which frees language developers from having to write sym- bolic compilers and formulate low-level queries to a solver.</p><p>ROSETTE supports both shallow (library-based) and deep (interpreter-based) embedding of languages. One can even stack languages and synthesize an interpreter for the lower parts of the language stack. Along these lines, we show in Section 2 how ROSETTE synthesizes rewrite rules for a compiler of circuit programs. We believe that this is the first synthesis of rewrites that does not require prior semantic axioms such as proof rules <ref type="bibr" target="#b35">[38]</ref>.</p><p>The key design decision in ROSETTE is to compile only a small a subset of the host language (Racket) to constraints, and to grow this small symbolic core with a partial evaluator that simplifies non-core constructs prior to symbolic compila- tion. This architecture offers several new benefits:</p><p>• ROSETTE programs are free to use all Racket fea- tures, including its advanced object system and meta- programming constructs such as macros, as long as these non-core constructs are partially-evaluated away prior to symbolic compilation. In our experiments, non-core constructs never leaked past the partial evaluator. Access to advanced language constructs thus eased construction of new languages without impacting the compilation to logic constraints.</p><p>• By dividing work between the partial evaluator and the symbolic compiler, we have enabled a simple imple- mentation while offering a rich solver-aided language. Prior systems either symbolically compiled the entire lan- guage, leading to large implementations and/or limited languages <ref type="bibr" target="#b7">[8,</ref><ref type="bibr" target="#b11">12,</ref><ref type="bibr" target="#b31">34]</ref>, or compiled only a tiny core without any support for growing it <ref type="bibr" target="#b20">[23]</ref>.</p><p>While ROSETTE heavily relies on Racket's metaprogram- ming for both symbolic compilation and partial evaluation, ROSETTE's architecture can be easily realized in other lan- guages too, as evidenced by recent work on embedding solver-aided features into Ruby <ref type="bibr" target="#b24">[27]</ref> and Scala <ref type="bibr" target="#b20">[23]</ref>. After all, ROSETTE only requires that the operations in the symbolic core can be overridden or otherwise lifted to ROSETTE's custom versions. The operations outside the symbolic core remain unchanged.</p><p>Our group has used ROSETTE to implement several new solver-aided systems, including a programming model for ultra-low-power spatial architectures with synthesis-based program partitioning; a declarative SDSL for web scraping, with synthesis support for programming by demonstration; and a superoptimizer for bitvector programs. Two of these sys- tems have been prototyped by senior undergraduate and first- year graduate students-all first-time users of ROSETTE-in just a few weeks. In contrast, the same students needed an entire semester to build prototypes of analogous SDSLs from scratch, without the help of ROSETTE. The key productivity benefits came from not having to build a symbolic compiler.</p><p>We present main ideas behind ROSETTE in Section 2, by showing how to grow a stack of tiny SDSLs with support for synthesis, verification, fault localization and angelic execution. We then present ROSETTE's semantics (Section 3), describe some of the systems designed with our framework (Section 4), and discuss related work (Section 5). Section 6 concludes the paper.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">ROSETTE by Example</head><p>In this section, we illustrate how to construct solver-aided DSLs through embedding in a solver-aided host language. We demonstrate both shallow and deep embedding. Our host solver-aided language is ROSETTE, which is itself embedded in a (classical) host language Racket <ref type="bibr" target="#b36">[39]</ref>.</p><p>Shallow embedding is demonstrated with a tiny DSL for specifying boolean circuits (Section 2.1). Here, circuit programs are ordinary Racket functions, and we show that a Racket DSL can be equipped with solver-aided capabilities by a straightforward port to ROSETTE (Section 2.2).</p><p>Next, we embed the circuit language deeply, which facili- tates development of circuit transformers, i.e., programs that rewrite circuit programs. We show that it is possible to syn- thesize and debug circuit transformers by asking ROSETTE to reason across three linguistic layers: circuit programs, their transformers, and their interpreters.</p><p>We show two styles of deep embedding: a lightweight version, which adopts ROSETTE's symbolic representation of circuits as its abstract syntax tree (Section 2.3); and a full deep embedding, which constructs an explicit abstract syntax tree and symbolically quantifies over a space of trees, giving the transformation language the power to verify correctness of its programs on all circuits up to a bounded size (Section 2.4).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1">Getting Started: A Circuit DSL in Racket</head><p>Consider the problem of building a tiny circuit language (TCL) for specifying boolean circuits, testing them on input-output pairs, and verifying that two circuits are equivalent on all inputs. TCL may be used in teaching, where it can demon- strate alternative circuits for a given boolean function, or in developing a boolean constraint solver, where it can test that circuit transformations change the structure (representation) of a circuit but not its boolean function.</p><p>1 #lang s-exp tcl 3 (define-circuit (xor x y) 4 (! (&lt;=&gt; x y)))</p><formula xml:id="formula_0">6 (define-circuit (RBC-parity a b c d) 7 (xor (&lt;=&gt; a b) (&lt;=&gt; c d))) 9 (define-circuit (AIG-parity a b c d) 10 (&amp;&amp; 11 (! (&amp;&amp; (! (&amp;&amp; (! (&amp;&amp; a b)) (&amp;&amp; (! a) (! b)))) 12 (! (&amp;&amp; (&amp;&amp; (! c) (! d)) (! (&amp;&amp; c d)))))) 13 (! (&amp;&amp; (&amp;&amp; (! (&amp;&amp; a b)) (! (&amp;&amp; (! a) (! b)))) 14 (&amp;&amp; (! (&amp;&amp; (! c) (! d))) (! (&amp;&amp; c d)))))))</formula><p>16 (verify-circuit AIG-parity RBC-parity) <ref type="figure">Figure 1</ref>. A sample program in a tiny circuit language (TCL) <ref type="figure">Figure 1</ref> shows a TCL program that verifies equivalence of two circuits, one presumably obtained by transforming the other. TCL is shallowly embedded in Racket and so TCL programs are valid Racket programs. TCL represents circuits as named first-class procedures that operate on boolean values and defines four built-in circuits (!, &lt;=&gt; , &amp;&amp;, and ||), which are themselves Racket procedures. The language provides constructs for defining new circuits (define-circuit) and for verifying that two circuits are equivalent on all inputs (verify-circuit). Throughout this paper, we show DSL keywords in blue, and use boldface for keywords in the host language (be it ROSETTE or Racket).</p><p>The example program in <ref type="figure">Figure 1</ref> verifies that a parity- checking circuit, RBC-parity, is equivalent to its transformed variant, AIG-parity. The original circuit takes the form of a Reduced Boolean Circuit (RBC) <ref type="bibr" target="#b1">[2]</ref>, and the transformed circuit is an And-Inverter Graph (AIG) <ref type="bibr" target="#b2">[3]</ref>. RBCs represent boolean functions using negations and bi-implications. AIGs use only negations and conjunctions. Both representations were designed for use in solver-based tools <ref type="bibr" target="#b0">[1,</ref><ref type="bibr" target="#b5">6,</ref><ref type="bibr" target="#b18">20]</ref>. 1 <ref type="figure" target="#fig_0">Figure 2</ref> shows an implementation of TCL in Racket. Lines 3-4 export (only) the TCL functionality to TCL programs along with a few boilerplate Racket primitives that make TCL a stand-alone language. The define-circuit construct is simply rewritten into a procedure definition. This syntactic ab- straction is implemented with a Racket macro: when the syn- tactic pattern on line 6 is found in a TCL program, it is rewrit- ten into the template on line 7, which happens to be a code fragment in the Racket language. The pattern variables id, in, and expr are substituted in the process. For example, the circuit definition (define-circuit (xor x y) (! (&lt;=&gt; x y)) ) is rewritten into (define (xor x y) (! (&lt;=&gt; x y)) ). Ellipses in the macro allow the pattern variable in to match a vari- able number of arguments. The verify-circuit procedure (lines 9-14) checks the equivalence of two n-ary circuits by applying them to all possible combinations of n bits, and failing if they produce different outputs. The remaining pro- cedures (lines <ref type="bibr" target="#b15">[16]</ref><ref type="bibr" target="#b16">[17]</ref><ref type="bibr" target="#b17">[18]</ref><ref type="bibr">[19]</ref>) define the built-in circuits.</p><p>1 #lang racket 3 (provide ! &amp;&amp; || &lt;=&gt; define-circuit verify-circuit 4 #%datum #%app #%module-begin #%top-interaction) 6 (define-syntax-rule (define-circuit (id in ...) expr) 7</p><p>(define (id in ...) expr)) 9 (define (verify-circuit impl spec) 10 (define n (procedure-arity spec))</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>11</head><p>(for ([i (expt 2 n)])</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>12</head><p>(define bits (for/list ([j n]) (bitwise-bit-set? i j)))</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>13</head><p>(unless (eq? (apply impl bits) (apply spec bits))</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>14</head><p>(error "verification failed on" bits)))) Because TCL is not solver aided, it misses several desirable features. First, the implementation of verify-circuit is inefficient. Based on exhaustive search, it will be slow on circuits with more than a few inputs. Second, TCL provides no automated support for localizing and fixing the bug in the AIG-parity circuit that was detected during verification. We add these features in the next subsection by developing TCL + , a tiny circuit language that is solver-aided.</p><formula xml:id="formula_1">16 (define (! a) (if a #f #t)) 17 (define (&amp;&amp; a b) (if a b #f)) 18 (define (|| a b) (if a #t b)) 19 (define (&lt;=&gt; a b) (if a b (! b)))</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2">Getting Symbolic: A Circuit SDSL in ROSETTE</head><p>Our first step toward a solver-aided circuit language, TCL + , is to embed TCL in the solver-aided ROSETTE language rather than in Racket. Using ROSETTE's symbolic values and assertions about program properties, we can formulate solver-aided queries. These queries will accelerate circuit verification as well as automatically locate and fix bugs in TCL + programs.</p><p>Embedding a language in ROSETTE To embed TCL in ROSETTE, we replace the first line in <ref type="figure" target="#fig_0">Figure 2</ref>, namely the directive #lang racket that embeds TCL in Racket, with the following language declaration: #lang s-exp rosette With this change, our newly created SDSL, TCL + , continues to work exactly as its precursor (although we are not yet ex- ploiting any solver-aided features of ROSETTE). The example program in <ref type="figure">Figure 1</ref> need not change at all, and its validity check still fails with the same error. Additionally, we will simplify <ref type="figure" target="#fig_0">Figure 2</ref> by omitting lines 16-19 because they define procedures already provided by ROSETTE.</p><p>Symbolic constants To take advantage of the solver-aided queries that TCL + inherits from its host, we will need to introduce symbolic values into circuit programs: &gt; (define-symbolic b0 b1 b2 b3 boolean?)</p><p>This definition creates four symbolic constants of boolean type, and binds them to four Racket variables.</p><p>Symbolic constants can be used wherever concrete values of the same type can be used. For example, we can call a circuit procedure on our symbolic constants to obtain another symbolic value-a symbolic expression with those four constants in the leaves:</p><formula xml:id="formula_2">&gt; (RBC-parity b0 b1 b2 b3) (! (&lt;=&gt; (&lt;=&gt; b1 b0) (&lt;=&gt; b2 b3)))</formula><p>ROSETTE actually provides two kinds of constructs for creating symbolic constants:</p><formula xml:id="formula_3">(define-symbolic id1 ... id k expr) (define-symbolic * id1 ... id k expr)</formula><p>The define-symbolic form creates k fresh symbolic con- stant of type expr and binds the provided program variables to their respective constants every time the form is evalu- ated (e.g., in the body of a loop). But sometimes, it is de- sirable to bind a variable to a fresh symbolic value. This is accomplished by the define-symbolic * form, which creates k streams of fresh constants, binding each variable to the next constant from its stream whenever the form is evaluated. The following example illustrates the semantic difference:</p><formula xml:id="formula_4">(define (static) (define-symbolic b boolean?) b) &gt; (define (dynamic) (define-symbolic * n number?) n) &gt; (eq? (static) (static)) #t &gt; (eq? (dynamic) (dynamic)) (= n$0 n$1)</formula><p>Booleans and numbers (more specifically, finite precision integers) are the only kinds of symbolic constants supported by ROSETTE. But because they are embedded in a program- ming language, they can be used to create symbolic instances of other data types. We will see an example of this in Section 2.4, where we use primitive symbolic constants to create a symbolic expression that represents all (abstract syntax) trees of bounded depth. (The trick is to use symbolic constants to control what tree is produced by a tree constructor.)</p><p>Verification With symbolic values as inputs, and assertions that specify desired properties of circuits applied to those inputs, we have all the necessary components to implement the four basic solver-aided queries for TCL + . For example, the following code accelerates verification of circuit programs (V ) by querying the solver for an input on which a circuit and its transformation fail to produce the same output: &gt; (define counterexample (verify (assert (eq? (RBC-parity b0 b1 b2 b3) (AIG-parity b0 b1 b2 b3))))) &gt; (evaluate (list b0 b1 b2 b3) counterexample) '(#t #t #t #f) &gt; (RBC-parity #t #t #t #f) #t &gt; (AIG-parity #t #t #t #f) #f</p><p>The (verify expr) query exhibits the usual demonic se- mantics. It attempts to find a binding from symbolic constants to values that violates at least one of the assertions encoun- tered during the evaluation of expr. Bindings are first-class values that can be freely manipulated by ROSETTE programs. We can also interpret any ROSETTE value with respect to a binding using the built-in evaluate procedure. In our ex- ample, the solver produces a binding that reveals an input (different from the one in Section 2.1) on which the trans- formed circuit, AIG-parity, fails to behave like the original circuit, RBC-parity.</p><p>Debugging The solver can help localize the cause of this faulty behavior (L) by identifying a maximal set of program expressions that are irrelevant to the failure-even if we replaced all such expressions with values provided by an angelic oracle, the resulting program would still violate the same assertion. ROSETTE finds irrelevant expressions by computing the complement set, which we will call a minimal unsatisfiable core of the failure. Core expressions are collectively responsible for an assertion failure, in the sense that the failed execution can be repaired by replacing just one core expression (in addition to all irrelevant expressions) with a call to an angelic oracle. In general, there may be many cores for each failure. Still, every core contains at least one buggy expression. In practice, examining one or two cores often leads to the source of the error.</p><p>To activate solver-aided debugging (which is off by de- fault due to overhead), we select a few functions as candi- dates for core extraction by changing their definitions to use the keyword define/debug instead of define. In our exam- ple, we would change the definition of AIG-parity to use define/debug instead of define-circuit, and invoke the debugger as follows:</p><formula xml:id="formula_5">&gt; (define core (debug [boolean?] (assert (eq? (AIG-parity #t #t #t #f) (RBC-parity #t #t #t #f))))) &gt; (render core) (define/debug (AIG-parity a b c d) (&amp;&amp; (! (&amp;&amp; (! (&amp;&amp; (! (&amp;&amp; a b)) (&amp;&amp; (! a) (! b)))) (! (&amp;&amp; (&amp;&amp; (! c) (! d)) (! (&amp;&amp; c d)))))) (! (&amp;&amp; (&amp;&amp; (! (&amp;&amp; a b)) (! (&amp;&amp; (! a) (! b)))) (&amp;&amp; (! (&amp;&amp; (! c) (! d))) (! (&amp;&amp; c d)))))))</formula><p>The (debug <ref type="bibr">[predicate ]</ref> expr) query takes as input an ex- pression whose execution leads to an assertion failure, and a predicate that specifies the dynamic type of the expressions to be considered for inclusion in the core. <ref type="bibr" target="#b1">2</ref> Cores are first- class values and can be used for further automation (such as program repair), or visualized using the built-in render pro- cedure. Given a core, render displays all procedures marked with define/debug, showing the core expressions in red and the irrelevant expressions in gray.</p><p>Angelic execution We are going to repair the circuit pro- gram with program synthesis, but first, we want to identify suitable repair candidates, i.e., subexpressions that we will replace with a synthesized repair expression. To look for re- pair candidates, we will heuristically restrict ourselves to the identified minimal unsatisfiable core. (In general, successful program repair may need to involve more than just the identi- fied core, or even the union of all cores, because a program may need to be completely rewritten to implement the desired function in the given language.) The heuristic we will use is to select as the repair candidate the largest subexpression from the core that the synthesizer can handle. This will increase the chance that the repair corrects the program on all inputs (which is the correctness condition we will use in synthesis).</p><p>The core that we have obtained in our example suggests several repair candidates for AIG-parity. For example, it may be sufficient to fix just the subexpression (&amp;&amp; a b), or we may have to replace the entire first child of the circuit with a new expression. To test the former hypothesis, we ask whether the failure can be removed by replacing the subexpression with an angelically chosen value. If not, repairing this subexpression alone will not be sufficient; we will need to select a larger repair candidate.</p><p>To create an oracle, we replace (&amp;&amp; a b) with a call to the dynamic-choose procedure, which generates fresh symbolic values, <ref type="bibr" target="#b2">3</ref> and query the solver for a concrete interpretation of those values that saves our buggy execution from failing (A):</p><formula xml:id="formula_6">&gt; (define (dynamic-choose) (define-symbolic * v boolean?) v) &gt; (define-circuit (AIG-parity a b c d) (&amp;&amp; (! (&amp;&amp; (! (&amp;&amp; (! (dynamic-choose)) (&amp;&amp; (! a) (! b)))) (! (&amp;&amp; (&amp;&amp; (! c) (! d)) (! (&amp;&amp; c d)))))) (! (&amp;&amp; (&amp;&amp; (! (&amp;&amp; a b)) (! (&amp;&amp; (! a) (! b)))) (&amp;&amp; (! (&amp;&amp; (! c) (! d))) (! (&amp;&amp; c d))))))) &gt; (solve (assert (eq? (AIG-parity #t #t #t #f)</formula><p>(RBC-parity #t #t #t #f))))) solve error: no satisfying execution found</p><p>The (solve expr) query implements angelic semantics. It returns a binding from symbolic constants to concrete values, if any, that satisfies all assertions encountered during the evaluation of expr. We are using the streaming construct define-symbolic * to create symbolic constants so that the oracle can produce distinct values if it is consulted multiple times during the execution, as is the case in the next example, where the circuit with the oracle is evaluated twice. In this case, the solver is unable to find a satisfying binding, proving that it is not sufficient to fix just the subexpression (&amp;&amp; a b).</p><p>To test our second repair hypothesis, we replace the entire first child of AIG-parity with a call to dynamic-choose. The solver is now able to prevent failures on both failing inputs that we have identified. Therefore, we have found a promising repair candidate:</p><formula xml:id="formula_7">&gt; (define-circuit (AIG-parity a b c d) (&amp;&amp; (dynamic-choose) (! (&amp;&amp; (&amp;&amp; (! (&amp;&amp; a b)) (! (&amp;&amp; (! a) (! b)))) (&amp;&amp; (! (&amp;&amp; (! c) (! d))) (! (&amp;&amp; c d))))))) &gt; (solve (begin (assert (eq? (AIG-parity #t #t #t #f) (RBC-parity #t #t #t #f))) (assert (eq? (AIG-parity #f #f #f #f) (RBC-parity #f #f #f #f))))) (model [dynamic-choose:v$0 #t] [dynamic-choose:v$1 #f])</formula><p>The new solve query yields an angelic binding for the two symbolic constants generated by evaluating AIG-parity- and therefore, dynamic-choose-on our two counterexample inputs. For AIG-parity to work correctly on the first input, the first child expression should produce #t. For the second input, it should produce #f.</p><p>Synthesis With the first child of AIG-parity as the repair candidate, we can now synthesize (S) a correct replacement for that child from a syntactic sketch <ref type="bibr" target="#b31">[34]</ref> of the desired repair. For example, the following sketch specifies that our repair is to be drawn from a grammar of Circuit expressions of depth k ≤ 3, containing only the AIG operators and inputs to AIG-parity:</p><formula xml:id="formula_8">&gt; (define-circuit (AIG-parity a b c d) (&amp;&amp; (Circuit [! &amp;&amp;] a b c d #:depth 3) (! (&amp;&amp; (&amp;&amp; (! (&amp;&amp; a b)) (! (&amp;&amp; (! a) (! b)))) (&amp;&amp; (! (&amp;&amp; (! c) (! d))) (! (&amp;&amp; c d)))))))</formula><p>Figure 3 (lines 39-46) shows the definition of the Circuit grammar. We specify grammars with the help of two con- structs: choose, which selects one of n expressions, and define-synthax (i.e., "define synthesizable syntax"), which combines expression choices into a (recursive) grammar. The definition corresponds to the usual BNF specification:</p><formula xml:id="formula_9">Circuit := (unop (expr . . . | (binop Circuit Circuit))) unop := op 1 | identity binop := op 2 | . . . | op k</formula><p>We instantiate this generic grammar by providing a set of circuit operators, a set of terminals, and an upper bound on the depth of circuit expressions drawn from the grammar.</p><p>Constructs for specifying grammars, such as choose and define-synthax, are provided by a small utility library built on top of ROSETTE, using macros and symbolic values. For example, the define-synthax form is implemented as a macro-generating macro. It creates a grammar (macro) from a pattern that specifies the syntax of grammar instantiations, a mandatory unrolling guard, and a template that specifies the body of the grammar. The unrolling guard helps ROSETTE determine when to stop expanding a given instantiation of the grammar. Our Circuit grammar guards the unrolling by decrementing an integer, but the guard can be any expression that evaluates to #f after a bounded number of unrollings. During the unrolling process, define-synthax introduces symbolic (boolean) constants to ensure that the expanded grammar captures all expressions of depth k or less, where k is the maximum number of unrollings allowed by the guard.</p><p>Given the sample sketch for repairing AIG-parity, we ask the solver to synthesize a repair as follows:</p><formula xml:id="formula_10">&gt; (define model (synthesize #:forall (list b0 b1 b2 b3) #:guarantee (assert (eq? (AIG-parity b0 b1 b2 b3) (RBC-parity b0 b1 b2 b3))))) &gt; (generate-forms model) (define-circuit (AIG-parity a b c d) (&amp;&amp; (! (&amp;&amp; (&amp;&amp; (! (&amp;&amp; d (! c))) (! (&amp;&amp; (! a) b))) (&amp;&amp; (! (&amp;&amp; c (! d))) (! (&amp;&amp; (! b) a))))) (! (&amp;&amp; (&amp;&amp; (! (&amp;&amp; a b)) (! (&amp;&amp; (! a) (! b)))) (&amp;&amp; (! (&amp;&amp; (! c) (! d))) (! (&amp;&amp; c d)))))))</formula><p>The synthesis query takes the form (synthesize #:forall input #:guarantee expr). Symbolic constants that do not ap- pear in the input expression are called "holes" <ref type="bibr" target="#b31">[34]</ref>. If success- ful, the query returns a binding from holes to concrete values that satisfies the assertions in expr for all possible bindings of the input constants. This corresponds to the classic formu- lation of synthesis <ref type="bibr" target="#b31">[34]</ref> as a ∃ h ∀ i. a 1 ( h, i) ∧ . . . ∧ a n ( h, i) problem, where h denotes the holes, i denotes the input constants, and a j ( h, i) is an assertion reached during the evaluation of expr.</p><p>In our example, h consists of the symbolic constants in- troduced by the instantiation of the Circuit grammar in the AIG-parity sketch. Each unrolling of the grammar intro- duces one fresh hole, and each (choose e 1 . . . e n ) expression in the fully unrolled grammar introduces n − 1 fresh holes. A binding for these holes encodes a completion of the sketch. We produce a syntactic representation of the completed sketch with the help of the utility function generate-forms. <ref type="figure" target="#fig_3">Figure 3</ref> combines all of the facilities we have developed so far into a complete implementation of TCL + .</p><formula xml:id="formula_11">TCL +</formula><p>The language provides a convenient domain-specific interface for formulating solver-aided queries about circuit programs. It is also compatible with our old TCL implementation-any TCL program can be ported to TCL + by simply changing its #lang declaration to tcl+.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.3">Getting Reflective: A Tiny Transformation SDSL</head><p>TCL + enables us to easily verify, debug and repair a circuit function against a reference implementation-for example, we repaired AIG-parity so that its behavior matches that of RBC-parity. But this does not fully address our original usage scenario, in which AIG-parity was the result of apply- ing a circuit transformation procedure to RBC-parity. Ideally, 20 (define (correct impl spec input) 21 (assert (eq? (apply impl input) (apply spec input))))</p><p>23 (define (verify-circuit impl spec) 24</p><p>(define input (symbolic-input spec))</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>25</head><p>(evaluate input (verify (correct impl spec input))))</p><p>27 (define (debug-circuit impl spec input) 28</p><formula xml:id="formula_12">(render (debug [boolean?] (correct impl spec input))))</formula><p>30 (define (solve-circuit impl spec . inputs) 31  Designing TTL <ref type="figure">Figure 4</ref> shows an example program, imple- mented in a tiny transformation language (TTL), that demon- strates our original usage scenario. TTL extends TCL + with constructs for defining and implementing circuit transforma- tion procedures, and with functions for formulating solver- aided queries about these procedures. A circuit transformer takes as input an abstract syntax tree (AST) that represents the body of a circuit procedure, and it produces another AST that represents the body of a functionally equivalent circuit. The match form matches an AST against a sequences of clauses. Each clause consists of a pattern whose free variables are bound in the body of the clause, if the match succeeds. The result of the first successful match is returned, and none of the remaining clauses are evaluated. The underscore pattern matches any value.</p><formula xml:id="formula_13">(solve (for ([input inputs]) (correct impl spec input)))) 33 (define (synthesize-circuit impl spec) 34 (define input (symbolic-input spec))</formula><p>In our example, the RAX procedure takes as input (an AST representation of) an RBC, and transforms it into an AIG by recursive application of three rewrite rules. The first two rules rewrite the &lt;=&gt; and ! nodes. The last rule (line 16) leaves all other nodes unchanged, ensuring that RAX acts as the identity function on ASTs that are not in the RBC form. The verify-transform function takes as input a transformer and a circuit procedure, reifies the circuit into an AST, and verifies that applying the transformer to the reified circuit produces (an AST for) a functionally equivalent circuit.</p><p>Implementing TTL <ref type="figure">Figure 5</ref> shows a sample implementa- tion of TTL that extends the TCL + prototype from <ref type="figure" target="#fig_3">Figure 3</ref>. The implementation exploits the ability of ROSETTE pro- grams to reflect on the structure of symbolic values at run- time. In particular, applying a ROSETTE function to symbolic inputs produces a symbolic encoding of its output-an AST- that can be examined by ROSETTE code (such as a circuit transformation procedure) with the help of pattern matching:</p><formula xml:id="formula_14">&gt; (RBC-parity b0 b1 b2 b3) (! (&lt;=&gt; (&lt;=&gt; b1 b0) (&lt;=&gt; b2 b3))) &gt; (match (RBC-parity b0 b1 b2 b3) [(! (&lt;=&gt; (&lt;=&gt; _ _ ) (&lt;=&gt; _ _ ))) #t] [ _ #f]) #t</formula><p>In the case of circuits, ROSETTE's symbolic encoding conve- niently reifies a circuit function into an AST that is built out of TTL's (and ROSETTE's) primitive boolean operators: &amp;&amp;, ||, ! and &lt;=&gt; . All user-defined functions are evaluated away.</p><p>The sample TTL enables circuit transformers to examine symbolic ASTs by exporting ROSETTE's match construct, which is syntactic sugar on top of Racket's own match. The implementation of solver-aided queries is also straightfor- ward. Each query function takes as input a transformer and a circuit procedure; it reifies the circuit by applying it to a list of symbolic values; and it poses a query about the equiv- alence of the reified circuit and its transformed AST. The debug-transform query additionally asserts that the leaves of the ASTs evaluate to their corresponding bits in the pro- vided counterexample input.</p><p>Using TTL Executing the program in <ref type="figure">Figure 4</ref> against our TTL prototype reveals a bug-a concrete input, '( #f #f #t #f), on which the circuit produced by RAX differs from RBC-parity. After marking RAX for debugging with define/debug, we use this input to localize the fault in the transformer:</p><formula xml:id="formula_15">&gt; (debug-transform RAX RBC-parity '(#f #f #t #f)) (define/debug (RAX ast) (match ast [(&lt;=&gt; left right) (let ([x (RAX left)] [y (RAX right)]) (! (&amp;&amp; (! (&amp;&amp; x y)) (&amp;&amp; (! x) (! y)))))] [(! left) (! (RAX left))] [ _ ast]))</formula><p>Based on the resulting core, we hypothesize that the body of the let expression is faulty, replace it with an instantiation of the Circuit grammar, and synthesize a fix: </p><formula xml:id="formula_16">(let ([x (RAX left)] [y (RAX right)]) (! (&amp;&amp; (! (&amp;&amp; y x)) (! (&amp;&amp; (! x) (! y))))))] [(! left) (! (RAX left))] [ _ ast]))</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.4">Getting Deep: A Better Tiny Transformation SDSL</head><p>So far, we have only used TTL to formulate queries about correctness of circuit transfomers on specific circuits. For example, the repair we synthesized for RAX is guaranteed to produce a correct transformation of RBC-parity, but not necessarily of other circuits. What we want instead is a more general guarantee of correctness, for both synthesis and verification queries.</p><p>To illustrate, consider a general (bounded) correctness property for TTL transformers: a transformer T is correct if its output (T f ) is equivalent to f on all n-input circuits of depth k or less. We can express this property easily in TTL by using circuit grammars. For example, the following code instantiates the property for our original RAX transformer <ref type="figure">(Figure 4</ref> But something seems wrong: the solver is unable to find any counterexamples to this more general claim, even though we know that RAX is buggy on at least one circuit (RBC-parity).</p><p>To see why our verification query failed, recall that verify-circuit reifies RBC by applying it to a list of sym- bolic inputs ( <ref type="figure">Figure 5</ref>). The result of this application is a symbolic AST that encodes all possible RBCs but is not itself an RBC. In particular, the resulting AST contains disjunctions (||), which arise from choose expressions in the Circuit grammar that makes up the body of RBC. For example, eval- uating (choose b0 b1) produces the symbolic value (|| (&amp;&amp; c i b0) (&amp;&amp; (! c i ) b1)), where c i is a fresh symbolic boolean introduced by choose. Because of these disjunctions, the RAX transformer simply returns RBC's AST unchanged <ref type="figure">(Figure 4</ref>, line 16), and verification fails:</p><formula xml:id="formula_17">&gt; (match (RBC b0 b1 b2 b3) [(|| _ ...) #t]</formula><p>[ _ #f]) #t &gt; (eq? (RBC b0 b1 b2 b3) (RAX (RBC b0 b1 b2 b3))) #t TTL + Deep SDSL embedding is the simplest way to im- plement TTL so that it supports verification and synthesis queries with strong correctness guarantees. Instead of relying on ROSETTE's symbolic values to represent circuit ASTs, we will define our own circuit data type, and write an interpreter for it. <ref type="figure" target="#fig_6">Figure 6</ref> shows the new implementation, called TTL + .</p><p>The circuit data type is defined using Racket structures, which are record types with support for subtyping. The TTL + interpreter recursively traverses a circuit tree and assigns meaning to each node. If a node is not an instance of the circuit type, the interpreter simply returns it. For example, the leaves of a circuit are boolean values, and they are interpreted as themselves.</p><p>Note that TTL + , like its predecessor, supports the use of the Circuit grammar construct. But in TTL + , the identifiers As a result, a TTL + application of RBC to a symbolic input yields a circuit structure that represents all RBCs of depth 2 or less. In other words, we obtain a symbolic representation of a rich value using just the symbolic primitives available in ROSETTE (in this case, symbolic booleans introduced by the Circuit grammar). The TTL + verify-transform query, if successful, returns two values: the booleans on which the input circuit differs from the transformed circuit, and a syntactic representation of the input circuit, if any part of its body is drawn from a grammar. For example, the following code applies the new verification query to RAX and our sample input circuits: The synthesize-transform query uses the built-in proce- dure symbolics to collect all symbolic constants that appear in the reified representation of its input circuit. Universally quantifying over these constants ensures that the query works correctly on circuit structures that represent all RBCs of given size. For example, using the RAX sketch from the previ- ous section, together with the RBC circuit, we can synthesize a completion of this sketch that is correct for all 4-input RBCs of depth 2 or less:</p><formula xml:id="formula_18">&gt; (synthesize-transform RAX RBC) (define-transform (RAX ast) (match ast [(&lt;=&gt; left right) (let ([x (RAX left)] [y (RAX right)]) (! (&amp;&amp; (! (&amp;&amp; (! y) (! x))) (! (&amp;&amp; x y)))))] [(! left) (! (RAX left))] [ _ ast]))</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">Core Solver-Aided Language</head><p>In this section, we present the core of the ROSETTE language- R 0 -together with rules for its evaluation in the presence of symbolic values. The full language supports additional queries, expressions and data types, including vectors and user-defined algebraic data types. But the semantics of evalu- ation in the presence of symbolic values can be understood on just R 0 . In particular, we provide the R 0 semantics in order to (i) give a model of what a solver-aided host may look like; (ii) explain the benefits of ensuring that such a language is capable of concrete (as well as symbolic) execution; and (iii) explain an alternative approach to finitization, in which the host language does not impose any built-in artifical limits on the length of executions.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Definitions and Expressions</head><p>An abstract grammar for the core language is given in <ref type="figure" target="#fig_8">Figure 7</ref>. It extends a tiny subset of Racket (core Scheme with mutation <ref type="bibr" target="#b27">[30]</ref>) with four forms: define-symbolic defines a variable and binds it to a fresh symbolic constant that must satisfy the predicate boolean? or number?;</p><p>assert specifies that a given expression does not evaluate to the constant #f;</p><p>(solve e) computes a binding from symbolic constants in e to concrete values such that all assertions encountered during the evaluation of e are satisfied; and, The core language supports all standard list, boolean, arith- metic and bitwise operators, as well as standard predicates for testing equality, falseness, etc.-we show only a subset of these for clarity. Note that, as in Racket and Scheme, oper- ators are functions, which are first class values. User-defined functions are supported via λ expressions.</p><p>The remaining constructs and expressions in the language are standard Scheme: set! changes the value of a defined variable; define introduces a new variable and binds it to the value of the given expression; begin groups a sequence of expressions (or, at the top level, forms), taking on the value of the last one; and (e e . . .) stands for procedure application, where the first expression must evaluate to a procedure that is applied to the values of the remaining expressions.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Values</head><p>R 0 programs operate on two kinds of values: concrete and symbolic. <ref type="figure">Figure 8</ref> extends the grammar of <ref type="figure" target="#fig_8">Figure 7</ref>, which describes concrete values, with new terms that represent symbolic booleans, symbolic integers, φ values and models.</p><p>Symbolic booleans and integers are modeled as terms (T e . . .), with T specifying the type of the term. Terms of the form (T x), where x is an identifier, represent symbolic constants introduced by define-symbolic; (t op v v . . .) en- codes the result of applying an operator op to the specified values; and (Int (Bool e . . .) i i) evaluates to one of its integer subterms, depending on the value of its boolean subterm. We introduce the (redundant) productions α, γ and ψ as nota- tional shorthands to refer to only symbolic, only concrete, and all boolean and integer values, respectively.</p><p>In addition to primitive symbolic values, evaluation of R 0 programs can also give rise to φ values and models. A model µ is a map from symbolic constants to concrete values; models are produced by evaluating solve and verify expressions. A φ value is a set of guard and value pairs; φ values can only result from evaluation of if expressions. The guards are boolean values, and the semantics of evaluation guarantees that at most one of them is true in any model µ produced by solving or verification. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3">Semantics</head><p>We define the operational semantics of R 0 by extending the reduction semantics of Scheme <ref type="bibr" target="#b27">[30]</ref>. We have implemented and tested this semantics in PLT Redex <ref type="bibr" target="#b13">[14]</ref>. <ref type="figure">Figure 10</ref> shows key reduction rules for R 0 , generated from our Redex model, <ref type="bibr" target="#b3">4</ref> and <ref type="figure">Figure 9</ref> shows the grammar of evaluation contexts in which these rules are applied. Recall that, in reduction semantics <ref type="bibr" target="#b12">[13]</ref>, an evaluation context is a term with a "hole," denoted by [], which designates the subterm to be evaluated. We write E[e] −→ E[e ] to indicate that the subterm e is replaced by e in the evaluation context E.</p><p>Reduction rules in <ref type="figure">Figure 10</ref> operate on program states. The error state is represented by the tuple (error) and cannot be reduced any further. A valid state is represented by a tuple (σ π κ F ), where F is the form (with a hole) to be evaluated; σ is the program store, which maps variables to values; π is the current path condition; and κ is the constraint store. The path condition is a boolean value encoding branch decisions taken to reach the current point in the evaluation, and the constraint store contains the boolean values that have been asserted so far.</p><p>Evaluating solver-aided forms. Rules Define-1 and Define- 2 use define to bind a variable with the given identifier to a fresh symbolic constant with the same identifier. Rules Assert- 0 and Assert-1 enforce the usual meaning of assertions for concrete values. Assert-2 is more interesting. It updates the constraint store with a formula stating that the current path condition implies the asserted value-that is, the assertion must hold if the execution reaches the given point. We use <ref type="bibr" target="#b3">4</ref> Omitted rules are similar to those in core Scheme and in <ref type="figure">Figure 10</ref>.</p><p>( <ref type="bibr">[[op]</ref>] v . . .) to denote construction of symbolic terms; for example, ( <ref type="bibr">[[!]</ref>]π) constructs the value (Bool ! π).</p><p>The rule for Solve-0 uses the meta-function R, which denotes the transitive closure of the reduction relation, to fully evaluate the expression e in the current state, yielding a new state that is processed by Solve-1. The latter simply passes the formulas in κ 1 , which include the original assertions from κ, to a SAT function. This function calls an underlying solver and returns a model that satisfies all the assertions in κ 1 (or raises an error if no such model exists). The Verify rules are identical, except that κ 1 assertions are treated as post-conditions to be falsified, while the original κ assertions are treated as pre-conditions. Evaluating base forms. Given an if expression with a symbolic condition, rule If-3 fully evaluates both branches under suitably amended path conditions. If both branches produce valid states, rule If-4 uses the merge meta-function ⊕ α to merge the resulting program stores and values. The merge function generates φ values to merge terms of different types-for example, if v 0 is a boolean and v 1 is an integer, the result of their merge is the term (Φ (α v 0 ) ((Bool ! α) v 1 )). If either of the branches results in an error, that branch is abandoned by asserting the negation of its guard, and evaluation proceeds with a merge of the pre-state and the remaining branch.</p><p>Application rules App-γ and App-ψ handle the application of operators to non-φ values. If the operator op is applied to purely concrete values, we produce the standard meaning of this application. If it is applied to at least one abstract value, we call the term constructor on the arguments (which may yield an error). The last rule, App-φ, handles φ values. In the case shown in the figure, the range of φ includes exactly one value in the domain of the given operator. Evaluation proceeds by asserting the guard of that value to be true, and supplying the value to the operator. Essentially, we use assertions to implement dynamic type checks in the symbolic domain. Other cases are handled similarly.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.4">Discussion</head><p>The R 0 evaluation rules maintain two important properties- fully concrete programs behave exactly as they would in Racket (Scheme), and our symbolic execution is both sound and complete <ref type="bibr" target="#b8">[9]</ref>. In particular, at each step of the evaluation, the symbolic state, as given by σ, π and κ, encodes only and all concrete states (if any) that could be reached via some fully concrete execution. When no symbolic values are used in the program, this is precisely the single state reachable via a particular concrete execution. R 0 ensures that fully concrete programs behave like Racket code in order to enable incremental development of SDSLs. In our experience, a natural way to develop an SDSL is to start with a Racket prototype of the language, test it on concrete programs and values, and then gradually add <ref type="figure">Figure 10</ref>. R 0 reduction rules as an extension of <ref type="figure">Figure 9</ref> the desired solver-aided functionality. This is how two of the case studies presented in Section 4 were developed.</p><p>The R 0 semantics also captures an important design de- cision behind ROSETTE: it admits only encodings of finite executions to formulas. This can be seen from rules for Solve and Verify. But unlike other symbolic execution systems that are based on bounded reasoning (e.g., <ref type="bibr" target="#b7">[8,</ref><ref type="bibr" target="#b10">11,</ref><ref type="bibr" target="#b11">12,</ref><ref type="bibr" target="#b15">16,</ref><ref type="bibr" target="#b31">34,</ref><ref type="bibr" target="#b33">36]</ref>), we do not artificially finitize executions by, e.g., unrolling recursions a finite number of times for two reasons.</p><p>First, many uses of loops and recursion just iterate over either a concrete instance or a symbolic encoding of a data structure, such as a list, a vector, or a struct. For example, our TTL + interpreter ( <ref type="figure" target="#fig_6">Figure 6</ref>) uses recursion to traverse an instance (or a symbolic encoding) of a circuit struct. ROSETTE executes all such loops and recursion precisely- that is, they are executed exactly as many times as needed to fully traverse the given structure. As a result, most loops and recursion in ROSETTE programs are self-finitizing with respect to program state, enabling, for example, synthesis of programs that traverse large heap structures, such as a struct representation of a 2000-node HTML tree (Section 4.1).</p><p>Second, in cases where explicit finitization is required, it is easy to implement in ROSETTE with the help of macros. We therefore leave the control over how this is performed to users, allowing them to define finitization behaviors that are best suited to their problem. For example, <ref type="figure" target="#fig_11">Figure 11</ref> shows a macro that implements a finitized while loop construct, which we used in a toy SDSL version of the Brainfudge language <ref type="bibr" target="#b40">[43]</ref>. The loop can execute at most three times:</p><formula xml:id="formula_19">&gt; (define (upto10 start)</formula><p>(define x start) (while (&lt; x 10) (set! x (+ x 1)))) &gt; (define-symbolic i number?) &gt; (evaluate i (solve (upto10 i))) 8 &gt; (solve (begin (assert <ref type="figure" target="#fig_8">(&lt; i 7)</ref>) (upto10 i))) solve error: no satisfying execution found 1 (define-syntax-rule (while test body ...  5 ; Returns true if the provided list of strings represents 6 ; a ZPath that connects the given source and sink 7 ; elements in an HTML tree (e.g., the root of the tree 8 ; and an example input). 9 (define (zpath? zpath source sink) 10 </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">Case Studies</head><p>In this section, we present three solver-aided systems that have been developed with ROSETTE, including a declarative DSL for web scraping; a spatial programming model for ultra low-power architectures; and a superoptimizer for bitvector programs. Two of these systems have been developed by undergraduates and first-year graduate students with no prior experience with using ROSETTE. We observe that ROSETTE's embedding in a fully-featured programming language, as well as its lightweight approach to symbolic reasoning, make it possible to quickly prototype solver-aided systems that are both immediately usable and sufficiently scalable. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">WebSynth</head><p>WebSynth is a solver-aided system for example-based web scraping. The problem of retrieving data from HTML files is surprisingly difficult in practice-it is usually solved by writing custom scripts or regular expressions, which must be manually revised whenever the target page changes. The problem is compounded when many slightly different scripts have to be maintained in order to scrape data from related, but separately coded and maintained web sites (e.g., to collate meeting schedules for organizations with many independent chapters, such as Alcoholics Anonymous). WebSynth takes a more robust, solver-aided approach to the scraping problem. Given an HTML file and one or more representative examples of data that should be retrieved, the system synthesizes a single ZPath expression that can be used to retrieve all of the example data. ZPaths are expressions in the ZPath language, which is a declarative DSL based on XPath <ref type="bibr" target="#b39">[42]</ref>. Expressions in the language specify how to traverse the HTML tree to retrieve the desired data, and the retrieval is performed by the ZPath interpreter. For example, the ZPath "/html/body/div/" selects all top-level DIV elements in an HTML tree. ZPath nodes can also include indices that enable selection of a particular child of a node in the path.</p><p>Because ZPaths are generated automatically by the solver, it is easy to maintain them-if the tree structure of the target page changes, the synthesizer is re-executed to produce a new script. In fact, during the development of WebSynth, one of its benchmark pages <ref type="bibr">[19]</ref> was restructured, and the system was able to generate another scraper for it in seconds.</p><p>The WebSynth system was developed by two undergradu- ate students in just a few weeks. They first implemented their ZPath interpreter and a DOM data structure for representing HTML trees in Racket. <ref type="figure" target="#fig_0">Figure 12</ref> shows an excerpt from this implementation. ZPaths are modeled as lists of string tokens (such as "html" or "div <ref type="bibr">[0]</ref>"), and a DOM node is a struct with fields for storing the node's HTML tag and children. The interpreter simply checks that a given list of strings forms a ZPath between two elements in the HTML tree-for ex- ample, the root of the tree and a string to be scraped. This initial prototype enabled the students to test the system by providing concrete ZPaths to the interpreter and checking that they retrieved the desired data, e.g., the top 100 song names from Apple's iTunes Charts <ref type="bibr">[19]</ref>.</p><p>The next step was to turn the ZPath interpreter into a synthesizer using ROSETTE. This involved changing the implementation language from Racket to ROSETTE; making ZPaths symbolic by letting each element of a ZPath list be a fresh symbolic value; 5 and asserting that the example data is retrieved by running the interpreter on the symbolic ZPath. <ref type="figure" target="#fig_3">Figure 13</ref> shows a sample HTML page; the ZPath program generated for this page and the example input "World"; and the result of executing the program in ROSETTE.</p><p>The system handles multiple input examples by extending the one-input case as follows. For each input example i, we create a symbolic ZPath zp i that scrapes just i (see lines 13-14 in <ref type="figure" target="#fig_3">Figure 13a</ref>). Then, we create a symbolic mask -expressed as a nested list of symbolic booleans-that can be applied to the individual zp i 's to compute a generalized ZPath that scrapes all the given data. For example, to scrape both "Hello" and "World" from the page in <ref type="figure" target="#fig_3">Figure 13</ref>, the system replaces the last three lines of our ZPath program with the following code (as well as the code that creates the zp i 's and the mask ):</p><p>(define model (solve (begin (assert (zpath? zp0 dom "World")) (assert (zpath? zp1 dom "Hello")) (assert (generalizes? mask zp0 zp1))))) (generalize (evaluate mask model) (evaluate zp0 model) (evaluate zp1 model))</p><p>WebSynth can synthesize ZPaths for real websites, with DOMs that consist of thousands of nodes, in a few seconds. <ref type="table">Table 1</ref> shows the performance data we obtained by applying WebSynth to three example web pages: iTunes Top 100 Songs <ref type="bibr">[19]</ref>; IMDb Top 250 Movies <ref type="bibr" target="#b17">[18]</ref>; and AlAnon AR Meetings <ref type="bibr" target="#b3">[4]</ref>. The second and third column display the size of each page, given as the number of DOM nodes and the depth of the DOM tree. We scraped each page four times, varying the number of input examples. The corresponding rows in the table show the total running time and just the solving time for each set of examples. The solving time includes symbolic execution, compilation to formulas, and the solver's running time. All example sets for a given page correspond to the same generalized ZPath. The IMDb ZPath extracts the titles of the 250 movies listed on the page; the iTunes ZPath extracts the title and the artist for each song; and the AlAnon ZPath extracts the group name, address and city for each  <ref type="table">Table 1</ref>. Performance of WebSynth on 3 sample web pages listed meeting. We performed all experiments on an Intel Core 2 Duo 2.13 GHz processor with 4 GB of memory. This case study shows the advantage of ROSETTE's ap- proach to symbolic evaluation of loops and recursion, which is enabled by aggressive partial evaluation. Rather than im- posing artificial bounds on the length of executions, we allow the structure of the data to guide the execution. In the case of WebSynth, the concrete structure of the DOM tree precisely determines how many times the body of the interpreter in <ref type="figure" target="#fig_0">Figure 12</ref> is executed. As a result, the students were able to turn their concrete interpreter of ZPaths into a scalable synthesizer simply by making the ZPaths symbolic, while keeping the DOM concrete. No special handling of the re- cursion in the interpreter was required, nor did the students have to resort to developing a tricky deterministic algorithm for synthesizing generalized ZPaths that work for multiple, potentially ambiguous input examples. <ref type="bibr" target="#b5">6</ref> </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">A Partitioner for a Spatial Programming Model</head><p>A project in our group focuses on developing a synthesis- aided programming model for GA144, a many-core archi- tecture composed of 144 tiny ultra-low-power processors. Because each core has only 300 words of memory and each word is only 18-bits wide, a program must be partitioned in an unusually fine-grained fashion, including bit-slicing of arithmetic operations-i.e., splitting 32-bit integer opera- tions into two 18-bit operations placed on neighboring cores. Additionally, the cores use a stack-based architecture with a small subset of Forth as its machine language. There are no compilers for either code partitioning or for the generation of optimal stack-based code. To illustrate the magnitude of the programming challenge, we note that an MD5 hash com- putation is partitioned across 10 cores and the machine code sometimes exploits tricks such as intentionally overflowing an 8-word stack.</p><p>We are developing a programming model that (i) parti- tions a single-core program; (ii) routes the communication across the fabric of cores; and (iii) uses superoptimization to generate optimal single-core code. The machine-code super- optimizer is similar to that of Section 4.3. Here, we describe our experience with using ROSETTE to develop the top part of the compilation pipeline.</p><p>To support partitioning, the programming model maps each logical program location (a variable or an array element) onto one of the cores. Integers larger than a machine word are represented as tuples of logical locations, each of which may be mapped onto a different core. Additionally, each operation (such as '+') is mapped onto the core that will execute it.</p><p>The sample code below shows the surface syntax of a program in our imperative spatial programming language. An integer is first defined as a pair of machine integers. A 64-element array of these pairs is then defined and distributed across cores 106 and 6 in such a way that the more significant words of these 64 integers are on core 106, while the lower words are all on core 6. Next, the function sumrotate is distributed across cores 105 and 5, which means that its return value will be computed at these two cores. The keyword @here at the first addition indicates that the addition will execute on the same cores as its containing function-cores 105 and 5. Note that this addition decomposes into two additions of machine words. The second addition is not assigned to specific cores, which means that the synthesizer is free to assign the two component additions onto suitable cores of its choice. In the extreme, the programmer can choose to assign cores to no operations or data, and the synthesizer will map all of them to cores that minimize communication cost of passing data to operations, while ensuring that the data fit into the memory capacity of each core. ...</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8">}</head><p>The core assigned to a program location or an operation can be thought of as their type. The corresponding non- traditional type system computes an abstract communica- tion cost for each inter-core communication that must be performed to evaluate the program. A program type checks if its communication cost is below a certain threshold and when the total amount of locations assigned to a core does not exceed the memory capacity of the core.</p><p>The problem of partitioning a program can be thought of as optimal type inference, i.e., assigning cores to program locations and operations such that the total abstract cost is minimized, subject to the capacity constraints of the cores.</p><p>To implement a synthesizer for this problem, a student first implemented a classic type checker for the partitioning type system. The type checker, designed as an abstract interpreter, traverses the program AST and computes the abstract communication cost given a provided assignment of <ref type="table">Table 2</ref>. Performance of the code partitioning synthesizer for the GA144 imperative spatial programming language cores to locations and operations. It also computes the number of logical locations assigned to each core. A communication cost is charged whenever an argument of an operation lives on a different core than the operation. In the end, the type checker verifies that the total cost is below the threshold and the data fit into each core. This type checker was written in pure Racket and debugged on programs where all data and operations were assigned to cores by the programmer, i.e., there was no core assignment left to synthesize.</p><p>Next, to turn this type checker into a type inferencer (and thus into a partitioning synthesizer), the student did nothing more than to replace the cores previously assigned by the programmer with ROSETTE symbolics, which made these core assignments unknown. Given the same type checker, the query (solve (type-check program)) was then used to compute an assignment of cores that meets the capacity con- straints, while keeping the abstract cost below a given thresh- old. To obtain optimal partitioning, it sufficed to iteratively tighten the bound, performing binary search until a better assignment of cores could not be found.</p><p>We have successfully used this synthesizer to partition the MD5 checksum computation across 10 cores, obtaining op- timal partitionings that differed as we modified the memory capacity of cores. <ref type="table">Table 2</ref> displays the synthesizer's running time on the MD5 function and five other benchmarks. We show, for each benchmark, the number of unknown place- ments of variables and operations; the number of assertions emitted by the type checker; the lines of code in the high- level SDSL program; and the total time taken to synthesize the optimal solution. The most challenging program, requir- ing placement of 14 program elements, was partitioned in about 20 minutes. We consider this an acceptable compilation time considering that a human is likely to take much longer to perform the task.</p><p>This case study pointed out the advantage of ROSETTE's introduction of partial evaluation into symbolic compilation. The access to non-symbolic parts of Racket greatly simplified the development of the synthesizer. Specifically, the AST of the spatial programming model was developed with the Racket object system and the type checker used a Visitor pattern that relied on inheritance. Compiling objects and class hierarchies to constraints is a nontrivial effort and, in fact, neither our symbolic core nor the Sketch synthesizer <ref type="bibr" target="#b31">[34]</ref>   <ref type="figure">Figure 14</ref>. Defining a bit vector program that computes the maximum of two integers support objects and classes. Unable to compile classes to constraints, the student would have to rewrite the type checker to operate on a simpler data structure, e.g., a list-based AST. Additionally, the object-based AST would have to be converted to the list-based tree. Luckily, with ROSETTE, neither the AST nor the type checker had to be modified. The checker's traversal of the object-based AST was partially evaluated away (because the partial evaluation was performed on a given program that was a runtime constant to the partial evaluator), leaving to the symbolic compiler only a residual program that calculated and checked the memory capacities and communication costs as a function of the symbolic cores. Thanks to the partial evaluator, the type checker code did not need to be modified at all and it was converted to an inferences automatically.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3">A Superoptimizer for Bitvector Programs</head><p>We expect that most tools developed with ROSETTE will be able to use its solver-aided facilities-such as solve and synthesize-as a black box. But occasionally, specialized solving facilities may be needed for performance reasons.</p><p>We have used ROSETTE to implement such a facility, in the form of a specialized synthesis algorithm <ref type="bibr" target="#b16">[17]</ref> for superoptimization of bitvector programs. The synthesizer takes as input a reference program and a bag (multi set) of low-level bitwise instructions, each of which can occur (at most) once in the synthesized program. Given these inputs, it finds a permutation of the instructions-and a way to wire the output of one to the input of another- so that the final program is functionally equivalent to the reference implementation. The search for the program is cleverly reduced to a constraint solving problem, so that the resulting encoding is quadratic in the size of the input multi set. A compact encoding of this kind cannot be produced by general-purpose synthesis tools, such as Sketch <ref type="bibr" target="#b31">[34]</ref>, without modifying their hardwired synthesis algorithms.</p><p>We were able to prototype a synthesizer that generates this encoding with fewer than 600 hundred lines of ROSETTE code. The synthesizer is implemented entirely as a user- level library. Its functionality is exposed to clients via a simple macro, which enables succinct specification of the bag of instructions and the reference function. The bit vector implementation is synthesized at macro-expansion time, and becomes available to client code at runtime. It can be used immediately, as well as printed and saved for future use. <ref type="figure">Figure 14</ref> shows an example use of the bit vector synthe- sizer. The define-fragment macro invokes the synthesizer (at expansion time) with the specified correctness checker and library of instructions. In our example, define-fragment is used to create a branch-free bit vector program for finding the maximum of two 32-bit integers. The synthesizer pro- duces an implementation in 6 seconds. The implementation is bound to the variable fast-max, and it can be used like any other Racket function. The define-fragment macro also introduces the identifier fast-max-stx, which is bound to a syntactic representation of the synthesized code: Our synthesizer achieves comparable performance to that reported for the Brahma tool on a set of 25 benchmarks <ref type="bibr" target="#b16">[17]</ref>. <ref type="table" target="#tab_3">Table 3</ref> shows the size of each benchmark, given as the number of lines of code, and the time taken to synthesize it. Unlike Brahma, our implementation times out after an hour on four benchmarks, which we believe is due to the use of a different solver. Nonetheless, this is considerably better than the results reported for other general-purpose synthesizers <ref type="bibr" target="#b16">[17]</ref>. We are currently working on connecting ROSETTE to different backends-a project made relatively easy by the fact that ROSETTE compiles programs to simple formulas over bitvectors and booleans.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.">Related Work</head><p>ROSETTE builds on a rich body of prior work on solver-aided languages <ref type="bibr">[5, 23-25, 27, 31, 34, 35]</ref> and symbolic evalua- tion <ref type="bibr" target="#b7">[8,</ref><ref type="bibr" target="#b9">10,</ref><ref type="bibr" target="#b11">12,</ref><ref type="bibr" target="#b14">15,</ref><ref type="bibr">21,</ref><ref type="bibr" target="#b34">37,</ref><ref type="bibr" target="#b37">40]</ref>. Its language is most closely related to Sketch <ref type="bibr" target="#b31">[34]</ref>, Kaplan <ref type="bibr" target="#b20">[23]</ref>, and Rubicon <ref type="bibr" target="#b24">[27]</ref>. All three are domain-specific languages: Sketch is a small, hand- crafted C-like language; Kaplan is a high level functional language embedded in Scala; and Rubicon is an SDSL em- bedded in Ruby. ROSETTE shares some features of these languages, but it differs from each in two key aspects that enable its use as a host solver-aided language. In particu- lar, ROSETTE supports metaprogramming (inherited from Racket), which enables easy language embedding; and it also supports all basic solver-aided queries, which enables automation of a variety of constructs in a guest SDSL.</p><p>Like Kaplan, ROSETTE is an embedded language that ex- poses symbolic values as first-class constructs. A distinguish- ing feature of Kaplan is its native support for many different types of symbolic values, including sets and maps, which are not supported natively in ROSETTE. Instead, ROSETTE programs build richer symbolic values using a small core lan- guage and a few primitive data types. But because ROSETTE tracks only a few values symbolically, it can afford to provide full symbolic support for its core language, which, like Sketch   <ref type="bibr" target="#b16">[17]</ref> and Rubicon, includes state mutation and reasoning about both branches of a conditional that depends on a symbolic value. Neither of these are supported in Kaplan. Unlike Sketch, ROSETTE provides a rich set of meta- programming facilities, inherited from Racket. The access to these facilities, as well as the access to first-class symbolic values, is particularly important for development of new lan- guage constructs and facilities. This is difficult to do in a stand-alone language like Sketch without modifying its com- piler. In contrast, we have been able to enrich ROSETTE with user-level libraries that implement new kinds of synthesis algorithms <ref type="bibr" target="#b16">[17]</ref> and constructs for specifying rich holes.</p><p>Rubicon's approach to symbolic evaluation implements a solver-aided semantics that is similar to the semantics of R 0 (Section 3). In particular, both R 0 and Rubicon behave like their host languages (Racket and Ruby, respectively) on fully concrete programs. But Rubicon's symbolic extension to its host language is specialized for verification queries, while ROSETTE handles other queries as well.</p><p>ROSETTE's symbolic evaluation is related to that per- formed in other bounded verification tools such as <ref type="bibr" target="#b7">[8,</ref><ref type="bibr" target="#b9">10,</ref><ref type="bibr" target="#b11">12,</ref><ref type="bibr" target="#b14">15,</ref><ref type="bibr">21,</ref><ref type="bibr" target="#b34">37,</ref><ref type="bibr" target="#b37">40]</ref>, and its angelic execution facilities are re- lated to prior work on angelic program repair <ref type="bibr" target="#b25">[28,</ref><ref type="bibr" target="#b26">29,</ref><ref type="bibr" target="#b29">32,</ref><ref type="bibr" target="#b30">33]</ref> and declarative execution <ref type="bibr" target="#b23">[26]</ref>. Unlike these tools, however, ROSETTE does not reason symbolically about complex fea- tures of a large language, relying instead on aggressive partial evaluation. This enhances both its flexibility and scalability, and we have found it to be a powerful way to obtain many of the benefits of solver-aided programming without as much engineering effort.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.">Conclusion</head><p>Solver-aided languages help write programs that invoke run- time oracles, contain holes to be completed by a synthesizer, and include checks of correctness. They also help localize and repair bugs. We describe ROSETTE, an extension to Racket that includes a symbolic compiler for translating solver-aided programs into logical constraints. ROSETTE also maps the result of constraint solving back to the program, which the program can use to update program state, produce an expres- sion, or generate other constraints. The novel advantage of ROSETTE is that it provides a relatively small symbolic core but extends the power of its language by preceding symbolic compilation with partial evaluation, which allows ROSETTE program to use any Racket constructs not compilable to con- straints as long as these constructs are partially evaluated away. This architecture allowed us to construct synthesizers without changing existing interpreters and type checkers, by just making their inputs symbolic.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 2 .</head><label>2</label><figDesc>Figure 2. A shallow embedding of TCL in Racket</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>1</head><label></label><figDesc>#lang s-exp rosette 3 (require rosette/lang/debug rosette/lib/tools/render 4 rosette/lib/meta/meta) 6 (provide (all-defined-out) ! &amp;&amp; || &lt;=&gt; define/debug 7 #%datum #%app #%module-begin #%top-interaction 8 quote (for-syntax #%datum)) 10 (define-syntax-rule (define-circuit (id in ...) expr) 11 (define (id in ...) expr)) 13 (define (dynamic-choose) 14 (define-symbolic * v boolean?) 15 v) 17 (define (symbolic-input spec) 18 (for/list ([i (procedure-arity spec)]) (dynamic-choose)))</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 3 .</head><label>3</label><figDesc>Figure 3. TCL + in ROSETTE</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 4 .Figure 5 .</head><label>45</label><figDesc>Figure 4. A sample program in a tiny transformation language (TTL)</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head></head><label></label><figDesc>) and all 4-input RBCs of depth k ≤ 2: &gt; (define-circuit (RBC a b c d) (Circuit [! &lt;=&gt;] a b c d #:depth 2)) &gt; (verify-transform RAX RBC) verify: no counterexample found</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>1Figure 6 .</head><label>6</label><figDesc>Figure 6. TTL + in ROSETTE</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>&gt;</head><label></label><figDesc>(verify-transform RAX RBC-parity) '(#f #t #f #f) () &gt; (interpret (RBC-parity #f #t #f #f)) #t &gt; (interpret (RAX (RBC-parity #f #t #f #f))) #f &gt; (verify-transform RAX RBC) '(#f #f #f #f) (define-circuit (RBC a b c d) (&lt;=&gt; (! a) (&lt;=&gt; (! a) c))) &gt; (define-circuit (RBC a b c d) (&lt;=&gt; (! a) (&lt;=&gt; (! a) c))) &gt; (interpret (RBC #f #f #f #f)) #f &gt; (interpret (RAX (RBC #f #f #f #f))) #t</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head>Figure 7 .</head><label>7</label><figDesc>Figure 7. Abstract grammar for R 0</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_9"><head>Figure 8 .Figure 9 .</head><label>89</label><figDesc>Figure 8. A grammar of R 0 values (including the literal values v from Figure 7)</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_11"><head>Figure 11 .</head><label>11</label><figDesc>Figure 11. A macro for a finitized while loop</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_12"><head>(Figure 12 .</head><label>12</label><figDesc>Figure 12. The WebSynth ZPath interpreter and DOM</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_13"><head>Figure 13 .</head><label>13</label><figDesc>Figure 13. A sample WebSynth program</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_14"><head>1</head><label></label><figDesc>typedef pair&lt;int,int&gt; myInt; 3 vector&lt;myInt&gt;@{[0:64]=(106,6)} k[64]; 5 myInt@(105,5) sumrotate(myInt@(104,4) buffer, ...) { 6 myInt@here sum = buffer +@here k[i] + message[g]; 7</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_15"><head>1</head><label></label><figDesc>(configure [bitwidth 32]) 3 (define-fragment (fast-max x y) 4 #:ensures (lambda (x y result) (= result (max x y))) 5 #:library (bvlib [{bvneg bvge bvand} 1] [{bvxor} 2]))</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head>Page Nodes Depth Examples Total (sec) Solve (sec)</head><label></label><figDesc></figDesc><table>iTunes 1104 
+10 
+
+2 
+14.0 
+0.4 
+4 
+14.5 
+0.7 
+8 
+15.5 
+1.3 
+16 
+17.5 
+2.3 
+
+IMDb 
+2152 
+20 
+
+2 
+15.1 
+0.5 
+4 
+15.6 
+0.7 
+8 
+16.7 
+1.0 
+16 
+18.7 
+1.6 
+
+AlAnon 2002 
+22 
+
+2 
+15.6 
+.9 
+4 
+17.0 
+1.6 
+8 
+20.0 
+3.1 
+16 
+26.2 
+5.0 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3" validated="false"><head>Table 3 .</head><label>3</label><figDesc></figDesc><table>Performance of ROSETTE's superoptimizer on 25 
+bitvector benchmarks from </table></figure>
+
+			<note place="foot" n="1"> They both also impose additional constraints on circuit structure, which we omit for the purposes of this paper.</note>
+
+			<note place="foot" n="2"> If the predicate is too restrictive-for example, it rejects all values-or if the procedures selected for debugging are not causing the failure, the query will fail with the same assertion error as expr. 3 Recall that the define-symbolic * form creates a stream of fresh constants for each declared variable.</note>
+
+			<note place="foot" n="5"> ROSETTE allows use of symbolic strings that are treated as atomic valuesi.e., they can be compared for equality but are otherwise uninterpreted.</note>
+
+			<note place="foot" n="6"> An example string is ambiguous when it appears in several different DOM nodes, and can therefore be scraped by several different ZPaths.</note>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Acknowledgments</head><p>This research was supported in part by awards from the Department of Energy (DE-SC0005136 and DE-FOA-0000619), National Science Foundation (NSF CCF-0916351 and NSF CCF-1139138), Samsung Electronics, UC Discov-ery, and Intel and Microsoft Awards to the Berkeley Universal Parallel Computing Research Center. We would also like to thank Mangpo Phothilimthana for providing the performance data on her code partitioning synthesizer, and Brandon King and Omar Rehmane for their WebSynth source code and benchmarks.</p></div>
+			</div>
+
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Program</head><p>Unknowns Asserts LOC Time (sec) array <ref type="table">3  77  6  1  for/array  12  607  9  7  for/array/tuple  12  607  9  17  function  12  435  17  2  matrix multiply  8  1079  18  17  md5  14  10940  116  1197  md5  8  6440  116  335</ref> </p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Translating pseudo-boolean constraints into CNF</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Aavani</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Theory and Application of Satisfiability Testing (SAT)</title>
+		<imprint>
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Symbolic reachability analysis based on SAT-solvers</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><forename type="middle">A</forename><surname>Abdulla</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Bjesse</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><surname>Eén</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Tools and Algorithms for Construction and Analysis of Systems (TACAS)</title>
+		<imprint>
+			<date type="published" when="2000" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Aiger</forename><forename type="middle">Fmv</forename><surname>Jku</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Al-Anon Ar</forename><surname>Meetings</surname></persName>
+		</author>
+		<ptr target="www.ar.al-anon.alateen.org/alanonmeetings.htm" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">The Spec# programming system: An overview</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Barnett</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><forename type="middle">R M</forename><surname>Leino</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W</forename><surname>Schulte</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Construction and Analysis of Safe, Secure and Interoperable Smart Devices (CASSIS)</title>
+		<imprint>
+			<date type="published" when="2004" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">ABC: A system for sequential synthesis and verification</title>
+		<ptr target="www.eecs.berkeley.edu/~alanmi/abc/" />
+		<imprint/>
+		<respStmt>
+			<orgName>Berkeley Logic Synthesis and Verification Group</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Angelic debugging</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Chandra</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Torlak</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Barman</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Bodik</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Intl. Conf. on Software Engineering (ICSE)</title>
+		<imprint>
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">A tool for checking ANSI-C programs</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Clarke</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Kroening</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Lerda</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Tools and Algorithms for the Construction and Analysis of Systems (TACAS)</title>
+		<imprint>
+			<date type="published" when="2004" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+		<title level="m" type="main">A relational framework for bounded program verification</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Dennis</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2009" />
+		</imprint>
+		<respStmt>
+			<orgName>Massachusetts Institute of Technology</orgName>
+		</respStmt>
+	</monogr>
+<note type="report_type">PhD thesis</note>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Modular verification of code with SAT</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Dennis</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><forename type="middle">S.-H</forename><surname>Chang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Jackson</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Intl. Symp. on Software Testing and Analysis (ISSTA)</title>
+		<imprint>
+			<date type="published" when="2006" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Modular verification of code with SAT</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Dennis</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><forename type="middle">S.-H</forename><surname>Chang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Jackson</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Intl. Symp. on Software Testing and Analysis (ISSTA)</title>
+		<imprint>
+			<date type="published" when="2006" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Finding bugs efficiently with a SAT solver</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Dolby</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Vaziri</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Tip</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Foundations of Software Engineering (FSE)</title>
+		<imprint>
+			<date type="published" when="2007" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+		<title level="m" type="main">The Calculi of Lambda-v-CS Conversion: A Syntactic Theory of Control and State in Imperative Higher-Order Programming Languages</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Felleisen</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1987" />
+		</imprint>
+		<respStmt>
+			<orgName>Indiana University</orgName>
+		</respStmt>
+	</monogr>
+<note type="report_type">PhD thesis</note>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<monogr>
+		<title level="m" type="main">Semantics Engineering with PLT Redex</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Felleisen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><forename type="middle">B</forename><surname>Findler</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Flatt</surname></persName>
+		</author>
+		<idno>ISBN 0262062755</idno>
+		<imprint>
+			<date type="published" when="2009" />
+			<publisher>The MIT Press</publisher>
+			<biblScope unit="page">9780262062756</biblScope>
+		</imprint>
+	</monogr>
+	<note>1st edition</note>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Analysis of invariants for efficient bounded verification</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Galeotti</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><surname>Rosner</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Pombo</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Frias</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Intl. Symp. on Software Testing and Analysis (ISSTA)</title>
+		<imprint>
+			<date type="published" when="2010" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<monogr>
+		<title level="m" type="main">Software Verification Using Alloy</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">P</forename><surname>Galeotti</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2010" />
+		</imprint>
+		<respStmt>
+			<orgName>University of Buenos Aires</orgName>
+		</respStmt>
+	</monogr>
+<note type="report_type">PhD thesis</note>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Synthesis of loop-free programs</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Gulwani</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Jha</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Tiwari</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Venkatesan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Programming Language Design and Implementation (PLDI)</title>
+		<imprint>
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<monogr>
+		<title level="m" type="main">IMDb Top 250 movies</title>
+		<ptr target="www.imdb.com/chart/top" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Clause form conversions for boolean circuits</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Jackson</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Sheridan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Theory and Application of Satisfiability Testing (SAT)</title>
+		<imprint>
+			<date type="published" when="2005" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Bug-Assist: assisting fault localization in ansi-c programs</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Jose</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Majumdar</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Computer Aided Verification (CAV) verification</title>
+		<imprint>
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Constraints as control</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">S</forename><surname>Köksal</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Kuncak</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Suter</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Principles of Programming Languages (POPL)</title>
+		<imprint>
+			<date type="published" when="2012" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Dafny: an automatic program verifier for functional correctness</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><forename type="middle">R M</forename><surname>Leino</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Logic for Programming, Artificial Intelligence, and Reasoning (LPAR)</title>
+		<imprint>
+			<date type="published" when="2010" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">A polymorphic intermediate verification language: Design and logical encoding</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><forename type="middle">R M</forename><surname>Leino</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Rümmer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Tools and Algorithms for the Construction and Analysis of Systems (TACAS)</title>
+		<imprint>
+			<date type="published" when="2010" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<monogr>
+		<title level="m" type="main">Executable specifications for Java programs</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Milicevic</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2010" />
+		</imprint>
+		<respStmt>
+			<orgName>Massachusetts Institute of Technology</orgName>
+		</respStmt>
+	</monogr>
+	<note>Master&apos;s thesis</note>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Rubicon: bounded verification of web applications</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">P</forename><surname>Near</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Jackson</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Foundations of Software Engineering (FSE)</title>
+		<imprint>
+			<date type="published" when="2012" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Contract-based data structure repair using Alloy</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Nokhbeh</forename><surname>Zaeem</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Khurshid</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">European Conf. on ObjectOriented Programming (ECOOP)</title>
+		<imprint>
+			<date type="published" when="2010" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">History-aware data structure repair using SAT</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Nokhbeh Zaeem</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Gopinath</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Khurshid</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><forename type="middle">S</forename><surname>Mckinley</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Tools and Algorithms for the Construction and Analysis of Systems (TACAS)</title>
+		<imprint>
+			<date type="published" when="2012" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<monogr>
+		<title level="m" type="main">An operational semantics for Scheme. SIGPLAN Lisp Pointers</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">D</forename></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1992" />
+			<biblScope unit="page" from="6" to="10" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">Specification-based sketching with Sketch#</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Samimi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Rajan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Workshop on Formal Techniques for Java-Like Programs (FTfJP)</title>
+		<imprint>
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">Falling back on executable specifications</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Samimi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><forename type="middle">D</forename><surname>Aung</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Millstein</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">European Conf. on ObjectOriented Programming (ECOOP)</title>
+		<imprint>
+			<date type="published" when="2010" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">Symbolic execution of Alloy models</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">H</forename><surname>Siddiqui</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Khurshid</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Intl. Conf. on Formal Methods and Software Engineering (ICFEM)</title>
+		<imprint>
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">Combinatorial sketching for finite programs</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Solar-Lezama</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Tancau</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Bodik</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Saraswat</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><forename type="middle">A</forename><surname>Seshia</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Architectural Support for Programming Languages and Operating Systems (ASPLOS)</title>
+		<imprint>
+			<date type="published" when="2006" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">Satisfiability modulo recursive programs</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Suter</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">S</forename><surname>Köksal</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Kuncak</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Static Analysis Symp. (SAS)</title>
+		<imprint>
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<monogr>
+		<title level="m" type="main">Automating Modular Program Verification by Refining Specifications</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Taghdiri</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2007" />
+		</imprint>
+		<respStmt>
+			<orgName>Massachusetts Institute of Technology</orgName>
+		</respStmt>
+	</monogr>
+<note type="report_type">PhD thesis</note>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<monogr>
+		<title level="m" type="main">Automating Modular Program Verification by Refining Specifications</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Taghdiri</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2007" />
+		</imprint>
+		<respStmt>
+			<orgName>Massachusetts Institute of Technology</orgName>
+		</respStmt>
+	</monogr>
+<note type="report_type">PhD thesis</note>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">Generating compiler optimizations from proofs</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Tate</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Stepp</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Lerner</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Principles of Programming Languages (POPL)</title>
+		<imprint>
+			<date type="published" when="2010" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<monogr>
+		<title level="m" type="main">The Racket Programming Language. racket-lang.org</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">MemSAT: checking axiomatic specifications of memory models</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Torlak</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Vaziri</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Dolby</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Programming Language Design and Implementation (PLDI)</title>
+		<imprint>
+			<date type="published" when="2010" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">Automatic program repair with evolutionary computation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W</forename><surname>Weimer</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Forrest</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><forename type="middle">L</forename><surname>Goues</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Nguyen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Commun. ACM</title>
+		<imprint>
+			<biblScope unit="volume">53</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="109" to="116" />
+			<date type="published" when="2010" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Xpath</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Xml Path Language</surname></persName>
+		</author>
+		<ptr target="www.w3.org/TR/xpath/" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<monogr>
+		<title level="m" type="main">Fudging up Racket. hashcollision.org/ brainfudge</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Yoo</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>
+

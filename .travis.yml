@@ -1,6 +1,6 @@
 language: python
 python:
-  - "2.7"
+  - "3.6"
 install:
   - pip install -r ./uploads/requirements/requirements_dev.txt
 notifications:
@@ -11,4 +11,4 @@ before_script:
   - psql -c "CREATE DATABASE travisci;" -U postgres
 script:
   - python manage.py migrate
-  - python manage.py test
+  - python manage.py test uploads/tests/

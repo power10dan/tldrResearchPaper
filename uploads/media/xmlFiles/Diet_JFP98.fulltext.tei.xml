@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/doyougnu/tmp/grobid-grobid-parent-0.4.4/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="pt">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.4.5-dummy" ident="GROBID" when="2017-11-01T17:53+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main"></title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>¢ ¡ ¤ £ ¦ ¥ ¨ § © § &quot; ! $ # % &apos; &amp; # ( 0 ) 1 ) 2 3 § ¨ &amp; 5 4 7 6 9 8 A @ B 8 D C ¨ E F E G E I H ¨ P Q G R ¢ S I Q G T 9 U V 8 X W G W F Y a ` b c 8 W G W G Y 1 d e Q G f 2 g I T 9 h p i I q G r $ s t R I h p u G r T ( v 9 h p w x U 2 y  T 9 r X v 9 v   © õ  õ Ù õ ÷ ¹ µ &quot; ¶ X × Á ½ 5 Å  ¹ µ  ½ ² ¿ X Û Á º ¾ ¨ ½ I ¿ Ä ¸ AE ¶ ¿ X ¾ G ¾ þ e ¿ ¾ G º X » e ¾ G Ä G ¶ ¹  Ü ¦ ¾ G Þ Û ¤ þ ¹ µ &quot; ¶ X × ê ½ 5 Â  ¹ º Ä G ¿ X ¾ G ¶ ¾  ¹ µ &quot; ¶ X ¾ G ¿ Ü ½ I Þ e ¾ G µ  Ä G × &quot; Â  ¹ µ  Ø ¼ ¶ ¿ X ¾ G ¾  ¿ ¾ G º X Ú Ù Þ  ¶ º V ¹ µ Á ¶ X ¸ Ù ¾  ¶ X ¿ ¾ G ¾ 7 º X ¶ X ¿ Ú  Ä G ¶ Ú  ¿ X ¾ G º 7 º ¸  × I À V µ ß ¹  µ ß ý ¯ ¹  Ø ¦ Ú  ¿ X ¾  á ! ! © á ¤ AE Ñ ¦ Ì G Î 9 É x Ï ¢ ¡ V Ì ¤ £ É 3 Ô © AE Ñ ¦ Ì G Î 9 É x Ï</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="pt">
+		<body>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>
+

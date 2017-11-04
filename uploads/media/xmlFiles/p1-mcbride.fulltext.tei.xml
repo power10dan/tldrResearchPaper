@@ -1,0 +1,584 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/doyougnu/tmp/grobid-grobid-parent-0.4.4/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.4.5-dummy" ident="GROBID" when="2017-11-01T17:54+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Functional Pearl: I am not a Number-I am a Free Variable</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Conor</forename><surname>Mcbride</surname></persName>
+							<email>c.t.mcbride@durham.ac.uk</email>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Department of Computer Science</orgName>
+								<orgName type="department" key="dep2">School of Computer Science</orgName>
+								<orgName type="institution">University of Durham South Road</orgName>
+								<address>
+									<postCode>DH1 3LE</postCode>
+									<settlement>Durham</settlement>
+									<country key="GB">England</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">James</forename><surname>Mckinna</surname></persName>
+							<email>james.mckinna@st-andrews.ac.uk</email>
+							<affiliation key="aff1">
+								<orgName type="institution">University of St Andrews North Haugh</orgName>
+								<address>
+									<addrLine>St Andrews</addrLine>
+									<postCode>KY16 9SS</postCode>
+									<country key="GB">Scotland</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Functional Pearl: I am not a Number-I am a Free Variable</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>Permission to make digital or hard copies of all or part of this work for personal or classroom use is granted without fee provided that copies are not made or distributed for profit or commercial advantage and that copies bear this notice and the full citation on the first page. To copy otherwise, to republish, to post on servers or to redistribute to lists, requires prior specific permission and/or a fee. Haskell&apos;04, September 22, 2004, Snowbird, Utah, USA. Copyright 2004 ACM 1-58113-850-4/04/0009 ...$5.00</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>I11 [Symbolic and Algebraic Manipulation]: Expressions and Their Representation; D11 [Programming Techniques]: Ap-plicative (Functional) Programming General Terms Languages</term>
+					<term>Design</term>
+					<term>Reliability</term>
+					<term>Theory Keywords Abstract syntax</term>
+					<term>bound variables</term>
+					<term>de Bruijn representation</term>
+					<term>free variables</term>
+					<term>fresh names</term>
+					<term>Haskell</term>
+					<term>implementing Epigram</term>
+					<term>induction principles</term>
+				</keywords>
+			</textClass>
+			<abstract>
+				<p>In this paper, we show how to manipulate syntax with binding using a mixed representation of names for free variables (with respect to the task in hand) and de Bruijn indices [5] for bound variables. By doing so, we retain the advantages of both representations: naming supports easy, arithmetic-free manipulation of terms; de Bruijn indices eliminate the need for α-conversion. Further, we have ensured that not only the user but also the implementation need never deal with de Bruijn indices, except within key basic operations. Moreover, we give a hierarchical representation for names which naturally reflects the structure of the operations we implement. Name choice is safe and straightforward. Our technology combines easily with an approach to syntax manipulation inspired by Huet&apos;s &apos;zippers&apos;[10]. Without the ideas in this paper, we would have struggled to implement EPIGRAM [19]. Our example-constructing inductive elimination operators for datatype families-is but one of many where it proves invaluable.</p>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>This paper is about our everyday craft. It concerns, in particu- lar, naming in the implementation of systems which manipulate syntax-with-binding. The problems we address here are not so much concerned with computations within such syntaxes as con- structions over them. For example, given the declaration of an in- ductive datatype (by declaring the types of its constructors), how might one construct its induction principle?</p><p>We encounter such issues all the time in the implementation of EPI- GRAM <ref type="bibr" target="#b18">[19]</ref>. But even as we develop new technology to support programming and reasoning in advanced type systems, but we must handle the issues they raise effectively with today's technology. We work in Haskell and so do our students. When they ask us what to read in order to learn their trade, we tend to look blank and feel guilty. We want to do something about that.</p><p>Let's look at the example of constructing an induction principle for a datatype. Suppose someone declares data Nat = Zero | Suc Nat</p><p>We should like to synthesize some statement corresponding to ∀P ∈ Nat → Prop. P Zero → (∀k ∈ Nat. P k → P (Suc k)) → ∀n ∈ Nat. P n In a theoretical presentation, we need not concern ourselves too much about where these names come from, and we can always choose them so that the sense is clear. In a practical implemen- tation, we have to be more cautious-the user (innocently or other- wise) may decide to declare data Nat = Zero | P Nat or even data P = Zero | Suc P We'll have to be careful not to end up with such nonsense as ∀P ∈ Nat → Prop. P Zero → (∀k ∈ Nat. P k → P (P k)) → ∀n ∈ Nat. P n or ∀P ∈ P → Prop.</p><p>P Zero → (∀k ∈ P. P k → P (Suc k)) → ∀n ∈ P. P n Fear of shadows may seem trivial, but it's no joke-some real sys- tems have this bug, although it would be invidious to name names.</p><p>Possible alternative strategies include the adoption of one of de Bruijn's systems of nameless dummies <ref type="bibr" target="#b4">[5]</ref> for the local quantifiers, either counting binders (including →, which we take to abbreviate ∀ where the bound variable isn't used) from the reference outward- de Bruijn indices, It's unfair to object that terms in de Bruijn syntax are unfit for hu- man consumption-they are not intended to be. Their main benefits lie in their uniform delivery of capture-avoiding substitution and their systematic resolution of α-equivalence. Our enemies can't choose bad names in order to make trouble.</p><formula xml:id="formula_0">∀</formula><p>However, we do recommend that anyone planning to use de Bruijn syntax for systematic constructions like the above should think again. Performing constructions in either of these systems requires a lot of arithmetic. This obscures the idea being implemented, re- sults in unreadable, unreliable, unmaintainable code, and is besides hard work. We, or rather our programs, can't choose good names in order to make sense.</p><p>A mixed representation of names provides a remedy. In this paper, we name free variables (ie, variables bound in the context) so that we can refer to them and rearrange them without the need to count; we give bound variables de Bruijn indices to ensure a canonical means of reference where there's no 'social agreement' on a name.</p><p>The distinction between established linguistic signs, connecting a signifiant (or 'signifier') with its signifié (or 'signified'), and local signs, where the particular choice of signifier is arbitrary was ob- served in the context of natural language by Saussure <ref type="bibr" target="#b5">[6]</ref>. In formal languages, the idea of distinguishing free and bound variables syn- tactically is also far from new. It's a recurrent idiom in the work of Gentzen <ref type="bibr" target="#b7">[8]</ref>, <ref type="bibr">Kleene [14]</ref> and Prawitz <ref type="bibr" target="#b23">[24]</ref>. The second author learned it from Randy Pollack who learned it in turn from Thierry Coquand <ref type="bibr" target="#b3">[4]</ref>; the first author learned it from the second.</p><p>The idea of using free names and bound indices is not new either- it's a common representation in interactive proof systems. This also comes to the authors from Randy Pollack <ref type="bibr" target="#b22">[23]</ref> who cites the influ- ence of Gérard Huet in the Constructive Engine <ref type="bibr" target="#b8">[9]</ref>. Here 'free' means 'bound globally in the context' and 'bound' means 'bound locally in the goal'. The distinction is allied to the human user's perspective-the user proves an implication by introducing the hy- pothesis to the context, naming it H for easy reference, although other names are, we hear, permitted. By doing so, the user shifts perspective to one which is locally more convenient, even though the resulting proof is intended to apply regardless of naming.</p><p>What's new in this paper is the use of similar perspective shifts to support the use of convenient naming in constructions where the 'user' is itself a program. These shifts are similar in charac- ter to those used by the second author (with Randy Pollack) when formalizing Pure Type Systems <ref type="bibr" target="#b19">[20,</ref><ref type="bibr" target="#b20">21]</ref>, although in that work, bound variables are distinguished from free variables but nonethe- less named. We draw on the Huet's 'zipper' technique <ref type="bibr" target="#b9">[10]</ref> to help us write programs which navigate and modify the structure of terms. Huet equips syntax with an auxiliary datatype of struc- tural contexts. In our variation on his theme, we require naming as we navigate under binders to ensure that a structural context is also a linguistic context. In effect, whoever 'I' may be, if I am involved in the discourse, then I am not a number-I am a free variable.</p><p>With many agents now engaged in the business of naming, we need a representation of names which readily supports the separation of namespaces between mechanical construction agents which call each other and indeed themselves. We adopt a hierarchical nam- ing system which permits multiple agents to choose multiple fresh names in a notionally asynchronous manner, without fear of clash- ing. Our design choice is unremarkable in the light of how humans address similar issues in the design of large computer systems. Both the ends and the means of exploiting names in human discourse be- come no less pertinent when the discourse is mechanical.</p><p>As the above example may suggest, we develop our techniques in this paper for a fragment of a relational logic, featuring variables, application, and universal quantification. It can also be seen as a non-computational fragment of a dependent type theory. We've de- liberately avoided a computational language in order to keep the fo- cus on construction, but you can-and every day we do-certainly apply the same ideas to λ-calculi.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Overview</head><p>In section 2 of this paper, we give the underlying data representa- tion for our example syntax and develop the key operations which manipulate bound variables-only here do we perform arithmetic on de Bruijn indices, and that is limited to tracking the outermost index as we recurse under binders.</p><p>Section 3 shows the development of our basic construction and analysis operators for the syntax, and discusses navigation within expressions in the style of Huet <ref type="bibr" target="#b9">[10]</ref>. Section 4 introduces our hi- erarchical technique for naming free variables in harmony with the call-hierarchy of agents which manipulate syntax.</p><p>These components come together in Section 5, where we assemble a high-level toolkit for constructions over our syntax. Section 6 puts this toolkit to work in a non-trivial example: the construction of induction principles for EPIGRAM's datatype families <ref type="bibr" target="#b6">[7,</ref><ref type="bibr" target="#b14">15,</ref><ref type="bibr" target="#b18">19]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">An Example Syntax</head><p>Today, let us have variables, application, and universal quantifica- tion. We choose an entirely first-order presentation: 1 infixl 9 :$ infixr 6 :→ data Expr = F Name -free variables | B Int -bound variables | Expr :$ Expr -application | Expr :→ Scope -∀-quantification deriving <ref type="bibr">(Show, Eq)</ref> newtype Scope = Scope Expr deriving (Show, Eq)</p><p>We shall define Name later-for now, let us at least presume that it supports the (==) test. Observe that expressions over a common context of free Names can meaningfully be compared with the or- dinary (==) test-α-conversion is not an issue.</p><p>Some readers may be familiar with the use of nested datatypes and polymorphic recursion to enforce scope constraints precisely if you parametrize expressions by names <ref type="bibr" target="#b1">[2,</ref><ref type="bibr" target="#b2">3]</ref>. Indeed, with a depen- dently typed meta-language it's not so hard to enforce both scope and type for an object-language <ref type="bibr" target="#b0">[1]</ref>. These advanced type systems can and should be used to give more precise types to the programs in this paper, but they would serve here only to distract readers not yet habituated to those systems from the implementation techniques which we seek to communicate here.</p><p>Nonetheless, we do introduce a cosmetic type distinction to help us remember that the scope of a binder must be interpreted differ- ently. The Scope type stands in lieu of the precise 'term over one more variable' construction. For the most part, we shall pretend that Expr is the type of closed expressions-those with no 'dan- gling' bound variables pointing out of scope, and that Scope has one dangling bound variable, called B 0 at the top level. In order to support this pretence, however, we must first develop the key utili- ties which trade between free and bound variables, providing a high level interface to Scope. We shall have abstract :: Name → Expr → Scope instantiate :: Expr → Scope → Expr</p><p>The operation abstract name turns a closed expression into a scope by turning name into B 0. Of course, as we push this operation un- der a binder, the correct index for name shifts along by one. That is, the image of name is always the outer de Bruijn index, hence we implement abstract via a helper function which tracks this value. Observe that the existing bound variables within expr's Scopes re- main untouched. Meanwhile, instantiate image turns a scope into an expression by replacing the outer de Bruijn index (initially B 0) with image, which we presume is closed. Of course, F name is closed, so we can use instantiate (F name) to invert abstract name. Note that the choice of an unsophisticated de Bruijn indexed repre- sentation allows us to re-use the closed expression image, however many bound variables have become available when it is being ref- erenced.</p><p>It is perfectly reasonable to develop these operations for other rep- resentations of bound variables, just as long as they're still kept sep- arate from the free variables. A de Bruijn level representation still has the benefit of canonical name-choice and cheap α-equivalence, but it does mean that image must be shifted one level when we push it under a binder. Moreover, if we were willing to pay for α-equivalence and fresh-name generation for bound variables, we could even use names, modifying the definition of Scope to pack them up. We feel that, whether or not you want to know the names of bound variables, it's better to arrange things so you don't have to care about the names of bound variables.</p><p>Those with an eye for a generalization will have spotted that both abstract and instantiate can be expressed as instances of a single general-purpose higher-order substitution operation, parametrized by arbitrary operations on free and bound variables, themselves parametrized by outer.</p><formula xml:id="formula_1">varChanger :: (Int → Name → Expr) → (Int → Int → Expr) → Expr → Expr</formula><p>We might well do this in practice, to reduce the 'boilerplate' code required by the separate first-order definitions. However, this oper- ation is unsafe in the wrong hands.</p><p>Another potential optimization, given that we often iterate these operations, is to generalize abstract, so that it turns a sequence of names into dangling indices, and correspondingly instantiate, replacing dangling indices with a sequence of closed expressions.</p><p>We leave this as an exercise for the reader.</p><p>From now on, outside of these operations, we maintain the invariant that Expr is only used for closed expressions and that Scopes have just one dangling index. The data constructors B and Sc have served their purpose-we forbid any further use of them. From now on, there are no de Bruijn numbers, only free variables.</p><p>It's trivial to define substitution for closed expressions using abstract and instantiate (naturally, this also admits a less succinct, more efficient implementation):</p><formula xml:id="formula_2">substitute :: Expr → Name → Expr → Expr substitute image name = instantiate image · abstract name</formula><p>Next, let us see how instantiate and abstract enable us to navigate under binders and back out again, without ever directly encounter- ing a de Bruijn index.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Basic Analysis and Construction Operators</head><p>We may readily define operators which attempt to analyse expres- sions, safely combining selection (testing which constructor is at the head) with projection (extracting subexpressions). Haskell's support for monads gives us a convenient means to handle failure when the 'wrong' constructor is present. Inverting ( :$ ) is straight- forward:</p><formula xml:id="formula_3">unapply :: MonadPlus m ⇒ Expr → m (Expr, Expr) unapply (fun :$ arg) = return (fun, arg) unapply = mzero</formula><p>For our quantifier, however, we combine structural decomposition with the naming of the bound variable. Rather than splitting a quan- tified expression into a domain and a Scope, we shall extract a bind- ing and the closed Expr representing the range. We introduce a spe- cial type of pairs which happen to be bindings, rather than using ordinary tuples, just to make the appearance of programs suitably suggestive. We equip Binding with some useful coercions. Now we can develop a 'smart constructor' which introduces a uni- versal quantifier by discharging a binding, and its monadically lifted inverter:</p><formula xml:id="formula_4">infixr 6 −→ (−→) :: Binding → Expr → Expr (name :∈ dom) −→ range = dom :→ abstract name range infix ←− (←−) :: MonadPlus m ⇒ Name → Expr → m (Binding, Expr) name ←− (dom :→ scope) = return (name :∈ dom, instantiate (F name) scope) name ←− = mzero</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Inspiration-the 'Zipper'</head><p>We can give an account of one-hole contexts in the style of Huet's 'zippers' <ref type="bibr" target="#b9">[10]</ref>. A Zipper is a stack, storing the information required to reconstruct an expression tree from a particular subexpression at each step on the path back to the root. The operations defined above allow us to develop the corresponding one-step manoeuvres uniformly over the type (Zipper, Expr).  <ref type="bibr" target="#b15">[16]</ref> this way, before the second author caught him at it.</p><p>The zipper construction provides a general-purpose presentation of navigation within expressions-that's a strength when we need to cope with navigation choices made by an external agency, such as the user of a structure editor. However, it's a weakness when we wish to support more focused editing strategies. In what follows, we'll be working not with the zipper itself, but with specific sub- types of it, representing particular kinds of one-hole context, such as 'quantifier prefix' or 'argument sequence'. Correspondingly, the operations we develop should be seen as specializations of Huet's.</p><p>But hold on a moment! Before we can develop more systematic editing tools, we must address the fact that navigating under a binder requires the supply of a Name. Where is this name to come from? How is it to be represented? What has the former to do with the latter? Let's now consider naming.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">On Naming</head><p>It's not unusual to find names represented as elements of String. However, for our purposes, that won't do. String does not have enough structure to reflect the way names get chosen. Choosing distinct names is easy if you're the only person doing it, because you can do it deliberately. However, if there is more than one agent choosing names, we encounter the possibility that their choices will overlap by accident.</p><p>The machine must avoid choosing names already reserved by the user, whether or not those names have yet appeared. Moreover, as our programs decompose tasks into subtasks, we must avoid nam- ing conflicts between the subprograms which address them. Indeed, we must avoid naming conflicts arising from different appeals to the same subprogram.</p><p>How do we achieve this? One way is to introduce a global symbol generator, mangling names to ensure they are globally unique; an- other approach requires a global counter, incremented each time a name is chosen. This state-based approach fills names with mean- ingless numbers, and it unnecessarily sequentializes the execution of operations-a process cannot begin to generate names until its predecessors have finished doing so.</p><p>Our approach is familiar from the context of module systems or object-oriented programming. We control the anarchy of naming by introducing hierarchical names.</p><p>type Name = Stack (String, Int)</p><p>We can use hierarchical names to reflect the hierarchy of tasks. We ensure that each subtask has a distinct prefix from which to form its names by extension. This directly rules out the possibility that different subtasks might choose the same name by accident and al- lows them to choose fresh names asynchronously. The remaining obligation-to ensure that each subtask makes distinct choices for the names under its own control-is easily discharged.</p><p>Superiority within the hierarchy of names is just the partial order induced by 'being a prefix':</p><formula xml:id="formula_5">xs (xs &lt; + ys)</formula><p>infixl 4 &lt; + ( &lt; + ) :: Stack x → Stack x → Stack x xs &lt; + Empty = xs xs &lt; + (ys :&lt; y) = xs &lt; + ys :&lt; y</p><p>We say that two names are independent, xs ⊥ ys, if neither xs ys nor ys xs. Two independent names must differ at some leftmost point in the stack: whatever extensions we make of them, they will still differ at that point in the stack.</p><p>xs ⊥ ys → (xs &lt; + xs ) ⊥ (ys &lt; + ys )</p><p>In order to work correctly with hierarchical names, the remaining idea we need is to name the agents which carry out the tasks, as well as the free variables. Each agent must choose independent names not only for the free variables it creates, but also for the sub-agents it calls: this is readily accomplished by ensuring that every agent only ever chooses names which strictly and independently extend its own 'root' name. This ensures that the naming hierarchy of reflects the call-hierarchy of agents.</p><formula xml:id="formula_6">root                                             </formula><p>root's variables: root :&lt; ("x", 0), ..., root :&lt; ("x", m), root :&lt; ("y", 0), ..., root :&lt; ("y", n), ... root's agents:</p><formula xml:id="formula_7">root :&lt; ("a", 0)     </formula><p>(root :&lt; ("a", 0))'s variables: root :&lt; ("a", 0) :&lt; ("x", 0), ... (root :&lt; ("a", 0))'s agents: root :&lt; ("a", 0) :&lt; ("a", 0), ... . . .</p><formula xml:id="formula_8">root :&lt; ("a", k)     </formula><p>(root :&lt; ("a", k))'s variables: root :&lt; ("a", k) :&lt; ("x", 0), ... (root :&lt; ("a", k))'s agents: root :&lt; ("a", k) :&lt; <ref type="figure">("a", 0)</ref>, ...</p><p>Note the convenience of (String, Int) as the type of name elements. The Strings give us legibility; the Ints an easy way to express uni- form sequences of distinct name-extensions x 0 ,...x n . Two little helpers will make simple names easier to construct: Our scheme of naming thus localizes choice of fresh names, mak- ing it easy to manage, even in recursive constructions. We only need a global name generator when printing de Bruijn syntax in user-legible form, and even then only to provide names which cor- respond closely to those for which the user has indicated a prefer- ence.</p><p>We shall develop our operations in the form of agencies.</p><formula xml:id="formula_9">type Agency agentT = Name → agentT</formula><p>That is an Agency agentT takes a 'root' name to an agent of type agentT with that name.</p><p>You've already seen an agency-the under-binding navigator, which may be retyped</p><formula xml:id="formula_10">infix ←− (←−) :: MonadPlus m ⇒ Agency (Expr → m (Binding, Expr))</formula><p>That is, (root ←−) is the agent which binds root by decomposing a quantifier. Note that here the agent which creates the binding shares its name: the variable means 'the thing made by the agent', so this arrangement is quite convenient. It fits directly with our standard practice of using 'metavariables' to stand for the unknown parts of a construction, each associated with an agent trying to deduce its value.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">A Higher-Level Construction Kit</head><p>Let's now build higher-level tools for composing and decompos- ing expressions. Firstly, we'll have equipment for working with a quantifier prefix, rather than individual bindings-here is the oper- ator which discharges a prefix over an expression, iterating −→.</p><p>type Prefix = Stack Binding</p><formula xml:id="formula_11">infixr 6 → → ( → → ) :: Prefix → Expr → Expr Empty → → expr = expr (binds :&lt; bind) → → range = binds → → bind −→ range</formula><p>The corresponding destructor is an agency. Given a root and a string x, it delivers a quantifier prefix with names of the form root :&lt; (x, i) where the 'subscript' i is numbered from 1: Note that intro specifically exploits the Maybe instance of the monadically lifted binding agency (←−).</p><p>If root is independent of all the names in expr-which it will be, if we maintain our hierarchical discipline-and</p><p>unprefix root x expr = (binds, range)</p><p>then range is unquantified and expr = binds → → range.</p><p>A little example will show how these tools are used. Suppose we wish to implement the weakening agency, which inserts a new hy- pothesis y with a given domain into a quantified expression after all the old ones (x 1 ,...,x n ). Here's how we do it safely and with names, not arithmetic.</p><p>weaken :: Agency (Expr → Expr → Expr) weaken root dom expr = xdoms → → (root // "y" :∈ dom) −→ range where (xdoms, range) = unprefix root "x" expr</p><p>As ever, the independence of the root supplied to the agency is enough to ensure the freshness of the names chosen locally by the agent.</p><p>We shall also need to build and decompose applications in terms of argument sequences, represented via <ref type="bibr">[Expr]</ref>. First, we iterate :$ , yielding $$ . Meaningful formulae in this particular language of expressions all fit the pattern ∀ x 1 :</p><formula xml:id="formula_12">X 1 . ...∀ x m : X m . R e 1 ... e n ,</formula><p>where R is a vari- able. Of course, either the quantifier prefix or the argument se- quence or both may be empty-this pattern excludes only appli- cations of quantified formulae, and these are meaningless. Note that the same is not true of languages with λ-abstraction and β- redices, but here we may reasonably presume that the meaningless case never happens, and develop a one-stop analysis agency: Again, the datatype Analysis is introduced only to make the appear- ance of the result suitably suggestive of its meaning, especially in patterns.</p><formula xml:id="formula_13">data Analysis = ForAll Prefix Name [Expr]</formula><p>The final piece of kit we shall define in this section delivers the ap- plication of a variable to a quantifier prefix-in practice, usually the very quantifier prefix over which it is abstracted, yielding a typical application of a functional object: Indeed, working in a λ-calculus, these tools make it easy to imple- ment λ-lifting <ref type="bibr" target="#b11">[12]</ref>, and also the 'raising' step in Miller's unification algorithm, working under a mixed prefix of existential and universal quantifiers <ref type="bibr" target="#b21">[22]</ref>.</p><formula xml:id="formula_14">infixl 9 −$$ ( −$$ ) :: Name → Prefix → Expr f −$$ parameters = apply (F f) parameters</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Example-inductive elimination operators for datatype families</head><p>We shall now use our tools to develop our example-constructing induction principles. To make things a little more challenging, and a little closer to home, let us consider the more general problem of constructing the inductive elimination operator for a datatype family <ref type="bibr" target="#b6">[7]</ref>.</p><p>Datatype families are collections of sets defined not parametrically as in Hindley-Milner languages, but by mutual induction, indexed over other data. They are the cornerstone of our dependently typed programming language, EPIGRAM <ref type="bibr" target="#b18">[19]</ref>. We present them by first declaring the type constructor, explaining the indexing structure, and then the data constructors, explaining how larger elements of types in the family are built from smaller ones. A common example is the family of vectors-lists indexed by element type and length. In EPIGRAM, we would write:</p><formula xml:id="formula_15">data X : ; n : Nat Vec X n :</formula><p>where Vnil : Vec X Zero ;</p><p>x : X ; xs : Vec X n Vcons x xs : Vec X (Suc n) That is, the Vnil constructor only makes empty vectors, whilst Vcons extends length by exactly one. This definition would elaborate (by a process rather like Hindley-Milner type inference) to a series of more explicit declarations in a language rather like that which we study in this paper:</p><formula xml:id="formula_16">Vec : ∀X ∈ Set. ∀n ∈ Nat. Set Vnil : ∀X ∈ Set. Vec X Zero Vcons : ∀X ∈ Set. ∀n ∈ Nat. ∀x ∈ X. ∀xs ∈ Vec X n. Vec X (Suc n)</formula><p>The elimination operator for vectors takes three kinds of arguments: first, the targets-the vector to be eliminated, preceded by the in-dices of its type; second, the motive, 2 explaining what is to be achieved by the elimination; and third, the methods, explaining how the motive is to be pursued for each constructor in turn. Here it is, made fully explicit:</p><formula xml:id="formula_17">Vec-Ind ∈ ∀X ∈ Set. ∀n ∈ Nat.</formula><p>∀xs ∈ Vec X n.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>   targets</head><p>∀P ∈ ∀X ∈ Set. ∀n ∈ Nat. ∀xs ∈ Vec X n. Set. motive ∀m n ∈ ∀X ∈ Set. P X Zero (Vnil X). ∀m c ∈ ∀X ∈ Set. ∀n ∈ Nat. ∀x ∈ X. ∀xs ∈ Vec X n. ∀h ∈ P X n xs. P X (Suc X) (Vcons X n x xs).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>     methods</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>P X n xs</head><p>It is not hard to appreciate that constructing such expressions us- ing only strings for variables provides a legion of opportunities for unlawful capture and abuse. On the other hand, the arithmetic in- volved in a purely de Bruijn indexed construction is truly terrifying. But with our tools, the construction is straightforward and safe..</p><p>To simplify the exposition, we shall presume that the declaration of the family takes the form of a binding for the type constructor and a context of data constructors which have already been checked for validity, say, according to the schema given by <ref type="bibr">Luo [15]</ref> where the H are the inductive hypotheses, specified as follows.</p><p>3. Non-recursive constructor arguments a : A do not mention F in A and contribute no inductive hypothesis. We neglected to include these structures in our paper presentation of EPIGRAM <ref type="bibr" target="#b18">[19]</ref> because they would have reduced our light-to- heat ratio for no profit-we gave no examples which involved them. However, as you shall shortly see, they do not complicate the imple- mentation in the slightest-the corresponding inductive hypothesis is parametrized by the same prefixy : Y.</p><p>Our agency for inductive elimination operators follows Luo's recipe directly. The basic outline is as follows:</p><formula xml:id="formula_18">makeIndElim :: Agency (Binding → Prefix → Binding) makeIndElim root (family :∈ famtype) constructors = root :∈ targets → → motive −→ fmap method constructors → → bName motive −$$ targets</formula><p>where -constructions from condition 1 ForAll indices set [] = analysis root "i" famtype targets = indices :&lt; root // "x" :∈ family −$$indices motive = root // "P" :∈ targets → → F (nm "Set") method :: Binding → Binding ...</p><p>As we have seen before, makeIndElim is an agency which con- structs a binding-the intended name of the elimination operator is used as the name of the agent. The analysis function readily extracts the indices from the type of the family (we presume that this ranges over Set). From here, we can make the type of an el- ement with those indices, and hence compute the prefix of targets over which the motive is abstracted. Presuming we can build an appropriate method for each constructor, we can now assemble our induction principle.</p><p>But how do we build a method for a constructor? Let us implement the constructions corresponding to condition 2. The method's type says that the motive should hold for those targets which can possibly be built by the constructor, given the construc- tor's arguments, together with inductive hypotheses for those of its arguments which happen to be recursive. We can easily combine the hypothesis constructions for non-recursive and recursive arguments (3 and 4, above) by making Stack an instance of the MonadPlus class in exactly the same 'list of successes' style as we have for ordinary lists <ref type="bibr" target="#b24">[25]</ref>. The non-recursive constructor arguments give rise to an empty Prefix (= Stack Binding) of inductive hypothesis bindings. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Epilogue</head><p>In this paper, we have shown how to manipulate syntax with bind- ing using a mixed representation of names for free variables (with respect to the task in hand) and de Bruijn indices <ref type="bibr" target="#b4">[5]</ref> for bound variables. By doing so, we retain the advantages of both repre- sentations: naming supports easy, arithmetic-free manipulation of terms; de Bruijn indices eliminate the need for α-conversion. Fur- ther, we have ensured that not only the user but also the implemen- tation need never deal with de Bruijn indices, except within key basic operations such as abstract and instantiate.</p><p>Moreover, we have chosen a representation for names which read- ily supports a power structure naturally reflecting the structure of agents within the implementation. Name choice is safe and straight- forward. Our technology combines easily with an approach to syn- tax manipulation inspired by Huet's 'zippers' <ref type="bibr" target="#b9">[10]</ref>.</p><p>Of course, it takes some effort to ensure that name-roots are prop- agated correctly through the call hierarchy of a large system. We can manage the details of this in practice by working within an ap- propriate monad. The monad which we use also manages the book- keeping for the recursive solution of metavariables by expressions in terms of other metavariables (whose names are extensions of the original)-this process is beyond the scope of this paper.</p><p>Without the ideas in this paper (amongst many others) it would have been much more difficult to implement EPIGRAM <ref type="bibr" target="#b17">[18]</ref>. Our example-constructing inductive elimination operators for datatype families-is but one of many where it proves invaluable. Others in- deed include λ-lifting <ref type="bibr" target="#b11">[12]</ref> and Miller-style unification <ref type="bibr" target="#b21">[22]</ref>.</p><p>More particularly, this technology evolved from our struggle to im- plement the 'elimination with a motive' approach <ref type="bibr" target="#b16">[17]</ref>, central to the elaboration of EPIGRAM programs into Type Theory. This transforms a problem containing a specific instance of a datatype family ∀s : S. ∀x : Ft. T into an equivalent problem which is immediately susceptible to elimination with operators like those constructed in our example.</p><p>∀ı : I. ∀x : Fı. ∀s : S. ∀x : Ft. T. ı =t → x = x → T Moreover, EPIGRAM source code is edited and elaborated into an underlying type theory incrementally, in no fixed order and with considerable dependency between components. The elaboration process is, in effect, code-driven tactical theorem-proving working on multiple interrelated problems simultaneously. Our principled approach to manipulating abstract syntax within multiple agents provides the key discipline we need in order to manage this process easily. We simply could not afford to leave these issues unanalysed.</p><p>Whatever the syntax you may find yourself manipulating, and whether or not it involves dependent types, the techniques we have illustrated provide one way to make the job easier. By making com- puters using names the way people do, we hope you can accomplish such tasks straightforwardly, and without becoming a prisoner of numbers.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7">References</head></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>− ∈ Nat → Prop. 0 Zero → (∀− ∈ Nat. 2 0 → 3 (Suc 1)) → ∀− ∈ Nat. 3 0 or from the outside inward-de Bruijn levels. ∀0 ∈ Nat → Prop. 0 Zero → (∀2 ∈ Nat. 0 2 → 0 (Suc 2)) → ∀3 ∈ Nat. 0 3</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>abstract</head><label></label><figDesc>:: Name → Expr → Scope abstract name expr = Sc (nameTo 0 expr) where nameTo outer (F name ) | name == name = B outer | otherwise = F name nameTo outer (B index) = B index nameTo outer (fun :$ arg) = nameTo outer fun :$ nameTo outer arg nameTo outer (dom :→ Sc body) = nameTo outer dom :→ Sc (nameTo (outer + 1) body)</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>instantiate</head><label></label><figDesc>:: Expr → Scope → Expr instantiate image (Sc body) = replace 0 body where replace outer (B index) | index == outer = image | otherwise = B index replace outer (F name) = F name replace outer (fun :$ arg) = replace outer fun :$ replace outer arg replace outer (dom :→ Sc body) = replace outer dom :→ Sc (replace (outer + 1) body)</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head></head><label></label><figDesc>Binding = Name :∈ Expr bName :: Binding → Name bName (name :∈ ) = name bVar :: Binding → Expr bVar = F · bName</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head></head><label></label><figDesc>Name → String → Name root // s = root :&lt; (s, 0) nm :: String → Name nm s = Empty // s</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>unprefix ::</head><label></label><figDesc>Agency (String → Expr → (Prefix, Expr)) unprefix root x expr = intro 1 (Empty, expr) where intro :: Int → (Prefix, Expr) → (Prefix, Expr) intro i (binds, expr) = case (root :&lt; (x, i)) ←− expr of Just (bind, range) → intro ( i + 1) (binds :&lt; bind, range) Nothing → (binds, expr)</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head></head><label></label><figDesc>( $$ ) :: Expr → [Expr] → Expr expr $$ [] = expr fun $$ (arg : args) = fun :$ arg $$ args Next, we build the destructor-this does not need to be an agency, as it binds no names: unapplies :: Expr → (Expr, [Expr]) unapplies expr = peel (expr, []) where peel (fun :$ arg, args) = peel (fun, arg : args) peel funargs = funargs</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>analysis ::</head><label></label><figDesc>Agency (String → Expr → Analysis) analysis root x expr = ForAll prefix f args where (prefix, range) = unprefix root x expr (F f, args) = unapplies range</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head></head><label></label><figDesc>where apply expr Empty = expr apply fun (binds :&lt; a :∈ ) = apply fun binds :$ F a An example of this in action is the generalization functional. This takes a prefix and a binding, returning a transformed binding ab- stracted over the prefix, together with the function which updates expressions accordingly. generalize :: Prefix → Binding → (Binding, Expr → Expr) generalize binds (name :∈ expr) = (me :∈ binds → → expr, substitute (name −$$ binds) name)</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_9"><head>method</head><label></label><figDesc>:: Binding → Binding method (con :∈ contype) = meth :∈ conargs → → (indhyp =&lt;&lt; conargs) → → bVar motive $$ conindices :$ (con −$$ conargs) where meth = root // "m" &lt; + con ForAll conargs fam conindices = analysis meth "a" contype indhyp :: Binding → Prefix ...</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_10"><head>indhyp</head><label></label><figDesc>:: Binding → Prefix indhyp (arg :∈ argtype) = do guard (argfam==family) -no hyp if arg non-recursive return (arg // "h" :∈ argargs → → bVar motive $$ argindices :$ (arg $$ argargs)) where ForAll argargs argfam argindices = analysis meth "y" argtype With this, our construction is complete.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head>infixl 4 :&lt; data Stack x = Empty | Stack x :&lt; x deriving (Show, Eq) type Zipper = Stack Step</head><label>4</label><figDesc></figDesc><table>data Step = Fun () Expr 
+| Arg Expr () 
+| Dom () Scope 
+| Range Binding () 
+
+This zipper structure combines the notions of structural and lin-
+guistic context-a Zipper contains the bindings for the names which 
+may appear in any Expr filling the 'hole'. Note that we don't bind 
+the variable when we edit a domain: it's not in scope. We can 
+easily edit these zippers, inserting new bindings (e.g., for induc-
+tive hypotheses) or permuting bindings where dependency permits, 
+without needing to renumber de Bruijn variables. 
+
+By contrast, editing with the zipper constructed with respect to 
+the raw definition of Expr-moving into scopes without binding 
+variables-often requires a nightmare of arithmetic. The first au-
+thor banged his head on his Master's project </table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head>1 : I 1 . ...∀i n : I n . Set Correspondingly, the target prefix is ∀ı : I. ∀x : Fı, and the motive has type P : ∀ı : I. ∀x : Fı. Set. 2. Each constructor has type c : ∀a 1 : A 1 . ...∀a m . : A m . F s 1 ... s n where thes do not mention F. The corresponding method has type ∀ a : A. ∀ h : H. Ps (c a)</head><label></label><figDesc></figDesc><table>-checking 
+as we go just requires a little extra work and a shift to an appropriate 
+monad. Luo's schema is a sound (but by no means complete) set 
+of syntactic conditions on family declarations which guarantee the 
+existence of a semantically meaningful induction principle. The 
+relevant conditions and the corresponding constructions are 
+
+1. The type constructor is typed as follows 
+
+F : ∀i </table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2" validated="false"><head>4 . Recursive constructor arguments have form a : ∀y 1 : Y 1 . ...∀y k : Y k . F r where F is not mentioned 3 in the Y or ther. The corresponding inductive hypothesis is h : ∀y : Y. Pr (ay) Observe that condition 4 allows for the inclusion of higher-order recursive arguments, parametrized by some y : Y. TheseInfTree) → InfTree</head><label>4</label><figDesc></figDesc><table>support 
+structures containing infinitary data, such as 
+
+data InfTree : where Leaf : InfTree 
+Node : (Nat → </table></figure>
+
+			<note place="foot" n="1"> The techniques in this paper adapt readily to higher-order representations of binding, but that&apos;s another story.</note>
+
+			<note place="foot" n="2"> We prefer &apos;motive&apos; [17] to &apos;induction predicate&apos;, because a motive need not be a predicate (i.e., a constructor of propositions) nor need an elimination operator be inductive. 3 This condition is known as strict positivity.</note>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Acknowledgements</head><p>The earliest version of the programs we present here dates back to 1995-our Edinburgh days-and can still be found in the source code for LEGO version 1.3, in a file named inscrutably conor-voodoo.sml. Our influences are date back much further. We should like to thank all of our friends and colleagues who have encouraged us and fed us ideas through the years, in particular Gérard Huet and Thierry Coquand.</p></div>
+			</div>
+
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Monadic presentations of lambdaterms using generalized inductive types</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Altenkirch</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Reus</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Computer Science Logic</title>
+		<imprint>
+			<date type="published" when="1999" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Substitution: A formal methods case study using monads and transformations</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Bellegarde</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Hook</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Science of Computer Programming</title>
+		<imprint>
+			<date type="published" when="1995" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">de Bruijn notation as a nested datatype</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Bird</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Paterson</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Functional Programming</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="77" to="92" />
+			<date type="published" when="1999" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">An algorithm for testing conversion in type theory</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Coquand</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Huet and Plotkin</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Lambda Calculus notation with nameless dummies: a tool for automatic formula manipulation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><forename type="middle">G</forename><surname>De Bruijn</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Indagationes Mathematicae</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="page" from="381" to="392" />
+			<date type="published" when="1972" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">Course in General Linguistics</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>De Saussure</surname></persName>
+		</author>
+		<editor>Roy Harris</editor>
+		<imprint>
+			<date type="published" when="1983" />
+			<publisher>Duckworth</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Inductive Sets and Families in Martin-Löf&apos;s Type Theory</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Dybjer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Huet and Plotkin</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">The collected papers of Gerhard Gentzen</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Gentzen</surname></persName>
+		</author>
+		<editor>Manfred Szabo</editor>
+		<imprint>
+			<date type="published" when="1969" />
+			<pubPlace>NorthHolland</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+		<title level="m" type="main">editor, A Perspective in Theoretical Computer Science</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Huet</surname></persName>
+		</author>
+		<editor>R. Narasimhan,</editor>
+		<imprint>
+			<date type="published" when="1989" />
+			<publisher>World Scientific Publishing</publisher>
+		</imprint>
+	</monogr>
+	<note>Commemorative Volume for Gift Siromoney</note>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">The Zipper</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Huet</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Functional Programming</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="549" to="554" />
+			<date type="published" when="1997" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Huet</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Plotkin</surname></persName>
+		</author>
+		<title level="m">Logical Frameworks. CUP</title>
+		<imprint>
+			<date type="published" when="1991" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<title level="m" type="main">Lambda Lifting: Transforming Programs to Recursive Equations</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Johnsson</surname></persName>
+		</author>
+		<imprint>
+			<biblScope unit="page" from="190" to="203" />
+		</imprint>
+	</monogr>
+	<note>In Jouannaud [13</note>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Functional Programming Languages and Computer Architecture</title>
+	</analytic>
+	<monogr>
+		<title level="j">LNCS</title>
+		<editor>J.-P. Jouannaud</editor>
+		<imprint>
+			<biblScope unit="volume">201</biblScope>
+			<date type="published" when="1985" />
+			<publisher>SpringerVerlag</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<monogr>
+		<title level="m" type="main">Introduction to Metamathematics. van Nostrand Rheinhold</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Kleene</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1952" />
+			<pubPlace>Princeton</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<monogr>
+		<title level="m" type="main">Computation and Reasoning: A Type Theory for Computer Science</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Z</forename><surname>Luo</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1994" />
+			<publisher>Oxford University Press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Inverting inductively defined relations in LEGO</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Mcbride</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Types for Proofs and Programs</title>
+		<editor>E. Giménez and C. Paulin-Mohring</editor>
+		<imprint>
+			<publisher>Springer-Verlag</publisher>
+			<date type="published" when="1998" />
+			<biblScope unit="volume">96</biblScope>
+			<biblScope unit="page" from="236" to="253" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Elimination with a Motive</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Mcbride ; P. Callaghan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Z</forename><surname>Luo</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Mckinna</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Pollack</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Types for Proofs and Programs (Proceedings of the International Workshop, TYPES&apos;00)</title>
+		<imprint>
+			<publisher>Springer-Verlag</publisher>
+			<date type="published" when="2002" />
+			<biblScope unit="volume">2277</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Mcbride</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Epigram</surname></persName>
+		</author>
+		<ptr target="http://www.dur.ac.uk/CARG/epigram" />
+		<imprint>
+			<date type="published" when="2004" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">The view from the left</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Mcbride</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Mckinna</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J. of Functional Programming</title>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<date type="published" when="2004" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Pure type systems formalized</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Mckinna</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Pollack</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Int. Conf. Typed Lambda Calculi and Applications TLCA&apos;93</title>
+		<editor>M. Bezem and J.-F. Groote</editor>
+		<imprint>
+			<publisher>Springer-Verlag</publisher>
+			<date type="published" when="1993" />
+			<biblScope unit="volume">664</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Some lambda calculus and type theory formalized</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Mckinna</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Pollack</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Automated Reasoning</title>
+		<imprint>
+			<biblScope unit="volume">23</biblScope>
+			<biblScope unit="page" from="373" to="409" />
+			<date type="published" when="1999" />
+		</imprint>
+	</monogr>
+	<note>Special Issue on Formal Proof, editors Gail Pieper and Frank Pfenning</note>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Unification under a mixed prefix</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Miller</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Symbolic Computation</title>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="321" to="358" />
+			<date type="published" when="1992" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Closure under alpha-conversion</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Pollack</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Types for Proofs and Programs</title>
+		<editor>H. Barendregt and T. Nipkow</editor>
+		<meeting><address><addrLine>Nijmegen</addrLine></address></meeting>
+		<imprint>
+			<publisher>Springer-Verlag</publisher>
+			<date type="published" when="1993" />
+			<biblScope unit="volume">806</biblScope>
+			<biblScope unit="page" from="313" to="332" />
+		</imprint>
+	</monogr>
+	<note>Workshop TYPES &apos;93</note>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Natural Deduction-A proof theoretical study</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Prawitz</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Almquist and Wiksell</title>
+		<imprint>
+			<date type="published" when="1965" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<monogr>
+		<title level="m" type="main">How to Replace Failure by a list of Successes</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Wadler</surname></persName>
+		</author>
+		<imprint>
+			<biblScope unit="page" from="113" to="128" />
+		</imprint>
+	</monogr>
+	<note>In Jouannaud [13</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>
+
