@@ -1,12 +1,12 @@
-import loginReducer from "./LoginReducer";
 import isLoadingReducer from "./isLoadingReducer";
 import authentication from "./authentication";
+import openDialog from "./DialogReducer.js";
 import { combineReducers } from 'redux';
 
 const tldrApp = combineReducers({
-	  loginReducer,
     isLoadingReducer,
-    authentication
+    authentication,
+    openDialog
 });
 
 export default tldrApp;

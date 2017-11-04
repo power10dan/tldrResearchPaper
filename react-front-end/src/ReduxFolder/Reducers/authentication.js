@@ -1,26 +1,33 @@
 import * as types from '../Constants/ActionTypes.js';
 
-let user = JSON.parse(localStorage.getItem('user'));
-const initialState = user ? { loggedIn: true, user } : {};
+//let user = JSON.parse(localStorage.getItem('user'));
+const initialState =  { loggedIn: false, errorMessage: " "} 
 
 function authentication(state = initialState, action) {
     switch (action.type) {
-    case types.REQUEST:
-        return {
-            loggingIn: true,
-            user: action.user
-        };
-    case types.LOGIN_SUCCESS:
-        return {
-            loggedIn: true,
-            user: action.user
-        };
-    case types.LOGIN_FAIL:
-        return {};
-    case types.LOGOUT:
-        return {};
-    default:
-        return state;
+        case types.REQUEST:
+            return {
+                loggedIn: action.isLogin,
+                user: action.user,
+                pass: action.pass
+            };
+        case types.LOGIN_SUCCESS:
+            return {
+                loggedIn: action.isLogin,
+                successMessage: action.message
+            };
+        case types.LOGIN_FAIL:
+            return {
+                loggedIn: action.isLogin,
+                errorMessage: action.message,
+
+            };
+        case types.LOGOUT:
+            return {
+                loggedIn: action.isLogin,
+            };
+        default:
+            return state;
     }
 }
 

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
+import AppTopBar from './AppComponents/AppTopBar.js';
 import SideNavCustom from './AppComponents/AppSideBar';
 import UploadFile from './AppBusinessLogic/UploadFile';
 import { LoginOps } from './AppBusinessLogic/LoginOp';
@@ -13,7 +14,6 @@ const history = createBrowserHistory();
 class App extends React.Component {
     constructor(props) {
         super(props);
-
         const { dispatch } = this.props;
     }
 
@@ -22,10 +22,10 @@ class App extends React.Component {
       <div className="App">
             <SideNavCustom />
             <Router history={history}>
-            <div>
-            <Route path="/login" component={LoginOps}/>
-            <Route path="/upload" component={UploadFile}/>
-            </div>
+                <div>
+                    <Route path="/" component={LoginOps}/>
+                    <Route path="/" component={UploadFile}/> 
+                </div>
             </Router>
       </div>
     );

@@ -10,22 +10,19 @@ const styles = theme => ({
 });
 
 const ErrSnack = (props) => {
-    var op = props.openDialog;
     return (
       <div>
-        <Snackbar
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'left',
-          }}
-          open={op}
-          autoHideDuration={1000}
-          onRequestClose = {()=>{op = false}}
-          SnackbarContentProps={{
-            'aria-describedby': 'message-id',
-          }}
-          message={<span id="message-id">{props.message}</span>}
-        />
+          <Snackbar
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'left',
+            }}
+            open={props.openDialog}
+            SnackbarContentProps={{
+              'aria-describedby': 'message-id',
+            }}
+            message={<span id="message-id">{props.message}</span>}
+          />
       </div>
     )
 

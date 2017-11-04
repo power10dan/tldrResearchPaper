@@ -5,33 +5,11 @@ import * as types from '../Constants/ActionTypes';
  *
  */
 
-
- // Async Operations, Converting them to Redux Thunk
-// export function LogInOp(url){
-//  	return (dispatch) =>{
-//  		  dispatch(isLoading(true));
-//  		  fetch(url).then((response)=>{
-//  			    if(!response.ok){
-//  				      throw Error(response.statusText);
-//  				      dispatch(isLoading(false));
-//  			    }
-//  			  dispatch(isLoading(false));
-//  			    return response;
-//  		  }).then((response)=> {
-//  				  response.json();
-//  		  }).then(()=> {
-//  		  	  dispatch(LogInSuccess(true));
-//  		  }).catch((err)=> {
-//  		  	  dispatch(LogInFailed(false, err));
-//  		  });
-//  	};
-// }
-
 /* helper login function takes a username and password, sends a request
    asynchronously validates the response, and stores the auth token locally if
    success, then return the user
 */
-function _login(username, password) {
+function _Login(username, password) {
     // set the request options
     const requestOptions = {
         method: 'POST',
@@ -40,67 +18,64 @@ function _login(username, password) {
     };
 
     // set the url and use fetch to send request
-		let url = "http://127.0.0.1:8000/rest-auth/login/";
-    return fetch(url, requestOptions)
-        .then(response => {
+    let url = "http://127.0.0.1:8000/rest-auth/login/";
+    return fetch(url, requestOptions);
+}
 
-            // if response is bad then return the status text
-            console.log("sending request");
-            if (!response.ok) {
-                return Promise.reject(response.statusText);
-            }
+// save user login credentials
+export function dispatchUserCred(username, userpass){
+    return {
+        type: types.REQUEST,
+        username: username,
+        userpassword: userpass
+    };
+}
 
+//actual login function
+export function Login(username, password) {
+    return dispatch => {
+        // save user password
+        _Login(username, password).then((response) => {
             // if good then return the response json
-            return response.json;
-        })
+            if(response.ok){
+                let welcomeMessage = "Hello, " + username
+                dispatch(LogInSuccess(welcomeMessage));
+                return response.json();
+            } 
 
-    // catch the json which is a user
-        .then(user => {
+            if(response.status == 404){
+                dispatch(LogInFailed("The provided credentials doesn't exist"));
+                dispatch(isLoading(false));
+            }
+            
+        }).then((user) => {
             // if user is good and we have a token, save token which is the same
             // as being logged in
             if (user && user.token) {
                 localStorage.setItem('user', JSON.stringify(user));
             }
-
             return user;
+        }).catch((err, status)=>{
+            if(err.message === "Failed to fetch"){
+                dispatch(LogInFailed("Server Connection Refused, Please Contact Your System Admin"));
+                dispatch(isLoading(false));
+            }
         });
-}
-
-
-/* actual login function
-*/
-export function login(username, password) {
-    return dispatch => {
-        dispatch(() => { return {
-                type: types.REQUEST,
-                username
-        };
-                       });
-
-        _login(username, password)
-            .then(
-                user => {
-                    dispatch(LogInSuccess(true));
-                },
-                error => {
-                    dispatch(LogInFailed(false, error));
-                });
-        
     };
 }
 
- // ================ Async Operations, Converting them to Redux Thunk ===========
- // action dispatch for when login succeds
-export function LogInSuccess(successStatus){
 
+// action dispatch for when login succeds
+export  function LogInSuccess(successStatus, message){
  	return {
  		type: types.LOGIN_SUCCESS,
- 		isLogin: successStatus
+ 		isLogin: true,
+        successMessage: message
  	};
  }
 
  // action dispatch when loading failed
-export function LogInFailed(failureStatus, failureMessage){
+export function LogInFailed(failureMessage){
  	return {
  		  type: types.LOGIN_FAIL,
  		  isLogin: false,
@@ -113,6 +88,18 @@ export function isLoading(isLoadingStats){
 		type: types.LOADING,
 		isLoading: isLoadingStats
 	};
+}
+
+// if this action dispatches true, we don't disable 
+// the login button. Else, we disable th login button
+// so user can't login unless they enter their 
+// user names and password
+
+export function isDisableButton(isDisable){
+    return{
+        type: types.IS_DISABLE,
+        disable : isDisable,
+    };
 }
 
  /*export function ForgotPass(email){
@@ -135,4 +122,4 @@ export function isLoading(isLoadingStats){
  export function DeleteFile(fileToDelete){
  	return {type: types.DELETEFILE, fileDel: fileToDelete};
  }
-// =================================================================================================
+

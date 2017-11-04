@@ -10,7 +10,7 @@ configure({ adapter: new Adapter() });
 const mockStore = configureStore();
 
 describe('Top Bar', () => {
-    it('renders the top bar with crashing', () => {
+    it('renders the top bar without crashing', () => {
         const wrapper = shallow(<AppTopBar/>, { context: { store: mockStore() } });
     });
 });
