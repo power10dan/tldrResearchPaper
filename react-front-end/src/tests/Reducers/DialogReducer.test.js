@@ -2,7 +2,7 @@ import openDialog from '../../ReduxFolder/Reducers/DialogReducer.js';
 
 const initialState = {};
 
-describe('Login Reducer', () => {
+describe('Dialog Reducer: ', () => {
     it('should return an initial state', () => {
         expect(openDialog({}, {type: "NOTVALID"})).toEqual(initialState);
     });
