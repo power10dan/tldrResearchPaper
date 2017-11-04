@@ -6,26 +6,29 @@ const initialState =  { loggedIn: false, errorMessage: " "}
 function authentication(state = initialState, action) {
     switch (action.type) {
         case types.REQUEST:
-            return {
-                loggedIn: action.isLogin,
-                user: action.user,
-                pass: action.pass
-            };
-        case types.LOGIN_SUCCESS:
-            return {
-                loggedIn: action.isLogin,
-                successMessage: action.message
-            };
-        case types.LOGIN_FAIL:
-            return {
-                loggedIn: action.isLogin,
-                errorMessage: action.message,
+        return Object.assign({}, state, {
+            loggedIn: action.isLogin,
+            user: action.user,
+            pass: action.pass
+        });
 
-            };
+        case types.LOGIN_SUCCESS:
+        return Object.assign({}, state, {
+            loggedIn: action.isLogin,
+            successMessage: action.message
+        });
+
+        case types.LOGIN_FAIL:
+        return Object.assign({}, state, {
+            loggedIn: action.isLogin,
+            errorMessage: action.message
+        });
+
         case types.LOGOUT:
-            return {
-                loggedIn: action.isLogin,
-            };
+        return Object.assign({}, state, {
+            loggedIn: false
+        });
+
         default:
             return state;
     }
