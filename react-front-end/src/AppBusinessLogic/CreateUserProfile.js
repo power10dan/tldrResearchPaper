@@ -11,7 +11,10 @@ class CreateUserProfile extends React.Component{
 		this.state = {
 			newUserName: "",
 			newUserEmail: "",
-			newUserPassword: ""
+			newUserPassword: "",
+			// if create user profile is successful, then we set this as true
+			// because technically the user is "logged in"
+			isLoggedIn: false  
 		};
 	}
 
@@ -34,16 +37,16 @@ class CreateUserProfile extends React.Component{
     		this.props.openDialog();
     		setTimeout(()=>{this.props.closeDialog()}, 2000); // set dialog close after two seconds
     	} else {
+    		this.props.isLoad(true);
     		this.props.createUser(userName, userPass, userEmail);
+    		if(this.state.isLoggedIn == false){
+    			this.props.updateFailed("Please Input User Password");
+	    		this.props.openDialog();
+	    		setTimeout(()=>{this.props.closeDialog()}, 2000); // set dialog close after two seconds
+    		}
+
 
     	}
-
-
-        if (username && password) {
-        	this.props.isLoad(true)
-            this.props.updateLogIn(this.state.newUserName, this.state.newUserPassword, this.state.newUserEmail);
-
-        }
 
         this.setState({newUserEmail: " "})
 		this.setState({newUserPassword: " "})

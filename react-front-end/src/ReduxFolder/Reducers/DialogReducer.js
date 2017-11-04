@@ -4,11 +4,11 @@ export default function openDialog(state = {}, action){
 	switch(action.type){
 		case types.OPEN_DIALOG:
 			return Object.assign({}, state, {
-                isOpenDialog: action.isDialogOpen
+                isOpenDialog: true
             });
         case types.CLOSE_DIALOG:
 			return  Object.assign({}, state, {
-                isOpenDialog: action.isDialogOpen
+                isOpenDialog: false
             });
 
 		default:

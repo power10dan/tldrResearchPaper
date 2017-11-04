@@ -27,6 +27,7 @@ class LoginOperations extends React.Component{
 		this.setState({isLoginSuccess: nextProps.loggedIn});
 		this.setState({errMessage: nextProps.errorMessage});
 		this.setState({opDialog: nextProps.isOpenDialog});
+		console.log(nextProps);
 	}
 
     handleSubmit = () => {

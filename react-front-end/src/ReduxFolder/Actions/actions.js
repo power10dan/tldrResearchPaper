@@ -43,8 +43,13 @@ export function Login(username, password) {
                 return response.json();
             } 
 
+            if(response.status == 400){
+                dispatch(LogInFailed("Something went wrong with the server. Please contact sys. admin."));
+                dispatch(isLoading(false));
+            }
+
             if(response.status == 404){
-                dispatch(LogInFailed("The provided credentials doesn't exist"));
+                dispatch(LogInFailed("We cannot find your loging credential"));
                 dispatch(isLoading(false));
             }
             
