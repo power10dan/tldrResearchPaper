@@ -47,7 +47,7 @@ describe('actions', () => {
             isLogin: text,
             message: message
         };
-        expect(actions.LogInFailed(text, message)).toEqual(expectedAction);
+        expect(actions.LogInFailed(message)).toEqual(expectedAction);
     });
 
     // TODO figure out async login testing
