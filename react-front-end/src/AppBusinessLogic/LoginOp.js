@@ -27,7 +27,6 @@ class LoginOperations extends React.Component{
 		this.setState({isLoginSuccess: nextProps.loggedIn});
 		this.setState({errMessage: nextProps.errorMessage});
 		this.setState({opDialog: nextProps.isOpenDialog});
-		console.log(nextProps);
 	}
 
     handleSubmit = () => {
@@ -112,6 +111,7 @@ class LoginOperations extends React.Component{
 
 	render(){
       const packagesLogin = this.functionPackages();
+      console.log(packagesLogin)
       let state = null;
       // only render when login fails, else we are OK
       if(this.state.isLoginSuccess === false ){

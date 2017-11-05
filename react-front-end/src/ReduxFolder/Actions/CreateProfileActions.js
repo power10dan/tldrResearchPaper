@@ -1,26 +1,25 @@
 import * as types from '../Constants/ActionTypes';
+import { LogInFailed, isLoading} from './actions.js';
 
 function _createProfile(userName, password, userEmail) {
     // set the request options
     const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({userName, password, userEmail});
+        body: JSON.stringify({userName, password, userEmail}),
     };
 
     // set the url and use fetch to send request
     let url = "http://127.0.0.1:8000/rest-auth/registration/";
     return fetch(url, {
 			method: 'post',
-			body: JSON.stringify(jsonData),
+			body: JSON.stringify({userName, password, userEmail}),
 			dataType: "json",
 			mode: "cors",
 			headers: {
         	    'Content-Type': 'application/json',
         	}
 		});
-	}
-
 }
 
 export function createProfile(userName, passWord, userEmail){

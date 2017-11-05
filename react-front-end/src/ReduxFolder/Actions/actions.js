@@ -38,12 +38,10 @@ export function Login(username, password) {
         _Login(username, password).then((response) => {
             // if good then return the response json
             if(response.ok){
-                let welcomeMessage = "Hello, " + username
-                dispatch(LogInSuccess(welcomeMessage));
                 return response.json();
             } 
 
-            if(response.status == 400){
+            if(response.status == 400 || response.status == 500){
                 dispatch(LogInFailed("Something went wrong with the server. Please contact sys. admin."));
                 dispatch(isLoading(false));
             }
@@ -57,6 +55,8 @@ export function Login(username, password) {
             // if user is good and we have a token, save token which is the same
             // as being logged in
             if (user && user.token) {
+                let welcomeMessage = "Hello, " + username
+                dispatch(LogInSuccess(welcomeMessage));
                 localStorage.setItem('user', JSON.stringify(user));
             }
             return user;

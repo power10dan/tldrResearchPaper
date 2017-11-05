@@ -2,10 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import Card, { CardActions, CardContent } from 'material-ui/Card';
+import { ProfileOps } from '../AppBusinessLogic/CreateUserProfile.js';
 import Button from 'material-ui/Button';
 import Typography from 'material-ui/Typography';
 import TextField from 'material-ui/TextField';
-import CreateNewProfileComp from '../AppComponents/CreateProfile.js';
+//import { ProfileOps } from '../AppComponents/CreateProfile.js';
 
 const styles = theme => ({
     card: {
@@ -43,7 +44,7 @@ const styles = theme => ({
     },
 
     title: {
-    	fontSize: 45,
+    	fontSize: 55,
     	marginTop: 60,
     	color: "#FFFFFF",
     },
@@ -69,10 +70,10 @@ const LoginCard = (props) => {
     		        </Typography>
             </CardContent>
         </Card>
-        <Card className={classes.inputCard} elevation={1}>
+        <Card className={classes.inputCard} elevation={1} >
   	        <CardContent>
       	      		<TextField
-                      value={props.name}
+                      value= {props.name}
       			          id="account"
       			          label="User Name"
       			          className={classes.textField}
@@ -97,9 +98,8 @@ const LoginCard = (props) => {
         			          <Button dense color="primary" onClick={callbacks.LoginSubmit}>
         			            Login
         			          </Button>
-        			          <Button dense color="primary">
-        			               Forgot Password / Account
-        			          </Button>
+                        <ProfileOps />
+        			         
         		      </CardActions>
   	        </CardContent> 
           </Card>
