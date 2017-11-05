@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import bcrypt from 'bcryptjs';
 import CreateProfile from '../AppComponents/CreateProfile.js';
 import {createProfile} from '../ReduxFolder/Actions/CreateProfileActions.js';
 import { LogInFailed, isLoading} from '../ReduxFolder/Actions/actions.js';
@@ -16,7 +17,7 @@ class CreateUserProfile extends React.Component{
 			// if create user profile is successful, then we set this as true
 			// because technically the user is "logged in"
 			error: " ",
-			isLoggedIn: false,
+      isRegistered: false,
 			opDialog: false,
 			disMissDialog: false,
 		};
@@ -67,43 +68,42 @@ class CreateUserProfile extends React.Component{
     	let userPass2 = this.state.newUserPassword2;
 
     	let sanitized = this.sanitizeUserInput(userName, userEmail, userPass, userPass2);
-    	if(sanitized === false){
+    	
+    	if(sanitized === true){
+            // only send the first password twice so the user is created
+	         // if we send both then they'll never match because of hash
+		    this.setState({newUserPassword: userPass}, () => {
+	            bcrypt.hash(this.state.newUserPassword, 10, this.storeHash);
+	        });
+
+	   	    this.props.createUser(userName, this.newUserPassword, this.newUserPassword, userEmail);
+    	} else {
     		this.props.openDialog();
-    		setTimeout(()=>{this.props.closeDialog()}, 2000); 
-    		return;
-    	} else{
-    		this.props.isLoad(true);
-    		this.props.createUser(userName, userPass, userPass2, userEmail);
-    		
-    		if(this.state.isLoggedIn === false){
-    			this.props.updateFailed("Please Input User Password");
-	    		this.props.openDialog();
-	    		setTimeout(()=>{this.props.closeDialog()}, 2000); // set dialog close after two seconds
-    		}
+    		setTimeout(()=>{this.props.closeDialog()}, 2000);
+    	}
 
-    		if(this.state.isLoggedIn === true){
-    			this.props.openDialog();
-    			setTimeout(()=>{this.props.closeDialog()}, 2000); // set dialog close after two seconds
-    		}
-
-    		this.setState({newUserEmail: " "})
-		    this.setState({newUserPassword: " "})
-		    this.setState({newUserPassword2: " "})
-		    this.setState({newUserName: " "})
-    	}        	
+    	this.setState({newUserEmail: " "})
+		this.setState({newUserPassword: " "})
+		this.setState({newUserPassword2: " "})
+		this.setState({newUserName: " "})      	
     }
 
     //create user Get methods.
 	newUserEmailGet = (userEmail) => {
 		this.setState({newUserEmail : userEmail.target.value});
 	}
-	newUserPasswordGet = (userPassword) => {
-		this.setState({newUserPassword : userPassword.target.value});
-	}
+
+     
   // this repetition is screaming for a higher ordered function
-	newUserPasswordGet2 = (userPassword2) => {
-		this.setState({newUserPassword2 : userPassword2.target.value});
+  storeHash = (err, hash) => {this.setState({userPass: hash});}
+
+	newUserPasswordGet = (userPassword) => {
+		  this.setState({newUserPassword : userPassword.target.value});
 	}
+	newUserPasswordGet2 = (userPassword) => {
+		  this.setState({newUserPassword2 : userPassword.target.value});
+	}
+
 	newUserNameGet = (userName) => {
 		this.setState({newUserName : userName.target.value});
 	}

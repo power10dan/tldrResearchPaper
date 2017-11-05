@@ -1,20 +1,7 @@
 import * as types from '../Constants/ActionTypes';
-import { LogInFailed, isLoading} from './actions.js';
+import { LogInFailed, isLoading, CreateAcc, LogInSuccess} from './actions.js';
 
 function _createProfile(username, password1, password2, account_emailaddress) {
-    // // set the request options
-    // const requestOptions = {
-    //     method: 'POST',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify({  username
-    //                           , password1
-    //                           , password2
-    //                           , account_emailaddress
-    //                          })
-    // };
-
-    // console.log(requestOptions);
-    // set the url and use fetch to send request
     let url = "http://127.0.0.1:8000/rest-auth/registration/";
     let request = {
 			  method: 'post',
@@ -23,11 +10,14 @@ function _createProfile(username, password1, password2, account_emailaddress) {
                                password1, 
                                password2
                             }),
+
 			  headers: {
         	  'Content-Type': 'application/json'
         }
-		};
-    
+		}; 
+
+    console.log('Req: ');
+    console.log(request);
     return fetch(url, request);
 }
 
@@ -38,6 +28,8 @@ export function createProfile(userName, passWord, passWord2, userEmail){
 			        let resp = [response.json(), response.status];
 			        return resp;
 		      }).then((data)=>{
+              let ret = {};
+
 			        if(data[1] === 400){
 				          this.setState({notLogState: true});
                   dispatch(LogInFailed("Bad Request Error, Please Contact Your System Admin."));
@@ -45,10 +37,20 @@ export function createProfile(userName, passWord, passWord2, userEmail){
 
 			        if(data[1] === 200){
 				          this.setState({notLogState: false});
-                   dispatch(LogInFailed("User Profile Created!"));
+                   dispatch(LogInSuccess("User Profile Created!"));
+                  ret = CreateAcc(false);
+			        }
+
+			        if(data[1] === 201){
+                  ret = CreateAcc(true);
 			        }
               
+              console.log("Data: ")
 			        console.log(data)
+
+              // dispatch the new action to handle a registered user
+              dispatch(ret);
+
 		      }).catch((err) =>{
 			        if(err.message === "Failed to fetch"){
                   dispatch(LogInFailed(
@@ -58,4 +60,3 @@ export function createProfile(userName, passWord, passWord2, userEmail){
 		      });
 	};
 }
-
