@@ -15,6 +15,7 @@ export const  LOGIN_REQUEST = 'LOGIN_REQUEST';
 export const  IS_DISABLE = 'IS_LOGIN_BUTTON_DISABLE';
 export const OPEN_DIALOG = 'OPEN_DIALOG';
 export const CLOSE_DIALOG = 'CLOSE_DIALOG';
+export const CREATEACC = 'CREATEACC';
 
 /*export const FORGOTPass = 'FORGOTPass';
 export const FORGOTACC  = 'FORGOTACC';
