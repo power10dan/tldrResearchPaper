@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+import bcrypt from 'bcryptjs';
 import CreateProfile from '../AppComponents/CreateProfile.js';
 import {createProfile} from '../ReduxFolder/Actions/CreateProfileActions.js';
 import { LogInFailed, isLoading} from '../ReduxFolder/Actions/actions.js';
@@ -17,7 +17,7 @@ class CreateUserProfile extends React.Component{
 			// if create user profile is successful, then we set this as true
 			// because technically the user is "logged in"
 			error: " ",
-			isLoggedIn: false,
+      isRegistered: false,
 			opDialog: false,
 			disMissDialog: false,
 		};
@@ -36,6 +36,7 @@ class CreateUserProfile extends React.Component{
     	let userPass = this.state.newUserPassword;
     	let userPass2 = this.state.newUserPassword2;
 
+        console.log("USER: ", userPass, userPass2);
     	if(userName === ""){
     		this.props.updateFailed("User Name Field is Empty");
     		this.props.openDialog();
@@ -65,19 +66,30 @@ class CreateUserProfile extends React.Component{
 
       } else {
     		this.props.isLoad(true);
-    		this.props.createUser(userName, userPass, userPass2, userEmail);
+          console.log('BEFORE', this.state)
+
+          // only send the first password twice so the user is created
+          // if we send both then they'll never match because of hash
+		      this.setState({newUserPassword: userPass}, () => {
+              bcrypt.hash(this.state.newUserPassword, 10, this.storeHash);
+          });
+
+    		  this.props.createUser(userName, this.newUserPassword, this.newUserPassword, userEmail);
+          console.log('AFTER', this.state)
     		
-    		if(this.state.isLoggedIn == false){
-    			this.props.updateFailed("Please Input User Password");
-	    		this.props.openDialog();
-	    		setTimeout(()=>{this.props.closeDialog()}, 2000); // set dialog close after two seconds
-    		}
+        // then something happened at the login
+    		  /* if(this.state.isRegistered === false){
+    			   this.props.updateFailed("Failed to Register, please try again");
+	    		   this.props.openDialog();
+    		     }
 
-    		if(this.state.isLoggedIn == true){
-    			this.props.openDialog();
-    			setTimeout(()=>{this.props.closeDialog()}, 2000); // set dialog close after two seconds
+           * // then login was successful
+    		     if(this.state.isRegistered === true){
+    			   this.props.openDialog();
+    		     }*/
 
-    		}
+    			/* setTimeout(()=>{this.props.closeDialog()}, 2000);*/
+          this.props.closeDialog();
     	}
 
         this.setState({newUserEmail: " "})
@@ -90,13 +102,18 @@ class CreateUserProfile extends React.Component{
 	newUserEmailGet = (userEmail) => {
 		this.setState({newUserEmail : userEmail.target.value});
 	}
-	newUserPasswordGet = (userPassword) => {
-		this.setState({newUserPassword : userPassword.target.value});
-	}
+
+     
   // this repetition is screaming for a higher ordered function
-	newUserPasswordGet2 = (userPassword2) => {
-		this.setState({newUserPassword2 : userPassword2.target.value});
+  storeHash = (err, hash) => {this.setState({userPass: hash});}
+
+	newUserPasswordGet = (userPassword) => {
+		  this.setState({newUserPassword : userPassword.target.value});
 	}
+	newUserPasswordGet2 = (userPassword) => {
+		  this.setState({newUserPassword2 : userPassword.target.value});
+	}
+
 	newUserNameGet = (userName) => {
 		this.setState({newUserName : userName.target.value});
 	}
