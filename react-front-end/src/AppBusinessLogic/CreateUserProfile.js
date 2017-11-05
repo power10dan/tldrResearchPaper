@@ -13,6 +13,7 @@ class CreateUserProfile extends React.Component{
 			newUserName: "",
 			newUserEmail: "",
 			newUserPassword: "",
+			newUserPassword2: "",
 			// if create user profile is successful, then we set this as true
 			// because technically the user is "logged in"
 			error: " ",
@@ -33,22 +34,38 @@ class CreateUserProfile extends React.Component{
     	let userName = this.state.newUserName;
     	let userEmail = this.state.newUserEmail;
     	let userPass = this.state.newUserPassword;
+    	let userPass2 = this.state.newUserPassword2;
 
     	if(userName === ""){
     		this.props.updateFailed("User Name Field is Empty");
     		this.props.openDialog();
-    		setTimeout(()=>{this.props.closeDialog()}, 2000); // set dialog close after two seconds
+
+        // set dialog close after two seconds
+    		setTimeout(()=>{this.props.closeDialog()}, 2000);
+
     	} else if(userEmail === ""){
     		this.props.updateFailed("Please Input User Email");
     		this.props.openDialog();
-    		setTimeout(()=>{this.props.closeDialog()}, 2000); // set dialog close after two seconds
+    		setTimeout(()=>{this.props.closeDialog()}, 2000); 
+
     	} else if(userPass === ""){
     		this.props.updateFailed("Please Input User Password");
     		this.props.openDialog();
-    		setTimeout(()=>{this.props.closeDialog()}, 2000); // set dialog close after two seconds
-    	} else {
+    		setTimeout(()=>{this.props.closeDialog()}, 2000);
+
+    	} else if (userPass2 === ""){
+    		  this.props.updateFailed("Second Password Required");
+    		  this.props.openDialog();
+    		  setTimeout(()=>{this.props.closeDialog()}, 2000);
+
+      } else if (userPass.localeCompare(userPass2) !== 0){
+    		  this.props.updateFailed("Passwords do not match!");
+    		  this.props.openDialog();
+    		  setTimeout(()=>{this.props.closeDialog()}, 2000);
+
+      } else {
     		this.props.isLoad(true);
-    		this.props.createUser(userName, userPass, userEmail);
+    		this.props.createUser(userName, userPass, userPass2, userEmail);
     		
     		if(this.state.isLoggedIn == false){
     			this.props.updateFailed("Please Input User Password");
@@ -64,8 +81,9 @@ class CreateUserProfile extends React.Component{
     	}
 
         this.setState({newUserEmail: " "})
-		this.setState({newUserPassword: " "})
-		this.setState({newUserName: " "})	
+		    this.setState({newUserPassword: " "})
+		    this.setState({newUserPassword2: " "})
+		    this.setState({newUserName: " "})
     }
 
     //create user Get methods.
@@ -75,12 +93,16 @@ class CreateUserProfile extends React.Component{
 	newUserPasswordGet = (userPassword) => {
 		this.setState({newUserPassword : userPassword.target.value});
 	}
+  // this repetition is screaming for a higher ordered function
+	newUserPasswordGet2 = (userPassword2) => {
+		this.setState({newUserPassword2 : userPassword2.target.value});
+	}
 	newUserNameGet = (userName) => {
 		this.setState({newUserName : userName.target.value});
 	}
 
 	// button for submitting to create user account
-	createNewUser = () =>{	
+	createNewUser = () =>{
 		this.handleSubmit();
 	}
 
@@ -96,13 +118,14 @@ class CreateUserProfile extends React.Component{
 		return({
 			UserEmail: this.newUserEmailGet,
 			UserPassword: this.newUserPasswordGet,
+			UserPassword2: this.newUserPasswordGet2,
 			UserName: this.newUserNameGet,
 			SubmitHand: this.createNewUser,
 			HandleClickOpenDialog: this.handleClickOpen,
 			HandleClickCloseDialog: this.handleClickClose
 		})
 	}
-	
+
 	render(){
 		const funcPackage = this.packageFunc();
 		let state = null
@@ -118,17 +141,18 @@ class CreateUserProfile extends React.Component{
 }
 
 function mapStateToProps(state){
-	const { loggedIn } = state.authentication;
-	const { isOpenDialog } = state.openDialog
+	  const { loggedIn } = state.authentication;
+	  const { isOpenDialog } = state.openDialog
 	return {
-		loggedIn,
-		isOpenDialog
+		  loggedIn,
+		  isOpenDialog
 	}
 }
 
 function mapDispatchToProps(dispatch){
 	return({
-		createUser: (userName, userPass, userEmail) => {dispatch(createProfile(userName, userPass, userEmail));},
+		  createUser: (userName, userPass, userPass2, userEmail) =>
+          {dispatch(createProfile(userName, userPass, userPass2, userEmail));},
 		isLoad: (isLoadingStatus) =>{dispatch(isLoading(isLoadingStatus));},
 		updateFailed: (message)=>{dispatch(LogInFailed(message));},
 		openDialog: () =>{dispatch(DialogOpen())},

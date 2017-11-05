@@ -90,7 +90,7 @@ const CreateNewProfileComp = (props) =>{
 			  			          margin = "dense"
 			  			          type="password"
 			  			          fullWidth
-			  			          onChange ={callbacks.UserPassword}
+			  			          onChange ={callbacks.UserPassword2}
 			  			          required
 			  			  
 				    	     />
