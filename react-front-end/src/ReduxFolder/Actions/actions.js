@@ -19,6 +19,8 @@ function _Login(username, password) {
 
     // set the url and use fetch to send request
     let url = "http://127.0.0.1:8000/login/";
+
+    console.log("Req:", requestOptions);
     return fetch(url, requestOptions);
 }
 
@@ -39,7 +41,7 @@ export function Login(username, password) {
             // if good then return the response json
             if(response.ok){
                 return response.json();
-            } 
+            }
 
             if(response.status == 400 || response.status == 500){
                 dispatch(LogInFailed("Something went wrong with the server. Please contact sys. admin."));
@@ -114,15 +116,17 @@ export function isDisableButton(isDisable){
  export function ForgotAcc(email){
  	return {type: types.FORGOTACC, recoverEmail: email};
  }
-
- export function CreateAcc(accountDetails){
- 	return {type: types.CREATEACC, accDetail: accountDetails};
- }
  */
+
+ export function CreateAcc(isRegistered){
+ 	return {type: types.CREATEACC, registered: isRegistered};
+ }
+
 
  export function UploadFile(fileToUpload){
  	return {type: types.UPLOADFILE, fileInfo: fileToUpload};
  }
+
 
  export function DeleteFile(fileToDelete){
  	return {type: types.DELETEFILE, fileDel: fileToDelete};
