@@ -3,7 +3,7 @@ import * as types from '../Constants/ActionTypes.js';
 //let user = JSON.parse(localStorage.getItem('user'));
 const initialState =  { loggedIn: false, errorMessage: " "} 
 
-function authentication(state = initialState, action) {
+export default function authentication(state = initialState, action) {
     switch (action.type) {
         case types.REQUEST:
         return Object.assign({}, state, {
@@ -33,5 +33,3 @@ function authentication(state = initialState, action) {
             return state;
     }
 }
-
-export default authentication;

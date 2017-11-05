@@ -6,7 +6,6 @@ import {createProfile} from '../ReduxFolder/Actions/CreateProfileActions.js';
 import { LogInFailed, isLoading} from '../ReduxFolder/Actions/actions.js';
 import {DialogOpen, DialogClose} from '../ReduxFolder/Actions/DialogActions.js';
 
-//TODO: FIXME
 class CreateUserProfile extends React.Component{
 	constructor(props){
 		super(props);
