@@ -18,18 +18,16 @@ function _createProfile(username, password1, password2, account_emailaddress) {
     let url = "http://127.0.0.1:8000/rest-auth/registration/";
     let request = {
 			  method: 'post',
-			  body: JSON.stringify({ username
-                               , account_emailaddress
-                               , password1
-                               , password2
-                             }),
-			  // dataType: "json",
-			  // mode: "cors",
+			  body: JSON.stringify({ username, 
+                               account_emailaddress, 
+                               password1, 
+                               password2
+                            }),
 			  headers: {
         	  'Content-Type': 'application/json'
         }
 		};
-    console.log(request);
+    
     return fetch(url, request);
 }
 
@@ -42,10 +40,12 @@ export function createProfile(userName, passWord, passWord2, userEmail){
 		      }).then((data)=>{
 			        if(data[1] === 400){
 				          this.setState({notLogState: true});
+                  dispatch(LogInFailed("Bad Request Error, Please Contact Your System Admin."));
 			        }
 
 			        if(data[1] === 200){
 				          this.setState({notLogState: false});
+                   dispatch(LogInFailed("User Profile Created!"));
 			        }
               
 			        console.log(data)

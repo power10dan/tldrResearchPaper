@@ -1,6 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
 import CreateProfile from '../AppComponents/CreateProfile.js';
 import {createProfile} from '../ReduxFolder/Actions/CreateProfileActions.js';
 import { LogInFailed, isLoading} from '../ReduxFolder/Actions/actions.js';
@@ -29,6 +28,37 @@ class CreateUserProfile extends React.Component{
 		//this.setState({opDialog: nextProps.isOpenDialog});
 	}
 
+	sanitizeUserInput = (userName, userEmail, userPass, userPass2) => {
+		let validEmailRegex = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?";
+		if(userName === ""){
+			this.props.updateFailed("Please Input User Name");
+			return false;
+		}
+
+		if(userEmail === ""){
+			this.props.updateFailed("Please Input User Email");
+    		return false;
+		}
+
+		if (userPass === " " || userPass2 === " "){
+			this.props.updateFailed("Please Input User Password");
+    		return false;
+		}
+
+		if(userPass.localeCompare(userPass2) !== 0){
+			this.props.updateFailed("You did not type matching password");
+			return false;
+		}
+		// sanitize user email
+		if(validEmailRegex.test(userEmail) == false){
+			this.props.updateFailed("Invalid User Email");
+			return false;
+		}
+
+		// if we get here, all input fields are sanitized
+		return true;
+	}
+
     handleSubmit= () => {
     	const {dispatch} = this.props;
     	let userName = this.state.newUserName;
@@ -36,54 +66,31 @@ class CreateUserProfile extends React.Component{
     	let userPass = this.state.newUserPassword;
     	let userPass2 = this.state.newUserPassword2;
 
-    	if(userName === ""){
-    		this.props.updateFailed("User Name Field is Empty");
-    		this.props.openDialog();
-
-        // set dialog close after two seconds
-    		setTimeout(()=>{this.props.closeDialog()}, 2000);
-
-    	} else if(userEmail === ""){
-    		this.props.updateFailed("Please Input User Email");
+    	let sanitized = this.sanitizeUserInput(userName, userEmail, userPass, userPass2);
+    	if(sanitized === false){
     		this.props.openDialog();
     		setTimeout(()=>{this.props.closeDialog()}, 2000); 
-
-    	} else if(userPass === ""){
-    		this.props.updateFailed("Please Input User Password");
-    		this.props.openDialog();
-    		setTimeout(()=>{this.props.closeDialog()}, 2000);
-
-    	} else if (userPass2 === ""){
-    		  this.props.updateFailed("Second Password Required");
-    		  this.props.openDialog();
-    		  setTimeout(()=>{this.props.closeDialog()}, 2000);
-
-      } else if (userPass.localeCompare(userPass2) !== 0){
-    		  this.props.updateFailed("Passwords do not match!");
-    		  this.props.openDialog();
-    		  setTimeout(()=>{this.props.closeDialog()}, 2000);
-
-      } else {
+    		return;
+    	} else{
     		this.props.isLoad(true);
     		this.props.createUser(userName, userPass, userPass2, userEmail);
     		
-    		if(this.state.isLoggedIn == false){
+    		if(this.state.isLoggedIn === false){
     			this.props.updateFailed("Please Input User Password");
 	    		this.props.openDialog();
 	    		setTimeout(()=>{this.props.closeDialog()}, 2000); // set dialog close after two seconds
     		}
 
-    		if(this.state.isLoggedIn == true){
+    		if(this.state.isLoggedIn === true){
     			this.props.openDialog();
     			setTimeout(()=>{this.props.closeDialog()}, 2000); // set dialog close after two seconds
-
     		}
-    	}
 
-        this.setState({newUserEmail: " "})
+    		this.setState({newUserEmail: " "})
 		    this.setState({newUserPassword: " "})
 		    this.setState({newUserPassword2: " "})
 		    this.setState({newUserName: " "})
+    	}        	
     }
 
     //create user Get methods.
