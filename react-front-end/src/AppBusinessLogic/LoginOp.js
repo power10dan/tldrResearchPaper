@@ -30,40 +30,50 @@ class LoginOperations extends React.Component{
 		this.setState({errMessage: nextProps.errorMessage});
 		this.setState({opDialog: nextProps.isOpenDialog});
 		this.setState({isRegist: nextProps.isRegistered});
-		this.setState({userName: nextProps.userName});
 	}
 
     handleSubmit = () => {
     	this.props.isLoading(true);
         const { dispatch } = this.props;
-        let userAcc = this.state.userName;
-        let userPassword = this.state.userPass;
-
-        if(userAcc === "" || typeof userAcc === "undefined") {
+        
+        if(this.state.userName === "" || typeof this.state.userName === "undefined") {
         	this.props.updateFailed("Please enter user name");
         	this.props.openDialog();
         	setTimeout(()=>{this.props.closeDialog()}, 2000); // set dialog close after two seconds
         	this.props.isLoading(false);
        
-        } else if(userPassword === "" || typeof userPassword === "undefined"){
+        } else if(this.state.userPass === "" || typeof this.state.userPass === "undefined"){
         	this.props.updateFailed("Please enter password");
         	this.props.openDialog();
         	setTimeout(()=>{this.props.closeDialog()}, 2000); // set dialog close after two seconds
         	this.props.isLoading(false);
         
         } else {
-        	this.props.loginOp(userAcc, userPassword);
+        	//FIXME: Monkey patch: put userName in userEmail parameter. 
+        	this.props.loginOp(this.state.userName, this.state.userName, this.state.userPass);
         
         	if(this.state.isLoginSuccess === false){
         		this.props.openDialog();
 	        	setTimeout(()=>{this.props.closeDialog()}, 2000); // set dialog close after two seconds
 	        	this.props.isLoading(false);
+		        	// clean up
+	   			this.setState({userName: ""});
+	   			// we have to clear out the text field variable
+				this.setState({userTempPass: ""});
+				// we also have to clear out our saved hash
+				this.setState({userPass: ""});
         	}
 
         	if(this.state.isLoginSuccess === true){
         		this.props.openDialog();
 	        	setTimeout(()=>{this.props.closeDialog()}, 2000); // set dialog close after two seconds
 	        	this.props.isLoading(false);
+		        	// clean up
+	   			this.setState({userName: ""});
+	   			// we have to clear out the text field variable
+				this.setState({userTempPass: ""});
+				// we also have to clear out our saved hash
+				this.setState({userPass: ""});
         	}
 
         	// clean up
@@ -116,7 +126,6 @@ class LoginOperations extends React.Component{
 	render(){
       const packagesLogin = this.functionPackages();
       let emptyState = null;
-      console.log(this.state.userName);
       if(this.state.isRegist === true || this.state.isLoginSuccess === true){
       	  	// in future, return something more meaningful
       	 	return(<SideNavStates cred={this.state.userName} /> );
@@ -154,7 +163,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch){
 	return({
 		updateFailed: (message)=>{dispatch(LogInFailed(message));},
-		loginOp: (userName, userPass) =>{dispatch(Login(userName, userPass));},
+		loginOp: (userName, userEmail, userPass) =>{dispatch(Login(userName, userEmail, userPass));},
 		isLoading: (stat)=>{dispatch(isLoading(stat));},
 		openDialog: () =>{dispatch(DialogOpen())},
 		closeDialog: () =>{dispatch(DialogClose())},

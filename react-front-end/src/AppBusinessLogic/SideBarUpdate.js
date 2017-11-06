@@ -11,8 +11,6 @@ class UpdateSideNav extends React.Component{
 	}
 
 	componentWillReceiveProps(nextProps) {
-		console.log("i am in sidenv")
-		console.log(nextProps);
 		this.setState({userName: nextProps.userName});
 	}
 
@@ -22,8 +20,6 @@ class UpdateSideNav extends React.Component{
 			return(	
 				<SideNavCustom cred={this.state.userName} />
 			)
-			
-
 		} else {
 			return(
 				<SideNavCustom cred={"Stranger"} />
@@ -35,6 +31,7 @@ class UpdateSideNav extends React.Component{
 // "connects" to the state tree, and return updated 
 // states when state tree is updated.
 function mapStateToProps(state) {
+	// get stuff from the UserProfile slice from the state tree
     const {userName } = state.UserProfile;
     return {
         userName,
