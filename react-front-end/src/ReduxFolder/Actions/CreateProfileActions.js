@@ -2,21 +2,23 @@ import * as types from '../Constants/ActionTypes';
 import { UserProfile } from '../Reducers/UserProfile.js';
 import { saveCred } from '../Actions/SaveCred.js';
 import { DialogOpenCreate , DialogCloseCreate } from './DialogActions.js';
+import { LogInSuccess } from './actions.js';
 
-function _createProfile(username, password1, password2, account_emailaddress) {
+function _createProfile(username, passwordFirst, passwordSecond, account_emailaddress) {
     let url = "http://127.0.0.1:8000/rest-auth/registration/";
     let request = {
 			  method: 'post',
-			  body: JSON.stringify({ username, 
-                               account_emailaddress, 
-                               password1, 
-                               password2
+			  body: JSON.stringify({ username: username, 
+                               account_emailaddress: account_emailaddress, 
+                               password1: passwordFirst, 
+                               password2: passwordSecond
                             }),
 			  headers: {
         	  'Content-Type': 'application/json'
         }
 		}; 
-
+    console.log("i am in create profile");
+    console.log(request)
     return fetch(url, request);
 }
 
@@ -27,7 +29,7 @@ export function createProfile(userName, passWord, passWord2, userEmail){
                 if(response.status === 201){
                     return response.json();
                 }
-                if(response.status === 400  ){
+                if(response.status === 400 ){
                     dispatch(CreateFailed("Username already existied"));
                     dispatch(DialogOpenCreate()),
                     setTimeout(()=>{dispatch(DialogCloseCreate())}, 2000);
@@ -37,6 +39,7 @@ export function createProfile(userName, passWord, passWord2, userEmail){
   		      }).then((data)=>{
                 if(typeof data !== 'undefined'){
                     dispatch(CreateSuccess("Profile Created!"));
+                    dispatch(LogInSuccess("You have logged in!"));
                     // save the token to the user profile 
                     dispatch(saveCred(userName, userEmail, data.key));
 

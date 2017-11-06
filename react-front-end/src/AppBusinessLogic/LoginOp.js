@@ -16,6 +16,7 @@ class LoginOperations extends React.Component{
 			userPass: "",
 			isLoginSuccess: false,
 			errMessage: "",
+			successMessage: "",
 			opDialog: false,
 			isRegist: false,
 		};
@@ -30,11 +31,13 @@ class LoginOperations extends React.Component{
 		this.setState({errMessage: nextProps.errorMessage});
 		this.setState({opDialog: nextProps.isOpenDialog});
 		this.setState({isRegist: nextProps.isRegistered});
+		this.setState({successMessage: nextProps.successMess});
 	}
 
     handleSubmit = () => {
     	this.props.isLoading(true);
         const { dispatch } = this.props;
+
         
         if(this.state.userName === "" || typeof this.state.userName === "undefined") {
         	this.props.updateFailed("Please enter user name");
@@ -98,7 +101,7 @@ class LoginOperations extends React.Component{
 		// then we hash the temp varible password and then
 		// return it to userPass.
 		this.setState({userTempPass: userPassword.target.value}, ()=>{
-			bcrypt.hash(this.state.userTempPass, 10, this.storeHash);
+			this.storeHash("hi", this.state.userTempPass)
 		});
 	}
 
@@ -128,7 +131,12 @@ class LoginOperations extends React.Component{
       let emptyState = null;
       if(this.state.isRegist === true || this.state.isLoginSuccess === true){
       	  	// in future, return something more meaningful
-      	 	return(<SideNavStates cred={this.state.userName} /> );
+      	 	return(
+      	 			<div>
+	      	 			<SideNavStates  />
+			      		<ErrSnack message={this.state.successMessage} openDialog={this.state.opDialog} />
+			      	</div>
+		      	);
       }
 
       if(this.state.isLoginSuccess === false ){
@@ -147,7 +155,7 @@ class LoginOperations extends React.Component{
 // "connects" to the state tree, and return updated 
 // states when state tree is updated.
 function mapStateToProps(state) {
-    const { isLoggedIn, errorMessage, isOpenDialog } = state.authentication;
+    const { isLoggedIn, errorMessage, isOpenDialog, successMess} = state.authentication;
     const {isRegistered} = state.createAccReducer;
 
     return {
@@ -155,6 +163,7 @@ function mapStateToProps(state) {
         errorMessage,
         isOpenDialog,
         isRegistered,
+        successMess
     };
 }
 

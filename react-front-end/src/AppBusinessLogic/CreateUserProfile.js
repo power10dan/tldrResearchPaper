@@ -103,16 +103,19 @@ class CreateUserProfile extends React.Component{
     	const {dispatch} = this.props;
     	let userName = this.state.newUserName;
     	let userEmail = this.state.newUserEmail;
-    	let userPass = this.state.newUserTempPassword;
-    	let userPass2 = this.state.newUserTempPassword2;
+    	let userPass = this.state.newUserPassword;
+    	let userPass2 = this.state.newUserPassword2;
+    	//console.log(this.state.)
+    	console.log("my state");
+    	console.log(userPass);
+    	console.log(this.state.newUserPassword);
+    	console.log(this.state.newUserPassword2);
 
     	let sanitized = this.sanitizeUserInput(userName, userEmail, userPass, userPass2);
     	if(sanitized === true){
             // only send the first password twice so the user is created
 	         // if we send both then they'll never match because of hash
-	        console.log("hahah")
-	        console.log(this.state);
-	   	    this.props.createUser(userName, userPass, userPass2, userEmail);
+	   	    this.props.createUser(this.state.newUserName, this.state.newUserPassword, this.state.newUserPassword2, this.state.newUserEmail);
 
 	   	    if(this.state.isRegistered == false){
 	   	    	this.props.openDialog();
@@ -145,15 +148,10 @@ class CreateUserProfile extends React.Component{
   	}
 
 	newUserPasswordGet = (userPassword) => {
-		  this.setState({newUserTempPassword : userPassword.target.value}, ()=>{
-
-		  	bcrypt.hash(this.state.userTempPassword, 10, this.storeHash);
-		  });
+		  this.setState({newUserPassword : userPassword.target.value});
 	}
 	newUserPasswordGet2 = (userPassword) => {
-		  this.setState({newUserTempPassword2 : userPassword.target.value}, ()=>{
-		  		bcrypt.hash(this.state.userTempPassword2, 10, this.storeHash);
-		  });
+		  this.setState({newUserPassword2 : userPassword.target.value});
 	}
 
 	newUserNameGet = (userName) => {
@@ -189,8 +187,8 @@ class CreateUserProfile extends React.Component{
 		return({
 			userName: this.state.newUserName,
 			userEmail: this.state.newUserEmail,
-			userPassword: this.state.newUserTempPassword,
-			userPassword2: this.state.newUserTempPassword2
+			userPassword: this.state.newUserPassword,
+			userPassword2: this.state.newUserPassword2
 		})
 	}
 

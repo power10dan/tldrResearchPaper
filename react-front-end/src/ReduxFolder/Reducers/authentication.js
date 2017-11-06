@@ -5,13 +5,13 @@ export default function authentication(state = userLogin , action) {
     switch (action.type) {
         case types.LOGIN_SUCCESS:
             return Object.assign({}, state, {
-                loggedIn: action.isLogin,
-                successMessage: action.message
+                isLoggedIn: action.isLogin,
+                successMess: action.successMessage
             });
 
         case types.LOGIN_FAIL:
             return Object.assign({}, state, {
-                loggedIn: action.isLogin,
+                isLoggedIn: action.isLogin,
                 errorMessage: action.message
             });
 

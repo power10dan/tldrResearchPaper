@@ -1,5 +1,7 @@
 import * as types from '../Constants/ActionTypes';
 import { saveCred } from '../Actions/SaveCred.js';
+import bcrypt from 'bcryptjs';
+
 /*
  * Action creators
  *
@@ -9,37 +11,31 @@ import { saveCred } from '../Actions/SaveCred.js';
    asynchronously validates the response, and stores the auth token locally if
    success, then return the user
 */
-function _Login(username, password) {
-    // set the request options
-    const requestOptions = {
+function _Login(userName, passWord) {
+    let requestOptions = {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, 
-                               password
+        body: JSON.stringify({ username: userName, 
+                               password: passWord
                             }),
+        headers: { 'Content-Type': 'application/json' }
     };
+    console.log("i am in login")
+    console.log(requestOptions);
 
     // set the url and use fetch to send request
     var url = "http://127.0.0.1:8000/login/";
     return fetch(url, requestOptions);
 }
 
-// save user login credentials
-export function dispatchUserCred(username, userpass){
-    return {
-        type: types.REQUEST,
-        username: username,
-        userpassword: userpass
-    };
-}
-
 //actual login function
 export function Login(userName, userEmail, password) {
+    //let hash = bcrypt.hashSync(password, 10);
+    //console.log(hash);
     return dispatch => {
         // save user password
         _Login(userName, password).then((response) => {
             let status = response.status;
-            if(response.ok != 201){
+            if(response.ok != true){
                 dispatch(LogInFailed("Login Failed"));
                 dispatch(isLoading(false));
                 return;
