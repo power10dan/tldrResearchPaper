@@ -3,12 +3,17 @@ import AppTopBar from '../AppComponents/AppTopBar.js';
 
 class UploadFile extends React.Component{
 
+	constructor(props){
+		super(props);
+		this.state = {isFinished: true, dataRec : ""}
+	}
+
 	handleClick = (fileObj) => {
 		var fileName = fileObj.fileList[0].name;
 		var djangoURL = "http://127.0.0.1:8000/api/uploadFile/".concat(fileName);
 		var djangoGETURL = "http://127.0.0.1:8000/api/getAllFiles/"
+		this.setState({isFinished: false});
 		this.uploadFiles(djangoURL, djangoGETURL, fileObj.base64);
-
 	}
 
 	uploadFiles = (urlPOST, urlGET, file) => {
@@ -38,7 +43,10 @@ class UploadFile extends React.Component{
 
 			return response.json()
 		}).then((data) =>{
-			console.log(data);
+			this.setState({dataRec : data })
+			this.setState({isFinished: true})
+
+			console.log(this.state)
 
 
 		}).catch((err) =>{
@@ -47,6 +55,12 @@ class UploadFile extends React.Component{
 	}
 
 	render(){
+		let isFinished = this.state.isFinished;
+		let state = null;
+		if(isFinished != true){
+			console.log("hip hip horray");
+		} 
+
 		return(
 			<AppTopBar  uploadFile={this.handleClick} />
 		);

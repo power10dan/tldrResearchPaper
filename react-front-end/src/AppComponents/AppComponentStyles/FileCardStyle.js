@@ -3,8 +3,8 @@ const stylesFileCard = theme => ({
 		paddingTop: 10,
 		paddingBottom: 3,
 		paddingLeft: 10,
-		marginTop: theme.spacing.unit*3,
-	});
+		marginTop: theme.spacing.unit*3
+	})
 });
 
 

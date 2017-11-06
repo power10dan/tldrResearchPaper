@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {withStyles} from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import Paper from 'material-ui/Paper';
 import Typography from 'material-ui/Typography';
-import stylesFileCard from './AppComponentStyles.js';
+import stylesFileCard from './AppComponentStyles/FileCardStyle.js';
 import Button from 'material-ui/Button';
 import Divider from 'material-ui/Divider';
 
@@ -24,7 +24,7 @@ const PaperSheetWithCards = (props) => {
 
 
 		</div>
-	);
+	)
 };
 
 export default withStyles(stylesFileCard)(PaperSheetWithCards);

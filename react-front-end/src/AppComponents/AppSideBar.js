@@ -7,6 +7,9 @@ import NestedList from './ListItems.js';
 // Dummy component, should only be getting data from
 // components from the AppBusinessLogic folder.
 export default class SideNavCustom extends Component{
+	constructor(props){
+		super(props);
+	}
 	showSettings(event){
 		event.preventDefault();
 	}
@@ -23,7 +26,9 @@ export default class SideNavCustom extends Component{
 
 					 <a id="userEmail"
 					    className="menu-item"
-					    href="/">Welcome Stranger!
+					    href="/">
+
+					    Welcome {this.props.cred}
 					 </a>
 					 <NestedList />
 				</Menu>

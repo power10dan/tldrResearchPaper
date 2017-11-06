@@ -96,7 +96,17 @@ staticfiles
 *.sqlite3
 
 # hiding node modules
-node_modules/*
+react-front-end/node_modules/*
 
 # hiding actual files in media/docs
 uploads/media/documents/*
+
+# python stuff
+*.pyc
+*/__init__.*
+
+# hide any logs
+*.logs
+
+# hide any .snap files from jest testing
+*.snap

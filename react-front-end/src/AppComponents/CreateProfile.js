@@ -25,95 +25,86 @@ const styles = theme =>({
   	},
 
   	title: {
-    	fontSize: 40,
+    	fontSize: 45,
     	marginTop: 20,
     	color: "#FFFFFF",
+    	paddingleft: 30
     },
 });
 
 
-class CreateNewProfileComp extends React.Component{
-	constructor(props){
-		super(props);
-		console.log(props);
-		this.state = {
-			open: false
-		};
-	}
-
-	 handleClickOpen = () => {
-	    this.setState({ open: true });
-	 };
-
-  	 handleRequestClose = () => {
-    	this.setState({ open: false });
-  	};
-
-  	render() {
-  		return(
+const CreateNewProfileComp = (props) =>{
+	const callbacks = props.callBacks;
+	const vals = props.vals;
+	return(
 			<div>
-				<Button dense color="primary" onClick = {this.handleClickOpen}>
+				<Button dense color="primary" onClick = {callbacks.HandleClickOpenDialog} >
 		  			 Create Account
 		  		</Button>
 
-				<Dialog open ={this.state.open} onRequestClose={this.handleRequest}>
-					<DialogTitle className={ this.props.classes.titleStyle}>
-						<Typography className={ this.props.classes.title} >
+				<Dialog open ={props.isOpen} onRequestClose={callbacks.HandleClickCloseDialog}>
+					<DialogTitle className={ props.classes.titleStyle}>
+						<Typography className={ props.classes.title} >
 								Create Account
 						</Typography>
 					</DialogTitle>
+					
 					<DialogContent>
-						<TextField
+							<TextField
+								value={vals.userName}
 								autoFocus
 								margin="dense"
 								id="name"
 								label="User Name"
 								fullWidth
-								onChange={this.props.createNameGetter}
+								onChange={ callbacks.UserName}
 								required
-								error = {this.props.isCreateErrorName}
+								
 							/>
 							<TextField
+								value={vals.userEmail}
 								autoFocus
 								margin="dense"
 								id="name"
 								label="Email Address"
 								fullWidth
-								onChange={this.props.createEmailGetter}
+								onChange={callbacks.UserEmail}
 								required
-								error ={this.props.isCreateErrorEmail}
+							
 							/>
 
 							 <TextField
-							 	   autoFocus
+							 	   value={vals.userPassword}
+							 	  autoFocus
 			  			          id="password"
-			  			          label="Password, must be at least 8 characters"
+			  			          label="Password, must be at least 8 characters with no spaces"
 			  			          margin = "dense"
 			  			          type="password"
 			  			          fullWidth
-			  			          onChange = {this.props.createPasswordGetter}
+			  			          onChange = {callbacks.UserPassword}
 			  			          required
-			  			          error = {this.props.isCreateErrorPassword1}
+			  			
 				    	     />
 
 				    	     <TextField
+				    	     	    value={vals.userPassword2}
 							 	   autoFocus
 			  			          id="password"
 			  			          label="Type Password Again"
 			  			          margin = "dense"
 			  			          type="password"
 			  			          fullWidth
-			  			          onChange ={this.props.createPasswordGetter}
+			  			          onChange ={callbacks.UserPassword2}
 			  			          required
-			  			          error = {this.props.isCreateErrorPassword2}
+			  			  
 				    	     />
 
 							<DialogActions>
-							   	<Button  onClick= {this.props.createAccountSubmitHandler}>
+							   	<Button  onClick= {callbacks.SubmitHand}>
 							   		Create Account
 							   	</Button>
 
-							   	<Button onClick= {this.handleRequestClose} >
+							   	<Button onClick= {callbacks.HandleClickCloseDialog} >
 							   		Cancel
 							   	</Button>
 							</DialogActions>
@@ -122,8 +113,6 @@ class CreateNewProfileComp extends React.Component{
 			</div>
 		)
 
-  	}
 }
-
 
 export default withStyles(styles)(CreateNewProfileComp);

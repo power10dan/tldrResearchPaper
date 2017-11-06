@@ -2,16 +2,17 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import Card, { CardActions, CardContent } from 'material-ui/Card';
+import { ProfileOps } from '../AppBusinessLogic/CreateUserProfile.js';
 import Button from 'material-ui/Button';
 import Typography from 'material-ui/Typography';
 import TextField from 'material-ui/TextField';
-import CreateNewProfileComp from '../AppComponents/CreateProfile.js';
+//import { ProfileOps } from '../AppComponents/CreateProfile.js';
 
 const styles = theme => ({
     card: {
-        width:'50%',
+        width:'40%',
         height:'160px',
-        marginTop: "55px",
+        marginTop: "125px",
         padding: "2px",
         marginLeft: "425px",
         background: "#5C6BC0",
@@ -33,8 +34,8 @@ const styles = theme => ({
     },
 
     inputCard:{
-    	width:'50%',
-      height:'240px',
+    	width:'40%',
+      height:'200px',
       marginTop: "0px",
       padding: "2px",
       marginLeft: "425px",
@@ -43,7 +44,7 @@ const styles = theme => ({
     },
 
     title: {
-    	fontSize: 45,
+    	fontSize: 55,
     	marginTop: 60,
     	color: "#FFFFFF",
     },
@@ -57,82 +58,57 @@ const styles = theme => ({
     }
 });
 
-const SimpleCard = (props) => {
+const LoginCard = (props) => {
   const classes = props.classes;
+  const callbacks = props.package;
   return (
-    <div className={classes.containerDiv}>
-      <Card className={classes.card}>
-        <CardContent>
-           		<Typography type="body1" className={classes.title}>
-		           " Welcome! "
-		        </Typography>
-        </CardContent>
-      </Card>
-      <Card className={classes.inputCard} elevation={1}>
-	        <CardContent>
-  	      		<TextField
-  			          id="account"
-  			          label="User Name"
-  			          className={classes.textField}
-  			          type="account"
-  			          margin="normal"
-                  onChange={props.loginNameGet}
-                  required
-                  error = {props.isErrorName}
-  		    	   >
-		</TextField>
-
-		<TextField
-			id="account"
-			label="Email"
-			className={classes.textField}
-			type="account"
-			margin="normal"
-			onChange={props.loginEmailGet}
-			required
-			error={props.isErrorEmail}
-				>
-               </TextField>
-
-	          	 <TextField
-  			          id="password"
-  			          label="Password"
-  			          className={classes.textFieldPass}
-  			          type="password"
-  			          margin="normal"
-                  onChange={props.loginPasswordGet}
-                  required
-                  error = {props.isErrorPassword}
-		    	     >
-               </TextField>
-		    	<CardActions className={classes.cardActionContainer}>
-			          <Button dense color="primary" onClick={props.loginSubmitHandler}>
-			            Login
-			          </Button>
-			          <Button dense color="primary">
-			            Forgot Password / Account
-			          </Button>
-  			        <CreateNewProfileComp
-                    createNameGetter = {props.createUserNameGet}
-                    createPasswordGetter = {props.createPasswordGet}
-                    createEmailGetter = {props.createEmailGet}
-                    createAccountSubmitHandler = {props.createAccountSubmitHandler}
-
-                    isCreateErrorEmail = {props.isCreateErrorEmail}
-                    isCreateErrorPassword1 = {props.isCreateErrorPassword1}
-                    isCreateErrorPassword2 = {props.isCreateErrorPassword2}
-                    isCreateErrorName = {props.isCreateErrorName}
-                />
-		        </CardActions>
-	        </CardContent>
+      <div className={classes.containerDiv}>
+        <Card className={classes.card}>
+            <CardContent>
+               		<Typography type="body1" className={classes.title}>
+    		           " Hi. "
+    		        </Typography>
+            </CardContent>
         </Card>
-    </div>
+        <Card className={classes.inputCard} elevation={1} >
+  	        <CardContent>
+      	      		<TextField
+                      value= {props.name}
+      			          id="account"
+      			          label="User Name"
+      			          className={classes.textField}
+      			          type="account"
+      			          margin="normal"
+                      onChange={callbacks.GetUserName}
+                      required
+                    >
+    		          </TextField>
 
+        	         <TextField
+                         value={props.pass}
+          			         id="password"
+          			         label="Password"
+          			         className={classes.textFieldPass}
+          			         type="password"
+          			         margin="normal"
+                         onChange={callbacks.GetPassword}
+                         required >
+                   </TextField>
+        		    	<CardActions className={classes.cardActionContainer}>
+        			          <Button dense color="primary" onClick={callbacks.LoginSubmit}>
+        			            Login
+        			          </Button>
+                        <ProfileOps />
+        			         
+        		      </CardActions>
+  	        </CardContent> 
+          </Card>
+      </div>
   );
 }
 
-SimpleCard.propTypes = {
+LoginCard.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(SimpleCard);
+export default withStyles(styles)(LoginCard);
