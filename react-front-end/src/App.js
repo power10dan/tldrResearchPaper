@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
 import AppTopBar from './AppComponents/AppTopBar.js';
-import SideNavCustom from './AppComponents/AppSideBar';
 import UploadFile from './AppBusinessLogic/UploadFile';
 import { LoginOps } from './AppBusinessLogic/LoginOp';
 import { connect } from 'react-redux';
@@ -20,7 +19,6 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-            <SideNavCustom />
             <Router history={history}>
                 <div>
                     <Route path="/" component={LoginOps}/>
