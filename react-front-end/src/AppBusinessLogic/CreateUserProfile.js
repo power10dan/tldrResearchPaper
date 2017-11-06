@@ -34,7 +34,7 @@ class CreateUserProfile extends React.Component{
 		this.setState({opMessageDialog: nextProps.isOpenDialog});
 		if(nextProps.dismissProfileDialog === true){
 			this.setState({opDialog: false});
-		}  else{
+		} else{
 			this.setState({opDialog: true});	
 		}
 	}
@@ -110,6 +110,8 @@ class CreateUserProfile extends React.Component{
     	if(sanitized === true){
             // only send the first password twice so the user is created
 	         // if we send both then they'll never match because of hash
+	        console.log("hahah")
+	        console.log(this.state);
 	   	    this.props.createUser(userName, userPass, userPass2, userEmail);
 
 	   	    if(this.state.isRegistered == false){
@@ -143,10 +145,15 @@ class CreateUserProfile extends React.Component{
   	}
 
 	newUserPasswordGet = (userPassword) => {
-		  this.setState({newUserTempPassword : userPassword.target.value});
+		  this.setState({newUserTempPassword : userPassword.target.value}, ()=>{
+
+		  	bcrypt.hash(this.state.userTempPassword, 10, this.storeHash);
+		  });
 	}
 	newUserPasswordGet2 = (userPassword) => {
-		  this.setState({newUserTempPassword2 : userPassword.target.value});
+		  this.setState({newUserTempPassword2 : userPassword.target.value}, ()=>{
+		  		bcrypt.hash(this.state.userTempPassword2, 10, this.storeHash);
+		  });
 	}
 
 	newUserNameGet = (userName) => {
