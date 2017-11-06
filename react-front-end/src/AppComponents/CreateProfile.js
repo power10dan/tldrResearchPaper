@@ -35,7 +35,7 @@ const styles = theme =>({
 
 const CreateNewProfileComp = (props) =>{
 	const callbacks = props.callBacks;
-	console.log(callbacks)
+	const vals = props.vals;
 	return(
 			<div>
 				<Button dense color="primary" onClick = {callbacks.HandleClickOpenDialog} >
@@ -50,7 +50,8 @@ const CreateNewProfileComp = (props) =>{
 					</DialogTitle>
 					
 					<DialogContent>
-						<TextField
+							<TextField
+								value={vals.userName}
 								autoFocus
 								margin="dense"
 								id="name"
@@ -61,6 +62,7 @@ const CreateNewProfileComp = (props) =>{
 								
 							/>
 							<TextField
+								value={vals.userEmail}
 								autoFocus
 								margin="dense"
 								id="name"
@@ -72,9 +74,10 @@ const CreateNewProfileComp = (props) =>{
 							/>
 
 							 <TextField
+							 	   value={vals.userPassword}
 							 	  autoFocus
 			  			          id="password"
-			  			          label="Password, must be at least 8 characters"
+			  			          label="Password, must be at least 8 characters with no spaces"
 			  			          margin = "dense"
 			  			          type="password"
 			  			          fullWidth
@@ -84,6 +87,7 @@ const CreateNewProfileComp = (props) =>{
 				    	     />
 
 				    	     <TextField
+				    	     	    value={vals.userPassword2}
 							 	   autoFocus
 			  			          id="password"
 			  			          label="Type Password Again"

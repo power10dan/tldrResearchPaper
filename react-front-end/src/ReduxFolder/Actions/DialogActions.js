@@ -11,3 +11,14 @@ export function DialogClose(){
 		type: types.CLOSE_DIALOG,
 	}
 }
+
+export function DialogOpenCreate(){
+	return {
+		type: types.OPEN_CREATE_DIALOG,
+	}
+}
+export function DialogCloseCreate(){
+	return {
+		type: types.CLOSE_CREATE_DIALOG,
+	}
+}

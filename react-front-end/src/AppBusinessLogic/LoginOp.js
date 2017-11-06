@@ -16,6 +16,7 @@ class LoginOperations extends React.Component{
 			isLoginSuccess: false,
 			errMessage: "",
 			opDialog: false,
+			isRegist: false,
 		};
 	}
 
@@ -24,9 +25,10 @@ class LoginOperations extends React.Component{
 	// which is in sometime we don't know. Thus, we use
 	// componentWillReceiveProps to set our new state
 	componentWillReceiveProps(nextProps) {
-		this.setState({isLoginSuccess: nextProps.loggedIn});
+		this.setState({isLoginSuccess: nextProps.isLoggedIn});
 		this.setState({errMessage: nextProps.errorMessage});
 		this.setState({opDialog: nextProps.isOpenDialog});
+		this.setState({isRegist: nextProps.isRegistered});
 	}
 
     handleSubmit = () => {
@@ -77,7 +79,7 @@ class LoginOperations extends React.Component{
 
 	userPasswordGet = (userPassword) => {
 		// we want to clear the text field right after user clicks LOGIN button.
-		// But if we use the same variable for the text field to keep track of user's inpu,
+		// But if we use the same variable for the text field to keep track of user's input,
 		// when the same variable gets hashed, the updated hash
 		// is going to be displayed on the password textfield also.
 		// Thus, we save the password into a temp variable,
@@ -111,20 +113,26 @@ class LoginOperations extends React.Component{
 
 	render(){
       const packagesLogin = this.functionPackages();
-      console.log(packagesLogin)
       let state = null;
       // only render when login fails, else we are OK
+      console.log(this.state.isRegistered);
+      //console.log("hi");
+      //this.state.isRegistered = nextProps.isRegistered;
+      
+      if(this.state.isRegist === true || this.state.isLoginSuccess === true){
+      	  	// in future, return something more meaningful
+      	 	return(null);
+      }
+
       if(this.state.isLoginSuccess === false ){
+      		
 	      	return (
 	      		<div>
 		      		<LoginComp package={packagesLogin} name={this.state.userName} pass={this.state.userTempPass} />
 		      		<ErrSnack message={this.state.errMessage} openDialog={this.state.opDialog} />
 		      	</div>
 	      	)
-      } else{
-      	  	// in future, return something more meaningful
-      	 	return(null);
-      }
+      } 
      
     }
 }
@@ -132,12 +140,13 @@ class LoginOperations extends React.Component{
 // "connects" to the state tree, and return updated 
 // states when state tree is updated.
 function mapStateToProps(state) {
-    const { loggedIn, errorMessage } = state.authentication;
-    const { isOpenDialog } = state.openDialog
+    const { isLoggedIn, errorMessage, isOpenDialog } = state.authentication;
+    const {isRegistered } = state.createAccReducer;
     return {
-        loggedIn,
+        isLoggedIn,
         errorMessage,
-        isOpenDialog
+        isOpenDialog,
+        isRegistered
     };
 }
 

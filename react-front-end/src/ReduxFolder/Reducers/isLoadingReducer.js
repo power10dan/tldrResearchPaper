@@ -1,11 +1,12 @@
 import {LOADING} from '../Constants/ActionTypes';
+import { isLoading } from '../Store/initialStoreState.js';
 
 // a reducer to update the loading status
-export default function isLoadingReducer(state = {}, action) {
+export default function isLoadingReducer(state = isLoading , action) {
     switch (action.type){
         case LOADING:
             return Object.assign({}, state, {
-                isLoading: action.isLoading
+                isLoad: action.isLoading
             });
 
     	default:

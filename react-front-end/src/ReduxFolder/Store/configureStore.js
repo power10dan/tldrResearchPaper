@@ -13,3 +13,5 @@ export const store = createStore(
 		loggerMiddleware
 	)
 );
+
+console.log(store.getState())

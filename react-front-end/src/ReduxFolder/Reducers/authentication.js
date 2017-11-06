@@ -1,34 +1,34 @@
 import * as types from '../Constants/ActionTypes.js';
+import { userLogin } from '../Store/initialStoreState.js';
 
-//let user = JSON.parse(localStorage.getItem('user'));
-const initialState =  { loggedIn: false, errorMessage: " "} 
-
-export default function authentication(state = initialState, action) {
+export default function authentication(state = userLogin , action) {
     switch (action.type) {
-        case types.REQUEST:
-        return Object.assign({}, state, {
-            loggedIn: action.isLogin,
-            user: action.user,
-            pass: action.pass
-        });
-
         case types.LOGIN_SUCCESS:
-        return Object.assign({}, state, {
-            loggedIn: action.isLogin,
-            successMessage: action.message
-        });
+            return Object.assign({}, state, {
+                loggedIn: action.isLogin,
+                successMessage: action.message
+            });
 
         case types.LOGIN_FAIL:
-        return Object.assign({}, state, {
-            loggedIn: action.isLogin,
-            errorMessage: action.message
-        });
+            return Object.assign({}, state, {
+                loggedIn: action.isLogin,
+                errorMessage: action.message
+            });
 
         case types.LOGOUT:
-        return Object.assign({}, state, {
-            loggedIn: false
-        });
+            return Object.assign({}, state, {
+                loggedIn: false
+            });
+        case types.OPEN_DIALOG:
+            return Object.assign({}, state,{
+                isOpenDialog: true
+            });
 
+
+        case types.CLOSE_DIALOG:
+            return Object.assign({}, state, {
+                isOpenDialog: false
+            })
         default:
             return state;
     }

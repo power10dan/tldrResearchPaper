@@ -1,5 +1,5 @@
 import * as types from '../Constants/ActionTypes';
-
+import { saveCred } from '../Actions/SaveCred.js';
 /*
  * Action creators
  *
@@ -14,13 +14,13 @@ function _Login(username, password) {
     const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({ username, 
+                               password
+                            }),
     };
 
     // set the url and use fetch to send request
-    let url = "http://127.0.0.1:8000/login/";
-
-    console.log("Req:", requestOptions);
+    var url = "http://127.0.0.1:8000/rest-auth/login/";
     return fetch(url, requestOptions);
 }
 
@@ -34,34 +34,27 @@ export function dispatchUserCred(username, userpass){
 }
 
 //actual login function
-export function Login(username, password) {
+export function Login(userName, userEmail, password) {
     return dispatch => {
         // save user password
-        _Login(username, password).then((response) => {
-            // if good then return the response json
-            if(response.ok){
+        _Login(userName, password).then((response) => {
+            let status = response.status;
+            if(response.ok != 201){
+                dispatch(LogInFailed("Login Failed"));
+                dispatch(isLoading(false));
+                return;
+            } else{
                 return response.json();
             }
-
-            if(response.status == 400 || response.status == 500){
-                dispatch(LogInFailed("Something went wrong with the server. Please contact sys. admin."));
-                dispatch(isLoading(false));
+        }).then((data) => {
+            // if login fails, data will be undefined.
+            // if not, then data should contain the login token.
+            if(typeof data === 'undefined'){
+                return;
+            } else {
+                dispatch(LogInSuccess("You have logged in!"));
+                dispatch(saveCred(userName, userEmail, data.key));
             }
-
-            if(response.status == 404){
-                dispatch(LogInFailed("We cannot find your loging credential"));
-                dispatch(isLoading(false));
-            }
-            
-        }).then((user) => {
-            // if user is good and we have a token, save token which is the same
-            // as being logged in
-            if (user && user.token) {
-                let welcomeMessage = "Hello, " + username
-                dispatch(LogInSuccess(welcomeMessage));
-                localStorage.setItem('user', JSON.stringify(user));
-            }
-            return user;
         }).catch((err, status)=>{
             if(err.message === "Failed to fetch"){
                 dispatch(LogInFailed("Server Connection Refused, Please Contact Your System Admin"));
@@ -71,9 +64,8 @@ export function Login(username, password) {
     };
 }
 
-
 // action dispatch for when login succeds
-export  function LogInSuccess(successStatus, message){
+export  function LogInSuccess(message){
  	return {
  		type: types.LOGIN_SUCCESS,
  		isLogin: true,
@@ -117,10 +109,6 @@ export function isDisableButton(isDisable){
  	return {type: types.FORGOTACC, recoverEmail: email};
  }
  */
-
- export function CreateAcc(isRegistered){
- 	return {type: types.CREATEACC, registered: isRegistered};
- }
 
 
  export function UploadFile(fileToUpload){

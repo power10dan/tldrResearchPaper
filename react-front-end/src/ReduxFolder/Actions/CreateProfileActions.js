@@ -1,5 +1,7 @@
 import * as types from '../Constants/ActionTypes';
-import { LogInFailed, isLoading, CreateAcc, LogInSuccess} from './actions.js';
+import { UserProfile } from '../Reducers/UserProfile.js';
+import { saveCred } from '../Actions/SaveCred.js';
+import { DialogOpenCreate , DialogCloseCreate } from './DialogActions.js';
 
 function _createProfile(username, password1, password2, account_emailaddress) {
     let url = "http://127.0.0.1:8000/rest-auth/registration/";
@@ -10,53 +12,60 @@ function _createProfile(username, password1, password2, account_emailaddress) {
                                password1, 
                                password2
                             }),
-
 			  headers: {
         	  'Content-Type': 'application/json'
         }
 		}; 
 
-    console.log('Req: ');
-    console.log(request);
     return fetch(url, request);
 }
 
 export function createProfile(userName, passWord, passWord2, userEmail){
 	return dispatch => {
-		  _createProfile(userName, passWord, passWord2, userEmail)
-          .then((response) => {
-			        let resp = [response.json(), response.status];
-			        return resp;
-		      }).then((data)=>{
-              let ret = {};
+  		  _createProfile(userName, passWord, passWord2, userEmail)
+            .then((response) => {
+                if(response.status === 201){
+                    return response.json();
+                }
+                if(response.status === 400  ){
+                    dispatch(CreateFailed("Username already existied"));
+                    dispatch(DialogOpenCreate()),
+                    setTimeout(()=>{dispatch(DialogCloseCreate())}, 2000);
+                    return;
+                }
 
-			        if(data[1] === 400){
-				          this.setState({notLogState: true});
-                  dispatch(LogInFailed("Bad Request Error, Please Contact Your System Admin."));
-			        }
+  		      }).then((data)=>{
+                if(typeof data !== 'undefined'){
+                    dispatch(CreateSuccess("Profile Created!"));
+                    // save the token to the user profile 
+                    dispatch(saveCred(userName, userEmail, data.key));
 
-			        if(data[1] === 200){
-				          this.setState({notLogState: false});
-                   dispatch(LogInSuccess("User Profile Created!"));
-                  ret = CreateAcc(false);
-			        }
+                }
+  		      }).catch((err) =>{
+  			        if(err.message === "Failed to fetch"){
+                    dispatch(CreateFailed("Server Connection Refused. Are you connected to the WIFI?"));
+                }
+  		      });
+	   };
+}
 
-			        if(data[1] === 201){
-                  ret = CreateAcc(true);
-			        }
-              
-              console.log("Data: ")
-			        console.log(data)
+export function CreateFailed(errMessage){
+    return {
+        type: types.FAIL_CREATE,
+        errorMess: errMessage
+    };
+}
 
-              // dispatch the new action to handle a registered user
-              dispatch(ret);
+export function CreateSuccess(successMess){
+     return {
+        type: types.CREATE_SUCCESS,
+        successMessage: successMess 
+     };
+}
 
-		      }).catch((err) =>{
-			        if(err.message === "Failed to fetch"){
-                  dispatch(LogInFailed(
-                      "Server Connection Refused, Please Contact Your System Admin"));
-                  dispatch(isLoading(false));
-              }
-		      });
-	};
+export function ResetDialog(){
+    return {
+      type: types.RESET_DIALOG
+    }
+
 }

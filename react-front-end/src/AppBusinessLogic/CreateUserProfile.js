@@ -3,8 +3,11 @@ import { connect } from 'react-redux';
 import bcrypt from 'bcryptjs';
 import CreateProfile from '../AppComponents/CreateProfile.js';
 import {createProfile} from '../ReduxFolder/Actions/CreateProfileActions.js';
-import { LogInFailed, isLoading} from '../ReduxFolder/Actions/actions.js';
-import {DialogOpen, DialogClose} from '../ReduxFolder/Actions/DialogActions.js';
+import { CreateFailed, CreateSuccess, ResetDialog} from '../ReduxFolder/Actions/CreateProfileActions.js';
+import { DialogOpenCreate , DialogCloseCreate } from '../ReduxFolder/Actions/DialogActions.js';
+import {isLoading } from '../ReduxFolder/Actions/actions.js';
+import ErrSnack from '../AppComponents/ErrDialog.js';
+
 
 class CreateUserProfile extends React.Component{
 	constructor(props){
@@ -12,27 +15,36 @@ class CreateUserProfile extends React.Component{
 		this.state = {
 			newUserName: "",
 			newUserEmail: "",
+			newUserTempPassword: "",
+			newUserTempPassword2: "",
 			newUserPassword: "",
 			newUserPassword2: "",
-			// if create user profile is successful, then we set this as true
-			// because technically the user is "logged in"
-			error: " ",
-      isRegistered: false,
-			opDialog: false,
-			disMissDialog: false,
+      		isRegistered: false,
+      		errMessage: " ",
+      		successMessage: " ",
+      		opDialog: false, // whether to open the create profile component or not
+      		opMessageDialog: false // whether to open error or success snack bar error box
 		};
 	}
 
 	componentWillReceiveProps(nextProps){
-		//this.setState({isLoggedIn: nextProps.loggedIn});
-		//this.setState({error: nextProps.errorMessage});
-		//this.setState({opDialog: nextProps.isOpenDialog});
+		this.setState({isRegistered: nextProps.isRegistered});
+		this.setState({errMessage: nextProps.errorMessageProfile});
+		this.setState({successMessage: nextProps.successMessageProfile});
+		this.setState({opMessageDialog: nextProps.isOpenDialog});
+		if(nextProps.dismissProfileDialog === true){
+			this.setState({opDialog: false});
+		}  else{
+			this.setState({opDialog: true});	
+		}
 	}
 
 	sanitizeUserInput = (userName, userEmail, userPass, userPass2) => {
-		let validEmailRegex = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?";
-		if(userName === ""){
-			this.props.updateFailed("Please Input User Name");
+		
+		let validEmailRegex = new RegExp("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?");
+		let containSpaces = new RegExp("/\s/");
+		if(userName === "" || containSpaces.test(userName)){
+			this.props.updateFailed("Please enter a valid User Name with no spaces");
 			return false;
 		}
 
@@ -41,67 +53,100 @@ class CreateUserProfile extends React.Component{
     		return false;
 		}
 
+		// sanitize user email
+		if(validEmailRegex.test(userEmail) == false){
+			this.props.updateFailed("Please input valid User Email");
+			return false;
+		}
+
+		if(userPass.length < 8 || containSpaces.test(userPass)){
+			this.props.updateFailed("Password must be at least 8 characters with no spaces");
+			return false;
+		}
+
+		if(containSpaces.test(userPass)){
+			this.props.updateFailed("Password must not contain spaces");
+			return false;
+		}
+
 		if (userPass === " " || userPass2 === " "){
 			this.props.updateFailed("Please Input User Password");
     		return false;
 		}
 
-		if(userPass.localeCompare(userPass2) !== 0){
-			this.props.updateFailed("You did not type matching password");
-			return false;
-		}
-		// sanitize user email
-		if(validEmailRegex.test(userEmail) == false){
-			this.props.updateFailed("Invalid User Email");
-			return false;
-		}
+		if(userPass !== userPass2){
+			this.props.updateFailed("Password Doesn't match");
+			return false 
 
+		}
+			
 		// if we get here, all input fields are sanitized
 		return true;
+	}
+
+	clearForum = () =>{
+			this.setState({newUserEmail: ""}, () =>{
+    			this.setState({newUserPassword: ""}, () =>{
+    				this.setState({newUserPassword2: ""}, () => {
+    					this.setState({newUserName: ""}, () => {
+    						this.setState({newUserTempPassword: ""}, () => {
+    							this.setState({newUserTempPassword2: ""}, () => {
+    							})
+    						}) 	
+    					})	
+    				})
+    			});
+    		});
 	}
 
     handleSubmit= () => {
     	const {dispatch} = this.props;
     	let userName = this.state.newUserName;
     	let userEmail = this.state.newUserEmail;
-    	let userPass = this.state.newUserPassword;
-    	let userPass2 = this.state.newUserPassword2;
+    	let userPass = this.state.newUserTempPassword;
+    	let userPass2 = this.state.newUserTempPassword2;
 
     	let sanitized = this.sanitizeUserInput(userName, userEmail, userPass, userPass2);
-    	
     	if(sanitized === true){
             // only send the first password twice so the user is created
 	         // if we send both then they'll never match because of hash
-		    this.setState({newUserPassword: userPass}, () => {
-	            bcrypt.hash(this.state.newUserPassword, 10, this.storeHash);
-	        });
+	   	    this.props.createUser(userName, userPass, userPass2, userEmail);
 
-	   	    this.props.createUser(userName, this.newUserPassword, this.newUserPassword, userEmail);
-    	} else {
-    		this.props.openDialog();
-    		setTimeout(()=>{this.props.closeDialog()}, 2000);
-    	}
+	   	    if(this.state.isRegistered == false){
+	   	    	this.props.openDialog();
+    			setTimeout(()=>{this.props.closeDialog()}, 2000);
+    			this.clearForum();
 
-    	this.setState({newUserEmail: " "})
-		this.setState({newUserPassword: " "})
-		this.setState({newUserPassword2: " "})
-		this.setState({newUserName: " "})      	
+    		} else {
+    			this.props.openDialog();
+    			setTimeout(()=>{this.props.closeDialog()}, 2000);
+    			this.clearForum();
+    		}
+    					 
+  		 } else {
+    			this.props.openDialog();
+    			setTimeout(()=>{this.props.closeDialog()}, 2000);
+    			this.clearForum();
+    	}	 	
     }
-
+  
     //create user Get methods.
 	newUserEmailGet = (userEmail) => {
 		this.setState({newUserEmail : userEmail.target.value});
 	}
 
      
-  // this repetition is screaming for a higher ordered function
-  storeHash = (err, hash) => {this.setState({userPass: hash});}
+  	// this repetition is screaming for a higher ordered function
+  	storeHash = (err, hash) => {
+  	 	this.setState({newUserPassword: hash});
+  	 	this.setState({newUserPassword2: hash});
+  	}
 
 	newUserPasswordGet = (userPassword) => {
-		  this.setState({newUserPassword : userPassword.target.value});
+		  this.setState({newUserTempPassword : userPassword.target.value});
 	}
 	newUserPasswordGet2 = (userPassword) => {
-		  this.setState({newUserPassword2 : userPassword.target.value});
+		  this.setState({newUserTempPassword2 : userPassword.target.value});
 	}
 
 	newUserNameGet = (userName) => {
@@ -133,14 +178,32 @@ class CreateUserProfile extends React.Component{
 		})
 	}
 
+	packageVal = () =>{
+		return({
+			userName: this.state.newUserName,
+			userEmail: this.state.newUserEmail,
+			userPassword: this.state.newUserTempPassword,
+			userPassword2: this.state.newUserTempPassword2
+		})
+	}
+
 	render(){
 		const funcPackage = this.packageFunc();
+		const packageVal = this.packageVal();
 		let state = null
-		if(this.state.disMissDialog == true){
-			return(state);
+		if(this.state.isRegistered === true){
+			return(
+				<div>
+					<ErrSnack message={this.state.successMessage} openDialog={this.state.opMessageDialog} />
+					<CreateProfile  vals= {packageVal} callBacks={funcPackage} isOpen={this.state.opDialog} />
+				</div>
+		    );
 		} else{
 			return(
-				<CreateProfile callBacks={funcPackage} isOpen={this.state.opDialog} />
+				<div>
+					<ErrSnack message={this.state.errMessage} openDialog={this.state.opMessageDialog} />
+					<CreateProfile vals= {packageVal} callBacks={funcPackage} isOpen={this.state.opDialog} />
+				</div>
 			)
 		}
 
@@ -148,22 +211,28 @@ class CreateUserProfile extends React.Component{
 }
 
 function mapStateToProps(state){
-	  const { loggedIn } = state.authentication;
-	  const { isOpenDialog } = state.openDialog
+	const { isRegistered, 
+		    errorMessageProfile,
+		    successMessageProfile, 
+		    isOpenDialog, dismissProfileDialog} = state.createAccReducer;
 	return {
-		  loggedIn,
-		  isOpenDialog
+		  isRegistered,
+		  isOpenDialog,
+		  errorMessageProfile, 
+		  successMessageProfile,
+		  dismissProfileDialog
 	}
 }
 
 function mapDispatchToProps(dispatch){
 	return({
-		  createUser: (userName, userPass, userPass2, userEmail) =>
-          {dispatch(createProfile(userName, userPass, userPass2, userEmail));},
+		createUser: (userName, userPass, userPass2, userEmail) =>
+        			{dispatch(createProfile(userName, userPass, userPass2, userEmail));},
 		isLoad: (isLoadingStatus) =>{dispatch(isLoading(isLoadingStatus));},
-		updateFailed: (message)=>{dispatch(LogInFailed(message));},
-		openDialog: () =>{dispatch(DialogOpen())},
-		closeDialog: () =>{dispatch(DialogClose())},
+		updateFailed: (message)=>{dispatch(CreateFailed(message));},
+		openDialog: () =>{dispatch(DialogOpenCreate())},
+		closeDialog: () =>{dispatch(DialogCloseCreate())},
+		resetDialog: () =>{dispatch(ResetDialog())}
 
 	})
 }

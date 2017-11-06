@@ -1,13 +1,34 @@
 import * as types from '../Constants/ActionTypes';
+import { createProfile }from '../Store/initialStoreState.js';
 
-export default function register(state = {}, action){
+export default function register(state = createProfile, action){
 	  switch(action.type){
-		case types.CREATEACC:
-			  return Object.assign({}, state, {
-            isRegistered: action.registered
-        });
+            case types.FAIL_CREATE:
+            	return Object.assign({}, state, {
+            		isRegistered: false,
+            		errorMessageProfile: action.errorMess,
+                    successMessageProfile: " ",
+                    dismissProfileDialog: false
+            	});
 
-		default:
-			  return state;
+            case types.CREATE_SUCCESS:
+            	return Object.assign({}, state, {
+            		isRegistered: true,
+            		errorMessageProfile: " ",
+            		successMessageProfile: action.successMessage,
+                    dismissProfileDialog: true
+            	});
+            case types.OPEN_CREATE_DIALOG:
+                return Object.assign({}, state, {
+                    isOpenDialog: true
+                });
+
+            case types.CLOSE_CREATE_DIALOG:
+                return Object.assign({}, state, {
+                    isOpenDialog: false,
+                });
+           
+    		default:
+    			return state;
 	  }
 }
