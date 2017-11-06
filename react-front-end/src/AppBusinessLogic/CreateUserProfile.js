@@ -105,17 +105,12 @@ class CreateUserProfile extends React.Component{
     	let userEmail = this.state.newUserEmail;
     	let userPass = this.state.newUserPassword;
     	let userPass2 = this.state.newUserPassword2;
-    	//console.log(this.state.)
-    	console.log("my state");
-    	console.log(userPass);
-    	console.log(this.state.newUserPassword);
-    	console.log(this.state.newUserPassword2);
 
     	let sanitized = this.sanitizeUserInput(userName, userEmail, userPass, userPass2);
     	if(sanitized === true){
             // only send the first password twice so the user is created
 	         // if we send both then they'll never match because of hash
-	   	    this.props.createUser(this.state.newUserName, this.state.newUserPassword, this.state.newUserPassword2, this.state.newUserEmail);
+	   	    this.props.createUser(userName,  userPass, userPass2,userEmail);
 
 	   	    if(this.state.isRegistered == false){
 	   	    	this.props.openDialog();

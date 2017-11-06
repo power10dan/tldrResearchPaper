@@ -19,8 +19,6 @@ function _Login(userName, passWord) {
                             }),
         headers: { 'Content-Type': 'application/json' }
     };
-    console.log("i am in login")
-    console.log(requestOptions);
 
     // set the url and use fetch to send request
     var url = "http://127.0.0.1:8000/login/";
@@ -48,7 +46,8 @@ export function Login(userName, userEmail, password) {
             if(typeof data === 'undefined'){
                 return;
             } else {
-                dispatch(LogInSuccess("You have logged in!"));
+                let message = "Hello " + userName
+                dispatch(LogInSuccess(message));
                 dispatch(saveCred(userName, userEmail, data.key));
             }
         }).catch((err, status)=>{
