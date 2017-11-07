@@ -8,7 +8,7 @@ const tldrApp = combineReducers({
     createAccReducer,
     isLoadingReducer,
     authentication,
-    UserProfile
+    UserProfile,
 });
 
 export default tldrApp;

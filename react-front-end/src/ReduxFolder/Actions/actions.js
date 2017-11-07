@@ -1,7 +1,6 @@
 import * as types from '../Constants/ActionTypes';
 import { saveCred } from '../Actions/SaveCred.js';
 import bcrypt from 'bcryptjs';
-
 /*
  * Action creators
  *
@@ -104,14 +103,3 @@ export function isDisableButton(isDisable){
  	return {type: types.FORGOTACC, recoverEmail: email};
  }
  */
-
-
- export function UploadFile(fileToUpload){
- 	return {type: types.UPLOADFILE, fileInfo: fileToUpload};
- }
-
-
- export function DeleteFile(fileToDelete){
- 	return {type: types.DELETEFILE, fileDel: fileToDelete};
- }
-

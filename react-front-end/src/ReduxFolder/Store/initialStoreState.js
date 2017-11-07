@@ -20,6 +20,9 @@ export const userProfile = {
 	files: [ ],
 	favorites: [ ],
 	upvotedSummaries: [ ],
+	errorUploadFile: " ",
+	errorRetrieveFile: " ",
+	getFile: false
 };
 
 export const isLoading = {

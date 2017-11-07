@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import AppTopBar from './AppComponents/AppTopBar.js';
-import UploadFile from './AppBusinessLogic/UploadFile';
+import {UploadFile} from './AppBusinessLogic/UploadFile';
 import { LoginOps } from './AppBusinessLogic/LoginOp';
 import { connect } from 'react-redux';
 import { Router, Route } from 'react-router-dom';
@@ -29,7 +29,6 @@ class App extends React.Component {
     );
   }
 }
-
 
 function mapStateToProps(state) {
     const { alert } = state;

@@ -1,70 +1,67 @@
 import React  from 'react';
 import AppTopBar from '../AppComponents/AppTopBar.js';
+import {connect} from 'react-redux';
+import {getAllFiles, uploadFile} from '../ReduxFolder/Actions/FileActions.js';
+
 
 class UploadFile extends React.Component{
-
 	constructor(props){
 		super(props);
-		this.state = {isFinished: true, dataRec : ""}
+		this.state = {
+				isFinished: true, 
+				dataRec : "",
+				token : " "
+			}
+	}
+
+	componentWillReceiveProps(nextProps){
+		this.setState({token: nextProps.token});
+		this.seState({dataRec: nextProps.files});
+		this.setState({isFinished: nextProps.isFinished})
+		this.props.getFiles(this.state.token)
 	}
 
 	handleClick = (fileObj) => {
-		var fileName = fileObj.fileList[0].name;
-		var djangoURL = "http://127.0.0.1:8000/api/uploadFile/".concat(fileName);
-		var djangoGETURL = "http://127.0.0.1:8000/api/getAllFiles/"
-		this.setState({isFinished: false});
-		this.uploadFiles(djangoURL, djangoGETURL, fileObj.base64);
-	}
-
-	uploadFiles = (urlPOST, urlGET, file) => {
-		var jsonData =  file
-		fetch(urlPOST, {
-			method: 'post',
-			body: jsonData ,
-			dataType: 'json',
-			mode: 'no-cors',
-			headers: {
-        	    'Content-Type': 'application/json',
-        	}
-		}).then((response) => {
-			this.getAllFiles(urlGET);
-		}).then((data)=>{
-			console.log("data")
-		}).catch((err)=>{
-			console.log(err)
-		});
-	}
-
-	getAllFiles = ( url ) =>{
-		var myInit = {
-			method: 'get',
-		};
-		fetch(url, myInit).then((response) =>{
-
-			return response.json()
-		}).then((data) =>{
-			this.setState({dataRec : data })
-			this.setState({isFinished: true})
-
-			console.log(this.state)
-
-
-		}).catch((err) =>{
-			console.log(err);
-		})
+		this.props.upload(fileObj.base64, this.state.token);
 	}
 
 	render(){
 		let isFinished = this.state.isFinished;
 		let state = null;
 		if(isFinished != true){
-			console.log("hip hip horray");
-		} 
+			return (
+			     <AppTopBar  uploadFile={this.handleClick} /> 
+			     // isloading component 
 
-		return(
-			<AppTopBar  uploadFile={this.handleClick} />
-		);
+			);
+		} else{
+			return (
+				<div>
+					<AppTopBar  uploadFile={this.handleClick} /> 
+					// show card 
+				</div>
+			);
+		}
 	}
 }
 
-export default UploadFile;
+// if login or create user is successful, we 
+// obtain the token generated here
+function mapStateToProps(state){
+	const {token , files, isFinished} = state.UserProfile;
+	return {
+		token,
+		files,
+		isFinished
+	};
+}
+
+function mapDispatchToProps(dispatch){
+	return({
+		getFiles: (jwtToken)=>{dispatch(getAllFiles(jwtToken));},
+		upload: (file, jwtToken)=>{dispatch(uploadFile(file, jwtToken));}
+	})
+}
+
+const  connectComp = connect(mapStateToProps)(UploadFile);
+export { connectComp as UploadFile};
