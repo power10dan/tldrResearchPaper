@@ -16,7 +16,7 @@ class UploadFile extends React.Component{
 
 	componentWillReceiveProps(nextProps){
 		this.setState({token: nextProps.token});
-		this.seState({dataRec: nextProps.files});
+		this.setState({dataRec: nextProps.files});
 		this.setState({isFinished: nextProps.isFinished})
 		this.props.getFiles(this.state.token)
 	}

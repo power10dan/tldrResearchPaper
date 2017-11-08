@@ -16,7 +16,6 @@ const AppTopBar = (props) =>{
 		          <Typography type="title" color="inherit" >
 		            TL ; DR Please?
 		          </Typography>
-
 			          <ReactFileReader
 			                 base64={true}
 			                 fileTypes=".pdf"
