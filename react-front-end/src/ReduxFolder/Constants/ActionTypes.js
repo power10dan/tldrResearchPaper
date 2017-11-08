@@ -32,3 +32,9 @@ export const CREATEACC  = 'CREATEACC';
 */
 export const UPLOADFILE = 'UPLOADFILE';
 export const DELETEFILE = 'DELETEFILE';
+export const GETFILE = 'GETFILE';
+export const DONEGET = 'DONEGET';
+export const UPLOAD_FAILED = 'UPLOAD_FAILED';
+export const GET_FAILED = 'GETFILE';
+export const DIALOG_OP = 'DIALOG_OPEN';
+export const DIALOG_CL = 'DIALOG_CL';

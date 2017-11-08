@@ -9,6 +9,7 @@ export default function UserProfile(state = userProfile, action){
 				userEmail: action.email,
 				token: action.token
 			});
+
 		default:
 			return state;
 	}
