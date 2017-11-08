@@ -25,6 +25,10 @@ export const userProfile = {
 	getFile: false
 };
 
+export const generalState = {
+    files: []
+};
+
 export const isLoading = {
 	isLoad: false,
 };
