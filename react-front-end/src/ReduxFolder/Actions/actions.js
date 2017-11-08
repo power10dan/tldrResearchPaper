@@ -37,11 +37,9 @@ export function Login(userName, userEmail, password) {
                 dispatch(isLoading(false));
                 return;
             } else{
-                console.log(response)
                 return response.json();
             }
         }).then((data) => {
-            console.log(data)
             // if login fails, data will be undefined.
             // if not, then data should contain the login token.
             if(typeof data === 'undefined'){

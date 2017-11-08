@@ -15,10 +15,12 @@ class UploadFile extends React.Component{
 	}
 
 	componentWillReceiveProps(nextProps){
-		this.setState({token: nextProps.token});
+		console.log(nextProps)
 		this.setState({dataRec: nextProps.files});
-		this.setState({isFinished: nextProps.isFinished})
-		this.props.getFiles(this.state.token)
+		this.setState({isFinished: nextProps.isFinished});
+		this.setState({token: nextProps.token}, ()=>{
+			this.props.getFiles(this.state.token);
+		});
 	}
 
 	handleClick = (fileObj) => {
@@ -63,5 +65,5 @@ function mapDispatchToProps(dispatch){
 	})
 }
 
-const  connectComp = connect(mapStateToProps)(UploadFile);
+const  connectComp = connect(mapStateToProps, mapDispatchToProps)(UploadFile);
 export { connectComp as UploadFile};
