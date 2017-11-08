@@ -2,7 +2,7 @@ import * as types from '../Constants/ActionTypes';
 import { UserProfile } from '../Reducers/UserProfile.js';
 import { saveCred } from '../Actions/SaveCred.js';
 import { DialogOpenCreate , DialogCloseCreate } from './DialogActions.js';
-import { LogInSuccess } from './actions.js';
+import { LogInSuccess } from './LoginActions.js';
 
 function _createProfile(username, passwordFirst, passwordSecond, account_emailaddress) {
     let url = "http://127.0.0.1:8000/rest-auth/registration/";

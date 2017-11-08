@@ -2,10 +2,12 @@ import React from 'react';
 import { connect } from 'react-redux';
 import LoginComp from '../AppComponents/LoginComp.js';
 import ErrSnack from '../AppComponents/ErrDialog.js';
-import { Login, LogInFailed, isLoading} from '../ReduxFolder/Actions/actions.js';
+import { Login, LogInFailed} from '../ReduxFolder/Actions/LoginActions.js';
+import {isLoading } from '../ReduxFolder/Actions/LoadingActions.js';
 import {DialogOpen, DialogClose} from '../ReduxFolder/Actions/DialogActions.js';
 import bcrypt from 'bcryptjs';
 import {SideNavStates} from '../AppBusinessLogic/SideBarUpdate';
+
  
 class LoginOperations extends React.Component{
 	constructor(props){

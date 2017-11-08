@@ -2,44 +2,78 @@ import React  from 'react';
 import AppTopBar from '../AppComponents/AppTopBar.js';
 import {connect} from 'react-redux';
 import {getAllFiles, uploadFile} from '../ReduxFolder/Actions/FileActions.js';
-
+import ErrSnack from '../AppComponents/ErrDialog.js';
+import {closeDialog} from '../ReduxFolder/Actions/FileActions.js';
 
 class UploadFile extends React.Component{
 	constructor(props){
 		super(props);
 		this.state = {
-				isFinished: true, 
-				dataRec : "",
-				token : " "
-			}
+			isFinished: true, 
+			isLoggedIn: false,
+			opWindow: false,
+			fileData : "",
+			token : "",
+			message: "",
+			err: " "
+		}
 	}
 
 	componentWillReceiveProps(nextProps){
-		this.setState({dataRec: nextProps.files});
-		this.setState({isFinished: nextProps.isFinished});
-		this.setState({token: nextProps.token}, ()=>{
-			this.props.getFiles(this.state.token);
-		});
+		this.setState({fileData: nextProps.files});
+		this.setState({opWindow: nextProps.opDialog});
+
+
+		if(nextProps.isLoad === true){
+			this.setState({isFinished: false});
+		} else{
+			this.setState({isFinished: true});
+		}
+
+		if(nextProps.isLoggedIn === true){
+			this.setState({isLoggedIn: true});
+		} else {
+			this.setState({isLoggedIn: false});
+		}
+
+		this.setState({token: nextProps.token}); 
+		if( nextProps.successMess != ""){
+			this.setState({message: nextProps.successMess});
+		}
+
+		if(nextProps.errorUploadFile != ""){
+			this.setState({message: nextProps.errorUploadFile});
+		}
+		
 	}
 
 	handleClick = (fileObj) => {
-		this.props.upload(fileObj.base64, this.state.token);
+		let nameOfFile = fileObj.fileList[0].name;
+		this.props.upload(fileObj.base64, this.state.token, nameOfFile);
 	}
 
 	render(){
 		let isFinished = this.state.isFinished;
-		let state = null;
-		if(isFinished != true){
-			return (
-			     <AppTopBar  uploadFile={this.handleClick} /> 
-			     // isloading component 
-
-			);
-		} else{
-			return (
+		// if app is not finished doing task (isFinished) or if there is no token (not logged in),
+		// disable the buttons
+		if(isFinished === false ){
+			return(
 				<div>
-					<AppTopBar  uploadFile={this.handleClick} /> 
-					// show card 
+			     	<AppTopBar  uploadFile={this.handleClick} loading={true} loggedIn= {false} disable={true}/> 
+			  	</div>
+			);
+		}  else if(this.state.isLoggedIn === false){
+			return(
+				<div>
+			    	 <AppTopBar  uploadFile={this.handleClick} loading={false} loggedIn= {false} disable={true}/> 
+			 	</div>
+			);
+
+		}else{
+			return(
+				<div>
+				    <ErrSnack message={this.state.message} openDialog={this.state.opWindow} />
+				    <AppTopBar  uploadFile={this.handleClick} loading={false} loggedIn={true} disable={false}/> 	
 				</div>
 			);
 		}
@@ -49,18 +83,25 @@ class UploadFile extends React.Component{
 // if login or create user is successful, we 
 // obtain the token generated here
 function mapStateToProps(state){
-	const {token , files, isFinished} = state.UserProfile;
+	const {token} = state.UserProfile;
+	const { files, successMess, opDialog, errorUploadFile } = state.genStateReducer;
+	const { isLoad } = state.isLoadingReducer;
+	const {isLoggedIn } = state.authentication;
 	return {
 		token,
 		files,
-		isFinished
+		isLoad,
+		isLoggedIn,
+		successMess,
+		opDialog,
+		errorUploadFile
 	};
 }
 
 function mapDispatchToProps(dispatch){
 	return({
 		getFiles: (jwtToken)=>{dispatch(getAllFiles(jwtToken));},
-		upload: (file, jwtToken)=>{dispatch(uploadFile(file, jwtToken));}
+		upload: (file, jwtToken, nameOfFile)=>{dispatch(uploadFile(file, jwtToken, nameOfFile));}
 	})
 }
 

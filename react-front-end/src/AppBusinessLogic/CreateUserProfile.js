@@ -5,7 +5,7 @@ import CreateProfile from '../AppComponents/CreateProfile.js';
 import {createProfile} from '../ReduxFolder/Actions/CreateProfileActions.js';
 import { CreateFailed, CreateSuccess, ResetDialog} from '../ReduxFolder/Actions/CreateProfileActions.js';
 import { DialogOpenCreate , DialogCloseCreate } from '../ReduxFolder/Actions/DialogActions.js';
-import {isLoading } from '../ReduxFolder/Actions/actions.js';
+import {isLoading } from '../ReduxFolder/Actions/LoadingActions.js';
 import ErrSnack from '../AppComponents/ErrDialog.js';
 
 

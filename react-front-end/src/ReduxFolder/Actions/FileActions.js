@@ -1,5 +1,5 @@
 import * as types from '../Constants/ActionTypes.js';
-
+import { isLoading } from '../Actions/LoadingActions.js';
 
 export function UploadFile(fileToUpload, successMess){
  	return {  
@@ -43,41 +43,55 @@ export function GetFailed(errMessage){
  	};
 }
 
-function _uploadFile(file, token){
-	  let jsonData =  file;
-	  let urlPOST = "http://127.0.0.1:8000/api/uploadFile/".concat(file);
-	  let strAuth = "JWT" + " " + token ;
-	  let authString = strAuth.replace("\\\\", "");
+function _uploadFile(file, token, fileName){
+	let jsonData =  file;
+	let urlPOST = "http://127.0.0.1:8000/api/uploadFile/".concat(fileName);
+	let strAuth = "JWT" + " " + token ;
+	let authString = strAuth.replace("\\\\", "");
 
 	let header = {
-		method: 'post',
+		method: 'POST',
 		body: jsonData ,
 		dataType: 'json',
-		Authorization: authString,
-		mode: 'no-cors',
+		mode: 'cors',
 		headers: {
-            'Content-Type': 'application/json',
-            "Authorization": authString
-       	}
+			Authorization: authString,
+			"Content-type": 'application/json'
+		}
 	};
 
 	return fetch(urlPOST, header);
 
 }
 
-export function uploadFile(file, token){
+export function uploadFile(file, token, fileName, prevFileState){
 	return dispatch =>{
-		_uploadFile(file, token).then((response) => {
+		dispatch(isLoading(true));
+		_uploadFile(file, token, fileName).then((response) => {
+
 			// dispatch success 
 			if(response.status.ok){
 				return response.json();
 			} else{
-				let message = "Failed to upload" + file;
-				dispatch(UploadFailed(message));
+				dispatch(isLoading(false));
+
+				return  response.status;
 			}
 		}).then((data)=>{
-			let message = "Successfully uploaded file" + file;
-			dispatch(UploadFile(data, message));
+			console.log(data)
+			if(data === 401){
+				let message = "Failed to upload " + fileName + ", Permission Denied";
+				dispatch(UploadFailed(message));
+				dispatch(openDialog());
+				dispatch(isLoading(false));
+				setTimeout(()=>{dispatch(closeDialog())}, 2000);
+			} else{
+				let successMessage = fileName + " uploaded successfully";
+				dispatch(UploadFile(data, successMessage));
+				dispatch(openDialog());
+				dispatch(isLoading(false));
+				setTimeout(()=>{dispatch(closeDialog())}, 2000);
+			}
 		}).catch((err)=>{
 			  console.log(err);
 		});;
@@ -86,12 +100,11 @@ export function uploadFile(file, token){
 
 function _getAllFiles(token){
 	let urlGET = "http://127.0.0.1:8000/api/getAllFiles/";
-	let strAuth = "JWT" + " " + token ;
+	let strAuth = "JWT" + " " + token;
 	let authString = strAuth.replace("\\\\", "");
-	
 	let header = {
-			method: 'GET',
-			headers: {"Authorization": authString}
+		method: 'GET',
+		headers: {"Authorization": authString}
 	};
 
 	return fetch(urlGET, header);
@@ -99,23 +112,35 @@ function _getAllFiles(token){
 
 export function getAllFiles(token){
 	return dispatch =>{
+		dispatch(isLoading(true));
 		_getAllFiles(token).then((response)=>{
 			if(response.ok){
 				  return response.json();
 			} else{
-          let message = "Failed to get files";
-          dispatch(GetFailed(message));
+	          let message = "Failed to get files";
+	          dispatch(GetFailed(message));
+	          dispatch(openDialog());
+	          setTimeout(()=>{dispatch(closeDialog())}, 2000);
+	          return;
 			}
 		}).then((data) =>{
-        dispatch(GetFiles(data.Files));
+        	dispatch(GetFiles(data.Files));
+        	dispatch(isLoading(false));
+        	return;
 		}).catch((err) =>{
 			console.log(err);
 		});
 	};
 }
 
+export function closeDialog(){
+	return {
+		type: types.DIALOG_CL,
+	}
+}
 
-
-
-
-
+export function openDialog(){
+	return {
+		type: types.DIALOG_OP,
+	}
+}
