@@ -2,7 +2,7 @@ import * as types from '../Constants/ActionTypes';
 import { UserProfile } from '../Reducers/UserProfile.js';
 import { saveCred } from '../Actions/SaveCred.js';
 import { DialogOpenCreate , DialogCloseCreate } from './DialogActions.js';
-import { LogInSuccess } from './LoginActions.js';
+import { LogInSuccess, Login } from './LoginActions.js';
 
 function _createProfile(username, passwordFirst, passwordSecond, account_emailaddress) {
     let url = "http://127.0.0.1:8000/rest-auth/registration/";
@@ -39,9 +39,11 @@ export function createProfile(userName, passWord, passWord2, userEmail){
   		      }).then((data)=>{
                 if(typeof data !== 'undefined'){
                     dispatch(CreateSuccess("Profile Created!"));
+                    dispatch(Login(userName, userEmail, passWord));
                     dispatch(LogInSuccess("You have logged in!"));
-                    // save the token to the user profile 
-                    dispatch(saveCred(userName, userEmail, data.key));
+
+                    // save the token to the user profile
+                    // dispatch(saveCred(userName, userEmail, data.key));
 
                 }
   		      }).catch((err) =>{
