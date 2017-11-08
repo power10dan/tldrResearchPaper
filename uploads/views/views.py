@@ -11,6 +11,7 @@ from rest_framework.authtoken.models import Token
 from uploads.models.models import Document
 from uploads.permissions.permissions import isAdminOrReadOnly
 from uploads.serializers.serializers import UserSerializer
+from uploads.lib.summarize import summarize
 
 from django.contrib import messages
 from django.contrib.auth.models import User
@@ -32,11 +33,12 @@ class FileUploadView(APIView):
     # some file storage solution
     def post(self, request, filename, format=None):
         fileUploaded = request.body
-        newString = fileUploaded.split(",")
+        #newString = fileUploaded.split(",")
         path = settings.MEDIA_DOCS + filename
         permission_classes = (isAdminOrReadOnly, )
         with open(path, 'wb') as fileopened:
-            fileopened.write(base64.decodestring(newString[1]))
+            fileopened.write(fileUploaded)
+            #fileopened.write(base64.decodestring(newString[1]))
         fileopened.close()
 
         # GROBID STUFF USING PY4J
@@ -49,6 +51,8 @@ class FileUploadView(APIView):
         consolidateCite = False
         status = grobidClass.PDFXMLConverter(inputDir, outputDir, consolidateHead, consolidateCite)
         print("Grobid Finished")
+        if status == 0:
+            summarize(outputDir+fileName[:-4]+'.fulltext.tei.xml',[])
         return Response(status=204)
 
 class GetAllFiles(APIView):
