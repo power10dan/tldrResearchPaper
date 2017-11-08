@@ -45,7 +45,7 @@ def summarize(document, file_name, headings_file):
                     summary_dict[current_heading] = "SECTION TOO SHORT TO SUMMARIZE!"
                     #print("Summary for " + current_heading + ": SECTION TOO SHORT TO SUMMARIZE!")
     summary_xml = dicttoxml.dicttoxml(summary_dict)
-    out_file = open(file_name+".xml", "wb")
+    out_file = open(SUMMARY_DOCS+file_name+".xml", "wb")
     out_file.write(summary_xml)
     out_file.close()
                 
@@ -56,5 +56,3 @@ def parse_headings(headings_file):
         for line in headers:
             line_split = line.split(';;')
             return line_split
-
-summarize("bananas_lenses.fulltext.tei.xml", "bananas_lenses", [])
