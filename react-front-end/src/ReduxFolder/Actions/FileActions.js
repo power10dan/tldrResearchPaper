@@ -85,6 +85,12 @@ export function uploadFile(file, token, fileName, prevFileState){
 				dispatch(openDialog());
 				dispatch(isLoading(false));
 				setTimeout(()=>{dispatch(closeDialog())}, 2000);
+			} else if(data === 500){
+				let message = "Failed to upload " + fileName + ", Internal Server Error";
+				dispatch(UploadFailed(message));
+				dispatch(openDialog());
+				dispatch(isLoading(false));
+				setTimeout(()=>{dispatch(closeDialog())}, 2000);
 			} else{
 				let successMessage = fileName + " uploaded successfully";
 				dispatch(UploadFile(data, successMessage));
