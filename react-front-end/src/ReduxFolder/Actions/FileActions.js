@@ -43,10 +43,10 @@ export function GetFailed(errMessage){
 }
 
 function _uploadFile(file, token){
-	let jsonData =  file
-	let urlPOST = "http://127.0.0.1:8000/api/uploadFile/".concat(file);
-	let strAuth = "JWT" + " " + token ;
-	let authString = strAuth.replace("\\\\", ""); 
+	  let jsonData =  file;
+	  let urlPOST = "http://127.0.0.1:8000/api/uploadFile/".concat(file);
+	  let strAuth = "JWT" + " " + token ;
+	  let authString = strAuth.replace("\\\\", "");
 
 	let header = {
 		method: 'post',
