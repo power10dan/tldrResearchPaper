@@ -16,9 +16,10 @@ export function DeleteFile(newFiles){
     };
 }
 
-export function GetFiles(){
+export function GetFiles(data){
     return {
-        type: types.GETFILE
+        type: types.GETFILE,
+        files: data
      };
 }
 
@@ -78,7 +79,7 @@ export function uploadFile(file, token){
 			let message = "Successfully uploaded file" + file;
 			dispatch(UploadFile(data, message));
 		}).catch((err)=>{
-			console.log(err)
+			  console.log(err);
 		});;
 	};
 }
@@ -86,7 +87,7 @@ export function uploadFile(file, token){
 function _getAllFiles(token){
 	let urlGET = "http://127.0.0.1:8000/api/getAllFiles/";
 	let strAuth = "JWT" + " " + token ;
-	let authString = strAuth.replace("\\\\", ""); 
+	let authString = strAuth.replace("\\\\", "");
 	
 	let header = {
 			method: 'GET',
@@ -100,20 +101,17 @@ export function getAllFiles(token){
 	return dispatch =>{
 		_getAllFiles(token).then((response)=>{
 			if(response.ok){
-				return response.json();
+				  return response.json();
 			} else{
-
+          let message = "Failed to get files";
+          dispatch(GetFailed(message));
 			}
 		}).then((data) =>{
-			console.log(data);
-
-
+        dispatch(GetFiles(data));
 		}).catch((err) =>{
 			console.log(err);
-		})
-
-
-	}
+		});
+	};
 }
 
 
