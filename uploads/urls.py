@@ -15,6 +15,8 @@ urlpatterns = [
     url(r'^api/getAllFiles/$', views.GetAllFiles.as_view()),
     url(r'^api/deleteFile/(?P<filename>[^/]+)$', views.DeleteFile.as_view()),
     url(r'^admin/', admin.site.urls),
+    url(r'^api/getAllSummaries/', views.SummaryOutputView.as_view()),
+    url(r'^api/userSummary/', views.SummaryInputView.as_view()),
     #url(r'^api/createUser/$'
     #    , views.CreateUser.as_view()
     #    , name='account-create'),

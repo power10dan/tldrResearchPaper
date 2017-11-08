@@ -25,6 +25,27 @@ import os
 import json
 import base64
 
+class SummaryOutputView(APIView):
+    def get(self, request):
+        fileRoot = settings.SUMMARY_DOCS
+        fileNames = [fileName for
+                     fileName in
+                     os.listdir(fileRoot) if fileName != ".DS_Store"]
+        
+        permission_classes = (isAdminOrReadOnly, )
+        fileData = [{'File': filename } for filename in fileNames]
+        response = HttpResponse(json.dumps(fileData), content_type="application/json")
+        return response
+
+class SummaryInputView(APIView):
+    def post(self, request):
+        file_name = request.POST["file_name"]
+        section = request.POST["section"]
+        summary_text = request.POST["summary_text"]
+
+        file_root = settings.SUMMARY_DOCS + '/' + file_name
+
+        return
 
 #RESTful API view for Django
 class FileUploadView(APIView):
