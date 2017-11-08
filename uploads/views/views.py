@@ -73,7 +73,7 @@ class FileUploadView(APIView):
         status = grobidClass.PDFXMLConverter(inputDir, outputDir, consolidateHead, consolidateCite)
         print("Grobid Finished")
         if status == 0:
-            summarize(outputDir+fileName[:-4]+'.fulltext.tei.xml',[])
+            summarize(outputDir+fileName[:-4]+'.fulltext.tei.xml',fileName[:-4],[])
         return Response(status=204)
 
 class GetAllFiles(APIView):

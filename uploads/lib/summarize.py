@@ -1,11 +1,16 @@
 import xmltodict
+import dicttoxml
+
+from django.conf import settings
 from collections import OrderedDict
+
 from sumy.parsers.plaintext import PlaintextParser #We're choosing a plaintext parser here, other parsers available for HTML etc.
 from sumy.nlp.tokenizers import Tokenizer 
 from sumy.summarizers.lex_rank import LexRankSummarizer #We're choosing Lexrank, other algorithms are also built in
 
-def summarize(document, headings_file):
+def summarize(document, file_name, headings_file):
     all_headings = False
+    summary_dict = {}
     if type(headings_file) == list:
         headings = headings_file
         all_headings = True
@@ -34,12 +39,22 @@ def summarize(document, headings_file):
                     sum_summary = ""
                     for sentence in summary:
                         sum_summary += str(sentence) + " "
-                    print("Summary for " + current_heading + ": " + sum_summary)
+                    summary_dict[current_heading] = sum_summary
+                    #print("Summary for " + current_heading + ": " + sum_summary)
                 else:
-                    print("Summary for " + current_heading + ": SECTION TOO SHORT TO SUMMARIZE!")
+                    summary_dict[current_heading] = "SECTION TOO SHORT TO SUMMARIZE!"
+                    #print("Summary for " + current_heading + ": SECTION TOO SHORT TO SUMMARIZE!")
+    summary_xml = dicttoxml.dicttoxml(summary_dict)
+    out_file = open(file_name+".xml", "wb")
+    out_file.write(summary_xml)
+    out_file.close()
+                
+
+
 def parse_headings(headings_file):
     with open(headings_file) as headers:
         for line in headers:
             line_split = line.split(';;')
             return line_split
 
+summarize("bananas_lenses.fulltext.tei.xml", "bananas_lenses", [])
