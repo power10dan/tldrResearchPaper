@@ -83,14 +83,15 @@ export function uploadFile(file, token){
 function _getAllFiles(token){
 		console.log(token)
 	let urlGET = "http://127.0.0.1:8000/api/getAllFiles/";
-	let authString = JSON.stringify("JWT" + " " + token );
-	console.log("auth string")
-	console.log(authString);
+	let strAuth = "Authorization: JWT" + " " + token ;
+	let authString = strAuth.replace("\\\\", ""); 
+	let newAuth = JSON.stringify(authString);
 	let header = {
-			method: 'get',
-			Authorization: JSON.stringify(authString),
+			method: 'GET',
+			headers: authString
 	};
 
+	console.log(header)
 	return fetch(urlGET, header);
 }
 
