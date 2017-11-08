@@ -107,7 +107,7 @@ export function getAllFiles(token){
           dispatch(GetFailed(message));
 			}
 		}).then((data) =>{
-        dispatch(GetFiles(data));
+        dispatch(GetFiles(data.Files));
 		}).catch((err) =>{
 			console.log(err);
 		});

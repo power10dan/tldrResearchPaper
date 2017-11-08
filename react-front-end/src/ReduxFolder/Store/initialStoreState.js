@@ -17,16 +17,15 @@ export const userProfile = {
 	userName: " ",
 	userEmail: " ",
 	token: " ",
-	files: [ ],
-	favorites: [ ],
+};
+
+export const generalState = {
+    files: [],
+    favorites: [ ],
 	upvotedSummaries: [ ],
 	errorUploadFile: " ",
 	errorRetrieveFile: " ",
 	getFile: false
-};
-
-export const generalState = {
-    files: []
 };
 
 export const isLoading = {
