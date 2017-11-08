@@ -45,15 +45,18 @@ export function GetFailed(errMessage){
 function _uploadFile(file, token){
 	let jsonData =  file
 	let urlPOST = "http://127.0.0.1:8000/api/uploadFile/".concat(file);
-	let authString = "Authorization: JWT " + token 
+	let strAuth = "JWT" + " " + token ;
+	let authString = strAuth.replace("\\\\", ""); 
+
 	let header = {
 		method: 'post',
 		body: jsonData ,
 		dataType: 'json',
-		Authorization: JSON.stringfy(authString),
+		Authorization: authString,
 		mode: 'no-cors',
 		headers: {
             'Content-Type': 'application/json',
+            "Authorization": authString
        	}
 	};
 
@@ -81,17 +84,15 @@ export function uploadFile(file, token){
 }
 
 function _getAllFiles(token){
-		console.log(token)
 	let urlGET = "http://127.0.0.1:8000/api/getAllFiles/";
-	let strAuth = "Authorization: JWT" + " " + token ;
+	let strAuth = "JWT" + " " + token ;
 	let authString = strAuth.replace("\\\\", ""); 
-	let newAuth = JSON.stringify(authString);
+	
 	let header = {
 			method: 'GET',
-			headers: authString
+			headers: {"Authorization": authString}
 	};
 
-	console.log(header)
 	return fetch(urlGET, header);
 }
 
@@ -99,13 +100,12 @@ export function getAllFiles(token){
 	return dispatch =>{
 		_getAllFiles(token).then((response)=>{
 			if(response.ok){
-				dispatch()
 				return response.json();
 			} else{
 
 			}
-		}).then((response) =>{
-			
+		}).then((data) =>{
+			console.log(data);
 
 
 		}).catch((err) =>{

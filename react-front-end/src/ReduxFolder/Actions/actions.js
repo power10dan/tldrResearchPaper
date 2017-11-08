@@ -47,7 +47,6 @@ export function Login(userName, userEmail, password) {
             } else {
                 let message = "Hello " + userName
                 dispatch(LogInSuccess(message));
-                console.log(data.key);
                 dispatch(saveCred(userName, userEmail, data.token));
             }
         }).catch((err, status)=>{
