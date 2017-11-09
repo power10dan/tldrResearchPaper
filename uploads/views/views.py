@@ -71,15 +71,15 @@ class getXMLFile(APIView):
         matched_files = glob.glob(path + ".*.tei.xml")
 
         # if matched then open the file, encode in base64, and serve
-        print(path)
         if matched_files:
-            # with open(matched_files[0], 'rb') as f:
-                # encode the file
-                response = FileResponse(open(matched_files[0], 'rb'))
+                # set the response with an encoded the file
+                response = FileResponse(base64.encodestring(
+                    open(matched_files[0], 'rb').read()))
 
                 # set response fields and return
                 response['Content-Disposition'] = "attachment: filename=%s" \
                                                   % file_name
+
                 response['status_code'] = resp_status
                 return response
         else:
