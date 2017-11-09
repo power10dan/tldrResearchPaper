@@ -62,7 +62,7 @@ class getXMLFile(APIView):
         permission_classes = (isAdminOrReadOnly, )
 
         # vars
-        file_name = request.GET["fine_name"]
+        file_name = request.GET["file_name"]
         path = os.path.join(settings.XML_DOCS, file_name)
         resp_status = status.HTTP_400_BAD_REQUEST
 
@@ -71,13 +71,11 @@ class getXMLFile(APIView):
         matched_files = glob.glob(path + ".*.tei.xml")
 
         # if matched then open the file, encode in base64, and serve
+        print(path)
         if matched_files:
-            with open(path, 'rb') as f:
+            # with open(matched_files[0], 'rb') as f:
                 # encode the file
-                _encoded = base64.b64encode(f.read())
-                response = FileResponse(
-                    FileWrapper(_encoded,
-                                content_type='application/xml'))
+                response = FileResponse(open(matched_files[0], 'rb'))
 
                 # set response fields and return
                 response['Content-Disposition'] = "attachment: filename=%s" \
