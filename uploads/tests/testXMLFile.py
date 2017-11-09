@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from rest_framework.test import APITestCase
 from django.core.urlresolvers import reverse
 from xml.etree import ElementTree as ET
@@ -33,6 +34,8 @@ test_xml = """
 </country>
 </data>
 """
+
+
 class XMLFileRESTfulTest(APITestCase):
     def setUp(self):
 
@@ -59,3 +62,34 @@ class XMLFileRESTfulTest(APITestCase):
         # now test that we actually get back an Unauthorized
         self.assertEqual(response.status_code,
                          status.HTTP_401_UNAUTHORIZED)
+
+
+class XMLFileEncTest(APITestCase):
+    def setUp(self):
+
+        # self.test_xml = test_xml
+        # self.file_path = settings.XML_DOCS + "test_xml_file.fulltext.tei.xml"
+        # self.file_name = path.basename(self.file_path)
+        self.create_url = reverse('getXMLFile')
+        self.client.force_login(User.objects.get_or_create(
+            username="testuser")[0])
+
+        # # save the xml file to xml media folder
+        # with open(self.file_path, "w") as f:
+        #     f.write((self.test_xml))
+
+    def test_bad_request(self):
+        """
+        IF we are logged in, and send a bad request we receive a 400 in response
+        """
+
+        # GET properties for request
+        data = {}
+
+        # send request
+        response = self.client.get(self.create_url, data, format='json')
+
+        # now test that we actually get back an Unauthorized
+        self.assertEqual(response.status_code,
+                         status.HTTP_400_BAD_REQUEST)
+
