@@ -14,6 +14,17 @@ const stylesAppTopBar = theme =>({
 	  	display: 'none',
 	  },
 
+	  progress: {
+	    position: 'absolute',
+	    marginTop: -10,
+	    marginRight: "1225px",
+  	  },
+
+  	  wrapper: {
+  	  	marginLeft: theme.spacing.unit*10,
+    	position: 'relative',
+
+  	  }
 });
 
 export default stylesAppTopBar;

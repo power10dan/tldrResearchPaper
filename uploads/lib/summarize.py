@@ -1,5 +1,6 @@
 import xmltodict
 import dicttoxml
+import numpy
 
 from django.conf import settings
 from collections import OrderedDict
@@ -45,7 +46,7 @@ def summarize(document, file_name, headings_file):
                     summary_dict[current_heading] = "SECTION TOO SHORT TO SUMMARIZE!"
                     #print("Summary for " + current_heading + ": SECTION TOO SHORT TO SUMMARIZE!")
     summary_xml = dicttoxml.dicttoxml(summary_dict)
-    out_file = open(SUMMARY_DOCS+file_name+".xml", "wb")
+    out_file = open(settings.SUMMARY_DOCS+file_name+".xml", "wb")
     out_file.write(summary_xml)
     out_file.close()
                 
