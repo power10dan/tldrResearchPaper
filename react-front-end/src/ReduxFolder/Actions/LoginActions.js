@@ -2,7 +2,6 @@ import * as types from '../Constants/ActionTypes';
 import { saveCred } from './SaveCred.js';
 import { CreateSuccess } from './CreateProfileActions.js';
 import { isLoading } from './LoadingActions.js';
-
 /*
  * Action creators
  *
