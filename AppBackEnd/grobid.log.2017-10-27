@@ -1,0 +1,40 @@
+27 Oct 2017 00:04.46 [INFO ] LibraryLoader             - Loading external native CRF library
+27 Oct 2017 00:04.46 [INFO ] LibraryLoader             - Loading Wapiti native library...
+27 Oct 2017 00:04.46 [INFO ] LibraryLoader             - Library crfpp loaded
+27 Oct 2017 00:05.44 [INFO ] WapitiModel               - Loading model: /Users/daniellin/Desktop/tldrApp/tldrResearchPaper/grobid-grobid-parent-0.4.4/grobid-home/models/fulltext/model.wapiti (size: 20462507)
+27 Oct 2017 00:05.49 [INFO ] WapitiModel               - Loading model: /Users/daniellin/Desktop/tldrApp/tldrResearchPaper/grobid-grobid-parent-0.4.4/grobid-home/models/segmentation/model.wapiti (size: 15755692)
+27 Oct 2017 00:05.52 [INFO ] Lexicon                   - Initiating dictionary
+27 Oct 2017 00:05.52 [INFO ] Lexicon                   - End of Initialization of dictionary
+27 Oct 2017 00:05.52 [INFO ] Lexicon                   - Initiating names
+27 Oct 2017 00:05.52 [INFO ] Lexicon                   - End of initialization of names
+27 Oct 2017 00:05.52 [INFO ] Lexicon                   - Initiating country codes
+27 Oct 2017 00:05.52 [INFO ] Lexicon                   - End of initialization of country codes
+27 Oct 2017 00:05.59 [INFO ] WapitiModel               - Loading model: /Users/daniellin/Desktop/tldrApp/tldrResearchPaper/grobid-grobid-parent-0.4.4/grobid-home/models/figure/model.wapiti (size: 680116)
+27 Oct 2017 00:06.00 [INFO ] WapitiModel               - Loading model: /Users/daniellin/Desktop/tldrApp/tldrResearchPaper/grobid-grobid-parent-0.4.4/grobid-home/models/table/model.wapiti (size: 1337378)
+27 Oct 2017 00:06.01 [INFO ] WapitiModel               - Loading model: /Users/daniellin/Desktop/tldrApp/tldrResearchPaper/grobid-grobid-parent-0.4.4/grobid-home/models/header/model.wapiti (size: 36094028)
+27 Oct 2017 00:06.07 [INFO ] WapitiModel               - Loading model: /Users/daniellin/Desktop/tldrApp/tldrResearchPaper/grobid-grobid-parent-0.4.4/grobid-home/models/affiliation-address/model.wapiti (size: 2646298)
+27 Oct 2017 00:06.10 [INFO ] WapitiModel               - Loading model: /Users/daniellin/Desktop/tldrApp/tldrResearchPaper/grobid-grobid-parent-0.4.4/grobid-home/models/citation/model.wapiti (size: 16235248)
+27 Oct 2017 00:06.12 [INFO ] WapitiModel               - Loading model: /Users/daniellin/Desktop/tldrApp/tldrResearchPaper/grobid-grobid-parent-0.4.4/grobid-home/models/reference-segmenter/model.wapiti (size: 4829569)
+27 Oct 2017 00:06.28 [INFO ] WapitiModel               - Loading model: /Users/daniellin/Desktop/tldrApp/tldrResearchPaper/grobid-grobid-parent-0.4.4/grobid-home/models/name/header/model.wapiti (size: 2225578)
+27 Oct 2017 00:06.28 [INFO ] WapitiModel               - Loading model: /Users/daniellin/Desktop/tldrApp/tldrResearchPaper/grobid-grobid-parent-0.4.4/grobid-home/models/name/citation/model.wapiti (size: 393118)
+27 Oct 2017 00:06.28 [INFO ] WapitiModel               - Loading model: /Users/daniellin/Desktop/tldrApp/tldrResearchPaper/grobid-grobid-parent-0.4.4/grobid-home/models/date/model.wapiti (size: 102435)
+27 Oct 2017 11:05.11 [INFO ] LibraryLoader             - Loading external native CRF library
+27 Oct 2017 11:05.11 [INFO ] LibraryLoader             - Loading Wapiti native library...
+27 Oct 2017 11:05.11 [INFO ] LibraryLoader             - Library crfpp loaded
+27 Oct 2017 11:10.45 [INFO ] WapitiModel               - Loading model: /Users/daniellin/Desktop/tldrApp/tldrResearchPaper/grobid-grobid-parent-0.4.4/grobid-home/models/fulltext/model.wapiti (size: 20462507)
+27 Oct 2017 11:10.51 [INFO ] WapitiModel               - Loading model: /Users/daniellin/Desktop/tldrApp/tldrResearchPaper/grobid-grobid-parent-0.4.4/grobid-home/models/segmentation/model.wapiti (size: 15755692)
+27 Oct 2017 11:10.53 [INFO ] Lexicon                   - Initiating dictionary
+27 Oct 2017 11:10.53 [INFO ] Lexicon                   - End of Initialization of dictionary
+27 Oct 2017 11:10.53 [INFO ] Lexicon                   - Initiating names
+27 Oct 2017 11:10.53 [INFO ] Lexicon                   - End of initialization of names
+27 Oct 2017 11:10.54 [INFO ] Lexicon                   - Initiating country codes
+27 Oct 2017 11:10.54 [INFO ] Lexicon                   - End of initialization of country codes
+27 Oct 2017 11:11.00 [INFO ] WapitiModel               - Loading model: /Users/daniellin/Desktop/tldrApp/tldrResearchPaper/grobid-grobid-parent-0.4.4/grobid-home/models/figure/model.wapiti (size: 680116)
+27 Oct 2017 11:11.01 [INFO ] WapitiModel               - Loading model: /Users/daniellin/Desktop/tldrApp/tldrResearchPaper/grobid-grobid-parent-0.4.4/grobid-home/models/table/model.wapiti (size: 1337378)
+27 Oct 2017 11:11.01 [INFO ] WapitiModel               - Loading model: /Users/daniellin/Desktop/tldrApp/tldrResearchPaper/grobid-grobid-parent-0.4.4/grobid-home/models/header/model.wapiti (size: 36094028)
+27 Oct 2017 11:11.08 [INFO ] WapitiModel               - Loading model: /Users/daniellin/Desktop/tldrApp/tldrResearchPaper/grobid-grobid-parent-0.4.4/grobid-home/models/affiliation-address/model.wapiti (size: 2646298)
+27 Oct 2017 11:11.10 [INFO ] WapitiModel               - Loading model: /Users/daniellin/Desktop/tldrApp/tldrResearchPaper/grobid-grobid-parent-0.4.4/grobid-home/models/citation/model.wapiti (size: 16235248)
+27 Oct 2017 11:11.12 [INFO ] WapitiModel               - Loading model: /Users/daniellin/Desktop/tldrApp/tldrResearchPaper/grobid-grobid-parent-0.4.4/grobid-home/models/reference-segmenter/model.wapiti (size: 4829569)
+27 Oct 2017 11:11.28 [INFO ] WapitiModel               - Loading model: /Users/daniellin/Desktop/tldrApp/tldrResearchPaper/grobid-grobid-parent-0.4.4/grobid-home/models/name/header/model.wapiti (size: 2225578)
+27 Oct 2017 11:11.28 [INFO ] WapitiModel               - Loading model: /Users/daniellin/Desktop/tldrApp/tldrResearchPaper/grobid-grobid-parent-0.4.4/grobid-home/models/name/citation/model.wapiti (size: 393118)
+27 Oct 2017 11:11.28 [INFO ] WapitiModel               - Loading model: /Users/daniellin/Desktop/tldrApp/tldrResearchPaper/grobid-grobid-parent-0.4.4/grobid-home/models/date/model.wapiti (size: 102435)

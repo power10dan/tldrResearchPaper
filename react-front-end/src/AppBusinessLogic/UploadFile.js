@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 import {getAllFiles, uploadFile} from '../ReduxFolder/Actions/FileActions.js';
 import ErrSnack from '../AppComponents/ErrDialog.js';
 import {closeDialog} from '../ReduxFolder/Actions/FileActions.js';
+import GridCardView from '../AppComponents/FileView.js';
 
 class UploadFile extends React.Component{
 	constructor(props){
@@ -15,7 +16,9 @@ class UploadFile extends React.Component{
 			fileData : "",
 			token : "",
 			message: "",
-			err: " "
+			err: " ",
+			files :[],
+			fileSummaries: [],
 		}
 	}
 
@@ -62,7 +65,7 @@ class UploadFile extends React.Component{
 			     	<AppTopBar  uploadFile={this.handleClick} loading={true} loggedIn= {false} disable={true}/> 
 			  	</div>
 			);
-		}  else if(this.state.isLoggedIn === false){
+		} else if(this.state.isLoggedIn === false){
 			return(
 				<div>
 			    	 <AppTopBar  uploadFile={this.handleClick} loading={false} loggedIn= {false} disable={true}/> 
