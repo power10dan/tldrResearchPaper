@@ -1,28 +1,19 @@
-from django.shortcuts import render, redirect
 from django.conf import settings
-from django.core.files.storage import FileSystemStorage
 
-from rest_framework.parsers import FileUploadParser, MultiPartParser
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 
-from uploads.models.models import Document
 from uploads.permissions.permissions import isAdminOrReadOnly
 from uploads.serializers.serializers import UserSerializer
 from uploads.lib.summarize import summarize
 
-from django.contrib import messages
-from django.contrib.auth.models import User
 from django.http import HttpResponse
-from django.core import serializers
-from django.views.static import serve
 from django.http import FileResponse
-# from wsgiref.util import FileWrapper
-from django.core.servers.basehttp import FileWrapper
+from wsgiref.util import FileWrapper
 
-from py4j.java_gateway import JavaGateway 
+from py4j.java_gateway import JavaGateway
 
 import os
 import json
