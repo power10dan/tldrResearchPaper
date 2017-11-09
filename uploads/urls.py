@@ -17,14 +17,16 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^api/getAllSummaries/', views.SummaryOutputView.as_view()),
     url(r'^api/userSummary/', views.SummaryInputView.as_view()),
-    url(r'^api/getXMLFile/', views.getXMLFile.as_view()),
+    url(r'^api/getXMLFile/', views.getXMLFile.as_view(), name='getXMLFile'),
     #url(r'^api/createUser/$'
     #    , views.CreateUser.as_view()
     #    , name='account-create'),
     # use /rest-auth/logout/ or /rest-auth/login/, this imports a bunch of urls
     # see here: http://django-rest-auth.readthedocs.io/en/latest/api_endpoints.html
    # url(r'^rest-auth/', include('rest_auth.urls')),
-    url(r'^rest-auth/registration/', include('rest_auth.registration.urls'), name='create-user'),
+    url(r'^rest-auth/registration/',
+        include('rest_auth.registration.urls'),
+        name='create-user'),
     url(r'^login/',obtain_jwt_token,name='login')
 ]
 
