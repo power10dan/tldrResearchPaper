@@ -62,13 +62,20 @@ class getXMLFile(APIView):
         permission_classes = (isAdminOrReadOnly, )
 
         # vars
-        file_name = request.GET["file_name"]
-        path = os.path.join(settings.XML_DOCS, file_name)
-        resp_status = status.HTTP_400_BAD_REQUEST
+        matched_files = []
+        # resp_status = status.HTTP_400_BAD_REQUEST
+        response = Response(status=status.HTTP_400_BAD_REQUEST)
 
-        # glob finds all pathnames that match a certain pattern, here we just
-        # match on only files that grobid will spit out. glob returns a list
-        matched_files = glob.glob(path + ".*.tei.xml")
+        # get filename from request, if not there None is returned
+        file_name = request.GET.get("file_name")
+
+        if file_name:
+            path = os.path.join(settings.XML_DOCS, file_name)
+
+            # glob finds all pathnames that match a certain pattern, here we
+            # just match on only files that grobid will spit out. glob returns
+            # a list
+            matched_files = glob.glob(path + ".*.tei.xml")
 
         # if matched then open the file, encode in base64, and serve
         if matched_files:
@@ -76,18 +83,16 @@ class getXMLFile(APIView):
                 response = FileResponse(base64.encodestring(
                     open(matched_files[0], 'rb').read()))
 
-                # set response fields and return
+                # set response fields
                 response['Content-Disposition'] = "attachment: filename=%s" \
                                                   % file_name
-
-                response['status_code'] = resp_status
-                return response
+                response['status_code'] = status.HTTP_200_OK
         else:
             # file wasn't found
-            return Response("File can't be found", status)
+            response.write("File can't be found")
 
         # else we return a bad request
-        return Response(status)
+        return response
 
 
 
