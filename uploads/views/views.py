@@ -63,19 +63,20 @@ class getXMLFile(APIView):
 
         # vars
         matched_files = []
-        # resp_status = status.HTTP_400_BAD_REQUEST
         response = Response(status=status.HTTP_400_BAD_REQUEST)
+        fail_str = "File not found"
 
         # get filename from request, if not there None is returned
         file_name = request.GET.get("file_name")
 
         if file_name:
+
             path = os.path.join(settings.XML_DOCS, file_name)
 
             # glob finds all pathnames that match a certain pattern, here we
             # just match on only files that grobid will spit out. glob returns
-            # a list
-            matched_files = glob.glob(path + ".*.tei.xml")
+            # a list. This is doing an exact match, glob can match regex though
+            matched_files = glob.glob(path)
 
         # if matched then open the file, encode in base64, and serve
         if matched_files:
@@ -89,7 +90,7 @@ class getXMLFile(APIView):
                 response['status_code'] = status.HTTP_200_OK
         else:
             # file wasn't found
-            response.write("File can't be found")
+            response.reason_phrase = fail_str
 
         # else we return a bad request
         return response
