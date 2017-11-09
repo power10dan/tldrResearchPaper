@@ -1,6 +1,7 @@
 import * as types from '../Constants/ActionTypes';
-import { saveCred } from '../Actions/SaveCred.js';
-import bcrypt from 'bcryptjs';
+import { saveCred } from './SaveCred.js';
+import { CreateSuccess } from './CreateProfileActions.js';
+import { isLoading } from './LoadingActions.js';
 
 /*
  * Action creators
@@ -48,7 +49,8 @@ export function Login(userName, userEmail, password) {
             } else {
                 let message = "Hello " + userName
                 dispatch(LogInSuccess(message));
-                dispatch(saveCred(userName, userEmail, data.key));
+                dispatch(CreateSuccess(""));
+                dispatch(saveCred(userName, userEmail, data.token));
             }
         }).catch((err, status)=>{
             if(err.message === "Failed to fetch"){
@@ -75,26 +77,8 @@ export function LogInFailed(failureMessage){
  		  isLogin: false,
  		  message: failureMessage
  	};
- };
-// simple actions when app is loading
-export function isLoading(isLoadingStats){
-	return {
-		type: types.LOADING,
-		isLoading: isLoadingStats
-	};
-}
+ }
 
-// if this action dispatches true, we don't disable 
-// the login button. Else, we disable th login button
-// so user can't login unless they enter their 
-// user names and password
-
-export function isDisableButton(isDisable){
-    return{
-        type: types.IS_DISABLE,
-        disable : isDisable,
-    };
-}
 
  /*export function ForgotPass(email){
  	return {type: types.FORGOTPass, recoverEmail: email};
@@ -104,14 +88,3 @@ export function isDisableButton(isDisable){
  	return {type: types.FORGOTACC, recoverEmail: email};
  }
  */
-
-
- export function UploadFile(fileToUpload){
- 	return {type: types.UPLOADFILE, fileInfo: fileToUpload};
- }
-
-
- export function DeleteFile(fileToDelete){
- 	return {type: types.DELETEFILE, fileDel: fileToDelete};
- }
-

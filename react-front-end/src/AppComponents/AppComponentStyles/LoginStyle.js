@@ -8,10 +8,6 @@ const stylesLogin = theme =>({
 	  }),
 	topHalf: {
 		background: '#EEEEEE'
-
-
-
-
 	}
 });
 

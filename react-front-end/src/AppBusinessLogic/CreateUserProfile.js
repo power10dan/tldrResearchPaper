@@ -5,7 +5,7 @@ import CreateProfile from '../AppComponents/CreateProfile.js';
 import {createProfile} from '../ReduxFolder/Actions/CreateProfileActions.js';
 import { CreateFailed, CreateSuccess, ResetDialog} from '../ReduxFolder/Actions/CreateProfileActions.js';
 import { DialogOpenCreate , DialogCloseCreate } from '../ReduxFolder/Actions/DialogActions.js';
-import {isLoading } from '../ReduxFolder/Actions/actions.js';
+import {isLoading } from '../ReduxFolder/Actions/LoadingActions.js';
 import ErrSnack from '../AppComponents/ErrDialog.js';
 
 
@@ -40,7 +40,6 @@ class CreateUserProfile extends React.Component{
 	}
 
 	sanitizeUserInput = (userName, userEmail, userPass, userPass2) => {
-		
 		let validEmailRegex = new RegExp("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?");
 		let containSpaces = new RegExp("/\s/");
 		if(userName === "" || containSpaces.test(userName)){
@@ -137,7 +136,7 @@ class CreateUserProfile extends React.Component{
 
      
   	// this repetition is screaming for a higher ordered function
-  	storeHash = (err, hash) => {
+  	storeHash = (hash) => {
   	 	this.setState({newUserPassword: hash});
   	 	this.setState({newUserPassword2: hash});
   	}

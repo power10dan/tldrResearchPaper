@@ -2,10 +2,12 @@ import React from 'react';
 import { connect } from 'react-redux';
 import LoginComp from '../AppComponents/LoginComp.js';
 import ErrSnack from '../AppComponents/ErrDialog.js';
-import { Login, LogInFailed, isLoading} from '../ReduxFolder/Actions/actions.js';
+import { Login, LogInFailed} from '../ReduxFolder/Actions/LoginActions.js';
+import {isLoading } from '../ReduxFolder/Actions/LoadingActions.js';
 import {DialogOpen, DialogClose} from '../ReduxFolder/Actions/DialogActions.js';
 import bcrypt from 'bcryptjs';
 import {SideNavStates} from '../AppBusinessLogic/SideBarUpdate';
+
  
 class LoginOperations extends React.Component{
 	constructor(props){
@@ -34,11 +36,20 @@ class LoginOperations extends React.Component{
 		this.setState({successMessage: nextProps.successMess});
 	}
 
+	formClean = ()=>{
+		// clean up
+	   	this.setState({userName: ""});
+	   	// we have to clear out the text field variable
+		this.setState({userTempPass: ""});
+		// we also have to clear out our saved hash
+		this.setState({userPass: ""});
+
+	}
+
     handleSubmit = () => {
     	this.props.isLoading(true);
         const { dispatch } = this.props;
 
-        
         if(this.state.userName === "" || typeof this.state.userName === "undefined") {
         	this.props.updateFailed("Please enter user name");
         	this.props.openDialog();
@@ -59,36 +70,22 @@ class LoginOperations extends React.Component{
         		this.props.openDialog();
 	        	setTimeout(()=>{this.props.closeDialog()}, 2000); // set dialog close after two seconds
 	        	this.props.isLoading(false);
-		        	// clean up
-	   			this.setState({userName: ""});
-	   			// we have to clear out the text field variable
-				this.setState({userTempPass: ""});
-				// we also have to clear out our saved hash
-				this.setState({userPass: ""});
+	        	this.formClean();
+		        
         	}
 
         	if(this.state.isLoginSuccess === true){
         		this.props.openDialog();
 	        	setTimeout(()=>{this.props.closeDialog()}, 2000); // set dialog close after two seconds
 	        	this.props.isLoading(false);
-		        	// clean up
-	   			this.setState({userName: ""});
-	   			// we have to clear out the text field variable
-				this.setState({userTempPass: ""});
-				// we also have to clear out our saved hash
-				this.setState({userPass: ""});
+	        	this.formClean();
+		       
         	}
-
-        	// clean up
-   			this.setState({userName: ""});
-   			// we have to clear out the text field variable
-			this.setState({userTempPass: ""});
-			// we also have to clear out our saved hash
-			this.setState({userPass: ""});
+        	this.formClean()
         } 
     }
 
-    storeHash = (err, hash) =>{
+    storeHash = ( hash) =>{
     	this.setState({userPass: hash});
     }
 
@@ -101,7 +98,7 @@ class LoginOperations extends React.Component{
 		// then we hash the temp varible password and then
 		// return it to userPass.
 		this.setState({userTempPass: userPassword.target.value}, ()=>{
-			this.storeHash("hi", this.state.userTempPass)
+			this.storeHash( this.state.userTempPass)
 		});
 	}
 
@@ -146,7 +143,7 @@ class LoginOperations extends React.Component{
 		      		<LoginComp package={packagesLogin} name={this.state.userName} pass={this.state.userTempPass} />
 		      		<ErrSnack message={this.state.errMessage} openDialog={this.state.opDialog} />
 		      	</div>
-	      	)
+	      	);
       } 
      
     }
@@ -157,7 +154,6 @@ class LoginOperations extends React.Component{
 function mapStateToProps(state) {
     const { isLoggedIn, errorMessage, isOpenDialog, successMess} = state.authentication;
     const {isRegistered} = state.createAccReducer;
-
     return {
         isLoggedIn,
         errorMessage,

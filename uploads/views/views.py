@@ -50,11 +50,11 @@ class SummaryInputView(APIView):
 #RESTful API view for Django
 class FileUploadView(APIView):
     parser_classes=(MultiPartParser,)
-    # gets the uploaded file and saves it in "media/documents" folder. TODO: Parse to PDF, and outsource this to Amazon or
-    # some file storage solution
+    
     def post(self, request, filename, format=None):
         fileUploaded = request.body
-        #newString = fileUploaded.split(",")
+        # need to include b in front of comma due to the string being binary
+        newString = fileUploaded.split(b',')
         path = settings.MEDIA_DOCS + filename
         permission_classes = (isAdminOrReadOnly, )
         with open(path, 'wb') as fileopened:
@@ -101,7 +101,6 @@ class DeleteFile(APIView):
 
 class CreateUser(APIView):
     def post(self, request, format="json"):
-        print(request.data)
         serializer = UserSerializer(data=request.data)
 
         # if serializer succeeds create user and save
