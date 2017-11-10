@@ -57,6 +57,7 @@ def grabFileToReq(request, out_name, fdir_one=[], fdir_two=[]):
 
     if matched_summaries and matched_files:
         files = zip(matched_files, matched_summaries)
+    print(files)
 
     # if matched then open the file, encode in base64, and serve
     if files:
