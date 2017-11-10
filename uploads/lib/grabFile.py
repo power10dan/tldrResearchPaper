@@ -1,50 +1,88 @@
 from django.http import FileResponse
 from rest_framework.response import Response
 from rest_framework import status
+from itertools import chain
 
 import glob
-import base64
 import os
+import tarfile
 
 
-def grabFileToReq(request, directory):
+def grabFileToReq(request, out_name, file_dir=None, summary_dir=None):
     """
     Given a request that specifies a filename in the body, and a directory this
     function finds the file in the filesystem, encodes it to base64, and then
     sends a response holding the xml file
     """
 
+    def getFiles(directory, file_names=[]):
+        matched_files = []
+
+        if file_names:
+            # Then we have one or more files
+
+            if file_dir:
+                # for each file, make the path by joining the directory
+                file_paths = map(lambda file_name:
+                                 os.path.join(file_dir, file_name), file_names)
+
+                # glob finds all pathnames that match a certain pattern,
+                # we just match on the absolute filename with extension, glob
+                # returns a list, but I'm only returning first match
+                matched_files = map(lambda path:
+                                    glob.glob(path)[0] if
+                                    glob.glob(path) else [],
+                                    file_paths)
+
+        # return the list, chain just flattens in case the file wasn't found
+        # this is not computationally expensive because this will always be a
+        # singleton in the edge case
+        return list(chain.from_iterable(matched_files))
+
     # vars
-    matched_files = []
     response = Response(status=status.HTTP_400_BAD_REQUEST)
-    fail_str = "File not found"
+    fail_str = "Files not found"
+    files = []
 
     # get filename from request, if not there None is returned
-    file_name = request.GET.get("file_name")
+    file_names = request.GET.getlist("file_names")
 
-    if file_name:
+    matched_files = getFiles(file_dir, file_names)
+    matched_summaries = getFiles(summary_dir, file_names)
+    print(matched_files, matched_summaries)
 
-        path = os.path.join(directory, file_name)
+    # this incurs another pass of the lists, which could be done in the closure
+    # defined above, that would reduce the closures generality though
+    if not matched_summaries and matched_files:
+        files = matched_files
 
-        # glob finds all pathnames that match a certain pattern, here we
-        # just match on only files that grobid will spit out. glob returns
-        # a list. This is doing an exact match, glob can match regex though
-        matched_files = glob.glob(path)
+    if matched_summaries and not matched_files:
+        files = matched_summaries
+
+    if matched_summaries and matched_files:
+        files = zip(matched_files, matched_summaries)
 
     # if matched then open the file, encode in base64, and serve
-    if matched_files:
-        # set the response with an encoded the file
-        response = FileResponse(base64.encodestring(
-            open(matched_files[0], 'rb').read()))
+    if files:
 
-        # set response fields
-        # content disposition tells the browser to treat the response
-        # as a file attachment
-        response['Content-Disposition'] = "attachment; filename=%s" % file_name
-        response['status_code'] = status.HTTP_200_OK
+        # bundle all the files to tar.bz2 file
+        with tarfile.open(out_name, "w:bz2") as tar:
+
+            for (xml_file, summary_file) in files:
+                tar.add(xml_file, os.path.basename(xml_file))
+                tar.add(summary_file, os.path.basename(summary_file))
+
+            # set the response with an encoded the file
+            response = FileResponse(tar)
+
+            # set response fields
+            # content disposition tells the browser to treat the response
+            # as a file attachment
+            response['Content-Disposition'] = "attachment; filename=%s" % tar
+            response['status_code'] = status.HTTP_200_OK
 
     else:
-        # file wasn't found
+        # files weren't found
         response.reason_phrase = fail_str
 
     # else we return a bad request
