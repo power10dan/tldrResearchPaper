@@ -1,14 +1,15 @@
 from django.http import FileResponse
 from rest_framework.response import Response
 from rest_framework import status
-from itertools import chain
+from operator import add
+from functools import reduce
 
 import glob
 import os
 import tarfile
 
 
-def grabFileToReq(request, out_name, file_dir=None, summary_dir=None):
+def grabFileToReq(request, out_name, fdir_one=[], fdir_two=[]):
     """
     Given a request that specifies a filename in the body, and a directory this
     function finds the file in the filesystem, encodes it to base64, and then
@@ -16,28 +17,26 @@ def grabFileToReq(request, out_name, file_dir=None, summary_dir=None):
     """
 
     def getFiles(directory, file_names=[]):
-        matched_files = []
+        matched_files = [None]
+
 
         if file_names:
             # Then we have one or more files
 
-            if file_dir:
+            if fdir_one:
                 # for each file, make the path by joining the directory
                 file_paths = map(lambda file_name:
-                                 os.path.join(file_dir, file_name), file_names)
+                                 os.path.join(fdir_one, file_name), file_names)
 
                 # glob finds all pathnames that match a certain pattern,
                 # we just match on the absolute filename with extension, glob
                 # returns a list, but I'm only returning first match
                 matched_files = map(lambda path:
                                     glob.glob(path)[0] if
-                                    glob.glob(path) else [],
+                                    glob.glob(path) else None,
                                     file_paths)
 
-        # return the list, chain just flattens in case the file wasn't found
-        # this is not computationally expensive because this will always be a
-        # singleton in the edge case
-        return list(chain.from_iterable(matched_files))
+        return [] if list(matched_files)[0] is None else matched_files
 
     # vars
     response = Response(status=status.HTTP_400_BAD_REQUEST)
@@ -46,10 +45,8 @@ def grabFileToReq(request, out_name, file_dir=None, summary_dir=None):
 
     # get filename from request, if not there None is returned
     file_names = request.GET.getlist("file_names")
-
-    matched_files = getFiles(file_dir, file_names)
-    matched_summaries = getFiles(summary_dir, file_names)
-    print(matched_files, matched_summaries)
+    matched_files = getFiles(fdir_one, file_names)
+    matched_summaries = getFiles(fdir_two, file_names)
 
     # this incurs another pass of the lists, which could be done in the closure
     # defined above, that would reduce the closures generality though

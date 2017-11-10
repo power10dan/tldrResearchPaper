@@ -89,7 +89,7 @@ class getXMLFile(APIView):
     """
 
     def get(self, request):
-        return grabFileToReq(request, "xmlFiles.tar.bz2", settings.XML_DOCS, [])
+        return grabFileToReq(request, "xmlFiles.tar.bz2", settings.XML_DOCS)
 
 class getPDFFile(APIView):
     """
@@ -99,7 +99,14 @@ class getPDFFile(APIView):
     """
 
     def get(self, request):
-        return grabFileToReq(request, settings.MEDIA_DOCS)
+        return grabFileToReq(request, "pdf_files.tar.bz2", settings.MEDIA_DOCS)
+
+
+class getXMLAndSums(APIView):
+    def get(self, request):
+        return grabFileToReq(request)
+
+
 
 #RESTful API view for Django
 class FileUploadView(APIView):

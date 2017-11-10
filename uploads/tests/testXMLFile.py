@@ -91,10 +91,10 @@ class XMLFileEncTest(APITestCase):
         data = {}
 
         # send request
-        # response = self.client.get(self.create_url, data, format='json')
+        response = self.client.get(self.create_url, data, format='json')
 
-        # # now test that we actually get back an Unauthorized
-        # self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # now test that we actually get back an Unauthorized
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_file_not_found(self):
         """
@@ -106,8 +106,8 @@ class XMLFileEncTest(APITestCase):
 
         response = self.client.get(self.create_url, data, format='json')
 
-        # self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        # self.assertEqual(response.reason_phrase, "Files not found")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.reason_phrase, "Files not found")
 
     def test_file_found(self):
         """
