@@ -92,7 +92,6 @@ def grabFileToReq(request, out_name, fdir_one=[], fdir_two=[]):
             else:
                 ret_title = "title not parsed correctly!"
 
-            print(ret_title, ret_summary, ret_author)
             retData['Files'].append(
                 {os.path.basename(xml_file): {
                     'title': json.dumps(ret_title),
@@ -101,7 +100,7 @@ def grabFileToReq(request, out_name, fdir_one=[], fdir_two=[]):
                     'files': [{'xml_file': json.dumps(open(xml_file).read())},
                               {'summary_file': json.dumps(open(summary_file).read())}]
                     }})
-            
+
             response = Response(retData, status.HTTP_200_OK)
 
     else:

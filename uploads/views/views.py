@@ -127,8 +127,9 @@ class getXMLAndSums(APIView):
 
             cntr = 0
             for f in os.listdir(settings.XML_DOCS):
-                data['file_names'].append(f[:-17]) #remove grobid gen'd stuff
-                cntr += 1
+                if f.name[0] != ".":
+                    data['file_names'].append(f[:-17]) #remove grobid gen'd stuff
+                    cntr += 1
 
                 if cntr >= int(num_files):
                     break
