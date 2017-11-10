@@ -1,7 +1,6 @@
 from django.http import FileResponse
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.parsers import FileUploadParser, MultiPartParser
 
 import glob
 import base64
