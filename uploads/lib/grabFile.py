@@ -17,7 +17,7 @@ def grabFileToReq(request, out_name, fdir_one=[], fdir_two=[]):
     """
 
     def getFiles(directory, file_names=[]):
-        matched_files = [None]
+        matched_files = []
 
         if file_names:
             # Then we have one or more files
@@ -30,12 +30,17 @@ def grabFileToReq(request, out_name, fdir_one=[], fdir_two=[]):
                 # glob finds all pathnames that match a certain pattern,
                 # we just match on the absolute filename with extension, glob
                 # returns a list, but I'm only returning first match
-                matched_files = map(lambda path:
-                                    glob.glob(path + ".*")[0] if
-                                    glob.glob(path) else None,
-                                    file_paths)
+                for path in file_paths:
+                    matches = glob.glob(path + ".*")
+                    if matches:
+                        matched_files.append(matches[0])
+                # matched_files = map(lambda path:
+                #                     glob.glob(path + ".*")[0] if
+                #                     glob.glob(path) else None,
+                #                     file_paths)
+                print(matched_files)
 
-        return [] if list(matched_files)[0] is None else matched_files
+        return matched_files
 
     # vars
     response = Response(status=status.HTTP_400_BAD_REQUEST)

@@ -11,7 +11,8 @@ from uploads.serializers.serializers import UserSerializer
 from uploads.lib.summarize import summarize
 
 from django.http import HttpResponse
-from django.http import FileResponse
+from django.http import HttpRequest
+from django.http.request import QueryDict, MultiValueDict
 
 from py4j.java_gateway import JavaGateway 
 from uploads.lib.grabFile import grabFileToReq
@@ -104,10 +105,41 @@ class getPDFFile(APIView):
 
 class getXMLAndSums(APIView):
     def get(self, request):
-        return grabFileToReq(request,
-                             "xml_and_summaries.tar.bz2",
-                             settings.XML_DOCS,
-                             settings.SUMMARY_DOCS)
+
+        num_files = None
+        num_files = request.GET.get('num_files')
+        file_names = request.GET.getlist("file_names")
+        response = Response(status=status.HTTP_400_BAD_REQUEST)
+
+        if file_names:
+            response = grabFileToReq(request,
+                                     "xml_and_summaries.tar.bz2",
+                                     settings.XML_DOCS,
+                                     settings.SUMMARY_DOCS)
+
+        if num_files:
+            data = {'file_names': []}
+
+            cntr = 0
+            for f in os.listdir(settings.XML_DOCS):
+                data['file_names'].append(f[:-17]) #remove grobid gen'd stuff
+                cntr += 1
+
+                if cntr >= int(num_files):
+                    break
+
+            newRequest = HttpRequest()
+            newRequest.method = 'GET'
+            qdict = QueryDict('', mutable=True)
+            qdict.update(MultiValueDict(data))
+            newRequest.GET = qdict.copy()
+            response = grabFileToReq(
+                newRequest,
+                "xml_and_summaries.tar.bz2",
+                settings.XML_DOCS,
+                settings.SUMMARY_DOCS)
+
+        return response
 
 
 
