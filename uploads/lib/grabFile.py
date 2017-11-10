@@ -54,12 +54,14 @@ def grabFileToReq(request, out_name, fdir_one=[], fdir_two=[]):
         files = matched_summaries
 
     if matched_summaries and matched_files:
-        files = zip(matched_files, matched_summaries)
-    print(files)
+        print("hello")
+        ds_store_path = '/Users/daniellin/Desktop/tldrApp/tldrResearchPaper/uploads/media/xmlFiles/.DS_Store'
+        matched_files_filt = [file for file in files if file != ds_store_path]
+        print(matched_files_filt)
+        files = zip(matched_files_filt, matched_summaries)
 
     # if matched then open the file, encode in base64, and serve
     if files:
-
         # bundle all the files to tar.bz2 file
         retData = {'Files': []}
         for (xml_file, summary_file) in files:
@@ -68,7 +70,7 @@ def grabFileToReq(request, out_name, fdir_one=[], fdir_two=[]):
             summary = []
 
             with open(xml_file, 'r') as x:
-                soup = BeautifulSoup(x, 'xml')
+                soup = BeautifulSoup(x, 'lxml-xml')
                 author = soup.find_all('persName')
                 title = soup.find_all('title')
 
@@ -104,8 +106,6 @@ def grabFileToReq(request, out_name, fdir_one=[], fdir_two=[]):
                     }})
             
             response = Response(retData, status.HTTP_200_OK)
->>>>>>> 0819e354f5a323d7b370121575c4f789131d38fa
-
     else:
         # files weren't found
         response.reason_phrase = fail_str
