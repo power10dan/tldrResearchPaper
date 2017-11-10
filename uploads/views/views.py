@@ -85,6 +85,8 @@ class getXMLFile(APIView):
                     open(matched_files[0], 'rb').read()))
 
                 # set response fields
+                # content disposition tells the browser to treat the response
+                # as a file attachment
                 response['Content-Disposition'] = "attachment; filename=%s" \
                                                   % file_name
                 response['status_code'] = status.HTTP_200_OK
