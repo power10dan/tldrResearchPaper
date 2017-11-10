@@ -34,9 +34,7 @@ def grabFileToReq(request, directory):
     # if matched then open the file, encode in base64, and serve
     if matched_files:
         # set the response with an encoded the file
-        response = FileResponse(base64.encodestring(
-            open(matched_files[0], 'rb').read()))
-
+        response = FileResponse(base64.encodestring(open(matched_files[0], 'rb').read()))
         # set response fields
         # content disposition tells the browser to treat the response
         # as a file attachment

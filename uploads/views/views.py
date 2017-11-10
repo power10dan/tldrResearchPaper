@@ -121,17 +121,13 @@ class FileUploadView(APIView):
         consolidateHead = False
         consolidateCite = False
         status = grobidClass.PDFXMLConverter(inputDir, outputDir, consolidateHead, consolidateCite)
-        print("Grobid Finished")
-        if status == 7:
-            summarize(outputDir+filename[:-4]+'.fulltext.tei.xml',filename[:-4],[])
+        summarize(outputDir+filename[:-4]+'.fulltext.tei.xml',filename[:-4],[])
         return Response(status=204)
 
 class GetAllFiles(APIView):
     def get(self, request):
         fileRoot = settings.MEDIA_DOCS
-        fileNames = [fileRoot + fileName for
-                     fileName in
-                     os.listdir(fileRoot) if fileName != ".DS_Store"]
+        fileNames = [fileName for fileName in os.listdir(fileRoot) if fileName != ".DS_Store"]
         
         permission_classes = (isAdminOrReadOnly, )
         fileData = {"Files": [{'File': filename } for filename in fileNames]}
