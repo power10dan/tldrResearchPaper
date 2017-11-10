@@ -19,7 +19,6 @@ def grabFileToReq(request, out_name, fdir_one=[], fdir_two=[]):
     def getFiles(directory, file_names=[]):
         matched_files = [None]
 
-
         if file_names:
             # Then we have one or more files
 
@@ -32,7 +31,7 @@ def grabFileToReq(request, out_name, fdir_one=[], fdir_two=[]):
                 # we just match on the absolute filename with extension, glob
                 # returns a list, but I'm only returning first match
                 matched_files = map(lambda path:
-                                    glob.glob(path)[0] if
+                                    glob.glob(path + ".*")[0] if
                                     glob.glob(path) else None,
                                     file_paths)
 

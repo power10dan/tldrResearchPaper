@@ -116,7 +116,7 @@ class XMLFileEncTest(APITestCase):
         content-disposition field and the proper filename
         """
 
-        data = {'file_names': [self.file_name, self.file_name2]}
+        data = {'file_names': ['test_xml_file']}
 
         response = self.client.get(self.create_url, data, format='json')
 
