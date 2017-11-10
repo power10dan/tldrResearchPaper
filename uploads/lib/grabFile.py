@@ -59,7 +59,14 @@ def grabFileToReq(request, out_name, fdir_one=[], fdir_two=[]):
 
     # this incurs another pass of the lists, which could be done in the closure
     # defined above, that would reduce the closures generality though
-    files = zip(matched_files, matched_summaries)
+    if not matched_summaries and matched_files:
+        files = map(lambda f: (f, None), matched_files)
+
+    if matched_summaries and not matched_files:
+        files = map(lambda f: (f, None), matched_summaries)
+
+    if matched_summaries and matched_files:
+        files = zip(matched_files, matched_summaries)
 
     # if matched then open the file, encode in base64, and serve
     if files:
@@ -67,21 +74,30 @@ def grabFileToReq(request, out_name, fdir_one=[], fdir_two=[]):
         # bundle all the files to tar.bz2 file
         retData = {'Files': []}
         for (xml_file, summary_file) in files:
+            print(xml_file, summary_file)
             author = []
             title = []
             summary = []
+            retXML = ""
+            retSum = ""
 
-            with open(xml_file, 'r') as x:
-                soup = BeautifulSoup(x, 'xml')
-                author = soup.find_all('persName')
-                title = soup.find_all('title')
+            if xml_file:
+                with open(xml_file, 'r') as x:
+                    soup = BeautifulSoup(x, 'xml')
+                    author = soup.find_all('persName')
+                    title = soup.find_all('title')
+                    retXML = json.dumps(x.read())
 
-            with open(summary_file, 'r') as s:
-                soup = BeautifulSoup(s, 'xml')
-                summary = soup.find_all(re.compile("(INTRODUCTION)", flags=re.IGNORECASE))
+            if summary_file:
+                with open(summary_file, 'r') as s:
+                    soup = BeautifulSoup(s, 'xml')
+                    summary = soup.find_all(re.compile("(INTRODUCTION)",
+                                                       flags=re.IGNORECASE))
+                    retSum = json.dumps(s.read())
 
             if summary:
                 ret_summary = shortenText(summary[0].get_text())
+
             else:
                 ret_summary = "Needs a summary written!"
 
@@ -100,8 +116,8 @@ def grabFileToReq(request, out_name, fdir_one=[], fdir_two=[]):
                     'title': json.dumps(ret_title),
                     'author': json.dumps(ret_author),
                     'Intro_summary': json.dumps(ret_summary),
-                    'files': [{'xml_file': json.dumps(open(xml_file).read())},
-                              {'summary_file': json.dumps(open(summary_file).read())}]
+                    'files': [{'xml_file': retXML},
+                              {'summary_file': retSum}]
                     }})
 
             response = Response(retData, status.HTTP_200_OK)
