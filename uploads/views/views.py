@@ -19,9 +19,11 @@ from uploads.lib.grabFile import grabFileToReq
 
 import os
 import json
+import re
 import base64
 import glob
 import xml.etree.ElementTree as ET
+from bs4 import BeautifulSoup
 
 
 class SummaryOutputView(APIView):
@@ -60,25 +62,20 @@ class SummaryInputView(APIView):
         # if request was well formed get the file from the file system
         if file_name and section and summary_text:
             path = settings.SUMMARY_DOCS + file_name
-            matched_files = glob.glob(path)
+            matched_files = glob.glob(path + "*")
 
         if matched_files:
             server_file = matched_files[0]  # get first match
 
-            # parse the xml
-            tree = ET.parse(server_file)
-            root = tree.getroot()
+            with open(server_file, 'r+') as f:
+                soup = BeautifulSoup(f, 'xml')
+                for match in soup.find_all(re.compile("(" + section + ")")):
+                    match.string = summary_text
 
-            # iterate over xml, matching on the tag for section, if match then
-            # replace the text with the new summary text
-            for child in root:
-                if child.tag == section:
-                    child.text = summary_text
+                f.seek(0)
+                f.write(soup.prettify())
+                f.truncate()
 
-            # save file
-            tree.write(path)
-
-            # set the response as successful
             response.status_code = status.HTTP_200_OK
 
         return response
