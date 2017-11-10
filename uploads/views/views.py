@@ -31,6 +31,7 @@ class SummaryOutputView(APIView):
     response holding the xml file
     """
     def get(self, request):
+        permission_classes = (isAdminOrReadOnly, )
         return grabFileToReq(request,
                              "summaries.tar.bz2",
                              [],
@@ -46,6 +47,7 @@ class SummaryInputView(APIView):
     def post(self, request):
 
         # vars
+        permission_classes = (isAdminOrReadOnly, )
         response = Response(status=status.HTTP_400_BAD_REQUEST)
         matched_files = []
 
@@ -90,6 +92,7 @@ class getXMLFile(APIView):
     """
 
     def get(self, request):
+        permission_classes = (isAdminOrReadOnly, )
         return grabFileToReq(request, "xmlFiles.tar.bz2", settings.XML_DOCS)
 
 class getPDFFile(APIView):
@@ -100,12 +103,14 @@ class getPDFFile(APIView):
     """
 
     def get(self, request):
+        permission_classes = (isAdminOrReadOnly, )
         return grabFileToReq(request, "pdf_files.tar.bz2", settings.MEDIA_DOCS)
 
 
 class getXMLAndSums(APIView):
     def get(self, request):
 
+        permission_classes = (isAdminOrReadOnly, )
         num_files = None
         num_files = request.GET.get('num_files')
         file_names = request.GET.getlist("file_names")

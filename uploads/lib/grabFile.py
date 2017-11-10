@@ -34,11 +34,6 @@ def grabFileToReq(request, out_name, fdir_one=[], fdir_two=[]):
                     matches = glob.glob(path + ".*")
                     if matches:
                         matched_files.append(matches[0])
-                # matched_files = map(lambda path:
-                #                     glob.glob(path + ".*")[0] if
-                #                     glob.glob(path) else None,
-                #                     file_paths)
-                print(matched_files)
 
         return matched_files
 
