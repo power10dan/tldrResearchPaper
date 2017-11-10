@@ -8,6 +8,7 @@ import json
 from bs4 import BeautifulSoup
 import re
 
+
 def grabFileToReq(request, out_name, fdir_one=[], fdir_two=[]):
     print(fdir_two)
     """
@@ -36,7 +37,7 @@ def grabFileToReq(request, out_name, fdir_one=[], fdir_two=[]):
         return matched_files
 
     # shorten the texts to about 15 words summary
-    def shortenText(textArr): 
+    def shortenText(textArr):
         wordList = re.sub("[^\w]", " ",  textArr).split()
         newShorten = []
         count = 0
@@ -58,14 +59,7 @@ def grabFileToReq(request, out_name, fdir_one=[], fdir_two=[]):
 
     # this incurs another pass of the lists, which could be done in the closure
     # defined above, that would reduce the closures generality though
-    if not matched_summaries and matched_files:
-        files = matched_files
-
-    if matched_summaries and not matched_files:
-        files = matched_summaries
-
-    if matched_summaries and matched_files:
-        files = zip(matched_files, matched_summaries)
+    files = zip(matched_files, matched_summaries)
 
     # if matched then open the file, encode in base64, and serve
     if files:
@@ -84,11 +78,10 @@ def grabFileToReq(request, out_name, fdir_one=[], fdir_two=[]):
 
             with open(summary_file, 'r') as s:
                 soup = BeautifulSoup(s, 'xml')
-                summary = soup.find_all(re.compile("(INTRODUCTION)"))
+                summary = soup.find_all(re.compile("(INTRODUCTION)", flags=re.IGNORECASE))
 
             if summary:
                 ret_summary = shortenText(summary[0].get_text())
-
             else:
                 ret_summary = "Needs a summary written!"
 
