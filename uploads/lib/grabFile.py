@@ -1,15 +1,11 @@
-from django.http import FileResponse
 from rest_framework.response import Response
 from rest_framework import status
-from operator import add
-from functools import reduce
-from io import BytesIO
+import xml.etree.ElementTree as ET
 
 import glob
 import os
-import tarfile
 import json
-
+from bs4 import BeautifulSoup
 
 def grabFileToReq(request, out_name, fdir_one=[], fdir_two=[]):
     """
@@ -65,27 +61,50 @@ def grabFileToReq(request, out_name, fdir_one=[], fdir_two=[]):
     if files:
 
         # bundle all the files to tar.bz2 file
-        with BytesIO() as out_stream, tarfile.open(out_name,
-                                                    "w:bz2",
-                                                    out_stream) as tar:
+        retData = {'Files': []}
+        for (xml_file, summary_file) in files:
+            author = []
+            title = []
+            summary = []
 
-            for (xml_file, summary_file) in files:
-                out_stream.write(json.dumps(xml_file).encode())
-                out_stream.write(json.dumps(summary_file).encode())
-                # tar.add(xml_file, os.path.basename(xml_file))
-                # tar.add(summary_file, os.path.basename(summary_file))
+            with open(xml_file, 'r') as x:
+                soup = BeautifulSoup(x, 'xml')
+                author = soup.find_all('persName')
+                title = soup.find_all('title')
 
-            # set the response with an encoded the file
-            print(out_stream)
-            print(tar)
-            response = FileResponse({"tarFile":[tar]})
+            with open(summary_file, 'r') as s:
+                soup = BeautifulSoup(s, 'xml')
+                summary = soup.find_all('Introduction')
 
-            # set response fields
-            # content disposition tells the browser to treat the response
-            # as a file attachment
-            response['Content-Disposition'] = "attachment; filename=%s" % tar
-            response['Content-Encoding'] = 'tar'
-            response['status_code'] = status.HTTP_200_OK
+            print("HERE", summary)
+
+            if summary:
+                ret_summary = summary[0].get_text()
+            else:
+                ret_summary = "Needs a summary written!"
+
+            if author:
+                ret_author = author[0].get_text()
+            else:
+                ret_author = "Author was not parsed correctly!"
+
+            if title:
+                ret_title = title[0].get_text()
+            else:
+                ret_title = "title not parsed correctly!"
+
+            print(ret_title, ret_summary, ret_author)
+            retData['Files'].append(
+                {os.path.basename(xml_file): {
+                    'title': json.dumps(ret_title),
+                    'author': json.dumps(ret_author),
+                    'Intro_summary': json.dumps(ret_summary),
+                    'files': [{'xml_file': json.dumps(open(xml_file).read())},
+                              {'summary_file': json.dumps(open(summary_file).read())}]
+                    }})
+            
+            response = Response(retData, status.HTTP_200_OK)
+>>>>>>> 0819e354f5a323d7b370121575c4f789131d38fa
 
     else:
         # files weren't found
