@@ -45,6 +45,8 @@ class SummaryInputView(APIView):
         response = Response(status=status.HTTP_400_BAD_REQUEST)
         matched_files = []
 
+        # request.data is a dict in the response, the .get method returns none
+        # if the fields are not in dict
         file_name = request.data.get('file_name')
         section = request.data.get('section')
         summary_text = request.data.get('summary_text')
@@ -61,8 +63,17 @@ class SummaryInputView(APIView):
             tree = ET.parse(server_file)
             root = tree.getroot()
 
+            # iterate over xml, matching on the tag for section, if match then
+            # replace the text with the new summary text
             for child in root:
-                print(child.tag, child.attrib)
+                if child.tag == section:
+                    child.text = summary_text
+
+            # save file
+            tree.write(path)
+
+            # set the response as successful
+            response.status_code = status.HTTP_200_OK
 
         return response
 
