@@ -19,6 +19,10 @@ urlpatterns = [
     url(r'^api/userSummary/', views.SummaryInputView.as_view()),
     url(r'^api/getXMLFile/', views.getXMLFile.as_view(), name='getXMLFile'),
     url(r'^api/getPDFFile/', views.getPDFFile.as_view(), name='getPDFFile'),
+    url(r'^api/getXMLAndSums/',
+        views.getXMLAndSums.as_view(),
+        name='getXMLAndSums'),
+
     url(r'^api/summaryInput/',
         views.SummaryInputView.as_view(),
         name='summaryInput'),

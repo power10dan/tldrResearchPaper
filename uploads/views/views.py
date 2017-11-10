@@ -104,7 +104,10 @@ class getPDFFile(APIView):
 
 class getXMLAndSums(APIView):
     def get(self, request):
-        return grabFileToReq(request)
+        return grabFileToReq(request,
+                             "xml_and_summaries.tar.bz2",
+                             settings.XML_DOCS,
+                             settings.SUMMARY_DOCS)
 
 
 
