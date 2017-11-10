@@ -76,7 +76,9 @@ def grabFileToReq(request, out_name, fdir_one=[], fdir_two=[]):
                 # tar.add(summary_file, os.path.basename(summary_file))
 
             # set the response with an encoded the file
-            response = FileResponse(tar)
+            print(out_stream)
+            print(tar)
+            response = FileResponse({"tarFile":[tar]})
 
             # set response fields
             # content disposition tells the browser to treat the response
