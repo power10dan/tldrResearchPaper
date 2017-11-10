@@ -7,7 +7,7 @@ import base64
 import os
 
 
-def grabFile(request, directory):
+def grabFileToReq(request, directory):
     """
     Given a request that specifies a filename in the body, and a directory this
     function finds the file in the filesystem, encodes it to base64, and then
