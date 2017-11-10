@@ -85,7 +85,7 @@ class getXMLFile(APIView):
                     open(matched_files[0], 'rb').read()))
 
                 # set response fields
-                response['Content-Disposition'] = "attachment: filename=%s" \
+                response['Content-Disposition'] = "attachment; filename=%s" \
                                                   % file_name
                 response['status_code'] = status.HTTP_200_OK
         else:
