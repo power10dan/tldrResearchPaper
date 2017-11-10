@@ -30,7 +30,10 @@ class SummaryOutputView(APIView):
     response holding the xml file
     """
     def get(self, request):
-        return grabFileToReq(request, settings.SUMMARY_DOCS)
+        return grabFileToReq(request,
+                             "summaries.tar.bz2",
+                             [],
+                             settings.SUMMARY_DOCS)
 
 
 class SummaryInputView(APIView):
@@ -86,7 +89,7 @@ class getXMLFile(APIView):
     """
 
     def get(self, request):
-        return grabFileToReq(request, settings.XML_DOCS)
+        return grabFileToReq(request, "xmlFiles.tar.bz2", settings.XML_DOCS)
 
 class getPDFFile(APIView):
     """
@@ -96,7 +99,17 @@ class getPDFFile(APIView):
     """
 
     def get(self, request):
-        return grabFileToReq(request, settings.MEDIA_DOCS)
+        return grabFileToReq(request, "pdf_files.tar.bz2", settings.MEDIA_DOCS)
+
+
+class getXMLAndSums(APIView):
+    def get(self, request):
+        return grabFileToReq(request,
+                             "xml_and_summaries.tar.bz2",
+                             settings.XML_DOCS,
+                             settings.SUMMARY_DOCS)
+
+
 
 #RESTful API view for Django
 class FileUploadView(APIView):
