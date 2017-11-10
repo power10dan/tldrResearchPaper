@@ -31,7 +31,11 @@ class SummaryOutputView(APIView):
     response holding the xml file
     """
     def get(self, request):
-        return grabFileToReq(request, settings.SUMMARY_DOCS)
+        permission_classes = (isAdminOrReadOnly, )
+        return grabFileToReq(request,
+                             "summaries.tar.bz2",
+                             [],
+                             settings.SUMMARY_DOCS)
 
 
 class SummaryInputView(APIView):
@@ -43,6 +47,7 @@ class SummaryInputView(APIView):
     def post(self, request):
 
         # vars
+        permission_classes = (isAdminOrReadOnly, )
         response = Response(status=status.HTTP_400_BAD_REQUEST)
         matched_files = []
 
@@ -87,14 +92,8 @@ class getXMLFile(APIView):
     """
 
     def get(self, request):
-        return grabFileToReq(request, settings.XML_DOCS)
-class getXMLAndSums(APIView):
-    def get(self, request):
-        return grabFileToReq(request,
-                             "xml_and_summaries.tar.bz2",
-                             settings.XML_DOCS,
-                             settings.SUMMARY_DOCS)
-
+        permission_classes = (isAdminOrReadOnly, )
+        return grabFileToReq(request, "xmlFiles.tar.bz2", settings.XML_DOCS)
 
 class getPDFFile(APIView):
     """
@@ -104,12 +103,14 @@ class getPDFFile(APIView):
     """
 
     def get(self, request):
+        permission_classes = (isAdminOrReadOnly, )
         return grabFileToReq(request, "pdf_files.tar.bz2", settings.MEDIA_DOCS)
 
 
 class getXMLAndSums(APIView):
     def get(self, request):
 
+        permission_classes = (isAdminOrReadOnly, )
         num_files = None
         num_files = request.GET.get('num_files')
         file_names = request.GET.getlist("file_names")
@@ -146,7 +147,6 @@ class getXMLAndSums(APIView):
         return response
 
 
->>>>>>> 7bc4188647286d854b287f04f82911273c7c91d3
 
 #RESTful API view for Django
 class FileUploadView(APIView):
@@ -171,14 +171,17 @@ class FileUploadView(APIView):
         consolidateHead = False
         consolidateCite = False
         status = grobidClass.PDFXMLConverter(inputDir, outputDir, consolidateHead, consolidateCite)
-        summarize(outputDir+filename[:-4]+'.fulltext.tei.xml',filename[:-4],[])
+        print("Grobid Finished")
+        if status == 7:
+            summarize(outputDir+filename[:-4]+'.fulltext.tei.xml',filename[:-4],[])
         return Response(status=204)
 
 class GetAllFiles(APIView):
     def get(self, request):
         fileRoot = settings.MEDIA_DOCS
-        xmlRoot = settings.XML_DOCS
-        fileNames = [fileName for fileName in os.listdir(fileRoot) if fileName != ".DS_Store"]
+        fileNames = [fileRoot + fileName for
+                     fileName in
+                     os.listdir(fileRoot) if fileName != ".DS_Store"]
         
         permission_classes = (isAdminOrReadOnly, )
         fileData = {"Files": [{'File': filename } for filename in fileNames]}
