@@ -111,3 +111,6 @@ uploads/media/documents/*
 
 # hide any .snap files from jest testing
 *.snap
+
+# hide test xml file
+*test_xml_file*
