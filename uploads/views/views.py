@@ -78,7 +78,7 @@ class getXMLFile(APIView):
     def get(self, request):
         return grabFileToReq(request, settings.XML_DOCS)
 
-class getPDFFile(APIView)
+class getPDFFile(APIView):
     """
     Given a valid request that specifies a filename in the body, this view
     finds the pdf file in the filesystem, encodes it to base64, and then sends
