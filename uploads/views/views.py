@@ -45,7 +45,6 @@ class SummaryInputView(APIView):
         response = Response(status=status.HTTP_400_BAD_REQUEST)
         matched_files = []
 
-        print(type(request.data), request.data)
         file_name = request.data.get('file_name')
         section = request.data.get('section')
         summary_text = request.data.get('summary_text')

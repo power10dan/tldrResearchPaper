@@ -9,8 +9,7 @@ from os import path
 import json
 
 
-test_xml = """
-<?xml version=\"1.0\"?>
+test_xml = """<?xml version=\"1.0\"?>
 <data>
 <country name=\"Liechtenstein\">
 <rank>1</rank>
@@ -40,8 +39,8 @@ class SummaryInputTest(APITestCase):
     def setUp(self):
 
         self.test_xml = test_xml
-        self.file_path = settings.XML_DOCS + "test_xml_file.fulltext.tei.xml"
-        self.file_name = path.basename(self.file_path)
+        self.file_path = settings.SUMMARY_DOCS + "test_xml_file"
+        self.file_name = path.basename(self.file_path + ".xml")
         self.create_url = reverse('summaryInput')
         self.client.force_login(User.objects.get_or_create(
             username="testuser")[0])
