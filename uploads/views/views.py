@@ -45,10 +45,10 @@ class SummaryInputView(APIView):
         response = Response(status=status.HTTP_400_BAD_REQUEST)
         matched_files = []
 
-        # grab file name, section, and summary none if bad request
-        file_name = request.POST.get("file_name")
-        section = request.POST.get("section")
-        summary_text = request.POST("summary_text")
+        print(type(request.data), request.data)
+        file_name = request.data.get('file_name')
+        section = request.data.get('section')
+        summary_text = request.data.get('summary_text')
 
         # if request was well formed get the file from the file system
         if file_name and section and summary_text:
@@ -78,7 +78,15 @@ class getXMLFile(APIView):
     def get(self, request):
         return grabFileToReq(request, settings.XML_DOCS)
 
+class getPDFFile(APIView)
+    """
+    Given a valid request that specifies a filename in the body, this view
+    finds the pdf file in the filesystem, encodes it to base64, and then sends
+    a response holding the pdf file
+    """
 
+    def get(self, request):
+        return grabFileToReq(request, settings.MEDIA_DOCS)
 
 #RESTful API view for Django
 class FileUploadView(APIView):
