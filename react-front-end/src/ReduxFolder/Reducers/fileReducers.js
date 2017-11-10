@@ -9,7 +9,6 @@ export default function genStateReducer(state = generalState, action) {
             });
         case types.UPLOADFILE:
             return Object.assign({}, state, {
-                files:action.fileInfo,
                 successMess: action.successMessage,
                 errorUploadFile: ""
             });

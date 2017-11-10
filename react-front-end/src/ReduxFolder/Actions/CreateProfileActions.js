@@ -1,5 +1,4 @@
 import * as types from '../Constants/ActionTypes';
-import { UserProfile } from '../Reducers/UserProfile.js';
 import { saveCred } from '../Actions/SaveCred.js';
 import { DialogOpenCreate , DialogCloseCreate } from './DialogActions.js';
 import { LogInSuccess, Login } from './LoginActions.js';

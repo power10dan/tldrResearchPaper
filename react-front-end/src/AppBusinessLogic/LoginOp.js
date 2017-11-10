@@ -5,7 +5,6 @@ import ErrSnack from '../AppComponents/ErrDialog.js';
 import { Login, LogInFailed} from '../ReduxFolder/Actions/LoginActions.js';
 import {isLoading } from '../ReduxFolder/Actions/LoadingActions.js';
 import {DialogOpen, DialogClose} from '../ReduxFolder/Actions/DialogActions.js';
-import bcrypt from 'bcryptjs';
 import {SideNavStates} from '../AppBusinessLogic/SideBarUpdate';
 
  
@@ -47,7 +46,7 @@ class LoginOperations extends React.Component{
 	}
 
     handleSubmit = () => {
-    	this.props.isLoading(true);
+    	//this.props.isLoading(true);
         const { dispatch } = this.props;
 
         if(this.state.userName === "" || typeof this.state.userName === "undefined") {
@@ -65,22 +64,11 @@ class LoginOperations extends React.Component{
         } else {
         	//FIXME: Monkey patch: put userName in userEmail parameter. 
         	this.props.loginOp(this.state.userName, this.state.userName, this.state.userPass);
-        
-        	if(this.state.isLoginSuccess === false){
-        		this.props.openDialog();
-	        	setTimeout(()=>{this.props.closeDialog()}, 2000); // set dialog close after two seconds
-	        	this.props.isLoading(false);
-	        	this.formClean();
-		        
-        	}
-
-        	if(this.state.isLoginSuccess === true){
-        		this.props.openDialog();
-	        	setTimeout(()=>{this.props.closeDialog()}, 2000); // set dialog close after two seconds
-	        	this.props.isLoading(false);
-	        	this.formClean();
-		       
-        	}
+        	// we don't perform open dialog here because isLoginSuccess is set asyncally;
+        	// there will be a time where isLoginSuccess was not properly set. This results
+        	// in a dialog with failed to login message opened before the dialog 
+        	// with success message is opened.
+        	setTimeout(()=>{this.props.closeDialog()}, 2000); // set dialog close after two seconds
         	this.formClean()
         } 
     }

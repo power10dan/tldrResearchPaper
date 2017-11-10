@@ -3,7 +3,6 @@ import AppTopBar from '../AppComponents/AppTopBar.js';
 import {connect} from 'react-redux';
 import {getAllFiles, uploadFile} from '../ReduxFolder/Actions/FileActions.js';
 import ErrSnack from '../AppComponents/ErrDialog.js';
-import {closeDialog} from '../ReduxFolder/Actions/FileActions.js';
 import GridCardView from '../AppComponents/FileView.js';
 
 class UploadFile extends React.Component{
@@ -13,11 +12,9 @@ class UploadFile extends React.Component{
 			isFinished: true, 
 			isLoggedIn: false,
 			opWindow: false,
-			fileData : "",
 			token : "",
 			message: "",
-			err: " ",
-			files :[],
+			fileData :[],
 			fileSummaries: [],
 		}
 	}
@@ -25,7 +22,6 @@ class UploadFile extends React.Component{
 	componentWillReceiveProps(nextProps){
 		this.setState({fileData: nextProps.files});
 		this.setState({opWindow: nextProps.opDialog});
-
 
 		if(nextProps.isLoad === true){
 			this.setState({isFinished: false});
@@ -40,14 +36,14 @@ class UploadFile extends React.Component{
 		}
 
 		this.setState({token: nextProps.token}); 
-		if( nextProps.successMess != ""){
+
+		if( nextProps.successMess !== ""){
 			this.setState({message: nextProps.successMess});
 		}
 
-		if(nextProps.errorUploadFile != ""){
+		if(nextProps.errorUploadFile !== ""){
 			this.setState({message: nextProps.errorUploadFile});
-		}
-		
+		}	
 	}
 
 	handleClick = (fileObj) => {
@@ -55,17 +51,30 @@ class UploadFile extends React.Component{
 		this.props.upload(fileObj.base64, this.state.token, nameOfFile);
 	}
 
+
 	render(){
 		let isFinished = this.state.isFinished;
-		// if app is not finished doing task (isFinished) or if there is no token (not logged in),
-		// disable the buttons
+	
+		// if the app is uploading a file and is not finished with that yet, show loading bar
 		if(isFinished === false ){
-			return(
-				<div>
-			     	<AppTopBar  uploadFile={this.handleClick} loading={true} loggedIn= {false} disable={true}/> 
-			  	</div>
-			);
-		} else if(this.state.isLoggedIn === false){
+			if(this.state.fileData == null){
+				return (
+					<div>
+			     		<AppTopBar  uploadFile={this.handleClick} loading={false} loggedIn= {false} disable={true} /> 
+			  		</div>
+			  	)
+
+			} else {
+				return(
+					<div>
+				     	<AppTopBar  uploadFile={this.handleClick} loading={true} loggedIn= {false} disable={true} /> 
+				     	<GridCardView arrayOfData = {this.state.fileData}/>	
+				  	</div>
+				);
+			}
+			
+		// if we are not logged in, don't  show anything
+		} else if(this.state.isLoggedIn === false ){
 			return(
 				<div>
 			    	 <AppTopBar  uploadFile={this.handleClick} loading={false} loggedIn= {false} disable={true}/> 
@@ -73,10 +82,13 @@ class UploadFile extends React.Component{
 			);
 
 		}else{
+			// at this point, we have either successfully or unsuccessfully uploaded a file. 
+			// we show the messages in a pop-up window. 
 			return(
 				<div>
 				    <ErrSnack message={this.state.message} openDialog={this.state.opWindow} />
-				    <AppTopBar  uploadFile={this.handleClick} loading={false} loggedIn={true} disable={false}/> 	
+				    <AppTopBar uploadFile={this.handleClick} loading={false} loggedIn={true} disable={false}/> 
+				    <GridCardView arrayOfData = {this.state.fileData}/>	
 				</div>
 			);
 		}
@@ -88,16 +100,17 @@ class UploadFile extends React.Component{
 function mapStateToProps(state){
 	const {token} = state.UserProfile;
 	const { files, successMess, opDialog, errorUploadFile } = state.genStateReducer;
+	console.log
 	const { isLoad } = state.isLoadingReducer;
 	const {isLoggedIn } = state.authentication;
 	return {
 		token,
-		files,
 		isLoad,
 		isLoggedIn,
 		successMess,
 		opDialog,
-		errorUploadFile
+		errorUploadFile,
+		files
 	};
 }
 

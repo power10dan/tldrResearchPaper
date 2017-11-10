@@ -7,9 +7,6 @@ import NestedList from './ListItems.js';
 // Dummy component, should only be getting data from
 // components from the AppBusinessLogic folder.
 export default class SideNavCustom extends Component{
-	constructor(props){
-		super(props);
-	}
 	showSettings(event){
 		event.preventDefault();
 	}

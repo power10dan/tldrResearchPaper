@@ -6,8 +6,10 @@ import glob
 import os
 import json
 from bs4 import BeautifulSoup
+import re
 
 def grabFileToReq(request, out_name, fdir_one=[], fdir_two=[]):
+    print(fdir_two)
     """
     Given a request that specifies a filename in the body, and a directory this
     function finds the file in the filesystem, encodes it to base64, and then
@@ -19,21 +21,30 @@ def grabFileToReq(request, out_name, fdir_one=[], fdir_two=[]):
 
         if file_names:
             # Then we have one or more files
+             # for each file, make the path by joining the directory
+            file_paths = map(lambda file_name:
+                             os.path.join(directory, file_name), file_names)
 
-            if fdir_one:
-                # for each file, make the path by joining the directory
-                file_paths = map(lambda file_name:
-                                 os.path.join(fdir_one, file_name), file_names)
-
-                # glob finds all pathnames that match a certain pattern,
-                # we just match on the absolute filename with extension, glob
-                # returns a list, but I'm only returning first match
-                for path in file_paths:
-                    matches = glob.glob(path + ".*")
-                    if matches:
-                        matched_files.append(matches[0])
+            # glob finds all pathnames that match a certain pattern,
+            # we just match on the absolute filename with extension, glob
+            # returns a list, but I'm only returning first match
+            for path in file_paths:
+                matches = glob.glob(path + ".*")
+                if matches:
+                    matched_files.append(matches[0])
 
         return matched_files
+
+    # shorten the texts to about 15 words summary
+    def shortenText(textArr): 
+        wordList = re.sub("[^\w]", " ",  textArr).split()
+        newShorten = []
+        count = 0
+        for text in wordList:
+            if(count < 25):
+                newShorten.append(text)
+            count = count + 1
+        return " ".join(newShorten) + "..."
 
     # vars
     response = Response(status=status.HTTP_400_BAD_REQUEST)
@@ -54,14 +65,11 @@ def grabFileToReq(request, out_name, fdir_one=[], fdir_two=[]):
         files = matched_summaries
 
     if matched_summaries and matched_files:
-        print("hello")
-        ds_store_path = '/Users/daniellin/Desktop/tldrApp/tldrResearchPaper/uploads/media/xmlFiles/.DS_Store'
-        matched_files_filt = [file for file in files if file != ds_store_path]
-        print(matched_files_filt)
-        files = zip(matched_files_filt, matched_summaries)
+        files = zip(matched_files, matched_summaries)
 
     # if matched then open the file, encode in base64, and serve
     if files:
+
         # bundle all the files to tar.bz2 file
         retData = {'Files': []}
         for (xml_file, summary_file) in files:
@@ -70,18 +78,17 @@ def grabFileToReq(request, out_name, fdir_one=[], fdir_two=[]):
             summary = []
 
             with open(xml_file, 'r') as x:
-                soup = BeautifulSoup(x, 'lxml-xml')
+                soup = BeautifulSoup(x, 'xml')
                 author = soup.find_all('persName')
                 title = soup.find_all('title')
 
             with open(summary_file, 'r') as s:
                 soup = BeautifulSoup(s, 'xml')
-                summary = soup.find_all('Introduction')
-
-            print("HERE", summary)
+                summary = soup.find_all(re.compile("(INTRODUCTION)"))
 
             if summary:
-                ret_summary = summary[0].get_text()
+                ret_summary = shortenText(summary[0].get_text())
+
             else:
                 ret_summary = "Needs a summary written!"
 
@@ -96,7 +103,7 @@ def grabFileToReq(request, out_name, fdir_one=[], fdir_two=[]):
                 ret_title = "title not parsed correctly!"
 
             retData['Files'].append(
-                {os.path.basename(xml_file): {
+                {os.path.basename("FILES"): {
                     'title': json.dumps(ret_title),
                     'author': json.dumps(ret_author),
                     'Intro_summary': json.dumps(ret_summary),
@@ -105,6 +112,7 @@ def grabFileToReq(request, out_name, fdir_one=[], fdir_two=[]):
                     }})
 
             response = Response(retData, status.HTTP_200_OK)
+
     else:
         # files weren't found
         response.reason_phrase = fail_str

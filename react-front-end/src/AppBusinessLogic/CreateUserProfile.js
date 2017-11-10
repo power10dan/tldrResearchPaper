@@ -1,9 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import bcrypt from 'bcryptjs';
 import CreateProfile from '../AppComponents/CreateProfile.js';
 import {createProfile} from '../ReduxFolder/Actions/CreateProfileActions.js';
-import { CreateFailed, CreateSuccess, ResetDialog} from '../ReduxFolder/Actions/CreateProfileActions.js';
+import { CreateFailed, ResetDialog} from '../ReduxFolder/Actions/CreateProfileActions.js';
 import { DialogOpenCreate , DialogCloseCreate } from '../ReduxFolder/Actions/DialogActions.js';
 import {isLoading } from '../ReduxFolder/Actions/LoadingActions.js';
 import ErrSnack from '../AppComponents/ErrDialog.js';
@@ -53,7 +52,7 @@ class CreateUserProfile extends React.Component{
 		}
 
 		// sanitize user email
-		if(validEmailRegex.test(userEmail) == false){
+		if(validEmailRegex.test(userEmail) === false){
 			this.props.updateFailed("Please input valid User Email");
 			return false;
 		}
