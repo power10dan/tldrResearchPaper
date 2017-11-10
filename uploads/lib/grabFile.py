@@ -75,6 +75,7 @@ def grabFileToReq(request, out_name, fdir_one=[], fdir_two=[]):
             # content disposition tells the browser to treat the response
             # as a file attachment
             response['Content-Disposition'] = "attachment; filename=%s" % tar
+            response['Content-Encoding'] = 'tar'
             response['status_code'] = status.HTTP_200_OK
 
     else:
