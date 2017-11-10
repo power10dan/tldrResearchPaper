@@ -12,9 +12,9 @@ from uploads.lib.summarize import summarize
 
 from django.http import HttpResponse
 from django.http import FileResponse
-from wsgiref.util import FileWrapper
 
 from py4j.java_gateway import JavaGateway 
+from uploads.lib.grabFile import grabFile
 
 import os
 import json
@@ -24,15 +24,8 @@ import glob
 
 class SummaryOutputView(APIView):
     def get(self, request):
-        fileRoot = settings.SUMMARY_DOCS
-        fileNames = [fileName for
-                     fileName in
-                     os.listdir(fileRoot) if fileName != ".DS_Store"]
+        return grabFile(request, settings.SUMMARY_DOCS)
 
-        permission_classes = (isAdminOrReadOnly, )
-        fileData = [{'File': filename } for filename in fileNames]
-        response = HttpResponse(json.dumps(fileData), content_type="application/json")
-        return response
 
 class SummaryInputView(APIView):
     """
@@ -58,44 +51,7 @@ class getXMLFile(APIView):
     """
 
     def get(self, request):
-        # set the permission class
-        permission_classes = (isAdminOrReadOnly, )
-
-        # vars
-        matched_files = []
-        response = Response(status=status.HTTP_400_BAD_REQUEST)
-        fail_str = "File not found"
-
-        # get filename from request, if not there None is returned
-        file_name = request.GET.get("file_name")
-
-        if file_name:
-
-            path = os.path.join(settings.XML_DOCS, file_name)
-
-            # glob finds all pathnames that match a certain pattern, here we
-            # just match on only files that grobid will spit out. glob returns
-            # a list. This is doing an exact match, glob can match regex though
-            matched_files = glob.glob(path)
-
-        # if matched then open the file, encode in base64, and serve
-        if matched_files:
-                # set the response with an encoded the file
-                response = FileResponse(base64.encodestring(
-                    open(matched_files[0], 'rb').read()))
-
-                # set response fields
-                # content disposition tells the browser to treat the response
-                # as a file attachment
-                response['Content-Disposition'] = "attachment; filename=%s" \
-                                                  % file_name
-                response['status_code'] = status.HTTP_200_OK
-        else:
-            # file wasn't found
-            response.reason_phrase = fail_str
-
-        # else we return a bad request
-        return response
+        return grabFile(request, settings.XML_DOCS)
 
 
 
