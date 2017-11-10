@@ -3,11 +3,12 @@ from rest_framework.response import Response
 from rest_framework import status
 from operator import add
 from functools import reduce
+from io import BytesIO
 
 import glob
 import os
-import json
 import tarfile
+import json
 
 
 def grabFileToReq(request, out_name, fdir_one=[], fdir_two=[]):
@@ -63,15 +64,18 @@ def grabFileToReq(request, out_name, fdir_one=[], fdir_two=[]):
     if files:
 
         # bundle all the files to tar.bz2 file
-        with tarfile.open(out_name, "w:bz2") as tar:
+        with BytesIO() as out_stream, tarfile.open(out_name,
+                                                    "w:bz2",
+                                                    out_stream) as tar:
 
             for (xml_file, summary_file) in files:
-                tar.add(xml_file, os.path.basename(xml_file))
-                tar.add(summary_file, os.path.basename(summary_file))
+                out_stream.write(json.dumps(xml_file).encode())
+                out_stream.write(json.dumps(summary_file).encode())
+                # tar.add(xml_file, os.path.basename(xml_file))
+                # tar.add(summary_file, os.path.basename(summary_file))
 
             # set the response with an encoded the file
-            # response = FileResponse(tar)
-            response.content = {'Files': tar}
+            response = FileResponse(tar)
 
             # set response fields
             # content disposition tells the browser to treat the response
@@ -79,6 +83,7 @@ def grabFileToReq(request, out_name, fdir_one=[], fdir_two=[]):
             response['Content-Disposition'] = "attachment; filename=%s" % tar
             response['Content-Encoding'] = 'tar'
             response['status_code'] = status.HTTP_200_OK
+
     else:
         # files weren't found
         response.reason_phrase = fail_str
