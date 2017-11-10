@@ -6,6 +6,7 @@ from functools import reduce
 
 import glob
 import os
+import json
 import tarfile
 
 
@@ -70,7 +71,8 @@ def grabFileToReq(request, out_name, fdir_one=[], fdir_two=[]):
                 tar.add(summary_file, os.path.basename(summary_file))
 
             # set the response with an encoded the file
-            response = FileResponse(tar)
+            # response = FileResponse(tar)
+            response.content = {'Files': tar}
 
             # set response fields
             # content disposition tells the browser to treat the response
@@ -78,7 +80,6 @@ def grabFileToReq(request, out_name, fdir_one=[], fdir_two=[]):
             response['Content-Disposition'] = "attachment; filename=%s" % tar
             response['Content-Encoding'] = 'tar'
             response['status_code'] = status.HTTP_200_OK
-
     else:
         # files weren't found
         response.reason_phrase = fail_str
