@@ -12,9 +12,10 @@ from uploads.lib.summarize import summarize
 
 from django.http import HttpResponse
 from django.http import HttpRequest
+from django.http import FileResponse
 from django.http.request import QueryDict, MultiValueDict
 
-from py4j.java_gateway import JavaGateway 
+from py4j.java_gateway import JavaGateway
 from uploads.lib.grabFile import grabFileToReq
 
 import os
@@ -34,10 +35,25 @@ class SummaryOutputView(APIView):
     """
     def get(self, request):
         permission_classes = (isAdminOrReadOnly, )
-        return grabFileToReq(request,
-                             "summaries.tar.bz2",
-                             [],
-                             settings.SUMMARY_DOCS)
+        root_dir = settings.SUMMARY_DOCS
+        response = Response(status=status.HTTP_400_BAD_REQUEST)
+        fail_str = "File not found!"
+
+        filename = request.GET.get("file_name")
+
+        if filename:
+            path = settings.SUMMARY_DOCS + filename
+            matches = glob.glob(path + ".*")
+
+            if matches:
+                response = FileResponse(
+                    base64.b64encode(open(matches[0], 'rb').read()))
+
+        if not filename or not matches:
+            response.reason_phrase = fail_str
+
+        return response
+
 
 
 class SummaryInputView(APIView):
@@ -140,7 +156,7 @@ class getXMLAndSums(APIView):
             newRequest.GET = qdict.copy()
             response = grabFileToReq(
                 newRequest,
-                "xml_and_summaries.tar.bz2",
+                "",
                 settings.XML_DOCS,
                 settings.SUMMARY_DOCS)
 

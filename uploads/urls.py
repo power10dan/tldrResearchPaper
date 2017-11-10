@@ -15,12 +15,11 @@ urlpatterns = [
     url(r'^api/getAllFiles/$', views.GetAllFiles.as_view()),
     url(r'^api/deleteFile/(?P<filename>[^/]+)$', views.DeleteFile.as_view()),
     url(r'^admin/', admin.site.urls),
-    url(r'^api/getAllSummaries/', views.SummaryOutputView.as_view()),
-    url(r'^api/userSummary/', views.SummaryInputView.as_view()),
+    url(r'^api/getSummary/', views.SummaryOutputView.as_view()),
     url(r'^api/getXMLFile/', views.getXMLFile.as_view(), name='getXMLFile'),
     url(r'^api/getPDFFile/', views.getPDFFile.as_view(), name='getPDFFile'),
     url(r'^api/getXMLAndSums/', views.getXMLAndSums.as_view(), name='getXMLAndSums'),
-    url(r'^api/summaryInput/', views.SummaryInputView.as_view(), name='summaryInput'),
+    url(r'^api/addUserSummary/', views.SummaryInputView.as_view(), name='summaryInput'),
     #url(r'^api/createUser/$'
     #    , views.CreateUser.as_view()
     #    , name='account-create'),
