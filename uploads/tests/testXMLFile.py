@@ -38,7 +38,6 @@ test_xml = """
 
 class XMLFileRESTfulTest(APITestCase):
     def setUp(self):
-
         self.test_xml = test_xml
         self.file_path = settings.XML_DOCS + "test_xml_file.fulltext.tei.xml"
         self.file_name = path.basename(self.file_path)
@@ -54,7 +53,7 @@ class XMLFileRESTfulTest(APITestCase):
         """
 
         # GET properties for request
-        data = {'file_name': self.file_name} 
+        data = {'file_name': self.file_name}
 
         # send request
         response = self.client.get(self.create_url, data, format='json')
@@ -67,9 +66,9 @@ class XMLFileRESTfulTest(APITestCase):
 class XMLFileEncTest(APITestCase):
     def setUp(self):
 
-        # self.test_xml = test_xml
-        # self.file_path = settings.XML_DOCS + "test_xml_file.fulltext.tei.xml"
-        # self.file_name = path.basename(self.file_path)
+        self.test_xml = test_xml
+        self.file_path = settings.XML_DOCS + "test_xml_file.fulltext.tei.xml"
+        self.file_name = path.basename(self.file_path)
         self.create_url = reverse('getXMLFile')
         self.client.force_login(User.objects.get_or_create(
             username="testuser")[0])
@@ -90,6 +89,32 @@ class XMLFileEncTest(APITestCase):
         response = self.client.get(self.create_url, data, format='json')
 
         # now test that we actually get back an Unauthorized
-        self.assertEqual(response.status_code,
-                         status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+    def test_file_not_found(self):
+        """
+        If we are logged in, and send a well formed request for a file that has
+        has not been processed, we get a file not found error
+        """
+
+        data = {'file_name': 'thisfiledoesntexist'}
+
+        response = self.client.get(self.create_url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.reason_phrase, "File not found")
+
+    def test_file_found(self):
+        """
+        If we are logged in, and send a well formed request we get back a
+        request that the browser will treat as an attachment i.e. it has a 
+        content-disposition field and the proper filename
+        """
+
+        data = {'file_name': self.file_name}
+
+        response = self.client.get(self.create_url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response['Content-Disposition'],
+                         "attachment; filename=" + self.file_name)
