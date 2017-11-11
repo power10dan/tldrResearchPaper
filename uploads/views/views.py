@@ -69,15 +69,19 @@ class SummaryInputView(APIView):
         response = Response(status=status.HTTP_400_BAD_REQUEST)
         matched_files = []
 
+        # default python 3.X behavior: request body is a byte string
+        body_unicode = request.body.decode('utf-8')
+        body_data = json.loads(body_unicode)
         # request.data is a dict in the response, the .get method returns none
         # if the fields are not in dict
-        file_name = request.data.get('file_name')
-        section = request.data.get('section')
-        summary_text = request.data.get('summary_text')
+        file_name = body_data.get('file_name')
+        section = body_data.get('section')
+        summary_text = body_data.get('summary_text')
 
         # if request was well formed get the file from the file system
         if file_name and section and summary_text:
-            path = settings.SUMMARY_DOCS + file_name
+            # default file_name include full path already
+            path = file_name
             matched_files = glob.glob(path + "*")
 
         if matched_files:
@@ -86,6 +90,7 @@ class SummaryInputView(APIView):
             with open(server_file, 'r+') as f:
                 soup = BeautifulSoup(f, 'xml')
                 for match in soup.find_all(re.compile("(" + section + ")")):
+                    print(match)
                     match.string = summary_text
 
                 f.seek(0)

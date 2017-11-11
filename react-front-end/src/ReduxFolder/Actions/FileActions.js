@@ -103,7 +103,7 @@ export function uploadFile(file, token, fileName, prevFileState){
 	};
 }
 
-function _getAllFiles(token){
+function _getAllFiles(token, newSummary, sectionText){
 	let urlGET = "http://127.0.0.1:8000/api/getXMLAndSums/?num_files=5";
 	let strAuth = "JWT" + " " + token;
 	let authString = strAuth.replace("\\\\", "");
@@ -113,6 +113,43 @@ function _getAllFiles(token){
 	};
 
 	return fetch(urlGET, header);
+}
+
+function _addSummaries(token, newSum, sectText, nameOfFile){
+	let urlAddSum = "http://127.0.0.1:8000/api/addUserSummary/";
+	let strAuth = "JWT" + " " + token;
+	let authString = strAuth.replace("\\\\", "");
+	let header = {
+		method: 'POST',
+		body:  JSON.stringify({"file_name": nameOfFile, 
+			    "section": sectText,
+			    "summary_text": newSum
+			 }),
+		headers: {
+			"Authorization": authString
+		},	
+	};
+	
+	return fetch(urlAddSum, header);
+}
+
+export function addSummaries(token, newSummary, sectionText, nameOfFile){
+	return dispatch =>{
+		dispatch(isLoading(true));
+		_addSummaries(token, newSummary, sectionText, nameOfFile).then((response)=>{
+			if(response.ok){
+				return response.status
+			} 
+		}).then((data)=>{
+			if(data == 200){
+				dispatch(getAllFiles(token));
+				dispatch(isLoading(false));
+			}
+
+		}).catch((err)=>{
+			console.log(err)
+		})
+	};
 }
 
 

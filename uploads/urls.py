@@ -6,9 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authtoken.views import obtain_auth_token
 from rest_framework_jwt.views import obtain_jwt_token
 
-
 from uploads.views import views
-
 
 urlpatterns = [
     url(r'^api/uploadFile/(?P<filename>[^/]+)$', views.FileUploadView.as_view()),

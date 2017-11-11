@@ -10,7 +10,6 @@ import re
 
 
 def grabFileToReq(request, out_name, fdir_one=[], fdir_two=[]):
-    print(fdir_two)
     """
     Given a request that specifies a filename in the body, and a directory this
     function finds the file in the filesystem, encodes it to base64, and then
@@ -74,12 +73,9 @@ def grabFileToReq(request, out_name, fdir_one=[], fdir_two=[]):
         # bundle all the files to tar.bz2 file
         retData = {'Files': []}
         for (xml_file, summary_file) in files:
-            print(xml_file, summary_file)
             author = []
             title = []
             summary = []
-            retXML = ""
-            retSum = ""
 
             if xml_file:
                 with open(xml_file, 'r') as x:
@@ -116,8 +112,8 @@ def grabFileToReq(request, out_name, fdir_one=[], fdir_two=[]):
                     'title': json.dumps(ret_title),
                     'author': json.dumps(ret_author),
                     'Intro_summary': json.dumps(ret_summary),
-                    'files': [{'xml_file': retXML},
-                              {'summary_file': retSum}]
+                    'files': [{'xml_file': xml_file},
+                              {'summary_file': summary_file}]
                     }})
 
             response = Response(retData, status.HTTP_200_OK)

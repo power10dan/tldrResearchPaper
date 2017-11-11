@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /Users/daniellin/Desktop/tldrApp/tldrResearchPaper/grobid-grobid-parent-0.4.4/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.4.5-dummy" ident="GROBID" when="2017-11-10T19:03+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Enterprise Search Behaviour of Software Engineers</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Luanne</forename><surname>Freund</surname></persName>
+							<email>luanne.freund@utoronto.ca</email>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Faculty of Information Studies</orgName>
+								<orgName type="department" key="dep2">Faculty of Management Dalhousie University Halifax</orgName>
+								<orgName type="institution">University of Toronto Toronto</orgName>
+								<address>
+									<country>Canada, Canada</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Elaine</forename><forename type="middle">G</forename><surname>Toms</surname></persName>
+							<email>etoms@dal.ca</email>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Faculty of Information Studies</orgName>
+								<orgName type="department" key="dep2">Faculty of Management Dalhousie University Halifax</orgName>
+								<orgName type="institution">University of Toronto Toronto</orgName>
+								<address>
+									<country>Canada, Canada</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Enterprise Search Behaviour of Software Engineers</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>H33 [Information Storage and Retrieval]: Information Search and Retrieval-search process</term>
+					<term>selection process General Terms Measurement</term>
+					<term>Human Factors</term>
+					<term>Experimentation Keywords Enterprise search</term>
+					<term>software engineers</term>
+					<term>search behaviour</term>
+					<term>queries</term>
+				</keywords>
+			</textClass>
+			<abstract>
+				<p>Technical professionals spend ~25% of their time at work searching for information, and have specialized information needs that are not well-served by generic enterprise search tools. In this study, we investigated how a group of software engineers use a workplace search system. We identify patterns of search behaviour specific to this group and distinct from general web and intranet search patterns, and make design recommendations for search systems that will better serve the needs of this group.</p>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">INTRODUCTION</head><p>Large scale studies of search engine logs have provided a clear picture of general usage patterns. The average web searcher submits queries slightly over 2 words in length, which is significantly shorter than queries used in earlier types of information systems <ref type="bibr" target="#b4">[5]</ref>. Other established patterns of web search behaviour are the use of between 2 to 3 queries per search session, and minimal use of advanced search syntax <ref type="bibr" target="#b5">[6]</ref>. Preliminary studies of workplace search suggest that it is qualitatively different from web searching, primarily due to the differing goals of the information community <ref type="bibr" target="#b1">[2]</ref>. A recent study of intranet search logs suggests that whereas the pattern of 2-3 queries per session holds true, the average intranet query may be even shorter: 1.4 terms <ref type="bibr" target="#b6">[7]</ref>. Subsumed in this data on general behaviour are the search patterns of sub-populations, such as technical professionals using search engines as work tools. In this brief report, we develop a somewhat contrasting picture of how this group searches for and selects documents.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">METHODOLOGY</head><p>The study was conducted as the evaluation phase of a long-term study of the contextual dimensions of workplace search, focusing on a community of software engineering consultants <ref type="bibr" target="#b3">[4]</ref>. We implemented an enterprise search engine that crawled and indexed an ~10 GB collection of documents gathered from the Internet, the corporate intranet, and from document repositories heavily used by this group. The crawl was customized for this group based on a targeted set of seed URLS.</p><p>The study used a task-based approach to search system evaluation. 32 software engineering consultants working in a large hi-tech company participated, each searching for 4 of a total of 8 simulated work-task scenarios <ref type="bibr" target="#b0">[1]</ref> assigned using a Latin square design. The scenarios represent a range of different task types commonly performed by this community, from relatively complex high-level tasks, such as the evaluation of alternative architectural patterns to simple low-level tasks, such as looking up software prerequisites. Sessions were conducted individually and remotely via Windows NetMeeting and lasted approximately 1 hour.</p><p>Participants completed four tasks consecutively. Searches took from between 10-20 minutes each. During each search, they were asked to indicate which documents would be useful, to rate them verbally on a simple 1-10 scale for usefulness, and to explain why they thought the selected documents would be useful. Data was collected through the server transaction log, online survey forms, and transcription of verbal responses.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">RESULTS</head><p>On average, this group used relatively long queries (4.38 terms) and identified a small number of useful documents per task (1.7). They issued 2.65 queries on average per task, and visited 3.31 websites. They failed to identify any useful documents in about a quarter (23%) of searches.</p><p>Looking more closely at the queries, we found that 66% of all queries contained at least one acronym, and that ~19% of all queries were entirely composed of acronyms. Acronyms were used for product names and various technologies and protocols (i.e. J2EE, SOA, LDAP). Numbers, referring to software version numbers, error codes or years, occurred in 31% of queries. Searchers used phrase syntax in 9% of queries. <ref type="table" target="#tab_0">Table 1</ref> contains a summary of factors participants used to determine the usefulness of documents. This summary is based on a content analysis of the verbal comments of participants with respect to documents identified as useful. The four broad categories of indicators that emerged from the analysis are: content, format, currency and authority. Participants assessed the content of documents based on the topic, the level of specificity of the information, ranging from broad topical overviews to detailed technical information, and the degree to which the Copyright is held by the author/owner(s). SIGIR'06, <ref type="bibr">August 6-11, 2006</ref>, Seattle, Washington, USA. ACM 1-59593-369-7/06/0008. information was generic or situated, i.e. related to a particular case or scenario. For format, they looked for genres suited to the assigned task scenario. They looked for structured documents from which information could be easily extracted, and in some cases preferred documents that allowed for interaction with the author. Currency was assessed with respect to the date of creation and the version of product or technology discussed. Finally, authority was assessed based on acquaintance, reputation or team affiliation of the author and the organizational source of the information (repository or workgroup). These results support and augment previous work on engineers' perceptions of documents <ref type="bibr" target="#b2">[3]</ref>. After completing all four tasks, participants provided feedback on features they would like to see added to this search tool. The most common request was for more advanced search syntax options. Participants emphasized that they regularly use Boolean syntax and that they consider it an essential feature. Other features of interest were the ability to group/limit or sort results based on source, genre, date and software product, and to have authors identified in the hitlist.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">DISCUSSION</head><p>Findings suggest that the search behaviour of this group is quite distinct from general web and intranet search behaviour. They use longer and more detailed queries (see <ref type="figure" target="#fig_0">Figure 1</ref> for a comparison). They make heavy use of specialized terms and search syntax, and the features they would like added to current search tools reflect the desire for greater control and functionality. The search behaviour of this group likely reflects their domain expertise, which is known to result in longer and more specialized queries <ref type="bibr" target="#b7">[8]</ref>. This expertise is also reflected in the non-topical cues they use to assess documents, which rely not only upon technical knowledge, but also on familiarity with their workplace information space. Authorship, genre, and source repository carry strong meaning for them, because so much of the information that is useful to them was created by their own community.</p><p>These findings lead to some design implications for workplace search systems for technical professionals. There is a clear need to provide searchers with the tools and support to create complex queries and to make effective use of specialized terminology. Controlled vocabulary look-up lists or query processing tools should be in place to deal with acronyms, product names, and other technical terms. Systems that can extract and highlight non-topical cues (authors, versions, dates, genres) used to determine usefulness will be able to provide benefit. Finally, multi-dimensional means of sorting and limiting the document collection are needed to help searchers find the right information for particular tasks. Automatic methods should be explored to classify collections by genre, level of specificity, degree of situatedness, source repository, etc. These types of specialized, domain-specific features are likely to make workplace search a more effective tool for technical professionals.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.">ACKNOWLEDGMENTS</head><p>This research is supported by an IBM CAS Fellowship and a SSHRC and Canada Research Chairs Program grant to the second author. Thanks to all the consultants who took part in the study and to Julie Waterhouse for all her valuable help with this project.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>Figure 1: Query length comparison (**intranet data from [7])</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head>Table 1 :</head><label>1</label><figDesc></figDesc><table>Factors used to determine information usefulness 
+
+Content 
+Format 
+Currency 
+Authority 
+Topicality 
+Level of 
+specificity 
+Degree of 
+situatedness 
+
+Genre 
+Structure 
+Interactivity 
+
+Date 
+Version of 
+product or 
+technology 
+
+Author 
+Source 
+repository 
+or group 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">The IIR evaluation model: a framework for evaluation of interactive information retrieval systems</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Borlund</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Information Research</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<date type="published" when="2003-04" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Searching the workplace web</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Fagin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Kumar</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><forename type="middle">S</forename><surname>Mccurley</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Novak</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Sivakumar</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">A</forename><surname>Tomlin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">P</forename><surname>Williamson</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 12 th International World Wide Web Conference (WWW &apos;03)</title>
+		<meeting>the 12 th International World Wide Web Conference (WWW &apos;03)<address><addrLine>Budapest, Hungary</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2003" />
+			<biblScope unit="page" from="366" to="375" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">The many faces of accessibility: engineers&apos; perception of information sources</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Fidel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Green</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Information Processing &amp; Management</title>
+		<imprint>
+			<biblScope unit="volume">40</biblScope>
+			<biblScope unit="page" from="563" to="581" />
+			<date type="published" when="2004" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Modeling taskgenre relationships for IR in the workplace</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Freund</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><forename type="middle">G</forename><surname>Toms</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><forename type="middle">L A</forename><surname>Clarke</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 28 th annual international ACM SIGIR conference (SIGIR &apos;05)</title>
+		<meeting>the 28 th annual international ACM SIGIR conference (SIGIR &apos;05)<address><addrLine>Salvador, Brazil</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2005" />
+			<biblScope unit="page" from="441" to="448" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">A review of web searching studies and a framework for future research</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><forename type="middle">J</forename><surname>Jansen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">U</forename><surname>Pooch</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Society for Information Science</title>
+		<imprint>
+			<biblScope unit="volume">52</biblScope>
+			<biblScope unit="page" from="235" to="246" />
+			<date type="published" when="2000" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Searching the web: the public and their queries</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Spink</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><forename type="middle">J</forename><surname>Jansen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Saracevic</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Society for Information Science</title>
+		<imprint>
+			<biblScope unit="volume">52</biblScope>
+			<biblScope unit="page" from="226" to="234" />
+			<date type="published" when="2001" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Searching the intranet: corporate users and their queries</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Stenmark</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 68 th Annual Meeting of the American Society for Information Science and Technology (ASIS&amp;T 2005)</title>
+		<meeting>the 68 th Annual Meeting of the American Society for Information Science and Technology (ASIS&amp;T 2005)<address><addrLine>Charlotte, NC</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2005-11-02" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Changes of search terms and tactics while writing a research proposal: a longitudinal case study</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Vakkari</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Pennanen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Serola</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Information Processing &amp; Management</title>
+		<imprint>
+			<biblScope unit="volume">39</biblScope>
+			<biblScope unit="page" from="445" to="463" />
+			<date type="published" when="2003" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>
+

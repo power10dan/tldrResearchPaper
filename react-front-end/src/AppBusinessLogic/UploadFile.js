@@ -1,7 +1,7 @@
 import React  from 'react';
 import AppTopBar from '../AppComponents/AppTopBar.js';
 import {connect} from 'react-redux';
-import {getAllFiles, uploadFile} from '../ReduxFolder/Actions/FileActions.js';
+import {getAllFiles, uploadFile, addSummaries} from '../ReduxFolder/Actions/FileActions.js';
 import ErrSnack from '../AppComponents/ErrDialog.js';
 import GridCardView from '../AppComponents/FileView.js';
 
@@ -16,6 +16,9 @@ class UploadFile extends React.Component{
 			message: "",
 			fileData :[],
 			fileSummaries: [],
+			isOpenSum: false,
+			newSummary: "",
+			sectionOfSummary: ""
 		}
 	}
 
@@ -51,10 +54,40 @@ class UploadFile extends React.Component{
 		this.props.upload(fileObj.base64, this.state.token, nameOfFile);
 	}
 
+	openCardDialog = ()=>{
+		this.setState({isOpenSum: true});
+	}
+
+	closeCardDialog =  () =>{
+		this.setState({isOpenSum: false});
+	}
+
+	getSumm = (text)=>{
+		this.setState({newSummary: text.target.value});
+	}
+
+	getSectionOfSum = (text)=>{
+		this.setState({sectionOfSummary: text.target.value});
+	}
+
+	handleAddSummary = () =>{
+		// so far for demo purposes it only uploads
+		// to one file. In the future, we might want to change that 
+		let fileToUpload = this.state.fileData[0].FILES.files[1].summary_file
+		if(this.state.newSummary !== "" && this.state.sectionOfSummary != ""){
+			this.props.addSum(	this.state.token, 
+								this.state.newSummary, 
+								this.state.sectionOfSummary,
+								fileToUpload
+							 );
+			this.closeCardDialog();	
+		} else{
+			this.closeCardDialog();
+		}	
+	}
 
 	render(){
 		let isFinished = this.state.isFinished;
-	
 		// if the app is uploading a file and is not finished with that yet, show loading bar
 		if(isFinished === false ){
 			if(this.state.fileData == null){
@@ -63,12 +96,16 @@ class UploadFile extends React.Component{
 			     		<AppTopBar  uploadFile={this.handleClick} loading={false} loggedIn= {false} disable={true} /> 
 			  		</div>
 			  	)
-
 			} else {
 				return(
 					<div>
 				     	<AppTopBar  uploadFile={this.handleClick} loading={true} loggedIn= {false} disable={true} /> 
-				     	<GridCardView arrayOfData = {this.state.fileData}/>	
+				     	 <GridCardView 
+				     	   arrayOfData = {this.state.fileData} 
+				     	   cardDia={this.openCardDialog} 
+				     	   isOpenSum={this.state.isOpenSum} 
+				     	   closeDia={this.closeCardDialog}
+				     	 />	
 				  	</div>
 				);
 			}
@@ -77,10 +114,9 @@ class UploadFile extends React.Component{
 		} else if(this.state.isLoggedIn === false ){
 			return(
 				<div>
-			    	 <AppTopBar  uploadFile={this.handleClick} loading={false} loggedIn= {false} disable={true}/> 
+			    	 <AppTopBar  uploadFile={this.handleClick} loading={false} loggedIn= {false} disable={true} /> 
 			 	</div>
 			);
-
 		}else{
 			// at this point, we have either successfully or unsuccessfully uploaded a file. 
 			// we show the messages in a pop-up window. 
@@ -88,7 +124,15 @@ class UploadFile extends React.Component{
 				<div>
 				    <ErrSnack message={this.state.message} openDialog={this.state.opWindow} />
 				    <AppTopBar uploadFile={this.handleClick} loading={false} loggedIn={true} disable={false}/> 
-				    <GridCardView arrayOfData = {this.state.fileData}/>	
+				    <GridCardView 
+				      arrayOfData = {this.state.fileData} 
+				      cardDia={this.openCardDialog} 
+				      isOpenSum={this.state.isOpenSum}
+				      closeDia={this.closeCardDialog}
+				      sectionFunc={this.getSectionOfSum}
+				      summaryFunc={this.getSumm}
+				      submitNewSummary={this.handleAddSummary}
+				    />	
 				</div>
 			);
 		}
@@ -100,7 +144,6 @@ class UploadFile extends React.Component{
 function mapStateToProps(state){
 	const {token} = state.UserProfile;
 	const { files, successMess, opDialog, errorUploadFile } = state.genStateReducer;
-	console.log
 	const { isLoad } = state.isLoadingReducer;
 	const {isLoggedIn } = state.authentication;
 	return {
@@ -117,7 +160,8 @@ function mapStateToProps(state){
 function mapDispatchToProps(dispatch){
 	return({
 		getFiles: (jwtToken)=>{dispatch(getAllFiles(jwtToken));},
-		upload: (file, jwtToken, nameOfFile)=>{dispatch(uploadFile(file, jwtToken, nameOfFile));}
+		upload: (file, jwtToken, nameOfFile)=>{dispatch(uploadFile(file, jwtToken, nameOfFile));},
+		addSum: (jwtToken, summary, section, nameOfFile)=>{dispatch(addSummaries(jwtToken,summary, section, nameOfFile))}
 	})
 }
 

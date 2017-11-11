@@ -62,7 +62,7 @@ const FileCardView =  (props) =>{
 				     </Typography>
 			       
 			        <CardActions className={props.classes.cardAction}>
-			        	<Button color="primary" className={props.classes.buttonStyle} >
+			        	<Button color="primary" className={props.classes.buttonStyle} onClick={props.cardDialog}>
 					        Add Summary
 					     </Button>
 					      <Button color="primary" className={props.classes.buttonStyle} >
