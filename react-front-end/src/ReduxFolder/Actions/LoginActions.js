@@ -2,6 +2,8 @@ import * as types from '../Constants/ActionTypes';
 import { saveCred } from './SaveCred.js';
 import { CreateSuccess } from './CreateProfileActions.js';
 import { isLoading } from './LoadingActions.js';
+import { getAllFiles } from './FileActions.js';
+import { DialogOpen} from './DialogActions.js';
 /*
  * Action creators
  *
@@ -34,7 +36,9 @@ export function Login(userName, userEmail, password) {
         _Login(userName, password).then((response) => {
             let status = response.status;
             if(response.ok != true){
-                dispatch(LogInFailed("Login Failed"));
+                dispatch(LogInFailed("Login Failed, we can't find your credentials"));
+                // only open dialog when it's asyncally reached here
+                dispatch(DialogOpen());
                 dispatch(isLoading(false));
                 return;
             } else{
@@ -47,14 +51,20 @@ export function Login(userName, userEmail, password) {
                 return;
             } else {
                 let message = "Hello " + userName
+                // clear login failed message
                 dispatch(LogInSuccess(message));
                 dispatch(CreateSuccess(""));
                 dispatch(saveCred(userName, userEmail, data.token));
+                 // only open dialog when it's asyncally reached here
+                dispatch(DialogOpen());
+
+                // get all files
+                dispatch(getAllFiles(data.token))
             }
         }).catch((err, status)=>{
             if(err.message === "Failed to fetch"){
                 dispatch(LogInFailed("Server Connection Refused, Please Contact Your System Admin"));
-                dispatch(isLoading(false));
+               
             }
         });
     };

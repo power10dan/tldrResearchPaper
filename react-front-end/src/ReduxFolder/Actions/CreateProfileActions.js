@@ -1,5 +1,4 @@
 import * as types from '../Constants/ActionTypes';
-import { UserProfile } from '../Reducers/UserProfile.js';
 import { saveCred } from '../Actions/SaveCred.js';
 import { DialogOpenCreate , DialogCloseCreate } from './DialogActions.js';
 import { LogInSuccess, Login } from './LoginActions.js';
@@ -41,7 +40,8 @@ export function createProfile(userName, passWord, passWord2, userEmail){
                     dispatch(CreateSuccess("Profile Created!"));
                     dispatch(Login(userName, userEmail, passWord));
                     dispatch(LogInSuccess("You have logged in!"));
-
+                    dispatch(DialogOpenCreate()),
+                    setTimeout(()=>{dispatch(DialogCloseCreate())}, 2000);
                     // save the token to the user profile
                     // dispatch(saveCred(userName, userEmail, data.key));
 

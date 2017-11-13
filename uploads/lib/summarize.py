@@ -50,8 +50,6 @@ def summarize(document, file_name, headings_file):
     out_file.write(summary_xml)
     out_file.close()
                 
-
-
 def parse_headings(headings_file):
     with open(headings_file) as headers:
         for line in headers:
