@@ -65,7 +65,7 @@ const FileCardView =  (props) =>{
 			        	<Button color="primary" className={props.classes.buttonStyle} onClick={props.cardDialog}>
 					        Add Summary
 					     </Button>
-					      <Button color="primary" className={props.classes.buttonStyle} >
+					      <Button color="primary" className={props.classes.buttonStyle} onClick={props.getPDF} >
 					        Download Paper
 					     </Button>
 			        </CardActions>

@@ -1,7 +1,7 @@
 import React  from 'react';
 import AppTopBar from '../AppComponents/AppTopBar.js';
 import {connect} from 'react-redux';
-import {getAllFiles, uploadFile, addSummaries} from '../ReduxFolder/Actions/FileActions.js';
+import {getAllFiles, downloadPDF, uploadFile, addSummaries} from '../ReduxFolder/Actions/FileActions.js';
 import ErrSnack from '../AppComponents/ErrDialog.js';
 import GridCardView from '../AppComponents/FileView.js';
 
@@ -160,6 +160,7 @@ function mapStateToProps(state){
 function mapDispatchToProps(dispatch){
 	return({
 		getFiles: (jwtToken)=>{dispatch(getAllFiles(jwtToken));},
+		getPDF: (jwtToken)=>{dispatch(downloadPDF(jwtToken));},
 		upload: (file, jwtToken, nameOfFile)=>{dispatch(uploadFile(file, jwtToken, nameOfFile));},
 		addSum: (jwtToken, summary, section, nameOfFile)=>{dispatch(addSummaries(jwtToken,summary, section, nameOfFile))}
 	})

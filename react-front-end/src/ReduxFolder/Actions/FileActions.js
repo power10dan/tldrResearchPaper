@@ -42,6 +42,30 @@ export function GetFailed(errMessage){
  	};
 }
 
+export function getPDFSuccess(message){
+  return{
+  	type: types.GETPDFSUCCESS,
+  	errDownload: message
+  }
+}
+
+function _downloadFile(token, fileName){
+  let urlGET = "http://127.0.0.1:8000/api/getPDFFile/".concat(fileName);
+  let strAuth = "JWT" + " " +token;
+  let authString = strAuth.replace("\\\\","");
+
+  let request = {
+    method: 'GET',
+    body: "",
+    file_names: [fileName],
+    headers: {
+      Authorization: authString,
+      "Content-type": 'application/json'
+    }
+  };
+  return fetch(urlGET, request)
+};
+
 function _uploadFile(file, token, fileName){
 	let jsonData =  file;
 	let urlPOST = "http://127.0.0.1:8000/api/uploadFile/".concat(fileName);
@@ -58,9 +82,26 @@ function _uploadFile(file, token, fileName){
 			"Content-type": 'application/json'
 		}
 	};
-
 	return fetch(urlPOST, header);
+}
 
+export function downloadPDF(token, fileName, prevFileState){
+  return dispatch=>{
+    dispatch(isLoading(true));
+    _downloadFile(token, fileName).then((response) => {
+      if(response.status.ok){
+      	dispatch(getPDFSuccess(response.status))
+        return response.json();
+      } else {
+        dispatch(isLoading(false));
+        return response.status;
+      }
+    }).then((data)=>{
+			console.log(data)
+		}).catch((err)=>{
+			  console.log(err);
+		});;
+  };
 }
 
 export function uploadFile(file, token, fileName, prevFileState){

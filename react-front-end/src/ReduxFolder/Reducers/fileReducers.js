@@ -13,6 +13,11 @@ export default function genStateReducer(state = generalState, action) {
                 errorUploadFile: ""
             });
 
+        case types.GETPDFSUCCESS:
+            return Object.assign({}, state, {
+                successMess: action.successMessage,
+            });
+
         case types.DELETEFILE:
            return Object.assign({}, state, {
                 files: action.fileDel

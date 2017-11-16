@@ -31,6 +31,7 @@ export const FORGOTACC  = 'FORGOTACC';
 export const CREATEACC  = 'CREATEACC';
 */
 export const UPLOADFILE = 'UPLOADFILE';
+export const GETPDFSUCCESS = 'GETPDFSUCCESS';
 export const DELETEFILE = 'DELETEFILE';
 export const GETFILE = 'GETFILE';
 export const DONEGET = 'DONEGET';
