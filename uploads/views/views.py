@@ -196,7 +196,7 @@ class FileUploadView(APIView):
         summarize(outputDir+filename[:-4]+'.fulltext.tei.xml',filename[:-4],[])
         return Response(status=204)
 
-class GetAllFiles(APIView):
+class GetAllFileNames(APIView):
     def get(self, request):
         fileRoot = settings.MEDIA_DOCS
         fileNames = [fileRoot + fileName for
