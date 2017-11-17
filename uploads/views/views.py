@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 
+from uploads.models.models import SectionSummary
 from uploads.permissions.permissions import isAdminOrReadOnly
 from uploads.serializers.serializers import UserSerializer
 from uploads.lib.summarize import summarize
@@ -43,14 +44,16 @@ class SummaryOutputView(APIView):
         filename = request.GET.get("file_name")
 
         if filename:
-            path = settings.SUMMARY_DOCS + filename
-            matches = glob.glob(path + ".*")
+            all_summary = SectionSummary.objects.filter(filename=filename)
+            print(all_summary)
+            #path = settings.SUMMARY_DOCS + filename
+            #matches = glob.glob(path + ".*")
 
-            if matches:
-                response = FileResponse(
-                    base64.b64encode(open(matches[0], 'rb').read()))
+            #if matches:
+            #    response = FileResponse(
+            #        base64.b64encode(open(matches[0], 'rb').read()))
 
-        if not filename or not matches:
+        if not filename:
             response.reason_phrase = fail_str
 
         return response
