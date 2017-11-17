@@ -12,7 +12,7 @@ class Document(models.Model):
     uploaded_at = models.DateTimeField(auto_now_add=True)
     author = models.CharField(max_length=255, blank=True)
 
-class XMLSummary(models.Model):
+class SectionSummary(models.Model):
 	filename = models.CharField(max_length=255)
 	header = models.CharField(max_length=255)
 	author = models.CharField(max_length=255)

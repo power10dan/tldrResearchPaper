@@ -10,6 +10,7 @@ from uploads.permissions.permissions import isAdminOrReadOnly
 from uploads.serializers.serializers import UserSerializer
 from uploads.lib.summarize import summarize
 
+
 from django.http import HttpResponse
 from django.http import HttpRequest
 from django.http import FileResponse
@@ -193,7 +194,7 @@ class FileUploadView(APIView):
         consolidateCite = False
         status = grobidClass.PDFXMLConverter(inputDir, outputDir, consolidateHead, consolidateCite)
         print("Grobid Finished")
-        summarize(outputDir+filename[:-4]+'.fulltext.tei.xml',filename[:-4],[])
+        summarize(outputDir+filename[:-4]+'.fulltext.tei.xml',filename[:-4])
         return Response(status=204)
 
 class GetAllFileNames(APIView):
