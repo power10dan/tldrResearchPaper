@@ -46,9 +46,9 @@ def summarize(document, file_name):
     out_file.close()
 
 # Add an auto generated summary to the DB
-def create_DB_summary(input_file, current_header, current_summary):
+def create_DB_summary(input_file, current_header, current_summary, username="AUTO SUMMARIZER"):
     autoSummary = SectionSummary(filename=input_file, header=current_header,
-                                 author="AUTO SUMMARIZER", summary=current_summary, votes=1)
+                                 author=username, summary=current_summary, votes=1)
     autoSummary.save()
 
 # Unused for now            

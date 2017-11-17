@@ -9,9 +9,9 @@ from rest_framework.authtoken.models import Token
 from uploads.models.models import SectionSummary
 from uploads.permissions.permissions import isAdminOrReadOnly
 from uploads.serializers.serializers import UserSerializer
-from uploads.lib.summarize import summarize
+from uploads.lib.summarize import summarize, create_DB_summary
 
-
+from django.core import serializers
 from django.http import HttpResponse
 from django.http import HttpRequest
 from django.http import FileResponse
@@ -35,23 +35,18 @@ class SummaryOutputView(APIView):
     summary file in the filesystem, encodes it to base64, and then sends a
     response holding the xml file
     """
-    def get(self, request):
+    def post(self, request):
         permission_classes = (isAdminOrReadOnly, )
         root_dir = settings.SUMMARY_DOCS
         response = Response(status=status.HTTP_400_BAD_REQUEST)
         fail_str = "File not found!"
 
-        filename = request.GET.get("file_name")
+        filename = request.POST.get("file_name")
 
         if filename:
             all_summary = SectionSummary.objects.filter(filename=filename)
-            print(all_summary)
-            #path = settings.SUMMARY_DOCS + filename
-            #matches = glob.glob(path + ".*")
-
-            #if matches:
-            #    response = FileResponse(
-            #        base64.b64encode(open(matches[0], 'rb').read()))
+            qs_json = serializers.serialize('json', all_summary)
+            response = HttpResponse(qs_json, content_type='application/json')
 
         if not filename:
             response.reason_phrase = fail_str
@@ -71,37 +66,20 @@ class SummaryInputView(APIView):
         # vars
         permission_classes = (isAdminOrReadOnly, )
         response = Response(status=status.HTTP_400_BAD_REQUEST)
-        matched_files = []
 
         # default python 3.X behavior: request body is a byte string
-        body_unicode = request.body.decode('utf-8')
-        body_data = json.loads(body_unicode)
+
         # request.data is a dict in the response, the .get method returns none
         # if the fields are not in dict
-        file_name = body_data.get('file_name')
-        section = body_data.get('section')
-        summary_text = body_data.get('summary_text')
+        file_name = request.POST.get('file_name')
+        section = request.POST.get('section')
+        summary_text = request.POST.get('summary_text')
+        username = request.POST.get('author')
 
         # if request was well formed get the file from the file system
-        if file_name and section and summary_text:
-            # default file_name include full path already
-            path = file_name
-            matched_files = glob.glob(path + "*")
-
-        if matched_files:
-            server_file = matched_files[0]  # get first match
-
-            with open(server_file, 'r+') as f:
-                soup = BeautifulSoup(f, 'xml')
-                for match in soup.find_all(re.compile("(" + section + ")")):
-                    print(match)
-                    match.string = summary_text
-
-                f.seek(0)
-                f.write(soup.prettify())
-                f.truncate()
-
-            response.status_code = status.HTTP_200_OK
+        if file_name and section and summary_text and username:
+            create_DB_summary(file_name, section, summary_text, username)
+            response = Response(status=status.HTTP_200_OK)
 
         return response
 
