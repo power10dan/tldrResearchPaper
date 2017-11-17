@@ -72,7 +72,7 @@ def grabFileToReq(request, out_name, fdir_one=[], fdir_two=[]):
 
         # bundle all the files to tar.bz2 file
         retData = {'Files': []}
-        for (xml_file, summary_file) in files:
+        for i, (xml_file, summary_file) in enumerate(files):
             author = []
             title = []
             summary = []
@@ -109,6 +109,7 @@ def grabFileToReq(request, out_name, fdir_one=[], fdir_two=[]):
 
             retData['Files'].append(
                 {os.path.basename("FILES"): {
+                    'fileName': file_names[i],
                     'title': json.dumps(ret_title),
                     'author': json.dumps(ret_author),
                     'Intro_summary': json.dumps(ret_summary),
