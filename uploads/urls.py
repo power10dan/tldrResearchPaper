@@ -15,7 +15,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^api/getSummary/', views.SummaryOutputView.as_view()),
     url(r'^api/getXMLFile/', views.getXMLFile.as_view(), name='getXMLFile'),
-    url(r'^api/getPDFFile/', views.getPDFFile.as_view(), name='getPDFFile'),
+    url(r'^api/getPDFFile/$', views.getPDFFile.as_view(), name='getPDFFile'),
     url(r'^api/getXMLAndSums/', views.getXMLAndSums.as_view(), name='getXMLAndSums'),
     url(r'^api/addUserSummary/', views.SummaryInputView.as_view(), name='summaryInput'),
     #url(r'^api/createUser/$'
