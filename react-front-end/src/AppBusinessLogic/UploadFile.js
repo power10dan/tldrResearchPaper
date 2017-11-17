@@ -55,7 +55,7 @@ class UploadFile extends React.Component{
 	}
 
     handleGetPDF = () => {
-        let file_name = this.props.files[0].FILES.fileName
+        let file_name = this.props.files[1].FILES.fileName
         this.props.getPDF(file_name, this.state.token)
     }
 

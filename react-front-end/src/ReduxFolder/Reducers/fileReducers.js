@@ -1,5 +1,6 @@
 import * as types from '../Constants/ActionTypes';
 import { generalState } from '../Store/initialStoreState.js';
+import { fileSaver } from 'file-saver';
 
 export default function genStateReducer(state = generalState, action) {
     switch (action.type) {
@@ -14,6 +15,8 @@ export default function genStateReducer(state = generalState, action) {
             });
 
         case types.GETPDFSUCCESS:
+        fileSaver.saveAs(new Blob([action.data]) , action.fileName);
+
             return Object.assign({}, state, {
                 successMess: action.successMessage,
             });
