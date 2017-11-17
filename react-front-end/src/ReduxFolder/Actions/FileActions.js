@@ -50,20 +50,19 @@ export function getPDFSuccess(message){
 }
 
 function _downloadFile(token, fileName){
-  let urlGET = "http://127.0.0.1:8000/api/getPDFFile/".concat(fileName);
+  let urlGET = "http://127.0.0.1:8000/api/getPDFFile/";
   let strAuth = "JWT" + " " +token;
   let authString = strAuth.replace("\\\\","");
 
   let request = {
     method: 'GET',
-    body: "",
-    file_names: [fileName],
+      file_names: JSON.stringify({[fileName]}),
     headers: {
-      Authorization: authString,
-      "Content-type": 'application/json'
+        "Authorization": authString,
+			  "Content-type": 'application/json'
     }
   };
-  return fetch(urlGET, request)
+    return fetch(urlGET, request);
 };
 
 function _uploadFile(file, token, fileName){

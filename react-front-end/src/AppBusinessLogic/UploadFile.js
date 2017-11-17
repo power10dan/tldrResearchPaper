@@ -50,9 +50,14 @@ class UploadFile extends React.Component{
 	}
 
 	handleClick = (fileObj) => {
-		let nameOfFile = fileObj.fileList[0].name;
-		this.props.upload(fileObj.base64, this.state.token, nameOfFile);
+		  let nameOfFile = fileObj.fileList[0].name;
+		  this.props.upload(fileObj.base64, this.state.token, nameOfFile);
 	}
+
+    handleGetPDF = () => {
+        let file_name = this.props.files[0].FILES.fileName
+        this.props.getPDF(file_name, this.state.token)
+    }
 
 	openCardDialog = ()=>{
 		this.setState({isOpenSum: true});
@@ -74,7 +79,7 @@ class UploadFile extends React.Component{
 		// so far for demo purposes it only uploads
 		// to one file. In the future, we might want to change that 
 		let fileToUpload = this.state.fileData[0].FILES.files[1].summary_file
-		if(this.state.newSummary !== "" && this.state.sectionOfSummary != ""){
+		if(this.state.newSummary !== "" && this.state.sectionOfSummary !== ""){
 			this.props.addSum(	this.state.token, 
 								this.state.newSummary, 
 								this.state.sectionOfSummary,
@@ -105,7 +110,6 @@ class UploadFile extends React.Component{
 				     	   cardDia={this.openCardDialog} 
 				     	   isOpenSum={this.state.isOpenSum} 
 				     	   closeDia={this.closeCardDialog}
-                 getPDF={this.state.fileData[0].files[1].fileName, this.state.token}
 				     	 />	
 				  	</div>
 				);
@@ -133,6 +137,7 @@ class UploadFile extends React.Component{
 				      sectionFunc={this.getSectionOfSum}
 				      summaryFunc={this.getSumm}
 				      submitNewSummary={this.handleAddSummary}
+              getPDF={this.handleGetPDF}
 				    />	
 				</div>
 			);
