@@ -12,13 +12,15 @@ from uploads.lib.summarize import summarize
 
 from django.http import HttpResponse
 from django.http import HttpRequest
-from django.http import FileResponse
+from django.http import StreamingHttpResponse
+from wsgiref.util import FileWrapper
 from django.http.request import QueryDict, MultiValueDict
 
 from py4j.java_gateway import JavaGateway
 from uploads.lib.grabFile import grabFileToReq
 
 import os
+import mimetypes
 import json
 import re
 import base64
@@ -121,8 +123,33 @@ class getPDFFile(APIView):
     """
 
     def get(self, request):
-        permission_classes = (isAdminOrReadOnly, )
-        return grabFileToReq(request, "pdf_files.tar.bz2", settings.MEDIA_DOCS)
+        # permission_classes = (isAdminOrReadOnly, )
+        root_dir = settings.MEDIA_DOCS
+        response = Response(status=status.HTTP_400_BAD_REQUEST)
+        fail_str = "File not found!"
+
+        # filename = request.GET.get("file_name")
+        # filename = request.GET.get("fileName")
+
+        print(type(request.GET.dict()))
+        for filename in request.GET.dict():
+            print(filename)
+            if filename:
+                path = root_dir + filename
+                matches = glob.glob(path + ".*")
+                print(matches)
+
+            if matches:
+                response = StreamingHttpResponse(FileWrapper(
+                    (open(matches[0], 'rb')),
+                    8192), content_type=mimetypes.guess_type(matches[0][0]))
+                response['Content-Length'] = os.path.getsize(matches[0])
+                response['Content-Disposition'] = "attachment; filename=%s" % os.path.basename(matches[0])
+
+            if not filename or not matches:
+                response.reason_phrase = fail_str
+
+        return response
 
 
 class getXMLAndSums(APIView):
