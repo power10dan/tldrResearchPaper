@@ -58,7 +58,7 @@ const FileCardView =  (props) =>{
 			            {props.title}
 			        </Typography>
 				    <Typography type="h3" className={props.classes.summaryText}>
-				            {"Intro Summary: " + props.summaryText}
+				        {"Intro Summary: " + props.summaryText}
 				     </Typography>
 			       
 			        <CardActions className={props.classes.cardAction}>

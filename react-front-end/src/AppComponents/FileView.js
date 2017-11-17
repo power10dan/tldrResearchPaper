@@ -34,6 +34,7 @@ const GridCardView = (props)=>{
 							summaryText = {card.FILES.Intro_summary} 
 							cardDialog={props.cardDia} 
 							closeDialog={props.closeDia}
+              getPDF={props.getPDF}
 						/>
 					))
 				}

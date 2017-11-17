@@ -105,6 +105,7 @@ class UploadFile extends React.Component{
 				     	   cardDia={this.openCardDialog} 
 				     	   isOpenSum={this.state.isOpenSum} 
 				     	   closeDia={this.closeCardDialog}
+                 getPDF={this.state.fileData[0].files[1].fileName, this.state.token}
 				     	 />	
 				  	</div>
 				);
@@ -160,7 +161,7 @@ function mapStateToProps(state){
 function mapDispatchToProps(dispatch){
 	return({
 		getFiles: (jwtToken)=>{dispatch(getAllFiles(jwtToken));},
-		getPDF: (jwtToken)=>{dispatch(downloadPDF(jwtToken));},
+		getPDF: (fileName, jwtToken)=>{dispatch(downloadPDF(jwtToken, fileName));},
 		upload: (file, jwtToken, nameOfFile)=>{dispatch(uploadFile(file, jwtToken, nameOfFile));},
 		addSum: (jwtToken, summary, section, nameOfFile)=>{dispatch(addSummaries(jwtToken,summary, section, nameOfFile))}
 	})
