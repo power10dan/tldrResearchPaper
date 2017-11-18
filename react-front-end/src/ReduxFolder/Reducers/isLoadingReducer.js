@@ -6,7 +6,7 @@ export default function isLoadingReducer(state = isLoadingST, action) {
     switch (action.type){
         case LOADING:
             return Object.assign({}, state, {
-                st_is_load: action.isLoading
+                st_is_load: action.a_is_load
             });
 
     	default:
