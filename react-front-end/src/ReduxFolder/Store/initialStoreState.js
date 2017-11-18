@@ -1,8 +1,8 @@
-export const userLogin = {
-	isLoggedIn: false,
-	errorMessage: "",
-	successMess: "",
-	isOpenDialog: false,
+export const userLoginST = {
+	st_is_logged_in: false,
+	st_error_msg: "",
+	st_success_msg: "",
+	st_is_open_dialog: false
 };
 
 export const createProfile = {
@@ -30,7 +30,7 @@ export const generalState = {
 	successMess: ""
 };
 
-export const isLoading = {
-	isLoad: false,
+export const isLoadingST = {
+	st_is_load: false
 };
 

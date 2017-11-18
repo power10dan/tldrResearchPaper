@@ -81,9 +81,9 @@ export function loginAction(a_user_name, a_user_email, a_password) {
 // action dispatch for when login succeeds
 export function logInSuccessAction(a_message){
  	return {
- 		type: types.LOGIN_SUCCESS,
- 		isLogin: true,
-        successMessage: a_message
+ 		  type: types.LOGIN_SUCCESS,
+      a_is_logged_in: true,
+      a_success_msg: a_message
  	};
  }
 
@@ -91,7 +91,7 @@ export function logInSuccessAction(a_message){
 export function logInFailedAction(a_failure_message){
  	return {
  		  type: types.LOGIN_FAIL,
- 		  isLogin: false,
- 		  message: a_failure_message
+      a_is_logged_in: false,
+      a_error_msg: a_failure_message
  	};
  }
