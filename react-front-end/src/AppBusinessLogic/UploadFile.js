@@ -29,19 +29,19 @@ class UploadFile extends React.Component{
 		this.setState({fileData: nextProps.files});
 		this.setState({opWindow: nextProps.opDialog});
 
-		if(nextProps.isLoad === true){
+		if(nextProps.st_is_load === true){
 			this.setState({isFinished: false});
 		} else{
 			this.setState({isFinished: true});
 		}
 
-		if(nextProps.isLoggedIn === true){
+		if(nextProps.st_is_logged_in === true){
 			this.setState({isLoggedIn: true});
 		} else {
 			this.setState({isLoggedIn: false});
 		}
 
-		this.setState({token: nextProps.token}); 
+		this.setState({token: nextProps.st_token}); 
 
 		if( nextProps.successMess !== ""){
 			this.setState({message: nextProps.successMess});
@@ -149,16 +149,16 @@ class UploadFile extends React.Component{
 }
 
 // if login or create user is successful, we 
-// obtain the token generated here
+// obtain the tokens generated here
 function mapStateToProps(state){
-	const {token} = state.userProfileReducer;
+	const {st_token} = state.userProfileReducer;
 	const { files, successMess, opDialog, errorUploadFile } = state.genStateReducer;
-	const { isLoad } = state.isLoadingReducer;
-	const {isLoggedIn } = state.authentication;
+	const { st_is_load } = state.isLoadingReducer;
+	const { st_is_logged_in } = state.authentication;
 	return {
-		token,
-		isLoad,
-		isLoggedIn,
+		st_token,
+    st_is_load,
+    st_is_logged_in,
 		successMess,
 		opDialog,
 		errorUploadFile,
