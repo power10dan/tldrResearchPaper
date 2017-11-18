@@ -1,7 +1,7 @@
 import * as types from '../Constants/ActionTypes';
 import { saveCred } from './SaveCred.js';
 import { createSuccessAction } from './CreateProfileActions.js';
-import { isLoading } from './LoadingActions.js';
+import { isLoadingAction } from './LoadingActions.js';
 import { getAllFilesAction } from './FileActions.js';
 import { dialogOpenAction} from './DialogActions.js';
 /*
@@ -38,7 +38,7 @@ export function Login(userName, userEmail, password) {
                 dispatch(LogInFailed("Login Failed, we can't find your credentials"));
                 // only open dialog when it's asyncally reached here
                 dispatch(dialogOpenAction());
-                dispatch(isLoading(false));
+                dispatch(isLoadingAction(false));
                 return;
             } else{
                 return response.json();

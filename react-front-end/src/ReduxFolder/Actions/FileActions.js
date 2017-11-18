@@ -1,5 +1,5 @@
 import * as types from '../Constants/ActionTypes.js';
-import { isLoading } from '../Actions/LoadingActions.js';
+import { isLoadingAction } from '../Actions/LoadingActions.js';
 
 function __uploadFileAction(a_success_mess){
  	return {
@@ -88,7 +88,7 @@ function _uploadFileAction(a_file, a_token, a_file_name){
 
 export function downloadPDFAction(a_token, a_file_name, a_prev_file_state){
   return dispatch=>{
-    dispatch(isLoading(true));
+    dispatch(isLoadingAction(true));
     _downloadFileAction(a_token, a_file_name).then((response) => {
       if(response.status.ok){
       	  dispatch(getPDFSuccessAction(response.status,
@@ -96,7 +96,7 @@ export function downloadPDFAction(a_token, a_file_name, a_prev_file_state){
                                        a_file_name));
         return response.json();
       } else {
-        dispatch(isLoading(false));
+        dispatch(isLoadingAction(false));
         return response.status;
       }
     }).then((data)=>{
@@ -109,13 +109,13 @@ export function downloadPDFAction(a_token, a_file_name, a_prev_file_state){
 
 export function uploadFileAction(file, a_token, a_file_name, a_prev_file_state){
 	return dispatch =>{
-		dispatch(isLoading(true));
+		dispatch(isLoadingAction(true));
 		_uploadFileAction(file, a_token, a_file_name).then((response) => {
 			// dispatch success 
 			if(response.status.ok){
 				return response.json();
 			} else{
-				dispatch(isLoading(false));
+				dispatch(isLoadingAction(false));
 
 				return  response.status;
 			}
@@ -124,7 +124,7 @@ export function uploadFileAction(file, a_token, a_file_name, a_prev_file_state){
 				let message = "Failed to upload " + a_file_name + ", Permission Denied";
 				  dispatch(uploadFailedAction(message));
 				  dispatch(openDialogAction());
-				  dispatch(isLoading(false));
+				  dispatch(isLoadingAction(false));
 				  setTimeout(()=>{dispatch(closeDialogAction());}, 2000);
 
 			} else if(data === 500){
@@ -132,7 +132,7 @@ export function uploadFileAction(file, a_token, a_file_name, a_prev_file_state){
               ", Internal Server Error";
 				  dispatch(uploadFailedAction(message));
 				  dispatch(openDialogAction());
-				  dispatch(isLoading(false));
+				  dispatch(isLoadingAction(false));
 				  setTimeout(()=>{dispatch(closeDialogAction());}, 2000);
 
 			} else{
@@ -140,7 +140,7 @@ export function uploadFileAction(file, a_token, a_file_name, a_prev_file_state){
 				  dispatch(__uploadFileAction(successMessage));
 				  dispatch(getAllFilesAction(a_token));
 				  dispatch(openDialogAction());
-				  dispatch(isLoading(false));
+				  dispatch(isLoadingAction(false));
 				  setTimeout(()=>{dispatch(closeDialogAction());}, 2000);
 			}
 		}).catch((err)=>{
@@ -186,7 +186,7 @@ export function addSummariesAction(
     a_name_of_file
 ) {
 	return dispatch =>{
-		dispatch(isLoading(true));
+		dispatch(isLoadingAction(true));
 		  _addSummariesAction(a_token, a_new_summary, a_section_text, a_name_of_file)
           .then((response)=>{
 
@@ -197,7 +197,7 @@ export function addSummariesAction(
 
 			        if(data === 200){
 				          dispatch(getAllFilesAction(a_token));
-				          dispatch(isLoading(false));
+				          dispatch(isLoadingAction(false));
 			        }
               
 		      }).catch((err)=>{
@@ -209,7 +209,7 @@ export function addSummariesAction(
 
 export function getAllFilesAction(a_token){
 	return dispatch =>{
-		  dispatch(isLoading(true));
+		  dispatch(isLoadingAction(true));
 		  _getAllFilesAction(a_token).then((response)=>{
 
 			if(response.ok){
@@ -221,7 +221,7 @@ export function getAllFilesAction(a_token){
 		}).then((data) =>{
 
 			if(data === 400){
-				  dispatch(isLoading(false));
+				  dispatch(isLoadingAction(false));
 				  let message = "Failed to get files";
 		      dispatch(getFailedAction(message));
 		      dispatch(openDialogAction());
@@ -230,7 +230,7 @@ export function getAllFilesAction(a_token){
 			}
 
 	      dispatch(getFilesAction(data.Files));
-	      dispatch(isLoading(false));
+	      dispatch(isLoadingAction(false));
 	      return;
 
 		}).catch((err) =>{

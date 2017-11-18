@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import LoginComp from '../AppComponents/LoginComp.js';
 import ErrSnack from '../AppComponents/ErrDialog.js';
 import { Login, LogInFailed} from '../ReduxFolder/Actions/LoginActions.js';
-import {isLoading } from '../ReduxFolder/Actions/LoadingActions.js';
+import {isLoadingAction } from '../ReduxFolder/Actions/LoadingActions.js';
 import {dialogOpenAction, dialogCloseAction} from '../ReduxFolder/Actions/DialogActions.js';
 import {SideNavStates} from '../AppBusinessLogic/SideBarUpdate';
 
@@ -154,7 +154,7 @@ function mapDispatchToProps(dispatch){
 	return({
 		updateFailed: (message)=>{dispatch(LogInFailed(message));},
 		loginOp: (userName, userEmail, userPass) =>{dispatch(Login(userName, userEmail, userPass));},
-		isLoading: (stat)=>{dispatch(isLoading(stat));},
+		isLoading: (stat)=>{dispatch(isLoadingAction(stat));},
 		openDialog: () =>{dispatch(dialogOpenAction())},
 		closeDialog: () =>{dispatch(dialogCloseAction())},
 	})

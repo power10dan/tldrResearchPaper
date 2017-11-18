@@ -4,7 +4,7 @@ import CreateProfile from '../AppComponents/CreateProfile.js';
 import {createProfileAction} from '../ReduxFolder/Actions/CreateProfileActions.js';
 import { createFailedAction, resetDialogAction} from '../ReduxFolder/Actions/CreateProfileActions.js';
 import { dialogOpenCreateAction , dialogCloseCreateAction } from '../ReduxFolder/Actions/DialogActions.js';
-import {isLoading } from '../ReduxFolder/Actions/LoadingActions.js';
+import {isLoadingAction } from '../ReduxFolder/Actions/LoadingActions.js';
 import ErrSnack from '../AppComponents/ErrDialog.js';
 
 
@@ -224,7 +224,7 @@ function mapDispatchToProps(dispatch){
 	return({
 		createUser: (userName, userPass, userPass2, userEmail) =>
         			{dispatch(createProfileAction(userName, userPass, userPass2, userEmail));},
-		isLoad: (isLoadingStatus) =>{dispatch(isLoading(isLoadingStatus));},
+		isLoad: (isLoadingStatus) =>{dispatch(isLoadingAction(isLoadingStatus));},
 		updateFailed: (message)=>{dispatch(createFailedAction(message));},
 		openDialog: () =>{dispatch(dialogOpenCreateAction())},
 		closeDialog: () =>{dispatch(dialogCloseCreateAction())},
