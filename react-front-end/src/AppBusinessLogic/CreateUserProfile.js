@@ -98,7 +98,6 @@ class CreateUserProfile extends React.Component{
 	}
 
     handleSubmit= () => {
-    	const {dispatch} = this.props;
     	let userName = this.state.newUserName;
     	let userEmail = this.state.newUserEmail;
     	let userPass = this.state.newUserPassword;
@@ -110,7 +109,7 @@ class CreateUserProfile extends React.Component{
 	         // if we send both then they'll never match because of hash
 	   	    this.props.createUser(userName,  userPass, userPass2,userEmail);
 
-	   	    if(this.state.isRegistered == false){
+	   	    if(this.state.isRegistered === false){
 	   	    	this.props.openDialog();
     			setTimeout(()=>{this.props.closeDialog()}, 2000);
     			this.clearForum();
@@ -188,7 +187,6 @@ class CreateUserProfile extends React.Component{
 	render(){
 		const funcPackage = this.packageFunc();
 		const packageVal = this.packageVal();
-		let state = null
 		if(this.state.isRegistered === true){
 			return(
 				<div>

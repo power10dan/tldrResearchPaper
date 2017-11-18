@@ -4,10 +4,6 @@ import { fileSaver } from 'file-saver';
 
 export default function genStateReducer(state = generalState, action) {
     switch (action.type) {
-        case types.GETFILE:
-            return Object.assign({}, state, {
-                files: action.files
-            });
         case types.UPLOADFILE:
             return Object.assign({}, state, {
                 successMess: action.successMessage,
@@ -48,11 +44,11 @@ export default function genStateReducer(state = generalState, action) {
         case types.DIALOG_OP:
             return Object.assign({}, state, {
                 opDialog: true
-            })
+            });
         case types.DIALOG_CL:
             return Object.assign({}, state, {
                 opDialog: false
-            })
+            });
 
         default:
             return state;

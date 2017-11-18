@@ -53,36 +53,37 @@ export function getPDFSuccess(message, data, fileName){
 
 function _downloadFile(token, fileName){
     let urlGET = "http://127.0.0.1:8000/api/getPDFFile/?".concat(fileName);
-  let strAuth = "JWT" + " " + token;
-  let authString = strAuth.replace("\\\\","");
+    let strAuth = "JWT ".concat(token);
+    let authString = strAuth.replace("\\\\","");
 
-  let request = {
-    method: 'GET',
-    headers: {
-        "Authorization": authString,
-			  "Content-type": 'application/json'
-    }
-  };
+    let request = {
+        method: 'GET',
+        headers: {
+            "Authorization": authString,
+			      "Content-type": 'application/json'
+        }
+    };
     return fetch(urlGET, request);
 };
 
 function _uploadFile(file, token, fileName){
-	let jsonData =  file;
-	let urlPOST = "http://127.0.0.1:8000/api/uploadFile/".concat(fileName);
-	let strAuth = "JWT" + " " + token ;
-	let authString = strAuth.replace("\\\\", "");
+	  let jsonData =  file;
+	  let urlPOST = "http://127.0.0.1:8000/api/uploadFile/".concat(fileName);
+	  let strAuth = "JWT ".concat(token);
+	  let authString = strAuth.replace("\\\\", "");
 
-	let header = {
-		method: 'POST',
-		body: jsonData ,
-		dataType: 'json',
-		mode: 'cors',
-		headers: {
-			Authorization: authString,
-			"Content-type": 'application/json'
-		}
-	};
-	return fetch(urlPOST, header);
+	  let header = {
+		    method: 'POST',
+		    body: jsonData ,
+		    dataType: 'json',
+		    mode: 'cors',
+		    headers: {
+			      Authorization: authString,
+			      "Content-type": 'application/json'
+		    }
+	  };
+
+	  return fetch(urlPOST, header);
 }
 
 export function downloadPDF(token, fileName, prevFileState){
@@ -145,33 +146,33 @@ export function uploadFile(file, token, fileName, prevFileState){
 }
 
 function _getAllFiles(token, newSummary, sectionText){
-	let urlGET = "http://127.0.0.1:8000/api/getXMLAndSums/?num_files=5";
-	let strAuth = "JWT" + " " + token;
-	let authString = strAuth.replace("\\\\", "");
-	let header = {
-		method: 'GET',
-		headers: {"Authorization": authString},
-	};
+	  let urlGET = "http://127.0.0.1:8000/api/getXMLAndSums/?num_files=5";
+	  let strAuth = "JWT".concat(token);
+	  let authString = strAuth.replace("\\\\", "");
+	  let header = {
+		    method: 'GET',
+		    headers: {"Authorization": authString},
+	  };
 
-	return fetch(urlGET, header);
+	  return fetch(urlGET, header);
 }
 
 function _addSummaries(token, newSum, sectText, nameOfFile){
-	let urlAddSum = "http://127.0.0.1:8000/api/addUserSummary/";
-	let strAuth = "JWT" + " " + token;
-	let authString = strAuth.replace("\\\\", "");
-	let header = {
-		method: 'POST',
-		body:  JSON.stringify({"file_name": nameOfFile, 
-			    "section": sectText,
-			    "summary_text": newSum
-			 }),
-		headers: {
-			"Authorization": authString
-		},	
-	};
-	
-	return fetch(urlAddSum, header);
+	  let urlAddSum = "http://127.0.0.1:8000/api/addUserSummary/";
+	  let strAuth = "JWT ".concat(token);
+	  let authString = strAuth.replace("\\\\", "");
+	  let header = {
+		    method: 'POST',
+		    body:  JSON.stringify({"file_name": nameOfFile,
+			                         "section": sectText,
+			                         "summary_text": newSum
+			                        }),
+		    headers: {
+			      "Authorization": authString
+		    }
+	  };
+
+	  return fetch(urlAddSum, header);
 }
 
 export function addSummaries(token, newSummary, sectionText, nameOfFile){
@@ -182,7 +183,7 @@ export function addSummaries(token, newSummary, sectionText, nameOfFile){
 				return response.status
 			} 
 		}).then((data)=>{
-			if(data == 200){
+			if(data === 200){
 				dispatch(getAllFiles(token));
 				dispatch(isLoading(false));
 			}

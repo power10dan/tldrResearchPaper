@@ -46,8 +46,6 @@ class LoginOperations extends React.Component{
 	}
 
     handleSubmit = () => {
-    	//this.props.isLoading(true);
-        const { dispatch } = this.props;
 
         if(this.state.userName === "" || typeof this.state.userName === "undefined") {
         	this.props.updateFailed("Please enter user name");
@@ -113,7 +111,6 @@ class LoginOperations extends React.Component{
 
 	render(){
       const packagesLogin = this.functionPackages();
-      let emptyState = null;
       if(this.state.isRegist === true || this.state.isLoginSuccess === true){
       	  	// in future, return something more meaningful
       	 	return(

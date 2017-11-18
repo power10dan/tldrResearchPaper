@@ -27,8 +27,7 @@ export const generalState = {
 	errorRetrieveFile: "",
 	getFile: false,
 	opDialog: false,
-	successMess: "",
-	errorUploadFile: ""
+	successMess: ""
 };
 
 export const isLoading = {

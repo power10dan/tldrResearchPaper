@@ -34,8 +34,7 @@ export function Login(userName, userEmail, password) {
     return dispatch => {
         // save user password
         _Login(userName, password).then((response) => {
-            let status = response.status;
-            if(response.ok != true){
+            if(response.ok !== true){
                 dispatch(LogInFailed("Login Failed, we can't find your credentials"));
                 // only open dialog when it's asyncally reached here
                 dispatch(DialogOpen());
