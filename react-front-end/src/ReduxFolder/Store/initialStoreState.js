@@ -6,11 +6,11 @@ export const userLoginST = {
 };
 
 export const createProfile = {
-	isRegistered: false,
-	errorMessageProfile:  "",
-	successMessageProfile: "",
-	isOpenDialog: false,
-	dismissProfileDialog: true
+    st_is_registered: false,
+    st_prf_err_msg: "",
+    st_prf_success_msg: "",
+	  st_is_open_dialog: false,
+    st_dismiss_prf_dialog: true
 };
 
 export const userProfile = {

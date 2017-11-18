@@ -71,20 +71,20 @@ export function createProfileAction(
 export function createFailedAction(a_err_message){
     return {
         type: types.FAIL_CREATE,
-        errorMess: a_err_message
+        a_prf_err_msg: a_err_message
     };
 }
 
 export function createSuccessAction(a_success_mess){
      return {
         type: types.CREATE_SUCCESS,
-        successMessage: a_success_mess 
+        a_prf_success_msg: a_success_mess 
      };
 }
 
 export function resetDialogAction(){
     return {
       type: types.RESET_DIALOG
-    }
+    };
 
 }
