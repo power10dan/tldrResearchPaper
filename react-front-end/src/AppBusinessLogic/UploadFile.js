@@ -101,19 +101,27 @@ class UploadFile extends React.Component{
 			if(this.state.fileData == null){
 				return (
 					<div>
-			     		<AppTopBar  uploadFileAction={this.handleClick} loading={false} loggedIn= {false} disable={true} /> 
+			     	<AppTopBar uploadFileAction = {this.handleClick}
+                       loading          = {false}
+                       loggedIn         = {false}
+                       disable          = {true}
+            />
 			  		</div>
 			  	)
 			} else {
 				return(
 					<div>
-				     	<AppTopBar  uploadFileAction={this.handleClick} loading={true} loggedIn= {false} disable={true} /> 
-				     	 <GridCardView 
-				     	   arrayOfData = {this.state.fileData} 
-				     	   cardDia={this.openCardDialog} 
-				     	   isOpenSum={this.state.isOpenSum} 
-				     	   closeDia={this.closeCardDialog}
-				     	 />	
+				    <AppTopBar uploadFileAction = {this.handleClick}
+                       loading          = {true}
+                       loggedIn         = {false}
+                       disable          = {true}
+            />
+
+				    <GridCardView arrayOfData = {this.state.fileData} 
+				     	            cardDia     = {this.openCardDialog} 
+				     	            isOpenSum   = {this.state.isOpenSum} 
+				     	            closeDia    = {this.closeCardDialog}
+				    />	
 				  	</div>
 				);
 			}
@@ -122,7 +130,11 @@ class UploadFile extends React.Component{
 		} else if(this.state.isLoggedIn === false ){
 			return(
 				<div>
-			    	 <AppTopBar  uploadFileAction={this.handleClick} loading={false} loggedIn= {false} disable={true} /> 
+			    <AppTopBar uploadFileAction = {this.handleClick}
+                     loading          = {false}
+                     loggedIn         = {false}
+                     disable          = {true}
+          />
 			 	</div>
 			);
 		}else{
@@ -130,18 +142,25 @@ class UploadFile extends React.Component{
 			// we show the messages in a pop-up window. 
 			return(
 				<div>
-				    <ErrSnack message={this.state.message} openDialog={this.state.opWindow} />
-				    <AppTopBar uploadFileAction={this.handleClick} loading={false} loggedIn={true} disable={false}/> 
-				    <GridCardView 
-				      arrayOfData = {this.state.fileData} 
-				      cardDia={this.openCardDialog} 
-				      isOpenSum={this.state.isOpenSum}
-				      closeDia={this.closeCardDialog}
-				      sectionFunc={this.getSectionOfSum}
-				      summaryFunc={this.getSumm}
-				      submitNewSummary={this.handleAddSummary}
-              getPDF={this.handleGetPDF}
-				    />	
+				  <ErrSnack message    = {this.state.message}
+                    openDialog = {this.state.opWindow}
+          />
+
+				  <AppTopBar uploadFileAction = {this.handleClick}
+                     loading          = {false}
+                     loggedIn         = {true}
+                     disable          = {false}
+          />
+
+				  <GridCardView arrayOfData      = {this.state.fileData} 
+				                cardDia          = {this.openCardDialog} 
+				                isOpenSum        = {this.state.isOpenSum}
+				                closeDia         = {this.closeCardDialog}
+				                sectionFunc      = {this.getSectionOfSum}
+				                summaryFunc      = {this.getSumm}
+				                submitNewSummary = {this.handleAddSummary}
+                        getPDF           = {this.handleGetPDF}
+				  />	
 				</div>
 			);
 		}
