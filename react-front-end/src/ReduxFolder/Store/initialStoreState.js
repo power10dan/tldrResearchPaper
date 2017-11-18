@@ -5,7 +5,7 @@ export const userLoginST = {
 	st_is_open_dialog: false
 };
 
-export const createProfile = {
+export const createProfileST = {
     st_is_registered: false,
     st_prf_err_msg: "",
     st_prf_success_msg: "",
@@ -13,10 +13,10 @@ export const createProfile = {
     st_dismiss_prf_dialog: true
 };
 
-export const userProfile = {
-	userName: "",
-	userEmail: "",
-	token: "",
+export const userProfileST = {
+	st_username: "",
+	st_user_email: "",
+	st_token: ""
 };
 
 export const generalState = {

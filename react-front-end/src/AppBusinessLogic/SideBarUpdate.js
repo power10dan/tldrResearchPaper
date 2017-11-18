@@ -6,19 +6,19 @@ class UpdateSideNav extends React.Component{
 	constructor(props){
 		super(props);
 		this.state ={
-			userName: ""
+			c_username: ""
 		}
 	}
 
 	componentWillReceiveProps(nextProps) {
-		this.setState({userName: nextProps.userName});
+		this.setState({c_username: nextProps.st_username});
 	}
 
 	render(){
-		if(this.state.userName !== ""){
+		if(this.state.c_username !== ""){
 			// render sidenav with props
-			return(	
-				<SideNavCustom cred={this.state.userName} />
+			return(
+				<SideNavCustom cred={this.state.c_username} />
 			)
 		} else {
 			return(
@@ -28,13 +28,13 @@ class UpdateSideNav extends React.Component{
 	}
 }
 
-// "connects" to the state tree, and return updated 
+// "connects" to the state tree, and return updated
 // states when state tree is updated.
 function mapStateToProps(state) {
 	// get stuff from the UserProfile slice from the state tree
-    const {userName } = state.UserProfile;
+    const {st_username} = state.userProfileReducer;
     return {
-        userName,
+      st_username,
     };
 }
 

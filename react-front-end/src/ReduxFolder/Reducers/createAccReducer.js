@@ -1,7 +1,7 @@
 import * as types from '../Constants/ActionTypes';
-import { createProfile }from '../Store/initialStoreState.js';
+import { createProfileST }from '../Store/initialStoreState.js';
 
-export default function register(state = createProfile, action){
+export default function register(state = createProfileST, action){
 	  switch(action.type){
             case types.FAIL_CREATE:
             	return Object.assign({}, state, {

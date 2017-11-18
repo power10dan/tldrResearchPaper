@@ -1,13 +1,13 @@
 import * as types from '../Constants/ActionTypes';
-import { userProfile } from '../Store/initialStoreState.js';
+import { userProfileST } from '../Store/initialStoreState.js';
 
-export default function UserProfile(state = userProfile, action){
+export default function userProfileReducer(state = userProfileST, action){
 	switch(action.type){
 		case types.SAVE_ACC:
 			return Object.assign({}, state, {
-				userName: action.userAcc,
-				userEmail: action.email,
-				token: action.token
+          st_username: action.a_username,
+          st_user_email: action.a_user_email,
+				  st_token: action.a_token
 			});
 
 		default:

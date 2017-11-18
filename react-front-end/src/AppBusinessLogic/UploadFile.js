@@ -151,7 +151,7 @@ class UploadFile extends React.Component{
 // if login or create user is successful, we 
 // obtain the token generated here
 function mapStateToProps(state){
-	const {token} = state.UserProfile;
+	const {token} = state.userProfileReducer;
 	const { files, successMess, opDialog, errorUploadFile } = state.genStateReducer;
 	const { isLoad } = state.isLoadingReducer;
 	const {isLoggedIn } = state.authentication;
