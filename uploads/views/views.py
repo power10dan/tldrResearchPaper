@@ -12,8 +12,7 @@ from uploads.lib.summarize import summarize
 
 from django.http import HttpResponse
 from django.http import HttpRequest
-from django.http import StreamingHttpResponse
-from wsgiref.util import FileWrapper
+from django.http import FileResponse
 from django.http.request import QueryDict, MultiValueDict
 
 from py4j.java_gateway import JavaGateway
@@ -131,19 +130,15 @@ class getPDFFile(APIView):
         # filename = request.GET.get("file_name")
         # filename = request.GET.get("fileName")
 
-        print(type(request.GET.dict()))
+
         for filename in request.GET.dict():
-            print(filename)
+
             if filename:
                 path = root_dir + filename
                 matches = glob.glob(path + ".*")
-                print(matches)
 
             if matches:
-                response = StreamingHttpResponse(FileWrapper(
-                    (open(matches[0], 'rb')),
-                    8192), content_type=mimetypes.guess_type(matches[0][0]))
-                response['Content-Length'] = os.path.getsize(matches[0])
+                response = FileResponse(open(matches[0], 'rb'))
                 response['Content-Disposition'] = "attachment; filename=%s" % os.path.basename(matches[0])
 
             if not filename or not matches:
