@@ -100,14 +100,15 @@ staticfiles
 react-front-end/node_modules/*
 
 # hiding actual files in media/docs
-uploads/media/documents/*
+uploads/media/*
 
 # python stuff
 *.pyc
 */__init__.*
+uploads/migrations/*
 
 # hide any logs
-*.logs
+*.log.*
 
 # hide any .snap files from jest testing
 *.snap

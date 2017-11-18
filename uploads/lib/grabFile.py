@@ -9,21 +9,21 @@ from bs4 import BeautifulSoup
 import re
 
 
-def grabFileToReq(request, out_name, fdir_one=[], fdir_two=[]):
+def grabFileToReq(request, out_name, fdir_one="", fdir_two=""):
     """
     Given a request that specifies a filename in the body, and a directory this
     function finds the file in the filesystem, encodes it to base64, and then
     sends a response holding the xml file
     """
 
-    def getFiles(directory, file_names=[]):
+    def getFiles(directory, fileNames=[]):
         matched_files = []
 
-        if file_names:
+        if fileNames:
             # Then we have one or more files
              # for each file, make the path by joining the directory
-            file_paths = map(lambda file_name:
-                             os.path.join(directory, file_name), file_names)
+            file_paths = map(lambda fname:
+                             os.path.join(directory, fname), fileNames)
 
             # glob finds all pathnames that match a certain pattern,
             # we just match on the absolute filename with extension, glob
