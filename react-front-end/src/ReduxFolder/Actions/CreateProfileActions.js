@@ -1,6 +1,6 @@
 import * as types from '../Constants/ActionTypes';
 import { dialogOpenCreateAction , dialogCloseCreateAction } from './DialogActions.js';
-import { LogInSuccess, Login } from './LoginActions.js';
+import { logInSuccessAction, loginAction } from './LoginActions.js';
 
 function _createProfileAction(
     a_username,
@@ -49,8 +49,8 @@ export function createProfileAction(
 
                 if(typeof data !== 'undefined'){
                     dispatch(createSuccessAction("Profile Created!"));
-                    dispatch(Login(a_user_name, a_user_email, a_password));
-                    dispatch(LogInSuccess("You have logged in!"));
+                    dispatch(loginAction(a_user_name, a_user_email, a_password));
+                    dispatch(logInSuccessAction("You have logged in!"));
                     dispatch(dialogOpenCreateAction());
                     setTimeout(()=>{dispatch(dialogCloseCreateAction());}, 2000);
 
