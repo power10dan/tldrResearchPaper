@@ -194,24 +194,26 @@ class CreateUserProfile extends React.Component{
 		if(this.state.c_is_registered === true){
 			return(
 				<div>
-					<ErrSnack message={this.state.c_success_msg}
-                    getOpenDialog={this.state.c_open_msg_dialog}
+					<ErrSnack message       = {this.state.c_success_msg}
+                    getOpenDialog = {this.state.c_open_msg_dialog}
           />
-					<CreateProfile vals= {packageVal}
-                         callBacks={funcPackage}
-                         isOpen={this.state.c_open_prf_dialog}
+
+					<CreateProfile vals      = {packageVal}
+                         callBacks = {funcPackage}
+                         isOpen    = {this.state.c_open_prf_dialog}
           />
 				</div>
 		    );
 		} else{
 			return(
 				<div>
-					<ErrSnack message={this.state.c_err_msg}
-                    getOpenDialog={this.state.c_open_msg_dialog}
+					<ErrSnack message       = {this.state.c_err_msg}
+                    getOpenDialog = {this.state.c_open_msg_dialog}
           />
-					<CreateProfile vals={packageVal}
-                         callBacks={funcPackage}
-                         isOpen={this.state.c_open_prf_dialog}
+
+					<CreateProfile vals      = {packageVal}
+                         callBacks = {funcPackage}
+                         isOpen    = {this.state.c_open_prf_dialog}
           />
 				</div>
 			)

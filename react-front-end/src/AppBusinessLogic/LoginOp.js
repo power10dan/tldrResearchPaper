@@ -121,7 +121,9 @@ class LoginOperations extends React.Component{
       	 	return(
       	 			<div>
 	      	 			<SideNavStates  />
-			      		<ErrSnack message={this.state.c_success_msg} getOpenDialog={this.state.c_op_dialog} />
+			      		<ErrSnack message       = {this.state.c_success_msg}
+                          getOpenDialog = {this.state.c_op_dialog}
+                />
 			      	</div>
 		      	);
       }
@@ -130,12 +132,14 @@ class LoginOperations extends React.Component{
 	      	return (
 	      		<div>
 	      			<SideNavStates  />
-		      		<LoginComp package={packagesLogin}
-                         name={this.state.c_user_name}
-                         pass={this.state.c_user_tmp_pass} />
+		      		<LoginComp package = {packagesLogin}
+                         name    = {this.state.c_user_name}
+                         pass    = {this.state.c_user_tmp_pass}
+              />
 
-		      		<ErrSnack message={this.state.c_err_msg}
-                        getOpenDialog={this.state.c_op_dialog} />
+		      		<ErrSnack message       = {this.state.c_err_msg}
+                        getOpenDialog = {this.state.c_op_dialog}
+              />
 		      	</div>
 	      	);
       } 
