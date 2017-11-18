@@ -40,7 +40,6 @@ class LoginOperations extends React.Component{
 		this.setState({c_success_msg: nextProps.st_success_msg});
 	}
 
-
 	formClean = ()=>{
 		// clean up
 	   	this.setState({c_user_name: ""});
@@ -131,8 +130,12 @@ class LoginOperations extends React.Component{
 	      	return (
 	      		<div>
 	      			<SideNavStates  />
-		      		<LoginComp package={packagesLogin} name={this.state.c_user_name} pass={this.state.c_user_tmp_pass} />
-		      		<ErrSnack message={this.state.c_err_msg} openDialog={this.state.c_op_dialog} />
+		      		<LoginComp package={packagesLogin}
+                         name={this.state.c_user_name}
+                         pass={this.state.c_user_tmp_pass} />
+
+		      		<ErrSnack message={this.state.c_err_msg}
+                        openDialog={this.state.c_op_dialog} />
 		      	</div>
 	      	);
       } 
@@ -140,8 +143,11 @@ class LoginOperations extends React.Component{
     }
 }
 
-// "connects" to the state tree, and return updated 
-// states when state tree is updated.
+/** 
+  * mapStateToProps takes the redux state tree and maps fields, by name,
+  * from the redux state tree to nextProps. This function is where the names
+  * in nextProps, in ComponentWillReceiveProps, comes from
+*/
 function mapStateToProps(state) {
   const {st_is_logged_in,
          st_error_msg,
@@ -157,8 +163,11 @@ function mapStateToProps(state) {
     };
 }
 
-// maps dispatch function to props, so we can pass 
-// them in our props function 
+/** 
+  * mapDispatchToProps inserts functions that we define into the component props
+  * this is how the components handler functions, can be passed to child 
+  * components and how redux actions are hooked up to react components
+**/
 function mapDispatchToProps(dispatch){
 	return({
 		updateFailed: (message)=>{dispatch(logInFailedAction(message));},
