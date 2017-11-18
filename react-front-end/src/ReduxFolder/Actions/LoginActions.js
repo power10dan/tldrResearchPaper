@@ -1,6 +1,6 @@
 import * as types from '../Constants/ActionTypes';
 import { saveCred } from './SaveCred.js';
-import { CreateSuccess } from './CreateProfileActions.js';
+import { createSuccessAction } from './CreateProfileActions.js';
 import { isLoading } from './LoadingActions.js';
 import { getAllFilesAction } from './FileActions.js';
 import { DialogOpen} from './DialogActions.js';
@@ -52,7 +52,7 @@ export function Login(userName, userEmail, password) {
                 let message = "Hello " + userName
                 // clear login failed message
                 dispatch(LogInSuccess(message));
-                dispatch(CreateSuccess(""));
+                dispatch(createSuccessAction(""));
                 dispatch(saveCred(userName, userEmail, data.token));
                  // only open dialog when it's asyncally reached here
                 dispatch(DialogOpen());
