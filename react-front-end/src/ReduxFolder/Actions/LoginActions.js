@@ -3,7 +3,7 @@ import { saveCred } from './SaveCred.js';
 import { createSuccessAction } from './CreateProfileActions.js';
 import { isLoading } from './LoadingActions.js';
 import { getAllFilesAction } from './FileActions.js';
-import { DialogOpen} from './DialogActions.js';
+import { dialogOpenAction} from './DialogActions.js';
 /*
  * Action creators
  *
@@ -37,7 +37,7 @@ export function Login(userName, userEmail, password) {
             if(response.ok !== true){
                 dispatch(LogInFailed("Login Failed, we can't find your credentials"));
                 // only open dialog when it's asyncally reached here
-                dispatch(DialogOpen());
+                dispatch(dialogOpenAction());
                 dispatch(isLoading(false));
                 return;
             } else{
@@ -55,7 +55,7 @@ export function Login(userName, userEmail, password) {
                 dispatch(createSuccessAction(""));
                 dispatch(saveCred(userName, userEmail, data.token));
                  // only open dialog when it's asyncally reached here
-                dispatch(DialogOpen());
+                dispatch(dialogOpenAction());
 
                 // get all files
                 dispatch(getAllFilesAction(data.token))

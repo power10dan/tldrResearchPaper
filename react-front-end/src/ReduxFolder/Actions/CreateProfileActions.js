@@ -1,5 +1,5 @@
 import * as types from '../Constants/ActionTypes';
-import { DialogOpenCreate , DialogCloseCreate } from './DialogActions.js';
+import { dialogOpenCreateAction , dialogCloseCreateAction } from './DialogActions.js';
 import { LogInSuccess, Login } from './LoginActions.js';
 
 function _createProfileAction(
@@ -40,8 +40,8 @@ export function createProfileAction(
 
                 if(response.status === 400 ){
                     dispatch(createFailedAction("Username already existied"));
-                    dispatch(DialogOpenCreate());
-                    setTimeout(()=>{dispatch(DialogCloseCreate());}, 2000);
+                    dispatch(dialogOpenCreateAction());
+                    setTimeout(()=>{dispatch(dialogCloseCreateAction());}, 2000);
                     return;
                 }
 
@@ -51,8 +51,8 @@ export function createProfileAction(
                     dispatch(createSuccessAction("Profile Created!"));
                     dispatch(Login(a_user_name, a_user_email, a_password));
                     dispatch(LogInSuccess("You have logged in!"));
-                    dispatch(DialogOpenCreate());
-                    setTimeout(()=>{dispatch(DialogCloseCreate())}, 2000);
+                    dispatch(dialogOpenCreateAction());
+                    setTimeout(()=>{dispatch(dialogCloseCreateAction());}, 2000);
 
                     // save the token to the user profile
                     // dispatch(saveCred(a_user_name, a_user_email, data.key));
