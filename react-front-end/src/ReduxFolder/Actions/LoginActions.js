@@ -2,7 +2,7 @@ import * as types from '../Constants/ActionTypes';
 import { saveCred } from './SaveCred.js';
 import { CreateSuccess } from './CreateProfileActions.js';
 import { isLoading } from './LoadingActions.js';
-import { getAllFiles } from './FileActions.js';
+import { getAllFilesAction } from './FileActions.js';
 import { DialogOpen} from './DialogActions.js';
 /*
  * Action creators
@@ -58,7 +58,7 @@ export function Login(userName, userEmail, password) {
                 dispatch(DialogOpen());
 
                 // get all files
-                dispatch(getAllFiles(data.token))
+                dispatch(getAllFilesAction(data.token))
             }
         }).catch((err, status)=>{
             if(err.message === "Failed to fetch"){

@@ -1,7 +1,10 @@
 import React  from 'react';
 import AppTopBar from '../AppComponents/AppTopBar.js';
 import {connect} from 'react-redux';
-import {getAllFiles, downloadPDF, uploadFile, addSummaries} from '../ReduxFolder/Actions/FileActions.js';
+import {getAllFilesAction,
+        downloadPDFAction,
+        uploadFileAction,
+        addSummariesAction} from '../ReduxFolder/Actions/FileActions.js';
 import ErrSnack from '../AppComponents/ErrDialog.js';
 import GridCardView from '../AppComponents/FileView.js';
 
@@ -98,13 +101,13 @@ class UploadFile extends React.Component{
 			if(this.state.fileData == null){
 				return (
 					<div>
-			     		<AppTopBar  uploadFile={this.handleClick} loading={false} loggedIn= {false} disable={true} /> 
+			     		<AppTopBar  uploadFileAction={this.handleClick} loading={false} loggedIn= {false} disable={true} /> 
 			  		</div>
 			  	)
 			} else {
 				return(
 					<div>
-				     	<AppTopBar  uploadFile={this.handleClick} loading={true} loggedIn= {false} disable={true} /> 
+				     	<AppTopBar  uploadFileAction={this.handleClick} loading={true} loggedIn= {false} disable={true} /> 
 				     	 <GridCardView 
 				     	   arrayOfData = {this.state.fileData} 
 				     	   cardDia={this.openCardDialog} 
@@ -119,7 +122,7 @@ class UploadFile extends React.Component{
 		} else if(this.state.isLoggedIn === false ){
 			return(
 				<div>
-			    	 <AppTopBar  uploadFile={this.handleClick} loading={false} loggedIn= {false} disable={true} /> 
+			    	 <AppTopBar  uploadFileAction={this.handleClick} loading={false} loggedIn= {false} disable={true} /> 
 			 	</div>
 			);
 		}else{
@@ -128,7 +131,7 @@ class UploadFile extends React.Component{
 			return(
 				<div>
 				    <ErrSnack message={this.state.message} openDialog={this.state.opWindow} />
-				    <AppTopBar uploadFile={this.handleClick} loading={false} loggedIn={true} disable={false}/> 
+				    <AppTopBar uploadFileAction={this.handleClick} loading={false} loggedIn={true} disable={false}/> 
 				    <GridCardView 
 				      arrayOfData = {this.state.fileData} 
 				      cardDia={this.openCardDialog} 
@@ -165,10 +168,10 @@ function mapStateToProps(state){
 
 function mapDispatchToProps(dispatch){
 	return({
-		getFiles: (jwtToken)=>{dispatch(getAllFiles(jwtToken));},
-		getPDF: (fileName, jwtToken)=>{dispatch(downloadPDF(jwtToken, fileName));},
-		upload: (file, jwtToken, nameOfFile)=>{dispatch(uploadFile(file, jwtToken, nameOfFile));},
-		addSum: (jwtToken, summary, section, nameOfFile)=>{dispatch(addSummaries(jwtToken,summary, section, nameOfFile))}
+		getFiles: (jwtToken)=>{dispatch(getAllFilesAction(jwtToken));},
+		getPDF: (fileName, jwtToken)=>{dispatch(downloadPDFAction(jwtToken, fileName));},
+		upload: (file, jwtToken, nameOfFile)=>{dispatch(uploadFileAction(file, jwtToken, nameOfFile));},
+		addSum: (jwtToken, summary, section, nameOfFile)=>{dispatch(addSummariesAction(jwtToken,summary, section, nameOfFile))}
 	})
 }
 

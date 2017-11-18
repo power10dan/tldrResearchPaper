@@ -2,21 +2,20 @@ import * as types from '../Constants/ActionTypes';
 import { DialogOpenCreate , DialogCloseCreate } from './DialogActions.js';
 import { LogInSuccess, Login } from './LoginActions.js';
 
-function _createProfile(username, passwordFirst, passwordSecond, account_emailaddress) {
+function _createProfile(a_username, a_password_one, a_password_two, a_account_email) {
     let url = "http://127.0.0.1:8000/rest-auth/registration/";
     let request = {
 			  method: 'post',
-			  body: JSON.stringify({ username: username,
-                               account_emailaddress: account_emailaddress,
-                               password1: passwordFirst,
-                               password2: passwordSecond
+			  body: JSON.stringify({ username: a_username,
+                               account_emailaddress: a_account_email,
+                               password1: a_password_one,
+                               password2: a_password_two
                             }),
 			  headers: {
         	  'Content-Type': 'application/json'
         }
 		};
-    console.log("i am in create profile");
-    console.log(request)
+
     return fetch(url, request);
 }
 

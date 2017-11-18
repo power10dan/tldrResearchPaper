@@ -1,59 +1,59 @@
 import * as types from '../Constants/ActionTypes.js';
 import { isLoading } from '../Actions/LoadingActions.js';
 
-export function UploadFile( successMess){
- 	return {  
- 		  type: types.UPLOADFILE, 
- 		  successMessage: successMess
+function __uploadFileAction(a_success_mess){
+ 	return {
+ 		  type: types.UPLOADFILE,
+ 		  successMessage: a_success_mess
     };
 }
 
-export function DeleteFile(newFiles){
+export function deleteFileAction(a_new_files){
 	return {
-        type: types.DELETEFILE, 
-        fileDel: newFiles
+        type: types.DELETEFILE,
+        fileDel: a_new_files
     };
 }
 
-export function GetFiles(data){
+export function getFilesAction(a_data){
     return {
         type: types.GETFILE,
-        files: data
+        files: a_data
      };
 }
 
-export function DoneGet(){
+export function doneGetAction(){
  	return {
  		types: types.DONEGET
  	};
 }
 
-export function UploadFailed(errMessage){
+export function uploadFailedAction(a_err_message){
  	return {
  		type: types.UPLOAD_FAILED,
- 		errUpload: errMessage,
+ 		errUpload: a_err_message
  	};
 }
 
-export function GetFailed(errMessage){
+export function getFailedAction(a_err_message){
  	return{
  		type: types.GET_FAILED,
- 		errGet: errMessage,
+ 		errGet: a_err_message
  	};
 }
 
-export function getPDFSuccess(message, data, fileName){
+export function getPDFSuccessAction(a_message, a_data, a_file_name){
   return{
   	  type: types.GETPDFSUCCESS,
-  	  errDownload: message,
-      fileName: fileName,
-      data: data
+  	  errDownload: a_message,
+      fileName: a_file_name,
+      data: a_data
   };
 }
 
-function _downloadFile(token, fileName){
-    let urlGET = "http://127.0.0.1:8000/api/getPDFFile/?".concat(fileName);
-    let strAuth = "JWT ".concat(token);
+function _downloadFileAction(a_token, a_file_name){
+    let urlGET = "http://127.0.0.1:8000/api/getPDFFile/?".concat(a_file_name);
+    let strAuth = "JWT ".concat(a_token);
     let authString = strAuth.replace("\\\\","");
 
     let request = {
@@ -66,10 +66,10 @@ function _downloadFile(token, fileName){
     return fetch(urlGET, request);
 };
 
-function _uploadFile(file, token, fileName){
-	  let jsonData =  file;
-	  let urlPOST = "http://127.0.0.1:8000/api/uploadFile/".concat(fileName);
-	  let strAuth = "JWT ".concat(token);
+function _uploadFileAction(a_file, a_token, a_file_name){
+	  let jsonData =  a_file;
+	  let urlPOST = "http://127.0.0.1:8000/api/uploadFile/".concat(a_file_name);
+	  let strAuth = "JWT ".concat(a_token);
 	  let authString = strAuth.replace("\\\\", "");
 
 	  let header = {
@@ -86,29 +86,31 @@ function _uploadFile(file, token, fileName){
 	  return fetch(urlPOST, header);
 }
 
-export function downloadPDF(token, fileName, prevFileState){
+export function downloadPDFAction(a_token, a_file_name, a_prev_file_state){
   return dispatch=>{
     dispatch(isLoading(true));
-    _downloadFile(token, fileName).then((response) => {
+    _downloadFileAction(a_token, a_file_name).then((response) => {
       if(response.status.ok){
-      	  dispatch(getPDFSuccess(response.status, response.data, fileName));
+      	  dispatch(getPDFSuccessAction(response.status,
+                                       response.data,
+                                       a_file_name));
         return response.json();
       } else {
         dispatch(isLoading(false));
         return response.status;
       }
     }).then((data)=>{
-			console.log(data)
+			  console.log(data);
 		}).catch((err)=>{
 			  console.log(err);
 		});;
   };
 }
 
-export function uploadFile(file, token, fileName, prevFileState){
+export function uploadFileAction(file, a_token, a_file_name, a_prev_file_state){
 	return dispatch =>{
 		dispatch(isLoading(true));
-		_uploadFile(file, token, fileName).then((response) => {
+		_uploadFileAction(file, a_token, a_file_name).then((response) => {
 			// dispatch success 
 			if(response.status.ok){
 				return response.json();
@@ -118,26 +120,28 @@ export function uploadFile(file, token, fileName, prevFileState){
 				return  response.status;
 			}
 		}).then((data)=>{
-			console.log(data)
 			if(data === 401){
-				let message = "Failed to upload " + fileName + ", Permission Denied";
-				dispatch(UploadFailed(message));
-				dispatch(openDialog());
-				dispatch(isLoading(false));
-				setTimeout(()=>{dispatch(closeDialog())}, 2000);
+				let message = "Failed to upload " + a_file_name + ", Permission Denied";
+				  dispatch(uploadFailedAction(message));
+				  dispatch(openDialogAction());
+				  dispatch(isLoading(false));
+				  setTimeout(()=>{dispatch(closeDialogAction());}, 2000);
+
 			} else if(data === 500){
-				let message = "Failed to upload " + fileName + ", Internal Server Error";
-				dispatch(UploadFailed(message));
-				dispatch(openDialog());
-				dispatch(isLoading(false));
-				setTimeout(()=>{dispatch(closeDialog())}, 2000);
+				  let message = "Failed to upload " + a_file_name +
+              ", Internal Server Error";
+				  dispatch(uploadFailedAction(message));
+				  dispatch(openDialogAction());
+				  dispatch(isLoading(false));
+				  setTimeout(()=>{dispatch(closeDialogAction());}, 2000);
+
 			} else{
-				let successMessage = fileName + " uploaded successfully";
-				dispatch(UploadFile(successMessage));
-				dispatch(getAllFiles(token));
-				dispatch(openDialog());
-				dispatch(isLoading(false));
-				setTimeout(()=>{dispatch(closeDialog())}, 2000);
+				let successMessage = a_file_name + " uploaded successfully";
+				  dispatch(__uploadFileAction(successMessage));
+				  dispatch(getAllFilesAction(a_token));
+				  dispatch(openDialogAction());
+				  dispatch(isLoading(false));
+				  setTimeout(()=>{dispatch(closeDialogAction());}, 2000);
 			}
 		}).catch((err)=>{
 			  console.log(err);
@@ -145,9 +149,9 @@ export function uploadFile(file, token, fileName, prevFileState){
 	};
 }
 
-function _getAllFiles(token, newSummary, sectionText){
+function _getAllFilesAction(a_token, a_new_summary, a_section_text){
 	  let urlGET = "http://127.0.0.1:8000/api/getXMLAndSums/?num_files=5";
-	  let strAuth = "JWT".concat(token);
+	  let strAuth = "JWT".concat(a_token);
 	  let authString = strAuth.replace("\\\\", "");
 	  let header = {
 		    method: 'GET',
@@ -157,15 +161,15 @@ function _getAllFiles(token, newSummary, sectionText){
 	  return fetch(urlGET, header);
 }
 
-function _addSummaries(token, newSum, sectText, nameOfFile){
+function _addSummariesAction(a_token, a_new_sum, a_sect_text, a_name_of_file){
 	  let urlAddSum = "http://127.0.0.1:8000/api/addUserSummary/";
-	  let strAuth = "JWT ".concat(token);
+	  let strAuth = "JWT ".concat(a_token);
 	  let authString = strAuth.replace("\\\\", "");
 	  let header = {
 		    method: 'POST',
-		    body:  JSON.stringify({"file_name": nameOfFile,
-			                         "section": sectText,
-			                         "summary_text": newSum
+		    body:  JSON.stringify({"file_name": a_name_of_file,
+			                         "section": a_sect_text,
+			                         "summary_text": a_new_sum
 			                        }),
 		    headers: {
 			      "Authorization": authString
@@ -175,63 +179,74 @@ function _addSummaries(token, newSum, sectText, nameOfFile){
 	  return fetch(urlAddSum, header);
 }
 
-export function addSummaries(token, newSummary, sectionText, nameOfFile){
+export function addSummariesAction(
+    a_token,
+    a_new_summary,
+    a_section_text,
+    a_name_of_file
+) {
 	return dispatch =>{
 		dispatch(isLoading(true));
-		_addSummaries(token, newSummary, sectionText, nameOfFile).then((response)=>{
-			if(response.ok){
-				return response.status
-			} 
-		}).then((data)=>{
-			if(data === 200){
-				dispatch(getAllFiles(token));
-				dispatch(isLoading(false));
-			}
+		  _addSummariesAction(a_token, a_new_summary, a_section_text, a_name_of_file)
+          .then((response)=>{
 
-		}).catch((err)=>{
-			console.log(err)
-		})
+			        if(response.ok){
+				          return response.status;
+			        }
+		      }).then((data)=>{
+
+			        if(data === 200){
+				          dispatch(getAllFilesAction(a_token));
+				          dispatch(isLoading(false));
+			        }
+              
+		      }).catch((err)=>{
+			        console.log(err);
+		      })
 	};
 }
 
 
-export function getAllFiles(token){
+export function getAllFilesAction(a_token){
 	return dispatch =>{
-		dispatch(isLoading(true));
-		_getAllFiles(token).then((response)=>{
+		  dispatch(isLoading(true));
+		  _getAllFilesAction(a_token).then((response)=>{
+
 			if(response.ok){
 				  return response.json();
-			} else{
-		        return response.status;
-			} 
-		}).then((data) =>{
-			if(data === 400){
-				dispatch(isLoading(false));
-				let message = "Failed to get files";
-		        dispatch(GetFailed(message));
-		        dispatch(openDialog());
-		        setTimeout(()=>{dispatch(closeDialog())}, 2000);
-		        return;
+			} else {
+		      return response.status;
 			}
 
-	        dispatch(GetFiles(data.Files));
-	        dispatch(isLoading(false));
-	        return;
+		}).then((data) =>{
+
+			if(data === 400){
+				  dispatch(isLoading(false));
+				  let message = "Failed to get files";
+		      dispatch(getFailedAction(message));
+		      dispatch(openDialogAction());
+		      setTimeout(()=>{dispatch(closeDialogAction());}, 2000);
+		      return;
+			}
+
+	      dispatch(getFilesAction(data.Files));
+	      dispatch(isLoading(false));
+	      return;
 
 		}).catch((err) =>{
-			console.log(err);
+			  console.log(err);
 		});
 	};
 }
 
-export function closeDialog(){
+export function closeDialogAction(){
 	return {
-		type: types.DIALOG_CL,
-	}
+		type: types.DIALOG_CL
+	};
 }
 
-export function openDialog(){
+export function openDialogAction(){
 	return {
-		type: types.DIALOG_OP,
-	}
+		type: types.DIALOG_OP
+	};
 }
