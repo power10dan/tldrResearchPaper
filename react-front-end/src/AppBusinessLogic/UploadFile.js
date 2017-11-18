@@ -188,9 +188,12 @@ function mapStateToProps(state){
 function mapDispatchToProps(dispatch){
 	return({
 		getFiles: (jwtToken)=>{dispatch(getAllFilesAction(jwtToken));},
-		getPDF: (fileName, jwtToken)=>{dispatch(downloadPDFAction(jwtToken, fileName));},
-		upload: (file, jwtToken, nameOfFile)=>{dispatch(uploadFileAction(file, jwtToken, nameOfFile));},
-		addSum: (jwtToken, summary, section, nameOfFile)=>{dispatch(addSummariesAction(jwtToken,summary, section, nameOfFile))}
+		getPDF: (fileName, jwtToken)=>
+      {dispatch(downloadPDFAction(jwtToken, fileName));},
+		upload: (file, jwtToken, nameOfFile)=>
+      {dispatch(uploadFileAction(file, jwtToken, nameOfFile));},
+		addSum: (jwtToken, summary, section, nameOfFile)=>
+      {dispatch(addSummariesAction(jwtToken,summary, section, nameOfFile))}
 	})
 }
 
