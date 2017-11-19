@@ -4,21 +4,21 @@ import { isLoadingAction } from '../Actions/LoadingActions.js';
 function __uploadFileAction(a_success_mess){
  	return {
  		  type: types.UPLOADFILE,
- 		  successMessage: a_success_mess
+      a_success_msg: a_success_mess
     };
 }
 
 export function deleteFileAction(a_new_files){
 	return {
-        type: types.DELETEFILE,
-        fileDel: a_new_files
+      type: types.DELETEFILE,
+      a_file_del: a_new_files
     };
 }
 
 export function getFilesAction(a_data){
     return {
         type: types.GETFILE,
-        files: a_data
+        st_files: a_data
      };
 }
 
@@ -30,24 +30,24 @@ export function doneGetAction(){
 
 export function uploadFailedAction(a_err_message){
  	return {
- 		type: types.UPLOAD_FAILED,
- 		errUpload: a_err_message
+ 		  type: types.UPLOAD_FAILED,
+      a_err_upload: a_err_message
  	};
 }
 
 export function getFailedAction(a_err_message){
  	return{
- 		type: types.GET_FAILED,
- 		errGet: a_err_message
+ 		  type: types.GET_FAILED,
+      a_err_file: a_err_message
  	};
 }
 
 export function getPDFSuccessAction(a_message, a_data, a_file_name){
   return{
   	  type: types.GETPDFSUCCESS,
-  	  errDownload: a_message,
-      fileName: a_file_name,
-      data: a_data
+      a_err_file: a_message,
+      a_file_name: a_file_name,
+      a_data: a_data
   };
 }
 
@@ -149,18 +149,6 @@ export function uploadFileAction(file, a_token, a_file_name, a_prev_file_state){
 	};
 }
 
-function _getAllFilesAction(a_token, a_new_summary, a_section_text){
-	  let urlGET = "http://127.0.0.1:8000/api/getXMLAndSums/?num_files=5";
-	  let strAuth = "JWT".concat(a_token);
-	  let authString = strAuth.replace("\\\\", "");
-	  let header = {
-		    method: 'GET',
-		    headers: {"Authorization": authString},
-	  };
-
-	  return fetch(urlGET, header);
-}
-
 function _addSummariesAction(a_token, a_new_sum, a_sect_text, a_name_of_file){
 	  let urlAddSum = "http://127.0.0.1:8000/api/addUserSummary/";
 	  let strAuth = "JWT ".concat(a_token);
@@ -206,11 +194,22 @@ export function addSummariesAction(
 	};
 }
 
+function _getAllFilesAction(a_token, a_num_files){
+	  let urlGET = "http://127.0.0.1:8000/api/getXMLAndSums/?num_files=".concat(a_num_files);
+	  let strAuth = "JWT" + " " + a_token;
+	  let authString = strAuth.replace("\\\\", "");
+	  let header = {
+		    method: 'GET',
+		    headers: {"Authorization": authString},
+	  };
+
+	  return fetch(urlGET, header);
+}
 
 export function getAllFilesAction(a_token){
 	return dispatch =>{
 		  dispatch(isLoadingAction(true));
-		  _getAllFilesAction(a_token).then((response)=>{
+		  _getAllFilesAction(a_token, 8).then((response)=>{
 
 			if(response.ok){
 				  return response.json();

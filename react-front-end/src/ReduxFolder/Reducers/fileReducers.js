@@ -6,48 +6,48 @@ export default function genStateReducer(state = generalState, action) {
     switch (action.type) {
         case types.UPLOADFILE:
             return Object.assign({}, state, {
-                successMess: action.successMessage,
-                errorUploadFile: ""
+                st_success_msg: action.a_success_msg,
+                st_err_upload: ""
             });
 
         case types.GETPDFSUCCESS:
         fileSaver.saveAs(new Blob([action.data]) , action.fileName);
 
             return Object.assign({}, state, {
-                successMess: action.successMessage,
+                st_success_msg: action.a_success_msg,
             });
 
         case types.DELETEFILE:
            return Object.assign({}, state, {
-                files: action.fileDel
+                files: action.a_file_del
             });
         case types.GETFILE:
             return Object.assign({}, state, {
-                getFile: true
+                st_get_file: true
             });
         case types.DONEGET:
             return Object.assign({}, state, {
-                getFile: false
+                st_get_file: false
             });
         case types.UPLOAD_FAILED:
             return Object.assign({}, state, {
-                errorUploadFile: action.errUpload,
-                successMess: "",
-                getFile: false
+                st_err_upload: action.a_err_upload,
+                st_success_msg: "",
+                st_get_file: false
             });
         case types.GET_FAILED:
            return Object.assign({}, state, {
-                errorRetrieveFile: action.errGet,
-                getFile: false
+               st_err_file: action.a_err_file,
+               st_get_file: false
 
             });
         case types.DIALOG_OP:
             return Object.assign({}, state, {
-                opDialog: true
+                st_is_open_dialog: true
             });
         case types.DIALOG_CL:
             return Object.assign({}, state, {
-                opDialog: false
+                st_is_open_dialog: false
             });
 
         default:

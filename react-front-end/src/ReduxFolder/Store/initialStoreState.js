@@ -14,23 +14,23 @@ export const createProfileST = {
 };
 
 export const userProfileST = {
-	st_username: "",
-	st_user_email: "",
-	st_token: ""
+	  st_username: "",
+	  st_user_email: "",
+	  st_token: ""
 };
 
 export const generalState = {
-    files: [],
-    favorites: [ ],
-	upvotedSummaries: [ ],
-	errorUploadFile: "",
-	errorRetrieveFile: "",
-	getFile: false,
-	opDialog: false,
-	successMess: ""
+    st_files: [],
+    st_favorites: [ ],
+	  st_upvoted_sums: [ ],
+    st_err_upload: "",
+    st_err_file: "",
+    st_get_file: false,
+    st_is_open_dialog: false,
+    st_success_msg: ""
 };
 
 export const isLoadingST = {
-	st_is_load: false
+	  st_is_load: false
 };
 
