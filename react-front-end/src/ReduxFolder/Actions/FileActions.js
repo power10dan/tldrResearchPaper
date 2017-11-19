@@ -18,7 +18,7 @@ export function deleteFileAction(a_new_files){
 export function getFilesAction(a_data){
     return {
         type: types.GETFILE,
-        st_files: a_data
+        a_files: a_data
      };
 }
 
@@ -190,17 +190,17 @@ export function addSummariesAction(
               
 		      }).catch((err)=>{
 			        console.log(err);
-		      })
+		      });
 	};
 }
 
 function _getAllFilesAction(a_token, a_num_files){
 	  let urlGET = "http://127.0.0.1:8000/api/getXMLAndSums/?num_files=".concat(a_num_files);
-	  let strAuth = "JWT" + " " + a_token;
+	  let strAuth = "JWT ".concat(a_token);
 	  let authString = strAuth.replace("\\\\", "");
 	  let header = {
 		    method: 'GET',
-		    headers: {"Authorization": authString},
+		    headers: {"Authorization": authString}
 	  };
 
 	  return fetch(urlGET, header);

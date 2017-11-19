@@ -14,7 +14,7 @@ export default function genStateReducer(state = generalState, action) {
         fileSaver.saveAs(new Blob([action.data]) , action.fileName);
 
             return Object.assign({}, state, {
-                st_success_msg: action.a_success_msg,
+                st_success_msg: action.a_success_msg
             });
 
         case types.DELETEFILE:
@@ -23,7 +23,8 @@ export default function genStateReducer(state = generalState, action) {
             });
         case types.GETFILE:
             return Object.assign({}, state, {
-                st_get_file: true
+                st_get_file: true,
+                st_files: action.a_files
             });
         case types.DONEGET:
             return Object.assign({}, state, {
