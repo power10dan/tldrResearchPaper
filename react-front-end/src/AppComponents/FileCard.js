@@ -54,18 +54,18 @@ const FileCardView =  (props) =>{
 		<div>
 			<Card className={props.classes.card} >
 				<CardContent>
-					<Typography type="h2" className={props.classes.title}>
-			            {props.title}
+					<Typography type="h2" className={props.classes.p_title}>
+			            {props.p_title}
 			        </Typography>
-				    <Typography type="h3" className={props.classes.summaryText}>
-				        {"Intro Summary: " + props.summaryText}
+				    <Typography type="h3" className={props.classes.p_summary_txt}>
+				        {"Intro Summary: " + props.p_summary_txt}
 				     </Typography>
-			       
+
 			        <CardActions className={props.classes.cardAction}>
-			        	<Button color="primary" className={props.classes.buttonStyle} onClick={props.cardDialog}>
+			        	<Button color="primary" className={props.classes.buttonStyle} onClick={props.p_card_dialog}>
 					        Add Summary
 					     </Button>
-					      <Button color="primary" className={props.classes.buttonStyle} onClick={props.getPDF} >
+					      <Button color="primary" className={props.classes.buttonStyle} onClick={props.p_getPDF} >
 					        Download Paper
 					     </Button>
 			        </CardActions>

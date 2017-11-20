@@ -57,24 +57,23 @@ class UploadFile extends React.Component{
 		  this.props.getUpload(fileObj.base64, this.state.c_token, nameOfFile);
 	}
 
-    handleGetPDF = () => {
-        let file_name = this.props.files[1].FILES.fileName
-        this.props.getPDF(file_name, this.state.c_token)
-    }
+  handleGetPDF = () => {
+    this.props.getPDF(this.props.file_name, this.state.c_token)
+  }
 
-	openCardDialog = ()=>{
+	handleOpenCardDialog = ()=>{
 		this.setState({c_is_open_sum: true});
 	}
 
-	closeCardDialog =  () =>{
+	handleCloseCardDialog =  () =>{
 		this.setState({c_is_open_sum: false});
 	}
 
-	getSumm = (text)=>{
+	handleGetSumm = (text)=>{
 		this.setState({c_new_sum: text.target.value});
 	}
 
-	getSectionOfSum = (text)=>{
+	handleGetSectionOfSum = (text)=>{
 		this.setState({c_sec_of_sum: text.target.value});
 	}
 
@@ -88,9 +87,9 @@ class UploadFile extends React.Component{
 								this.state.c_sec_of_sum,
 								fileToUpload
 							 );
-			this.closeCardDialog();	
+			this.handleCloseCardDialog();	
 		} else{
-			this.closeCardDialog();
+			this.handleCloseCardDialog();
 		}	
 	}
 
@@ -118,9 +117,9 @@ class UploadFile extends React.Component{
             />
 
 				    <GridCardView arrayOfData = {this.state.c_file_data}
-				     	            cardDia     = {this.openCardDialog}
+				     	            cardDia     = {this.handleOpenCardDialog}
 				     	            isOpenSum   = {this.state.c_is_open_sum}
-				     	            closeDia    = {this.closeCardDialog}
+				     	            closeDia    = {this.handleCloseCardDialog}
 				    />
 				  	</div>
 				);
@@ -146,20 +145,20 @@ class UploadFile extends React.Component{
                     openDialog = {this.state.c_op_window}
           />
 
-				  <AppTopBar uploadFile = {this.handleClick}
+				  <AppTopBar uploadFile       = {this.handleClick}
                      loading          = {false}
                      loggedIn         = {true}
                      disable          = {false}
           />
 
 				  <GridCardView arrayOfData      = {this.state.c_file_data} 
-				                cardDia          = {this.openCardDialog} 
+				                cardDia          = {this.handleOpenCardDialog} 
 				                isOpenSum        = {this.state.c_is_open_sum}
-				                closeDia         = {this.closeCardDialog}
-				                sectionFunc      = {this.getSectionOfSum}
-				                summaryFunc      = {this.getSumm}
+				                closeDia         = {this.handleCloseCardDialog}
+				                sectionFunc      = {this.handleGetSectionOfSum}
+				                summaryFunc      = {this.handleGetSumm}
 				                submitNewSummary = {this.handleAddSummary}
-                        getPDF           = {this.handleGetPDF}
+                        p_getPDF         = {this.handleGetPDF}
 				  />	
 				</div>
 			);
@@ -192,7 +191,7 @@ function mapDispatchToProps(dispatch){
 	return({
 		getFiles: (jwtToken)=>{dispatch(getAllFilesAction(jwtToken));},
 
-		getPDF: (fileName, jwtToken)=>
+		getPDF: (fileName, jwtToken) =>
       {dispatch(downloadPDFAction(jwtToken, fileName));},
 
 		getUpload: (file, jwtToken, nameOfFile)=>
