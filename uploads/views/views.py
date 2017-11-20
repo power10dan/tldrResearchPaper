@@ -187,17 +187,16 @@ class FileUploadView(APIView):
             fileopened.write(base64.decodestring(newString[1]))
         fileopened.close()
 
-        # GROBID STUFF USING PY4J
-        print("Grobid Working")
+        print("Connecting to Grobid server")
         inputDir = settings.MEDIA_DOCS
         outputDir = settings.XML_DOCS
-        gateway = JavaGateway()
-        grobidClass = gateway.entry_point
-        consolidateHead = False
-        consolidateCite = False
-        status = grobidClass.PDFXMLConverter(inputDir, outputDir, consolidateHead, consolidateCite)
+        url = 'http://localhost:8080/processFulltextDocument'
+        response = request.post(url,files={'input':open(path,'rb')})
+        with open(outputDir+filename[:-4]+'.fulltext.tei.xml','w') as outputFile:
+            outputFile.write(response.text)
+
         print("Grobid Finished")
-        summarize(outputDir+filename[:-4]+'.fulltext.tei.xml',filename[:-4])
+        summarize(outputDir+filename[:-4]+'.fulltext.tei.xml',filename[:-4],[])
         return Response(status=204)
 
 class GetAllFileNames(APIView):
