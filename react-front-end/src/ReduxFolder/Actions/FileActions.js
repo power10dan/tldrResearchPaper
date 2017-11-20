@@ -96,7 +96,10 @@ export function downloadPDFAction(a_token, a_file_name, a_prev_file_state){
                                        a_file_name));
         return response.json();
       } else {
-        dispatch(isLoadingAction(false));
+				  let message = response.reason_phrase;
+          dispatch(isLoadingAction(false));
+				  dispatch(uploadFailedAction(message));
+        
         return response.status;
       }
     }).then((data)=>{

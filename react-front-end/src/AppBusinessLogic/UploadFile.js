@@ -57,8 +57,8 @@ class UploadFile extends React.Component{
 		  this.props.getUpload(fileObj.base64, this.state.c_token, nameOfFile);
 	}
 
-  handleGetPDF = () => {
-    this.props.getPDF(this.props.file_name, this.state.c_token)
+  handleGetPDF = (file_name) => {
+    this.props.getPDF(file_name, this.state.c_token)
   }
 
 	handleOpenCardDialog = ()=>{
@@ -120,6 +120,7 @@ class UploadFile extends React.Component{
 				     	            cardDia     = {this.handleOpenCardDialog}
 				     	            isOpenSum   = {this.state.c_is_open_sum}
 				     	            closeDia    = {this.handleCloseCardDialog}
+                          p_getPDF    = {this.handleGetPDF}
 				    />
 				  	</div>
 				);
