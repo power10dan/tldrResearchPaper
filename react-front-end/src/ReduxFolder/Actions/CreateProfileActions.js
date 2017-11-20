@@ -1,34 +1,37 @@
 import * as types from '../Constants/ActionTypes';
-import { saveCred } from '../Actions/SaveCred.js';
-import { DialogOpenCreate , DialogCloseCreate } from './DialogActions.js';
-import { LogInSuccess, Login } from './LoginActions.js';
+import { dialogOpenCreateAction , dialogCloseCreateAction } from './DialogActions.js';
+import { logInSuccessAction, loginAction } from './LoginActions.js';
 
-function _createProfileAction(username,
-                              password_one,
-                              password_two,
-                              account_email_address) {
+function _createProfileAction(
+    a_username,
+    a_password_one,
+    a_password_two,
+    a_account_email
+) {
     let url = "http://127.0.0.1:8000/rest-auth/registration/";
     let request = {
 			  method: 'post',
-			  body: JSON.stringify({ username: username, 
-                               account_emailaddress: account_email_address, 
-                               password1: password_one, 
-                               password2: password_two
+			  body: JSON.stringify({ username: a_username,
+                               account_emailaddress: a_account_email,
+                               password1: a_password_one,
+                               password2: a_password_two
                             }),
 			  headers: {
         	  'Content-Type': 'application/json'
         }
-		}; 
+		};
+
     return fetch(url, request);
 }
 
-export function createProfileAction(user_name,
-                                    password_one,
-                                    password_two,
-                                    user_email) {
+export function createProfileAction(
+    a_user_name,
+    a_password,
+    a_password2,
+    a_user_email
+) {
 	return dispatch => {
-  		  _createProfile(user_name, password_one, password_two, user_email)
-
+  		  _createProfileAction(a_user_name, a_password, a_password2, a_user_email)
             .then((response) => {
 
                 if(response.status === 201){
@@ -36,50 +39,52 @@ export function createProfileAction(user_name,
                 }
 
                 if(response.status === 400 ){
-                    dispatch(createFailedAction("Username already exists"));
-                    dispatch(DialogOpenCreate()),
-                    setTimeout(()=>{dispatch(DialogCloseCreate())}, 2000);
+                    dispatch(createFailedAction("Username already existied"));
+                    dispatch(dialogOpenCreateAction());
+                    setTimeout(()=>{dispatch(dialogCloseCreateAction());}, 2000);
                     return;
                 }
 
   		      }).then((data)=>{
 
                 if(typeof data !== 'undefined'){
-
                     dispatch(createSuccessAction("Profile Created!"));
-                    dispatch(Login(user_name, user_email, password_one));
-                    dispatch(LogInSuccess("You have logged in!"));
-                    dispatch(DialogOpenCreate()),
-                    setTimeout(()=>{dispatch(DialogCloseCreate());}, 2000);
+                    dispatch(loginAction(a_user_name, a_user_email, a_password));
+                    dispatch(logInSuccessAction("You have logged in!"));
+                    dispatch(dialogOpenCreateAction());
+                    setTimeout(()=>{dispatch(dialogCloseCreateAction());}, 2000);
+
+                    // save the token to the user profile
+                    // dispatch(saveCred(a_user_name, a_user_email, data.key));
 
                 }
   		      }).catch((err) =>{
   			        if(err.message === "Failed to fetch"){
                     dispatch(createFailedAction(
-                        "Server Connection Refused. \
-                         Are you connected to the WIFI?"));
+                        "Server Connection Refused. Are \
+                        you connected to the WIFI?"));
                 }
   		      });
 	   };
 }
 
-export function createFailedAction(errMessage){
+export function createFailedAction(a_err_message){
     return {
         type: types.FAIL_CREATE,
-        errorMess: errMessage
+        a_prf_err_msg: a_err_message
     };
 }
 
-export function createSuccessAction(successMess){
+export function createSuccessAction(a_success_mess){
      return {
         type: types.CREATE_SUCCESS,
-        successMessage: successMess 
+        a_prf_success_msg: a_success_mess 
      };
 }
 
 export function resetDialogAction(){
     return {
       type: types.RESET_DIALOG
-    }
+    };
 
 }
