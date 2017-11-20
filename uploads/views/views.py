@@ -14,6 +14,7 @@ from django.http import HttpResponse
 from django.http import HttpRequest
 from django.http import FileResponse
 from django.http.request import QueryDict, MultiValueDict
+from wsgiref.util import FileWrapper
 
 from py4j.java_gateway import JavaGateway
 from uploads.lib.grabFile import grabFileToReq
@@ -122,14 +123,10 @@ class getPDFFile(APIView):
     """
 
     def get(self, request):
-        # permission_classes = (isAdminOrReadOnly, )
+        permission_classes = (isAdminOrReadOnly, )
         root_dir = settings.MEDIA_DOCS
         response = Response(status=status.HTTP_400_BAD_REQUEST)
         fail_str = "File not found!"
-
-        # filename = request.GET.get("file_name")
-        # filename = request.GET.get("fileName")
-
 
         for filename in request.GET.dict():
 
@@ -138,8 +135,11 @@ class getPDFFile(APIView):
                 matches = glob.glob(path + ".*")
 
             if matches:
-                response = FileResponse(open(matches[0], 'rb'))
-                response['Content-Disposition'] = "attachment; filename=%s" % os.path.basename(matches[0])
+                f = open(matches[0], 'rb')
+                response = HttpResponse(content=f)
+                response['Content-Type'] = 'application/pdf'
+                response['Content-Disposition'] = 'attachment; filename=%s' \
+                                                  % os.path.basename(matches[0])
 
             if not filename or not matches:
                 response.reason_phrase = fail_str
