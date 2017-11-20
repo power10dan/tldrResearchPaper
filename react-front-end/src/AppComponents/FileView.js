@@ -29,22 +29,20 @@ const GridCardView = (props)=>{
 		<div className={classes.root} >
 			<GridList className={classes.gridList} cols={2} >
 				{  props.arrayOfData.map(card =>(
-						<FileCard 
-							title={card.FILES.title} 
-							summaryText = {card.FILES.Intro_summary} 
-							cardDialog={props.cardDia} 
-							closeDialog={props.closeDia}
-              getPDF={props.getPDF}
+					 <FileCard title       = {card.FILES.title}
+						         summaryText = {card.FILES.Intro_summary} 
+					           cardDialog  = {props.cardDia} 
+					           closeDialog = {props.closeDia}
+                     getPDF      = {props.getPDF}
 						/>
 					))
 				}
 			</GridList>
-			<AddSumDialog  
-			      open={props.isOpenSum} 
-			      closeDialog={props.closeDia} 
-			 	  getSection = {props.sectionFunc}
-			 	  getNewSummary = {props.summaryFunc}
-			 	  submitNewSummary = {props.submitNewSummary}
+			<AddSumDialog open             = {props.isOpenSum} 
+			              closeDialog      = {props.closeDia} 
+			 	            getSection       = {props.sectionFunc}
+			 	            getNewSummary    = {props.summaryFunc}
+			 	            submitNewSummary = {props.submitNewSummary}
 			/>
 		</div>
 	); 
