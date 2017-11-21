@@ -1,6 +1,7 @@
 import * as types from '../Constants/ActionTypes.js';
 import { isLoadingAction } from '../Actions/LoadingActions.js';
 import { saveAs } from 'file-saver';
+import { download } from 'downloadjs';
 
 function __uploadFileAction(a_success_mess){
  	return {
@@ -87,25 +88,24 @@ function _downloadFileAction(a_token, a_file_name){
 export function downloadPDFAction(a_token, a_file_name){
   return dispatch=>{
       dispatch(isLoadingAction(true));
-      _downloadFileAction(a_token, a_file_name).then((response) => {
-
-      if(response.ok){
-
-      	  dispatch(getPDFSuccessAction(response.status));
-          return response;
-
-      } else {
-				  let message = response.reason_phrase;
-          dispatch(isLoadingAction(false));
-				  dispatch(uploadFailedAction(message));
+      _downloadFileAction(a_token, a_file_name)
+          .then((response) => {
+              if(response.ok){
+      	          dispatch(getPDFSuccessAction(response.status));
+                  return response.blob();
+                  
+              } else {
+				          let message = response.reason_phrase;
+                  dispatch(isLoadingAction(false));
+				          dispatch(uploadFailedAction(message));
         
-        return response.status;
-      }
-    }).then((data)=>{
-			  console.log(data);
-		}).catch((err)=>{
-			  console.log(err);
-		});;
+                  return response.status;
+              }
+          }).then((data)=>{
+              saveAs(data, "foo.pdf");
+		      }).catch((err)=>{
+			        console.log(err);
+		      });;
   };
 }
 
