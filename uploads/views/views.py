@@ -21,11 +21,10 @@ from py4j.java_gateway import JavaGateway
 from uploads.lib.grabFile import grabFileToReq
 
 import os
-import mimetypes
 import json
-import re
 import base64
 import glob
+import requests
 import xml.etree.ElementTree as ET
 from bs4 import BeautifulSoup
 
@@ -191,12 +190,12 @@ class FileUploadView(APIView):
         inputDir = settings.MEDIA_DOCS
         outputDir = settings.XML_DOCS
         url = 'http://localhost:8080/processFulltextDocument'
-        response = request.post(url,files={'input':open(path,'rb')})
+        response = requests.post(url,files={'input':open(path,'rb')})
         with open(outputDir+filename[:-4]+'.fulltext.tei.xml','w') as outputFile:
             outputFile.write(response.text)
 
         print("Grobid Finished")
-        summarize(outputDir+filename[:-4]+'.fulltext.tei.xml',filename[:-4],[])
+        summarize(outputDir+filename[:-4]+'.fulltext.tei.xml',filename[:-4])
         return Response(status=204)
 
 class GetAllFileNames(APIView):
