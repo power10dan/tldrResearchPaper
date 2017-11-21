@@ -1,7 +1,6 @@
 import * as types from '../Constants/ActionTypes.js';
 import { isLoadingAction } from '../Actions/LoadingActions.js';
 import { saveAs } from 'file-saver';
-import { download } from 'downloadjs';
 
 function __uploadFileAction(a_success_mess){
  	return {
