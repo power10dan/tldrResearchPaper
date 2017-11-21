@@ -94,7 +94,7 @@ if 'TRAVIS' in os.environ:
             'ENGINE':   'django.db.backends.postgresql_psycopg2',
             'NAME':     'travisci',
             'USER':     'postgres',
-            'PASSWORD': '',
+            'PASSWORD': 'iampost',
             'HOST':     'localhost',
             'PORT':     '',
         }
@@ -105,7 +105,7 @@ else:
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'tldrDb',
         'USER': 'postgres',
-        'PASSWORD': 'iamthepostgresuserpassword', # also bad practice most likely
+        'PASSWORD': 'iampostgresuserpassword', # also bad practice most likely
         'HOST': '127.0.0.1',
         'PORT': '5432'
     }

@@ -10,6 +10,7 @@ from uploads.models.models import SectionSummary
 from uploads.permissions.permissions import isAdminOrReadOnly
 from uploads.serializers.serializers import UserSerializer
 from uploads.lib.summarize import summarize, create_DB_summary
+from uploads.lib.cleanup import cleanUp
 
 from django.core import serializers
 from django.http import HttpResponse
@@ -25,6 +26,7 @@ import json
 import re
 import base64
 import glob
+import requests
 import xml.etree.ElementTree as ET
 from bs4 import BeautifulSoup
 
@@ -114,6 +116,7 @@ class getXMLAndSums(APIView):
         num_files = None
         num_files = request.GET.get('num_files')
         file_names = request.GET.getlist("file_names")
+
         response = Response(status=status.HTTP_400_BAD_REQUEST)
 
         if file_names:
@@ -147,6 +150,12 @@ class getXMLAndSums(APIView):
                 settings.XML_DOCS,
                 settings.SUMMARY_DOCS)
 
+        #############################################
+
+        cleanUp()
+
+        #############################################
+        
         return response
 
 
@@ -165,18 +174,41 @@ class FileUploadView(APIView):
             fileopened.write(base64.decodestring(newString[1]))
         fileopened.close()
 
-        # GROBID STUFF USING PY4J
-        print("Grobid Working")
+
+        print("Connecting to Grobid server")
         inputDir = settings.MEDIA_DOCS
         outputDir = settings.XML_DOCS
-        gateway = JavaGateway()
-        grobidClass = gateway.entry_point
-        consolidateHead = False
-        consolidateCite = False
-        status = grobidClass.PDFXMLConverter(inputDir, outputDir, consolidateHead, consolidateCite)
+        url = 'http://192.168.99.100:8080/processFulltextDocument'
+
+        print("got to the request")
+
+        response = requests.post(url, files={'input':open(path,'rb')})
+
+        print("past the request")
+
+        print("trying to write to file")
+
+        with open(outputDir+filename[:-4]+'.fulltext.tei.xml','w') as outputFile:
+            outputFile.write(response.text)
+
+        print("wrote to file")
+
         print("Grobid Finished")
         summarize(outputDir+filename[:-4]+'.fulltext.tei.xml',filename[:-4])
         return Response(status=204)
+
+        # GROBID STUFF USING PY4J
+        #print("Grobid Working")
+        #inputDir = settings.MEDIA_DOCS
+        #outputDir = settings.XML_DOCS
+        #gateway = JavaGateway()
+        #grobidClass = gateway.entry_point
+        #consolidateHead = False
+        #consolidateCite = False
+        #status = grobidClass.PDFXMLConverter(inputDir, outputDir, consolidateHead, consolidateCite)
+        #print("Grobid Finished")
+        #summarize(outputDir+filename[:-4]+'.fulltext.tei.xml',filename[:-4])
+        #return Response(status=204)
 
 class GetAllFileNames(APIView):
     def get(self, request):
