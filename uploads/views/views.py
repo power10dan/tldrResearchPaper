@@ -30,6 +30,50 @@ import requests
 import xml.etree.ElementTree as ET
 from bs4 import BeautifulSoup
 
+class SummaryVote(APIView):
+    """
+    Increase the vote count by one.
+    """
+    def post(self, request):
+        response = Response(status=status.HTTP_400_BAD_REQUEST)
+
+        filename = request.POST.get('file_name')
+        header = request.POST.get('header')
+        author = request.POST.get('author')
+
+        if filename and header and author:
+            summary_list = SectionSummary.objects.filter(filename=filename, header=header, author=author)
+            if len(summary_list) == 1:
+                summary = summary_list[0]
+                old_votes = summary.votes
+                new_votes = old_votes + 1
+                summary.votes = new_votes
+                summary.save()
+
+                response = Response(status=status.HTTP_200_OK)
+
+        return response
+
+    """
+    Get the number of votes for a specific summary.
+    """
+    def get(self, request):
+        response = Response(status=status.HTTP_400_BAD_REQUEST)
+
+        filename = request.GET.get('file_name')
+        header = request.GET.get('header')
+        author = request.GET.get('author')
+
+        if filename and header and author:
+            summary_list = SectionSummary.objects.filter(filename=filename, header=header, author=author)
+            if len(summary_list) == 1:
+                summary = summary_list[0]
+                num_votes = summary.votes
+
+                votes_data = {'votes': num_votes}
+                response = HttpResponse(json.dumps(votes_data), content_type="application/json")
+
+        return response
 
 class SummaryOutputView(APIView):
     """

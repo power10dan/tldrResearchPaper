@@ -105,7 +105,7 @@ else:
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'tldrDb',
         'USER': 'postgres',
-        'PASSWORD': 'iampostgresuserpassword', # also bad practice most likely
+        'PASSWORD': 'iamthepostgresuserpassword', # also bad practice most likely
         'HOST': '127.0.0.1',
         'PORT': '5432'
     }
@@ -144,7 +144,7 @@ REST_FRAMEWORK = {
 }
 
 JWT_AUTH = {
-        'JWT_EXPIRATION_DELTA' : datetime.timedelta(seconds=300)
+        'JWT_EXPIRATION_DELTA' : datetime.timedelta(seconds=30000)
         }
 
 # Internationalization

@@ -34,6 +34,7 @@ def cleanUp():
             ## If the file does not exist, delete the summary.
             if (sum_file not in dir_filenames):
                 summary.delete()
+                cleanUpFile(sum_file)
 
         ## Create a list of filenames associated with summaries
         ## in the database.
@@ -64,14 +65,12 @@ def cleanUpFile(file_name):
         ## Removes any XML files associated with the PDF.
         xml_file = file_name[:-4] + '.fulltext.tei.xml'
         xml_path = settings.XML_DOCS + xml_file
-
         if(os.path.isfile(xml_path)):
             os.remove(xml_path)
 
 
         ## Removes any summary files associated with the PDF.
         sum_file = file_name[:-4] + '.xml'
-        sum_file = settings.SUMMARY_DOCS + sum_file
-
-        if(os.path.isfile(sum_file)):
-            os.remove(sum_file)
+        sum_path = settings.SUMMARY_DOCS + sum_file
+        if(os.path.isfile(sum_path)):
+            os.remove(sum_path)
