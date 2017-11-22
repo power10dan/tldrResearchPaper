@@ -10,8 +10,6 @@ export default function genStateReducer(state = generalState, action) {
             });
 
         case types.GETPDFSUCCESS:
-        // saveAs(new Blob([action.a_data]) , action.a_file_name);
-
             return Object.assign({}, state, {
                 st_success_msg: action.a_success_msg
             });
@@ -39,7 +37,6 @@ export default function genStateReducer(state = generalState, action) {
            return Object.assign({}, state, {
                st_err_file: action.a_err_file,
                st_get_file: false
-
             });
         case types.DIALOG_OP:
             return Object.assign({}, state, {
@@ -49,6 +46,10 @@ export default function genStateReducer(state = generalState, action) {
             return Object.assign({}, state, {
                 st_is_open_dialog: false
             });
+        case types.ADD_PAPER_DL:
+            return Object.assign({}, state, {
+                st_dl_file_names: st_dl_file_names.push(action.a_dl_file_name)
+        });
 
         default:
             return state;
