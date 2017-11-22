@@ -33,7 +33,7 @@ const GridCardView = (props)=>{
 						         p_summary_txt  = {card.FILES.Intro_summary}
 					           p_card_dialog  = {props.cardDia}
 					           p_close_dialog = {props.closeDia}
-                     p_handleCheck  = {props.handleCheck.bind(this, card.FILES.fileName)}
+                     p_handleCheck  = {props.p_handleCheck.bind(this, card.FILES.fileName)}
 						/>
 					))
 				}

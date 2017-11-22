@@ -111,7 +111,7 @@ class FileCardView extends React.Component {
               <ExpandMoreIcon />
             </IconButton>
             <CheckBox tabIndex={-1}
-                      checked={props.p_handleCheck}
+                      onChange={this.props.p_handleCheck}
             />
 			    </CardActions>
           <Collapse in={this.state.expanded} transitionDuration="auto" unmountOnExit>

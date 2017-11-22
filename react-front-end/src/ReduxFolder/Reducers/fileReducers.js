@@ -47,8 +47,20 @@ export default function genStateReducer(state = generalState, action) {
                 st_is_open_dialog: false
             });
         case types.ADD_PAPER_DL:
+        let new_dl_set = state.st_dl_file_names;
+        let file_name = action.a_dl_file_name;
+
+        // if state has the file then we delete it from the set
+        if (new_dl_set.has(file_name)) {
+            new_dl_set.delete(file_name);
+         
+        // If state does not have the file then we add it
+        } else {
+            new_dl_set.add(file_name);
+        }
+        // now return by combining the new set into the state object
             return Object.assign({}, state, {
-                st_dl_file_names: st_dl_file_names.push(action.a_dl_file_name)
+                st_dl_file_names: new_dl_set
         });
 
         default:

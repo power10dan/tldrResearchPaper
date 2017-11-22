@@ -132,6 +132,7 @@ class UploadFile extends React.Component{
 				     	            cardDia     = {this.handleOpenCardDialog}
 				     	            isOpenSum   = {this.state.c_is_open_sum}
 				     	            closeDia    = {this.handleCloseCardDialog}
+                        p_handleCheck = {this.handleCheck}
 				    />
 				  	</div>
 				);
@@ -172,7 +173,7 @@ class UploadFile extends React.Component{
 				                sectionFunc      = {this.handleGetSectionOfSum}
 				                summaryFunc      = {this.handleGetSumm}
 				                submitNewSummary = {this.handleAddSummary}
-                        handleCheck      = {this.handleCheck}
+                        p_handleCheck    = {this.handleCheck}
 				  />	
 				</div>
 			);
