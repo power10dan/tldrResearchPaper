@@ -12,6 +12,7 @@
         "filesaverjs": "^1.2.0",
         "jss": "^8.1.0",
         "jss-rtl": "^0.2.1",
+        "material-ui-next": "^1.0.0-beta.20",
         "node-localstorage": "^1.3.0",
         "react": "^15.6.2",
         "react-popper": "^0.7.4",
