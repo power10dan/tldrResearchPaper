@@ -81,20 +81,38 @@ class SummaryOutputView(APIView):
     summary file in the filesystem, encodes it to base64, and then sends a
     response holding the xml file
     """
-    def post(self, request):
+    def get(self, request):
         permission_classes = (isAdminOrReadOnly, )
         root_dir = settings.SUMMARY_DOCS
         response = Response(status=status.HTTP_400_BAD_REQUEST)
         fail_str = "File not found!"
 
-        filename = request.POST.get("file_name")
+        filename = request.GET.get('file_name')
+        header = request.GET.get('header')
+        num = request.GET.get('num')
 
-        if filename:
+        if filename and header and num:
+            all_summary = SectionSummary.objects.filter(filename=filename, header=header)
+
+            if len(all_summary) <= int(num):
+                qs_json = serializers.serialize('json', all_summary)
+                response = HttpResponse(qs_json, content_type='application/json')
+            else:
+                some_summaries = all_summary[:int(num)]
+                qs_json = serializers.serialize('json', some_summaries)
+                response = HttpResponse(qs_json, content_type='application/json')
+
+        elif filename and header:
+            all_summary = SectionSummary.objects.filter(filename=filename, header=header)
+            qs_json = serializers.serialize('json', all_summary)
+            response = HttpResponse(qs_json, content_type='application/json')
+
+        elif filename:
             all_summary = SectionSummary.objects.filter(filename=filename)
             qs_json = serializers.serialize('json', all_summary)
             response = HttpResponse(qs_json, content_type='application/json')
 
-        if not filename:
+        else:
             response.reason_phrase = fail_str
 
         return response
