@@ -30,13 +30,6 @@ const AppTopBar = (props) =>{
 
 				       </ReactFileReader>
 
-			         <Button color="contrast"
-                       className={props.classes.buttonStyle}
-                       onClick={props.p_card_dialog}
-                       disabled >
-					       Add Summary
-					     </Button>
-
 					      <Button color="contrast"
                         className={props.classes.buttonStyle}
                         onClick={props.p_getPDF}
@@ -75,13 +68,6 @@ const AppTopBar = (props) =>{
 					      </Button>
 				       </ReactFileReader>
 
-			         <Button color="contrast"
-                       className={props.classes.buttonStyle}
-                       onClick={props.p_card_dialog}
-                       disabled >
-					       Add Summary
-					     </Button>
-
 					      <Button color="contrast"
                         className={props.classes.buttonStyle}
                         onClick={props.p_getPDF}
@@ -117,12 +103,6 @@ const AppTopBar = (props) =>{
 					          Upload Files
 					        </Button>
 					       </ReactFileReader>
-
-			         <Button color="contrast"
-                       className={props.classes.buttonStyle}
-                       onClick={props.p_card_dialog}>
-					       Add Summary
-					     </Button>
 
 					      <Button color="contrast"
                         className={props.classes.buttonStyle}
