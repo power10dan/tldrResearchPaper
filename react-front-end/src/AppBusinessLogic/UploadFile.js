@@ -3,6 +3,7 @@ import AppTopBar from '../AppComponents/AppTopBar.js';
 import {connect} from 'react-redux';
 import {getAllFilesAction,
         downloadPDFAction,
+        addPaperToDLAction,
         uploadFileAction,
         addSummariesAction} from '../ReduxFolder/Actions/FileActions.js';
 import ErrSnack from '../AppComponents/ErrDialog.js';
@@ -17,6 +18,7 @@ class UploadFile extends React.Component{
 			c_op_window: false,                 // is an op window open
 			c_token : "",                       // component variable for token
 			c_msg: "",                          // component message
+      c_dl_file_names: "",                // an array of filenames that changes
 			c_file_data :[],                    // array of file data
 			c_file_summaries: [],               // array of file summaries
 			c_is_open_sum: false,               // is summary dialog open
@@ -28,6 +30,7 @@ class UploadFile extends React.Component{
 	componentWillReceiveProps(nextProps){
 		this.setState({c_file_data: nextProps.st_files});
 		this.setState({c_op_window: nextProps.st_is_open_dialog});
+    this.setState({c_dl_file_names: nextProps.st_dl_file_names})
 
 		if(nextProps.st_is_load === true){
 			this.setState({c_is_fin: false});
@@ -57,8 +60,8 @@ class UploadFile extends React.Component{
 		  this.props.getUpload(fileObj.base64, this.state.c_token, nameOfFile);
 	}
 
-  handleGetPDF = (file_name) => {
-    this.props.getPDF(file_name, this.state.c_token)
+  handleGetPDF = () => {
+    this.props.getPDF(this.c_dl_file_names, this.state.c_token)
   }
 
 	handleOpenCardDialog = ()=>{
@@ -72,6 +75,15 @@ class UploadFile extends React.Component{
 	handleGetSumm = (text)=>{
 		this.setState({c_new_sum: text.target.value});
 	}
+
+/** 
+  * Function handleCheck, adds the file_name for a file represented by the
+  * card that holds the checkbox to a component array that is passed to getPDFs
+  * when download PDFs is clicked
+**/
+  handleCheck = (file_name) => {
+    this.props.getAddToDL(file_name);
+  }
 
 	handleGetSectionOfSum = (text)=>{
 		this.setState({c_sec_of_sum: text.target.value});
@@ -120,7 +132,6 @@ class UploadFile extends React.Component{
 				     	            cardDia     = {this.handleOpenCardDialog}
 				     	            isOpenSum   = {this.state.c_is_open_sum}
 				     	            closeDia    = {this.handleCloseCardDialog}
-                          p_getPDF    = {this.handleGetPDF}
 				    />
 				  	</div>
 				);
@@ -150,16 +161,18 @@ class UploadFile extends React.Component{
                      loading          = {false}
                      loggedIn         = {true}
                      disable          = {false}
+                     files            = {this.state.c_sel_files}
+                     p_getPDF         = {this.handleGetPDF}
           />
 
-				  <GridCardView arrayOfData      = {this.state.c_file_data} 
-				                cardDia          = {this.handleOpenCardDialog} 
+				  <GridCardView arrayOfData      = {this.state.c_file_data}
+				                cardDia          = {this.handleOpenCardDialog}
 				                isOpenSum        = {this.state.c_is_open_sum}
 				                closeDia         = {this.handleCloseCardDialog}
 				                sectionFunc      = {this.handleGetSectionOfSum}
 				                summaryFunc      = {this.handleGetSumm}
 				                submitNewSummary = {this.handleAddSummary}
-                        p_getPDF         = {this.handleGetPDF}
+                        handleCheck      = {this.handleCheck}
 				  />	
 				</div>
 			);
@@ -194,6 +207,9 @@ function mapDispatchToProps(dispatch){
 
 		getPDF: (fileName, jwtToken) =>
       {dispatch(downloadPDFAction(jwtToken, fileName));},
+
+		getAddToDL: (fileName, jwtToken) =>
+      {dispatch(addPaperToDLAction(fileName, jwtToken));},
 
 		getUpload: (file, jwtToken, nameOfFile)=>
       {dispatch(uploadFileAction(file, jwtToken, nameOfFile));},

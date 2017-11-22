@@ -69,7 +69,7 @@ function _uploadFileAction(a_file, a_token, a_file_name){
 	  return fetch(urlPOST, header);
 }
 
-function _downloadFileAction(a_token, a_file_name){
+function _downloadPDFAction(a_token, a_file_name){
     let urlGET = "http://127.0.0.1:8000/api/getPDFFile/?".concat(a_file_name);
     let strAuth = "JWT ".concat(a_token);
     let authString = strAuth.replace("\\\\","");
@@ -84,28 +84,41 @@ function _downloadFileAction(a_token, a_file_name){
     return fetch(urlGET, request);
 };
 
-export function downloadPDFAction(a_token, a_file_name){
-  return dispatch=>{
+/**
+ * Function expects a token and an array of file names to download, it then
+ * fetches the file for each file name from the server and queues the browser
+ * to save
+ **/
+export function downloadPDFAction(a_token, a_file_names){
+  return dispatch => {
       dispatch(isLoadingAction(true));
-      _downloadFileAction(a_token, a_file_name)
-          .then((response) => {
-              if(response.ok){
-      	          dispatch(getPDFSuccessAction(response.status));
-                  return response.blob();
-                  
-              } else {
-				          let message = response.reason_phrase;
-                  dispatch(isLoadingAction(false));
-				          dispatch(uploadFailedAction(message));
-        
-                  return response.status;
-              }
-          }).then((data)=>{
-              saveAs(data, "foo.pdf");
-		      }).catch((err)=>{
-			        console.log(err);
-		      });;
-  };
+      a_file_names.map(a_file_name => 
+                       _downloadPDFAction(a_token, a_file_name)
+                       .then((response) => {
+                           if(response.ok){
+      	                       dispatch(getPDFSuccessAction(response.status));
+                               return response.blob();
+                               
+                           } else {
+				                       let message = response.reason_phrase;
+                               dispatch(isLoadingAction(false));
+				                       dispatch(uploadFailedAction(message));
+
+                               return response.status;
+                           }
+                       }).then((data)=>{
+                           saveAs(data, a_file_name);
+		                   }).catch((err)=>{
+			                     console.log(err);
+		                   })
+                      )};
+}
+
+export function addPaperToDLAction (a_file_name) {
+    return {
+        type: types.ADD_PAPER_DL,
+        a_dl_file_name: a_file_name
+    };
 }
 
 export function uploadFileAction(file, a_token, a_file_name, a_prev_file_state){
