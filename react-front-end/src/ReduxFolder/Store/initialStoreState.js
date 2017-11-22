@@ -24,6 +24,7 @@ export const generalState = {
     st_favorites: [ ],
 	  st_upvoted_sums: [ ],
     st_err_upload: "",
+    st_dl_file_names: [ ],
     st_err_file: "",
     st_get_file: false,
     st_is_open_dialog: false,
