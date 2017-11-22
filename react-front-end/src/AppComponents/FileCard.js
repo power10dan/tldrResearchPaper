@@ -94,16 +94,11 @@ class FileCardView extends React.Component {
 				  </CardContent>
 
 			    <CardActions className={this.props.classes.cardAction}>
-			      {/* <Button color="primary"
-                className={this.props.classes.buttonStyle}
-                onClick={this.props.p_card_dialog}>
-					      Add Summary
-					      </Button>
-					      <Button color="primary"
-                className={this.props.classes.buttonStyle}
-                onClick={this.props.p_getPDF}>
-					      Download Paper
-					      </Button> */}
+			      <Button color="primary"
+                    className={this.props.classes.buttonStyle}
+                    onClick={this.props.p_card_dialog}>
+					    Add Summary
+					  </Button>
             <div className={classes.flexGrow} />
             <IconButton
               className={classnames(classes.expand, {
@@ -115,7 +110,9 @@ class FileCardView extends React.Component {
             >
               <ExpandMoreIcon />
             </IconButton>
-            <CheckBox tabIndex={-1} />
+            <CheckBox tabIndex={-1}
+                      checked={props.p_handleCheck}
+            />
 			    </CardActions>
           <Collapse in={this.state.expanded} transitionDuration="auto" unmountOnExit>
             <CardContent>
