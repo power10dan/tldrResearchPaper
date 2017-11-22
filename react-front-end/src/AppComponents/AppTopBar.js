@@ -18,6 +18,7 @@ const AppTopBar = (props) =>{
                           color="inherit" >
 		            TL ; DR Please?
 		          </Typography>
+
 			        <ReactFileReader base64={true}
                                fileTypes=".pdf"
                                handleFiles={props.uploadFile}>
@@ -28,11 +29,27 @@ const AppTopBar = (props) =>{
 					      </Button>
 
 				       </ReactFileReader>
+
+			         <Button color="contrast"
+                       className={props.classes.buttonStyle}
+                       onClick={props.p_card_dialog}
+                       disabled >
+					       Add Summary
+					     </Button>
+
+					      <Button color="contrast"
+                        className={props.classes.buttonStyle}
+                        onClick={props.p_getPDF}
+                        disabled >
+					        Download Selected Papers
+					      </Button>
+
 			         <Button color="contrast"
                        className={props.classes.menuButton}
                        disabled>
 			          			About This App
 			         </Button>
+
 		        </Toolbar>
 		      </AppBar>
 		       <LinearProgress color="accent" mode="query" />
@@ -57,11 +74,27 @@ const AppTopBar = (props) =>{
 					        Upload Files
 					      </Button>
 				       </ReactFileReader>
+
+			         <Button color="contrast"
+                       className={props.classes.buttonStyle}
+                       onClick={props.p_card_dialog}
+                       disabled >
+					       Add Summary
+					     </Button>
+
+					      <Button color="contrast"
+                        className={props.classes.buttonStyle}
+                        onClick={props.p_getPDF}
+                        disabled >
+					        Download Selected Papers
+					      </Button>
+
 			         <Button color="contrast"
                        className={props.classes.menuButton}
                        disabled>
 			           About This App
 			         </Button>
+
 		        </Toolbar>
 		      </AppBar>
 	    	</div>
@@ -78,17 +111,30 @@ const AppTopBar = (props) =>{
 				        <ReactFileReader base64={true}
                                  fileTypes=".pdf"
                                  handleFiles={props.uploadFile}>
-
 				          <Button color="contrast"
                           component="span"
 						          	  className = {props.classes.menuButton} >
 					          Upload Files
 					        </Button>
 					       </ReactFileReader>
-			           <Button color="contrast"
-                         className={props.classes.menuButton} >
-                   About This App
-                 </Button>
+
+			         <Button color="contrast"
+                       className={props.classes.buttonStyle}
+                       onClick={props.p_card_dialog}>
+					       Add Summary
+					     </Button>
+
+					      <Button color="contrast"
+                        className={props.classes.buttonStyle}
+                        onClick={props.p_getPDF}>
+					        Download Selected Papers
+					      </Button>
+
+			         <Button color="contrast"
+                       className={props.classes.menuButton} >
+                 About This App
+               </Button>
+
 			        </Toolbar>
 			      </AppBar>
 		    </div>
