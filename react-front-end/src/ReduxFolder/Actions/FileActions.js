@@ -73,7 +73,7 @@ function _uploadFileAction(a_file, a_token, a_file_name){
  * Helper function for download PDF action, function takes a token and a filename
  * and then actual performs the async fetch to the server for the file
  **/
-function __downloadPDFAction(a_token, a_file_name){
+function _downloadPDFAction(a_token, a_file_name){
     let strAuth = "JWT ".concat(a_token);
     let authString = strAuth.replace("\\\\","");
     let arr = [...a_file_name];
@@ -97,17 +97,18 @@ function __downloadPDFAction(a_token, a_file_name){
 };
 
 /**
- * Helper function for download PDF action, this takes a single filename and
- * performs a single fetch to the serve to grab the file. this function wraps
- * around the second helper and performs all the error catching
+ * Function expects a token and an array of file names to download, it then
+ * fetches the file for each file name from the server and queues the browser
+ * to save
  **/
-export function _downloadPDFAction(a_token, a_file_name){
+export function downloadPDFAction(a_token, a_file_names){
   return dispatch => {
       dispatch(isLoadingAction(true));
-      __downloadPDFAction(a_token, a_file_name)
+      _downloadPDFAction(a_token, a_file_names)
           .then((response) => {
               if(response.ok){
       	          dispatch(getPDFSuccessAction(response.status));
+                  dispatch(isLoadingAction(false));
                   return response.blob();
 
               } else {
@@ -118,20 +119,11 @@ export function _downloadPDFAction(a_token, a_file_name){
                   return response.status;
               }
           }).then((data)=>{
-              saveAs(data, a_file_name);
+              saveAs(data, {type: "application/zip"});
 		      }).catch((err)=>{
 			        console.log(err);
 		      });
   };
-}
-
-/**
- * Function expects a token and an array of file names to download, it then
- * fetches the file for each file name from the server and queues the browser
- * to save
- **/
-export function downloadPDFAction(a_token, a_file_names) {
-    return _downloadPDFAction(a_token, a_file_names);
 }
 
 export function addPaperToDLAction (a_file_name) {
