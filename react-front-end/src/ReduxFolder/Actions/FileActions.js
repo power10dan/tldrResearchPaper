@@ -74,9 +74,17 @@ function _uploadFileAction(a_file, a_token, a_file_name){
  * and then actual performs the async fetch to the server for the file
  **/
 function __downloadPDFAction(a_token, a_file_name){
-    let urlGET = "http://127.0.0.1:8000/api/getPDFFile/?".concat(a_file_name);
     let strAuth = "JWT ".concat(a_token);
     let authString = strAuth.replace("\\\\","");
+    let arr = [...a_file_name];
+    let queryString = "";
+
+    // convert the set to an array and then pack the query string for the req
+    a_file_name.forEach((e) => {
+        queryString += e + "&";
+    });
+
+    let urlGET = "http://127.0.0.1:8000/api/getPDFFile/?files=".concat(queryString);
 
     let request = {
         method: 'GET',
@@ -123,9 +131,7 @@ export function _downloadPDFAction(a_token, a_file_name){
  * to save
  **/
 export function downloadPDFAction(a_token, a_file_names) {
-    console.log(a_token, a_file_names);
-    return a_file_names.forEach((a_file_name, dummy_var, a_file_names) =>
-                            _downloadPDFAction(a_token, a_file_name));
+    return _downloadPDFAction(a_token, a_file_names);
 }
 
 export function addPaperToDLAction (a_file_name) {
