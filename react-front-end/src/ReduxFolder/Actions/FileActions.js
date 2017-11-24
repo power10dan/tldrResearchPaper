@@ -106,20 +106,21 @@ export function downloadPDFAction(a_token, a_file_names){
       dispatch(isLoadingAction(true));
       _downloadPDFAction(a_token, a_file_names)
           .then((response) => {
-              if(response.ok){
+              if(response.status.ok){
+                  // dispatch success actions
       	          dispatch(getPDFSuccessAction(response.status));
                   dispatch(isLoadingAction(false));
-                  return response.blob();
+
+                  // now save file
+                  saveAs(response.blob(), {type: "application/zip"});
 
               } else {
+
 				          let message = response.reason_phrase;
                   dispatch(isLoadingAction(false));
 				          dispatch(uploadFailedAction(message));
-
-                  return response.status;
               }
-          }).then((data)=>{
-              saveAs(data, {type: "application/zip"});
+              return response.status;
 		      }).catch((err)=>{
 			        console.log(err);
 		      });

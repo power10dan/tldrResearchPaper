@@ -103,7 +103,7 @@ class getPDFFile(APIView):
         permission_classes = (isAdminOrReadOnly, )
         root_dir = settings.MEDIA_DOCS
         response = Response(status=status.HTTP_400_BAD_REQUEST)
-        fail_str = "File not found!"
+        response.reason_phrase = "No Files found!"
 
         # try to get the file query strings from the request
         req_files = request.GET.getlist('files')
@@ -114,27 +114,12 @@ class getPDFFile(APIView):
 
         # if we got back a zipfile then pack the request
         if z_file_path:
-            print(z_file_path)
             response = HttpResponse(content=open(z_file_path, 'rb').read())
+            response.status_code = status.HTTP_200_OK
             response['Content-Type'] = 'application/x-zip-compressed'
             response['Content-Disposition'] = 'attachment; filename=%s' \
                                               % os.path.basename(z_file_path)
-
-        # for filename in request.GET.getlist('files'):
-
-        #     if filename:
-        #         path = root_dir + filename
-        #         matches = glob.glob(path + ".*")
-
-        #     if matches:
-        #         f = open(matches[0], 'rb')
-        #         response = HttpResponse(content=f)
-        #         response['Content-Type'] = 'application/pdf'
-        #         response['Content-Disposition'] = 'attachment; filename=%s' \
-        #                                           % os.path.basename(matches[0])
-
-        #     if not filename or not matches:
-        #         response.reason_phrase = fail_str
+            response.reason_phrase = "Success!"
 
         return response
 
