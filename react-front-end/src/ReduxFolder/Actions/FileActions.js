@@ -69,7 +69,11 @@ function _uploadFileAction(a_file, a_token, a_file_name){
 	  return fetch(urlPOST, header);
 }
 
-function _downloadPDFAction(a_token, a_file_name){
+/**
+ * Helper function for download PDF action, function takes a token and a filename
+ * and then actual performs the async fetch to the server for the file
+ **/
+function __downloadPDFAction(a_token, a_file_name){
     let urlGET = "http://127.0.0.1:8000/api/getPDFFile/?".concat(a_file_name);
     let strAuth = "JWT ".concat(a_token);
     let authString = strAuth.replace("\\\\","");
@@ -85,33 +89,43 @@ function _downloadPDFAction(a_token, a_file_name){
 };
 
 /**
+ * Helper function for download PDF action, this takes a single filename and
+ * performs a single fetch to the serve to grab the file. this function wraps
+ * around the second helper and performs all the error catching
+ **/
+export function _downloadPDFAction(a_token, a_file_name){
+  return dispatch => {
+      dispatch(isLoadingAction(true));
+      __downloadPDFAction(a_token, a_file_name)
+          .then((response) => {
+              if(response.ok){
+      	          dispatch(getPDFSuccessAction(response.status));
+                  return response.blob();
+
+              } else {
+				          let message = response.reason_phrase;
+                  dispatch(isLoadingAction(false));
+				          dispatch(uploadFailedAction(message));
+
+                  return response.status;
+              }
+          }).then((data)=>{
+              saveAs(data, a_file_name);
+		      }).catch((err)=>{
+			        console.log(err);
+		      });
+  };
+}
+
+/**
  * Function expects a token and an array of file names to download, it then
  * fetches the file for each file name from the server and queues the browser
  * to save
  **/
-export function downloadPDFAction(a_token, a_file_names){
-  return dispatch => {
-      dispatch(isLoadingAction(true));
-      a_file_names.map(a_file_name => 
-                       _downloadPDFAction(a_token, a_file_name)
-                       .then((response) => {
-                           if(response.ok){
-      	                       dispatch(getPDFSuccessAction(response.status));
-                               return response.blob();
-                               
-                           } else {
-				                       let message = response.reason_phrase;
-                               dispatch(isLoadingAction(false));
-				                       dispatch(uploadFailedAction(message));
-
-                               return response.status;
-                           }
-                       }).then((data)=>{
-                           saveAs(data, a_file_name);
-		                   }).catch((err)=>{
-			                     console.log(err);
-		                   })
-                      )};
+export function downloadPDFAction(a_token, a_file_names) {
+    console.log(a_token, a_file_names);
+    return a_file_names.forEach((a_file_name, dummy_var, a_file_names) =>
+                            _downloadPDFAction(a_token, a_file_name));
 }
 
 export function addPaperToDLAction (a_file_name) {

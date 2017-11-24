@@ -18,7 +18,7 @@ class UploadFile extends React.Component{
 			c_op_window: false,                 // is an op window open
 			c_token : "",                       // component variable for token
 			c_msg: "",                          // component message
-      c_dl_file_names: "",                // an array of filenames that changes
+      c_dl_file_names: new Set(),         // a set of filenames that changes
 			c_file_data :[],                    // array of file data
 			c_file_summaries: [],               // array of file summaries
 			c_is_open_sum: false,               // is summary dialog open
@@ -28,9 +28,11 @@ class UploadFile extends React.Component{
 	}
 
 	componentWillReceiveProps(nextProps){
-		this.setState({c_file_data: nextProps.st_files});
-		this.setState({c_op_window: nextProps.st_is_open_dialog});
-    this.setState({c_dl_file_names: nextProps.st_dl_file_names})
+		  this.setState({c_file_data: nextProps.st_files});
+		  this.setState({c_op_window: nextProps.st_is_open_dialog});
+      console.log("BEFORE", this.state.c_dl_file_names);
+      this.setState({c_dl_file_names: new Set(nextProps.st_dl_file_names)});
+      console.log("AFTER", this.state.c_dl_file_names);
 
 		if(nextProps.st_is_load === true){
 			this.setState({c_is_fin: false});
@@ -44,7 +46,7 @@ class UploadFile extends React.Component{
 			this.setState({c_is_logged_in: false});
 		}
 
-		this.setState({c_token: nextProps.st_token}); 
+		this.setState({c_token: nextProps.st_token});
 
 		if( nextProps.st_success_msg !== ""){
 			this.setState({c_msg: nextProps.st_success_msg});
@@ -52,7 +54,7 @@ class UploadFile extends React.Component{
 
 		if(nextProps.st_err_upload !== ""){
 			this.setState({c_msg: nextProps.st_err_upload});
-		}	
+		}
 	}
 
 	handleClick = (fileObj) => {
@@ -61,7 +63,7 @@ class UploadFile extends React.Component{
 	}
 
   handleGetPDF = () => {
-    this.props.getPDF(this.c_dl_file_names, this.state.c_token)
+    this.props.getPDF(this.state.c_dl_file_names, this.state.c_token)
   }
 
 	handleOpenCardDialog = ()=>{
@@ -76,7 +78,7 @@ class UploadFile extends React.Component{
 		this.setState({c_new_sum: text.target.value});
 	}
 
-/** 
+/**
   * Function handleCheck, adds the file_name for a file represented by the
   * card that holds the checkbox to a component array that is passed to getPDFs
   * when download PDFs is clicked
@@ -91,11 +93,11 @@ class UploadFile extends React.Component{
 
 	handleAddSummary = () =>{
 		// so far for demo purposes it only uploads
-		// to one file. In the future, we might want to change that 
+		// to one file. In the future, we might want to change that
 		let fileToUpload = this.state.c_file_data[0].FILES.files[1].summary_file
 		if(this.state.c_new_sum !== "" && this.state.c_sec_of_sum !== ""){
-			this.props.getAddSum(	this.state.c_token, 
-								this.state.c_new_sum, 
+			this.props.getAddSum(	this.state.c_token,
+								this.state.c_new_sum,
 								this.state.c_sec_of_sum,
 								fileToUpload
 							 );
@@ -198,7 +200,8 @@ function mapStateToProps(state){
     st_success_msg,
     st_is_open_dialog,
     st_err_upload,
-		st_files
+		st_files,
+    st_dl_file_names: state.genStateReducer.st_dl_file_names
 	};
 }
 
@@ -206,8 +209,8 @@ function mapDispatchToProps(dispatch){
 	return({
 		getFiles: (jwtToken)=>{dispatch(getAllFilesAction(jwtToken));},
 
-		getPDF: (fileName, jwtToken) =>
-      {dispatch(downloadPDFAction(jwtToken, fileName));},
+		getPDF: (fileNames, jwtToken) =>
+      {dispatch(downloadPDFAction(jwtToken, fileNames));},
 
 		getAddToDL: (fileName, jwtToken) =>
       {dispatch(addPaperToDLAction(fileName, jwtToken));},
