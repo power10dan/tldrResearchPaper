@@ -1,9 +1,9 @@
 from django.conf import settings
 
-from rest_framework.parsers import FileUploadParser, MultiPartParser
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.parsers import MultiPartParser
 from rest_framework.authtoken.models import Token
 
 from uploads.models.models import SectionSummary
@@ -14,20 +14,16 @@ from uploads.lib.summarize import summarize, create_DB_summary
 from django.core import serializers
 from django.http import HttpResponse
 from django.http import HttpRequest
-from django.http import FileResponse
 from django.http.request import QueryDict, MultiValueDict
-from wsgiref.util import FileWrapper
 
-from py4j.java_gateway import JavaGateway
 from uploads.lib.grabFile import grabFileToReq
+from uploads.lib.zipFile import zipFiles
 
 import os
 import json
 import base64
 import glob
 import requests
-import xml.etree.ElementTree as ET
-from bs4 import BeautifulSoup
 
 
 class SummaryOutputView(APIView):
@@ -109,21 +105,36 @@ class getPDFFile(APIView):
         response = Response(status=status.HTTP_400_BAD_REQUEST)
         fail_str = "File not found!"
 
-        for filename in request.GET.dict():
+        # try to get the file query strings from the request
+        req_files = request.GET.getlist('files')
 
-            if filename:
-                path = root_dir + filename
-                matches = glob.glob(path + ".*")
+        # if we got them try to zip them all
+        if req_files:
+            (z_file_path) = zipFiles(root_dir, req_files)
 
-            if matches:
-                f = open(matches[0], 'rb')
-                response = HttpResponse(content=f)
-                response['Content-Type'] = 'application/pdf'
-                response['Content-Disposition'] = 'attachment; filename=%s' \
-                                                  % os.path.basename(matches[0])
+        # if we got back a zipfile then pack the request
+        if z_file_path:
+            print(z_file_path)
+            response = HttpResponse(content=open(z_file_path, 'rb').read())
+            response['Content-Type'] = 'application/x-zip-compressed'
+            response['Content-Disposition'] = 'attachment; filename=%s' \
+                                              % os.path.basename(z_file_path)
 
-            if not filename or not matches:
-                response.reason_phrase = fail_str
+        # for filename in request.GET.getlist('files'):
+
+        #     if filename:
+        #         path = root_dir + filename
+        #         matches = glob.glob(path + ".*")
+
+        #     if matches:
+        #         f = open(matches[0], 'rb')
+        #         response = HttpResponse(content=f)
+        #         response['Content-Type'] = 'application/pdf'
+        #         response['Content-Disposition'] = 'attachment; filename=%s' \
+        #                                           % os.path.basename(matches[0])
+
+        #     if not filename or not matches:
+        #         response.reason_phrase = fail_str
 
         return response
 
