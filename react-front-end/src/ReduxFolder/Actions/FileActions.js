@@ -189,18 +189,17 @@ function _addSummariesAction(a_token,
 	  let authString = strAuth.replace("\\\\", "");
 	  let header = {
 		    method: 'POST',
-		    body:  JSON.stringify({"file_name": a_name_of_file,
-			                         "section": a_sect_text,
-			                         "summary_text": a_new_sum,
-                               "author": a_name_of_author
-			                        }),
+		    body: JSON.stringify({"file_name": a_name_of_file,
+			                        "section": a_sect_text,
+			                        "summary_text": a_new_sum,
+                              "author": a_name_of_author
+			                       }),
 		    headers: {
 			      "Authorization": authString,
 			      "Content-type": 'application/json'
 		    }
 	  };
 
-    console.log("IN FILE ACTION", a_name_of_author);
 	  return fetch(urlAddSum, header);
 }
 

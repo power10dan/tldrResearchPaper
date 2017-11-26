@@ -155,10 +155,11 @@ class SummaryInputView(APIView):
 
         # request.data is a dict in the response, the .get method returns none
         # if the fields are not in dict
-        file_name = request.POST.get('file_name')
-        section = request.POST.get('section')
-        summary_text = request.POST.get('summary_text')
-        username = request.POST.get('author')
+        json_data = json.loads(request.body)
+        file_name = json_data['file_name']
+        section = json_data['section']
+        summary_text = json_data['summary_text']
+        username = json_data['author']
 
         # if request was well formed get the file from the file system
         if file_name and section and summary_text and username:
