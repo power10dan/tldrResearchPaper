@@ -63,7 +63,7 @@ class UploadFile extends React.Component{
 	}
 
   handleGetPDF = () => {
-    this.props.getPDF(this.state.c_dl_file_names, this.state.c_token)
+      this.props.getPDF(this.state.c_dl_file_names, this.state.c_token);
   }
 
 	handleOpenCardDialog = ()=>{

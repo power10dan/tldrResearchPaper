@@ -8,13 +8,14 @@ import Button from 'material-ui/Button';
 import IconButton from 'material-ui/IconButton';
 import CheckBox from 'material-ui/Checkbox';
 import ExpandMoreIcon from 'material-ui-icons/ExpandMore';
+import SimpleSelect from './DropDown';
 
 const styles = theme => ({
 	card: {
 		marginTop: "30px",
 		marginLeft: "35px",
 		borderRadius: "15px",
-		background: "#5C6BC0",
+		background: "#5C6BC0"
 		/* height: 185,*/
 	},
 
@@ -30,16 +31,16 @@ const styles = theme => ({
   expand: {
     transform: 'rotate(0deg)',
     transition: theme.transitions.create('transform', {
-      duration: theme.transitions.duration.shortest,
+      duration: theme.transitions.duration.shortest
     }),
   },
 
   expandOpen: {
-    transform: 'rotate(180deg)',
+    transform: 'rotate(180deg)'
   },
 
   flexGrow: {
-    flex: '1 1 auto',
+    flex: '1 1 auto'
   },
 
 	summaryText:{
@@ -51,7 +52,7 @@ const styles = theme => ({
 	},
 
 	cardAction:{
-		marginTop: "-65px",
+		marginTop: "-65px"
 	},
 
 
@@ -65,18 +66,19 @@ const styles = theme => ({
   	},
 
   	contentMargin:{
-  		marginRight: "20px",
+  		marginRight: "20px"
   	}
 });
 
 
 class FileCardView extends React.Component {
-  state = { expanded: false };
+    state = { expanded: false,
+              section: "test section"
+    };
 
   handleExpandClick = () => {
     this.setState({ expanded: !this.state.expanded });
   };
-
 
   render () {
     const { classes } = this.props;
@@ -94,25 +96,31 @@ class FileCardView extends React.Component {
 				  </CardContent>
 
 			    <CardActions className={this.props.classes.cardAction}>
-			      <Button color="primary"
-                    className={this.props.classes.buttonStyle}
-                    onClick={this.props.p_card_dialog}>
+			      <Button color     = "primary"
+                    className = {this.props.classes.buttonStyle}
+                    onClick   = {this.props.p_card_dialog}>
 					    Add Summary
 					  </Button>
+
+
             <div className={classes.flexGrow} />
+
             <IconButton
-              className={classnames(classes.expand, {
+              className     = {classnames(classes.expand, {
                   [classes.expandOpen]: this.state.expanded
               })}
-              onClick={this.handleExpandClick}
-              aria-expanded={this.state.expanded}
-              aria-label="Show more"
+              onClick       = {this.handleExpandClick}
+              aria-expanded = {this.state.expanded}
+              aria-label    = "Show more"
             >
               <ExpandMoreIcon />
             </IconButton>
-            <CheckBox tabIndex={-1}
-                      onChange={this.props.p_handleCheck}
+
+            <SimpleSelect />
+            <CheckBox tabIndex = {-1}
+                      onChange = {this.props.p_handleCheck}
             />
+
 			    </CardActions>
           <Collapse in={this.state.expanded} transitionDuration="auto" unmountOnExit>
             <CardContent>
