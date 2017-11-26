@@ -106,7 +106,7 @@ export function downloadPDFAction(a_token, a_file_names){
       dispatch(isLoadingAction(true));
       _downloadPDFAction(a_token, a_file_names)
           .then((response) => {
-              if(response.status == 200){
+              if(response.ok){
 
                   // dispatch success actions
       	          dispatch(getPDFSuccessAction(response.status));
