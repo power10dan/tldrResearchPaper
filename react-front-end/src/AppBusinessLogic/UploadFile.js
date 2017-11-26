@@ -19,6 +19,7 @@ class UploadFile extends React.Component{
 			c_token : "",                       // component variable for token
 			c_msg: "",                          // component message
       c_dl_file_names: new Set(),         // a set of filenames that changes
+      c_user_name: "",
 			c_file_data :[],                    // array of file data
 			c_file_summaries: [],               // array of file summaries
 			c_is_open_sum: false,               // is summary dialog open
@@ -30,9 +31,7 @@ class UploadFile extends React.Component{
 	componentWillReceiveProps(nextProps){
 		  this.setState({c_file_data: nextProps.st_files});
 		  this.setState({c_op_window: nextProps.st_is_open_dialog});
-      console.log("BEFORE", this.state.c_dl_file_names);
       this.setState({c_dl_file_names: new Set(nextProps.st_dl_file_names)});
-      console.log("AFTER", this.state.c_dl_file_names);
 
 		if(nextProps.st_is_load === true){
 			this.setState({c_is_fin: false});
@@ -42,6 +41,7 @@ class UploadFile extends React.Component{
 
 		if(nextProps.st_is_logged_in === true){
 			this.setState({c_is_logged_in: true});
+      this.setState({c_user_name: nextProps.st_username});
 		} else {
 			this.setState({c_is_logged_in: false});
 		}
@@ -94,12 +94,13 @@ class UploadFile extends React.Component{
 	handleAddSummary = () =>{
 		// so far for demo purposes it only uploads
 		// to one file. In the future, we might want to change that
-		let fileToUpload = this.state.c_file_data[0].FILES.files[1].summary_file
+		let fileToUpload = this.state.c_file_data[0].FILES.files[1].summary_file;
 		if(this.state.c_new_sum !== "" && this.state.c_sec_of_sum !== ""){
 			this.props.getAddSum(	this.state.c_token,
 								this.state.c_new_sum,
 								this.state.c_sec_of_sum,
-								fileToUpload
+								fileToUpload,
+                this.state.c_user_name
 							 );
 			this.handleCloseCardDialog();	
 		} else{
@@ -186,7 +187,7 @@ class UploadFile extends React.Component{
 // if login or create user is successful, we 
 // obtain the tokens generated here
 function mapStateToProps(state){
-	const {st_token} = state.userProfileReducer;
+	  const {st_token} = state.userProfileReducer;
 	const { st_files,
           st_success_msg,
           st_is_open_dialog,
@@ -201,7 +202,8 @@ function mapStateToProps(state){
     st_is_open_dialog,
     st_err_upload,
 		st_files,
-    st_dl_file_names: state.genStateReducer.st_dl_file_names
+    st_dl_file_names: state.genStateReducer.st_dl_file_names,
+    st_username: state.userProfileReducer.st_username
 	};
 }
 
@@ -218,9 +220,13 @@ function mapDispatchToProps(dispatch){
 		getUpload: (file, jwtToken, nameOfFile)=>
       {dispatch(uploadFileAction(file, jwtToken, nameOfFile));},
 
-		getAddSum: (jwtToken, summary, section, nameOfFile)=>
-      {dispatch(addSummariesAction(jwtToken,summary, section, nameOfFile))}
-	})
+		  getAddSum: (jwtToken, summary, section, nameOfFile, author)=>
+          {dispatch(addSummariesAction(jwtToken,
+                                       summary,
+                                       section,
+                                       nameOfFile,
+                                       author));}
+	});
 }
 
 const  connectComp = connect(mapStateToProps, mapDispatchToProps)(UploadFile);

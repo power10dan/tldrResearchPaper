@@ -179,7 +179,11 @@ export function uploadFileAction(file, a_token, a_file_name, a_prev_file_state){
 	};
 }
 
-function _addSummariesAction(a_token, a_new_sum, a_sect_text, a_name_of_file){
+function _addSummariesAction(a_token,
+                             a_new_sum,
+                             a_sect_text,
+                             a_name_of_file,
+                             a_name_of_author){
 	  let urlAddSum = "http://127.0.0.1:8000/api/addUserSummary/";
 	  let strAuth = "JWT ".concat(a_token);
 	  let authString = strAuth.replace("\\\\", "");
@@ -187,13 +191,16 @@ function _addSummariesAction(a_token, a_new_sum, a_sect_text, a_name_of_file){
 		    method: 'POST',
 		    body:  JSON.stringify({"file_name": a_name_of_file,
 			                         "section": a_sect_text,
-			                         "summary_text": a_new_sum
+			                         "summary_text": a_new_sum,
+                               "author": a_name_of_author
 			                        }),
 		    headers: {
-			      "Authorization": authString
+			      "Authorization": authString,
+			      "Content-type": 'application/json'
 		    }
 	  };
 
+    console.log("IN FILE ACTION", a_name_of_author);
 	  return fetch(urlAddSum, header);
 }
 
@@ -201,11 +208,16 @@ export function addSummariesAction(
     a_token,
     a_new_summary,
     a_section_text,
-    a_name_of_file
+    a_name_of_file,
+    a_name_of_author
 ) {
 	return dispatch =>{
 		dispatch(isLoadingAction(true));
-		  _addSummariesAction(a_token, a_new_summary, a_section_text, a_name_of_file)
+		  _addSummariesAction(a_token,
+                          a_new_summary,
+                          a_section_text,
+                          a_name_of_file,
+                          a_name_of_author)
           .then((response)=>{
 
 			        if(response.ok){
@@ -246,7 +258,6 @@ export function getAllFilesAction(a_token){
 			} else {
 		      return response.status;
 			}
-
 		}).then((data) =>{
 
 			if(data === 400){
@@ -259,6 +270,8 @@ export function getAllFilesAction(a_token){
 			}
 
 	      dispatch(getFilesAction(data.Files));
+        data.Files.map(e =>
+                       dispatch(getSummariesAction(a_token, e.FILES.fileName)));
 	      dispatch(isLoadingAction(false));
 	      return;
 
@@ -266,6 +279,57 @@ export function getAllFilesAction(a_token){
 			  console.log(err);
 		});
 	};
+}
+
+function _getSummariesAction(a_token, a_file_name){
+	  let urlGET = "http://127.0.0.1:8000/api/getSummary/?file_name=".concat(a_file_name);
+	  let strAuth = "JWT ".concat(a_token);
+	  let authString = strAuth.replace("\\\\", "");
+	  let request = {
+		    method: 'GET',
+		    headers: {"Authorization": authString}
+	  };
+
+	  return fetch(urlGET, request);
+}
+
+export function getSummariesAction(a_token, a_file_name) {
+    return dispatch => {
+        dispatch(isLoadingAction(true));
+        _getSummariesAction(a_token, a_file_name)
+            .then((response) => {
+                if(response.ok){
+                    return response.json();
+                } else {
+				            // let message = response.reason_phrase;
+                    // dispatch(isLoadingAction(false));
+				            // dispatch(uploadFailedAction(message));
+                    return response.status;
+                }
+		        }).then((data) => {
+			          if(data === 400){
+
+				            dispatch(isLoadingAction(false));
+				            let message = "Failed to get Summaries";
+		                dispatch(getFailedAction(message));
+		                dispatch(openDialogAction());
+		                setTimeout(()=>{dispatch(closeDialogAction());}, 2000);
+		                return;
+			          }
+
+                dispatch(packSummaryActions(data));
+                
+            }).catch((err)=>{
+			          console.log(err);
+		        });
+    };
+}
+
+export function packSummaryActions(a_data) {
+    return {
+        type: types.PACK_SUMMARIES,
+        a_file_summs: a_data
+    };
 }
 
 export function closeDialogAction(){
