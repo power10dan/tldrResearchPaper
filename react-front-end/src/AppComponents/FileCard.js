@@ -122,7 +122,8 @@ class FileCardView extends React.Component {
             />
 
 			    </CardActions>
-          <Collapse in={this.state.expanded} transitionDuration="auto" unmountOnExit>
+          <Collapse in={this.state.expanded}
+                    transitionDuration="auto" unmountOnExit>
             <CardContent>
               <Typography type="body2">
                 A HEADER!
