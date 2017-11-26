@@ -106,13 +106,16 @@ export function downloadPDFAction(a_token, a_file_names){
       dispatch(isLoadingAction(true));
       _downloadPDFAction(a_token, a_file_names)
           .then((response) => {
-              if(response.status.ok){
+              if(response.status == 200){
+
                   // dispatch success actions
       	          dispatch(getPDFSuccessAction(response.status));
                   dispatch(isLoadingAction(false));
 
                   // now save file
-                  saveAs(response.blob(), {type: "application/zip"});
+                  response.blob().then((data) => {
+                      saveAs(data, {type:"application/zip"});
+                  });
 
               } else {
 
