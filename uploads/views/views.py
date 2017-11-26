@@ -10,6 +10,7 @@ from uploads.models.models import SectionSummary
 from uploads.permissions.permissions import isAdminOrReadOnly
 from uploads.serializers.serializers import UserSerializer
 from uploads.lib.summarize import summarize, create_DB_summary
+from uploads.lib.cleanup import cleanUp
 
 from django.core import serializers
 from django.http import HttpResponse
@@ -25,6 +26,74 @@ import base64
 import glob
 import requests
 
+class SummaryDownVote(APIView):
+    """
+    Increase the vote count by one.
+    """
+    def post(self, request):
+        response = Response(status=status.HTTP_400_BAD_REQUEST)
+
+        filename = request.POST.get('file_name')
+        header = request.POST.get('header')
+        author = request.POST.get('author')
+
+        if filename and header and author:
+            summary_list = SectionSummary.objects.filter(filename=filename, header=header, author=author)
+            if len(summary_list) == 1:
+                summary = summary_list[0]
+                old_votes = summary.votes
+                new_votes = old_votes - 1
+                summary.votes = new_votes
+                summary.save()
+
+                response = Response(status=status.HTTP_200_OK)
+
+        return response
+
+class SummaryVote(APIView):
+    """
+    Increase the vote count by one.
+    """
+    def post(self, request):
+        response = Response(status=status.HTTP_400_BAD_REQUEST)
+
+        filename = request.POST.get('file_name')
+        header = request.POST.get('header')
+        author = request.POST.get('author')
+
+        if filename and header and author:
+            summary_list = SectionSummary.objects.filter(filename=filename, header=header, author=author)
+            if len(summary_list) == 1:
+                summary = summary_list[0]
+                old_votes = summary.votes
+                new_votes = old_votes + 1
+                summary.votes = new_votes
+                summary.save()
+
+                response = Response(status=status.HTTP_200_OK)
+
+        return response
+
+    """
+    Get the number of votes for a specific summary.
+    """
+    def get(self, request):
+        response = Response(status=status.HTTP_400_BAD_REQUEST)
+
+        filename = request.GET.get('file_name')
+        header = request.GET.get('header')
+        author = request.GET.get('author')
+
+        if filename and header and author:
+            summary_list = SectionSummary.objects.filter(filename=filename, header=header, author=author)
+            if len(summary_list) == 1:
+                summary = summary_list[0]
+                num_votes = summary.votes
+
+                votes_data = {'votes': num_votes}
+                response = HttpResponse(json.dumps(votes_data), content_type="application/json")
+
+        return response
 
 class SummaryOutputView(APIView):
     """
@@ -32,20 +101,38 @@ class SummaryOutputView(APIView):
     summary file in the filesystem, encodes it to base64, and then sends a
     response holding the xml file
     """
-    def post(self, request):
+    def get(self, request):
         permission_classes = (isAdminOrReadOnly, )
         root_dir = settings.SUMMARY_DOCS
         response = Response(status=status.HTTP_400_BAD_REQUEST)
         fail_str = "File not found!"
 
-        filename = request.POST.get("file_name")
+        filename = request.GET.get('file_name')
+        header = request.GET.get('header')
+        num = request.GET.get('num')
 
-        if filename:
+        if filename and header and num:
+            all_summary = SectionSummary.objects.filter(filename=filename, header=header)
+
+            if len(all_summary) <= int(num):
+                qs_json = serializers.serialize('json', all_summary)
+                response = HttpResponse(qs_json, content_type='application/json')
+            else:
+                some_summaries = all_summary[:int(num)]
+                qs_json = serializers.serialize('json', some_summaries)
+                response = HttpResponse(qs_json, content_type='application/json')
+
+        elif filename and header:
+            all_summary = SectionSummary.objects.filter(filename=filename, header=header)
+            qs_json = serializers.serialize('json', all_summary)
+            response = HttpResponse(qs_json, content_type='application/json')
+
+        elif filename:
             all_summary = SectionSummary.objects.filter(filename=filename)
             qs_json = serializers.serialize('json', all_summary)
             response = HttpResponse(qs_json, content_type='application/json')
 
-        if not filename:
+        else:
             response.reason_phrase = fail_str
 
         return response
@@ -131,6 +218,7 @@ class getXMLAndSums(APIView):
         num_files = None
         num_files = request.GET.get('num_files')
         file_names = request.GET.getlist("file_names")
+
         response = Response(status=status.HTTP_400_BAD_REQUEST)
 
         if file_names:
@@ -164,6 +252,12 @@ class getXMLAndSums(APIView):
                 settings.XML_DOCS,
                 settings.SUMMARY_DOCS)
 
+        #############################################
+
+        cleanUp()
+
+        #############################################
+        
         return response
 
 
@@ -182,17 +276,29 @@ class FileUploadView(APIView):
             fileopened.write(base64.decodestring(newString[1]))
         fileopened.close()
 
+
         print("Connecting to Grobid server")
         inputDir = settings.MEDIA_DOCS
         outputDir = settings.XML_DOCS
-        url = 'http://localhost:8080/processFulltextDocument'
-        response = requests.post(url,files={'input':open(path,'rb')})
+        url = 'http://192.168.99.100:8080/processFulltextDocument'
+
+        print("got to the request")
+
+        response = requests.post(url, files={'input':open(path,'rb')})
+
+        print("past the request")
+
+        print("trying to write to file")
+
         with open(outputDir+filename[:-4]+'.fulltext.tei.xml','w') as outputFile:
             outputFile.write(response.text)
+
+        print("wrote to file")
 
         print("Grobid Finished")
         summarize(outputDir+filename[:-4]+'.fulltext.tei.xml',filename[:-4])
         return Response(status=204)
+
 
 class GetAllFileNames(APIView):
     def get(self, request):
@@ -206,6 +312,7 @@ class GetAllFileNames(APIView):
         response = HttpResponse(json.dumps(fileData), content_type="application/json")
         return response
 
+
 class DeleteFile(APIView):
     def delete(self, request, filename, format=None):
         fileToBeDel = filename
@@ -216,6 +323,7 @@ class DeleteFile(APIView):
             return Response(status=204)
         else:
             return Response("File can't be found", status=404)
+
 
 class CreateUser(APIView):
     def post(self, request, format="json"):

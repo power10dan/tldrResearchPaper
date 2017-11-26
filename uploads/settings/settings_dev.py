@@ -94,7 +94,7 @@ if 'TRAVIS' in os.environ:
             'ENGINE':   'django.db.backends.postgresql_psycopg2',
             'NAME':     'travisci',
             'USER':     'postgres',
-            'PASSWORD': '',
+            'PASSWORD': 'iampost',
             'HOST':     'localhost',
             'PORT':     '',
         }
@@ -144,7 +144,7 @@ REST_FRAMEWORK = {
 }
 
 JWT_AUTH = {
-        'JWT_EXPIRATION_DELTA' : datetime.timedelta(seconds=300)
+        'JWT_EXPIRATION_DELTA' : datetime.timedelta(seconds=30000)
         }
 
 # Internationalization

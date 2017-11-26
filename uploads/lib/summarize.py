@@ -1,6 +1,8 @@
 import xmltodict
 import dicttoxml
 import numpy
+import nltk
+nltk.download('punkt')
 
 from django.conf import settings
 from collections import OrderedDict

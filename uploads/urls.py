@@ -18,6 +18,8 @@ urlpatterns = [
     url(r'^api/getPDFFile/$', views.getPDFFile.as_view(), name='getPDFFile'),
     url(r'^api/getXMLAndSums/', views.getXMLAndSums.as_view(), name='getXMLAndSums'),
     url(r'^api/addUserSummary/', views.SummaryInputView.as_view(), name='summaryInput'),
+    url(r'^api/summaryVote/', views.SummaryVote.as_view(), name='SummaryVote'),
+    url(r'^api/summaryDownVote/', views.SummaryDownVote.as_view(), name='SummaryDownVote'),
     #url(r'^api/createUser/$'
     #    , views.CreateUser.as_view()
     #    , name='account-create'),
