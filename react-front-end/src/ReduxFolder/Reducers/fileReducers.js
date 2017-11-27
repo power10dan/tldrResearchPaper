@@ -1,5 +1,6 @@
 import * as types from '../Constants/ActionTypes';
 import { generalState } from '../Store/initialStoreState.js';
+import * as lodash from 'lodash';
 
 export default function genStateReducer(state = generalState, action) {
     switch (action.type) {
@@ -83,7 +84,7 @@ export default function genStateReducer(state = generalState, action) {
         let better_file_data = state.st_file_summs.slice();
 
         // if tmp is not empty, then we add the good object to the better array
-        if (!_.isEmpty(tmp)) {
+        if (!(lodash.isEmpty(tmp))) {
             better_file_data.push(tmp);
         }
 
