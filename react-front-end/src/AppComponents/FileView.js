@@ -28,12 +28,12 @@ const GridCardView = (props)=>{
 	return (
 		<div className={classes.root} >
 			<GridList className={classes.gridList} cols={1} >
-				{  props.arrayOfData.map(card =>(
-					 <FileCard p_title        = {card.FILES.title}
-						         p_summary_txt  = {card.FILES.Intro_summary}
+				{props.arrayOfData.map(card =>(
+					 <FileCard p_title        = {card.title}
 					           p_card_dialog  = {props.cardDia}
 					           p_close_dialog = {props.closeDia}
-                     p_handleCheck  = {props.p_handleCheck.bind(this, card.FILES.fileName)}
+                     p_handleCheck  = {props.p_handleCheck.bind(this, card.file_name)}
+                     p_summary_data = {card.section_summs}
 						/>
 					))
 				}

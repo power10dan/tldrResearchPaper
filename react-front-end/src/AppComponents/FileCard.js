@@ -73,11 +73,15 @@ const styles = theme => ({
 
 class FileCardView extends React.Component {
     state = { expanded: false,
-              section: "test section"
+              p_sect_index: 0,  // this.state.p_sect_index for section and summary array
     };
 
   handleExpandClick = () => {
     this.setState({ expanded: !this.state.expanded });
+  };
+
+  handleSelectChange = p_sect_index => event => {
+      this.setState({p_sect_index: event.target.value})
   };
 
   render () {
@@ -85,13 +89,16 @@ class FileCardView extends React.Component {
 	  return (
 		  <div>
 			  <Card className={this.props.classes.card}>
-          <CardHeader className={this.props.classes.title}
-                      title={this.props.p_title}
+          <CardHeader className = {this.props.classes.title}
+                      title     = {this.props.p_title}
           />
 
 				  <CardContent>
+              <Typography type="body2">
+                  {this.props.p_title}
+              </Typography>
 				    <Typography paragraph className={this.props.classes.p_summary_txt}>
-				      {"Intro Summary: " + this.props.p_summary_txt}
+                {this.props.p_summary_data[this.state.p_sect_index].summary}
 				    </Typography>
 				  </CardContent>
 
@@ -125,14 +132,8 @@ class FileCardView extends React.Component {
           <Collapse in={this.state.expanded}
                     transitionDuration="auto" unmountOnExit>
             <CardContent>
-              <Typography type="body2">
-                A HEADER!
-              </Typography>
               <Typography paragraph>
-                Hi there, this is to demo that expanding actually works! This
-                text is hardcoded in the FileCard.js file in the frontend 
-                components. You should change this to be somethign that is
-                passed in from props in the future.
+                {this.props.p_summary_data[this.state.p_sect_index].summary}
               </Typography>
             </CardContent>
           </Collapse>

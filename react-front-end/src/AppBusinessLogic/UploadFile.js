@@ -30,9 +30,9 @@ class UploadFile extends React.Component{
 
 	componentWillReceiveProps(nextProps){
 		  this.setState({c_file_data: nextProps.st_files});
-		  this.setState({c_file_summaries: nextProps.st_file_summs});
 		  this.setState({c_op_window: nextProps.st_is_open_dialog});
       this.setState({c_dl_file_names: new Set(nextProps.st_dl_file_names)});
+		  this.setState({c_file_summaries: nextProps.st_file_summs});
 
 		if(nextProps.st_is_load === true){
 			this.setState({c_is_fin: false});
@@ -113,7 +113,7 @@ class UploadFile extends React.Component{
 		let c_is_fin = this.state.c_is_fin;
 		// if the app is uploading a file and is not finished with that yet, show loading bar
 		if(c_is_fin === false ){
-			if(this.state.c_file_data == null){
+			if(this.state.c_file_data == null || this.state.c_file_summaries == null){
 				return (
 					<div>
 			     	<AppTopBar uploadFile       = {this.handleClick}
@@ -132,11 +132,11 @@ class UploadFile extends React.Component{
                        disable          = {true}
             />
 
-				    <GridCardView arrayOfData = {this.state.c_file_summaries}
-				     	            cardDia     = {this.handleOpenCardDialog}
-				     	            isOpenSum   = {this.state.c_is_open_sum}
-				     	            closeDia    = {this.handleCloseCardDialog}
-                        p_handleCheck = {this.handleCheck}
+				    <GridCardView arrayOfData    = {this.state.c_file_summaries}
+				     	            cardDia        = {this.handleOpenCardDialog}
+				     	            isOpenSum      = {this.state.c_is_open_sum}
+				     	            closeDia       = {this.handleCloseCardDialog}
+                          p_handleCheck  = {this.handleCheck}
 				    />
 				  	</div>
 				);
@@ -170,7 +170,7 @@ class UploadFile extends React.Component{
                      p_getPDF         = {this.handleGetPDF}
           />
 
-				  <GridCardView arrayOfData      = {this.state.c_file_data}
+				  <GridCardView arrayOfData      = {this.state.c_file_summaries}
 				                cardDia          = {this.handleOpenCardDialog}
 				                isOpenSum        = {this.state.c_is_open_sum}
 				                closeDia         = {this.handleCloseCardDialog}
@@ -178,7 +178,7 @@ class UploadFile extends React.Component{
 				                summaryFunc      = {this.handleGetSumm}
 				                submitNewSummary = {this.handleAddSummary}
                         p_handleCheck    = {this.handleCheck}
-				  />	
+				  />
 				</div>
 			);
 		}
@@ -204,7 +204,7 @@ function mapStateToProps(state){
     st_is_open_dialog,
     st_err_upload,
 		st_files,
-    st_file_summs: state.genStateReducer.st_dl_file_names,
+    st_file_summs: state.genStateReducer.st_file_summs,
     st_dl_file_names: state.genStateReducer.st_dl_file_names,
     st_username: state.userProfileReducer.st_username
 	};
