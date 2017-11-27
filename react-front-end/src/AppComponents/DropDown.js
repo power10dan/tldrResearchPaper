@@ -21,11 +21,8 @@ const styles = theme => ({
 });
 
 class SimpleSelect extends React.Component {
-  state = {section: ""};
+  index = {index: 0};
 
-  handleChange = section => event => {
-    this.setState({ [section]: event.target.value });
-  };
 
   render() {
     const { classes } = this.props;
@@ -35,16 +32,17 @@ class SimpleSelect extends React.Component {
         <FormControl className={classes.formControl}>
           <InputLabel htmlFor="section-simple">Section</InputLabel>
           <Select
-            value={this.state.section}
-            onChange={this.handleChange('section')}
+            value={this.props.p_curr_index}
+            onChange={this.props.p_handleChange}
             input={<Input id="section-simple" />}
           >
             <MenuItem value="">
               <em>None</em>
             </MenuItem>
-            <MenuItem value={10}>Ten</MenuItem>
-            <MenuItem value={20}>Twenty</MenuItem>
-            <MenuItem value={30}>Thirty</MenuItem>
+
+            {this.props.p_section_summs.map(e => (
+                <MenuItem value={e.fields.pk}>{e.fields.header}</MenuItem>
+            ))}
           </Select>
         </FormControl>
       </form>

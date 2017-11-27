@@ -80,7 +80,7 @@ class FileCardView extends React.Component {
     this.setState({ expanded: !this.state.expanded });
   };
 
-  handleSelectChange = p_sect_index => event => {
+    handleSelectChange = (event) => {
       this.setState({p_sect_index: event.target.value})
   };
 
@@ -123,7 +123,10 @@ class FileCardView extends React.Component {
               <ExpandMoreIcon />
             </IconButton>
 
-            <SimpleSelect />
+            <SimpleSelect p_handleChange  = {this.handleSelectChange}
+                          p_curr_index    = {this.state.p_sect_index}
+                          p_section_summs = {this.props.p_summary_data}
+            />
             <CheckBox tabIndex = {-1}
                       onChange = {this.props.p_handleCheck}
             />
