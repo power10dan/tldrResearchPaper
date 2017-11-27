@@ -27,6 +27,7 @@ const GridCardView = (props)=>{
 	const { classes } = props;
 	return (
 		<div className={classes.root} >
+        {console.log("IN FILE VIEW", props.arrayOfData)}
 			<GridList className={classes.gridList} cols={1} >
 				{props.arrayOfData.map(card =>(
 					 <FileCard p_title        = {card.title}

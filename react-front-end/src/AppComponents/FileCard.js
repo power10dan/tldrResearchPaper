@@ -73,7 +73,7 @@ const styles = theme => ({
 
 class FileCardView extends React.Component {
     state = { expanded: false,
-              p_sect_index: 0,  // this.state.p_sect_index for section and summary array
+              p_sect_index: 2,  // this.state.p_sect_index for section and summary array
     };
 
   handleExpandClick = () => {
@@ -95,10 +95,10 @@ class FileCardView extends React.Component {
 
 				  <CardContent>
               <Typography type="body2">
-                  {this.props.p_title}
+                {this.props.p_summary_data[this.state.p_sect_index].fields.header}
               </Typography>
 				    <Typography paragraph className={this.props.classes.p_summary_txt}>
-                {this.props.p_summary_data[this.state.p_sect_index].summary}
+                {this.props.p_summary_data[this.state.p_sect_index].fields.summary}
 				    </Typography>
 				  </CardContent>
 
@@ -133,7 +133,7 @@ class FileCardView extends React.Component {
                     transitionDuration="auto" unmountOnExit>
             <CardContent>
               <Typography paragraph>
-                {this.props.p_summary_data[this.state.p_sect_index].summary}
+                {this.props.p_summary_data[this.state.p_sect_index].fields.summary}
               </Typography>
             </CardContent>
           </Collapse>
