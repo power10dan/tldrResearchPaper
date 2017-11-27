@@ -15,7 +15,8 @@ const styles = theme => ({
 		marginTop: "30px",
 		marginLeft: "35px",
 		borderRadius: "15px",
-		background: "#5C6BC0"
+		background: "#5C6BC0",
+
 		/* height: 185,*/
 	},
 
@@ -73,7 +74,7 @@ const styles = theme => ({
 
 class FileCardView extends React.Component {
     state = { expanded: false,
-              p_sect_index: 2,  // this.state.p_sect_index for section and summary array
+              p_sect_index: 0,  // index for section and summary array
     };
 
   handleExpandClick = () => {
@@ -81,7 +82,6 @@ class FileCardView extends React.Component {
   };
 
     handleSelectChange = (event) => {
-        console.log("VALUE", event.target.value)
       this.setState({p_sect_index: event.target.value})
   };
 
@@ -95,8 +95,7 @@ class FileCardView extends React.Component {
           />
 
 				  <CardContent>
-              <Typography type="body2">
-        {console.log(this.state)}
+              <Typography type="body1">
                 {this.props.p_summary_data[this.state.p_sect_index].fields.header}
               </Typography>
 				    <Typography paragraph className={this.props.classes.p_summary_txt}>
