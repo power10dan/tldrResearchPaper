@@ -81,6 +81,7 @@ class FileCardView extends React.Component {
   };
 
     handleSelectChange = (event) => {
+        console.log("VALUE", event.target.value)
       this.setState({p_sect_index: event.target.value})
   };
 
@@ -95,6 +96,7 @@ class FileCardView extends React.Component {
 
 				  <CardContent>
               <Typography type="body2">
+        {console.log(this.state)}
                 {this.props.p_summary_data[this.state.p_sect_index].fields.header}
               </Typography>
 				    <Typography paragraph className={this.props.classes.p_summary_txt}>
