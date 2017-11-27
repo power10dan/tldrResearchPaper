@@ -21,7 +21,8 @@ export default function genStateReducer(state = generalState, action) {
         case types.GETFILE:
             return Object.assign({}, state, {
                 st_get_file: true,
-                st_files: action.a_files
+                st_files: action.a_files,
+                st_file_names: action.a_files.map(elem => elem.FILES.fileName)
             });
         case types.DONEGET:
             return Object.assign({}, state, {
@@ -62,6 +63,12 @@ export default function genStateReducer(state = generalState, action) {
                 return Object.assign({}, state, {
                     st_dl_file_names: new Set(new_dl_set)
             });
+    case types.PACK_SUMMARIES:
+        console.log("INREDUCER", action.a_file_summs);
+        return Object.assign({}, state, {
+            st_file_summs: action.a_file_summs
+        });
+
 
         default:
             return state;

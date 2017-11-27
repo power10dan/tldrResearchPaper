@@ -21,6 +21,8 @@ export const userProfileST = {
 
 export const generalState = {
     st_files: [],
+    st_file_names: [],
+    st_file_summs: {},
     st_favorites: [ ],
 	  st_upvoted_sums: [ ],
     st_err_upload: "",

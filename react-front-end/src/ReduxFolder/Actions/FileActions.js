@@ -211,6 +211,7 @@ export function addSummariesAction(
     a_name_of_author
 ) {
 	return dispatch =>{
+      console.log("IN SUMMARIES", a_name_of_file)
 		dispatch(isLoadingAction(true));
 		  _addSummariesAction(a_token,
                           a_new_summary,

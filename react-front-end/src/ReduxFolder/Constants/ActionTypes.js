@@ -31,6 +31,7 @@ export const FORGOTACC  = 'FORGOTACC';
 export const CREATEACC  = 'CREATEACC';
 */
 export const UPLOADFILE = 'UPLOADFILE';
+export const PACK_SUMMARIES = 'PACK_SUMMARIES';
 export const GETPDFSUCCESS = 'GETPDFSUCCESS';
 export const DELETEFILE = 'DELETEFILE';
 export const GETFILE = 'GETFILE';
