@@ -30,6 +30,7 @@ class UploadFile extends React.Component{
 
 	componentWillReceiveProps(nextProps){
 		  this.setState({c_file_data: nextProps.st_files});
+		  this.setState({c_file_summaries: nextProps.st_file_summs});
 		  this.setState({c_op_window: nextProps.st_is_open_dialog});
       this.setState({c_dl_file_names: new Set(nextProps.st_dl_file_names)});
 
@@ -102,7 +103,7 @@ class UploadFile extends React.Component{
 								fileToUpload,
                 this.state.c_user_name
 							 );
-			this.handleCloseCardDialog();	
+			this.handleCloseCardDialog();
 		} else{
 			this.handleCloseCardDialog();
 		}	
@@ -131,7 +132,7 @@ class UploadFile extends React.Component{
                        disable          = {true}
             />
 
-				    <GridCardView arrayOfData = {this.state.c_file_data}
+				    <GridCardView arrayOfData = {this.state.c_file_summaries}
 				     	            cardDia     = {this.handleOpenCardDialog}
 				     	            isOpenSum   = {this.state.c_is_open_sum}
 				     	            closeDia    = {this.handleCloseCardDialog}
@@ -191,6 +192,7 @@ function mapStateToProps(state){
 	const { st_files,
           st_success_msg,
           st_is_open_dialog,
+          st_file_summs,
           st_err_upload} = state.genStateReducer;
 	const { st_is_load } = state.isLoadingReducer;
 	const { st_is_logged_in } = state.authentication;
@@ -202,6 +204,7 @@ function mapStateToProps(state){
     st_is_open_dialog,
     st_err_upload,
 		st_files,
+    st_file_summs: state.genStateReducer.st_dl_file_names,
     st_dl_file_names: state.genStateReducer.st_dl_file_names,
     st_username: state.userProfileReducer.st_username
 	};

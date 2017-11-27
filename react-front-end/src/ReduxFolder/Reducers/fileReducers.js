@@ -64,9 +64,9 @@ export default function genStateReducer(state = generalState, action) {
                     st_dl_file_names: new Set(new_dl_set)
             });
     case types.PACK_SUMMARIES:
-        console.log("INREDUCER", action.a_file_summs);
         return Object.assign({}, state, {
-            st_file_summs: action.a_file_summs
+            //spread or else converts to set
+            st_file_summs: [...action.a_file_summs] 
         });
 
 
