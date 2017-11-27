@@ -317,7 +317,7 @@ export function getSummariesAction(a_token, a_file_name) {
 		                return;
 			          }
 
-                dispatch(packSummaryActions(data));
+                dispatch(packSummaryActions(data, a_file_name));
                 
             }).catch((err)=>{
 			          console.log(err);
@@ -325,10 +325,11 @@ export function getSummariesAction(a_token, a_file_name) {
     };
 }
 
-export function packSummaryActions(a_data) {
+export function packSummaryActions(a_data, a_file_name) {
     return {
         type: types.PACK_SUMMARIES,
-        a_file_summs: a_data
+        a_file_summs: a_data,
+        a_file_name: a_file_name
     };
 }
 

@@ -64,9 +64,32 @@ export default function genStateReducer(state = generalState, action) {
                     st_dl_file_names: new Set(new_dl_set)
             });
     case types.PACK_SUMMARIES:
+        // munge the data properly
+        let tmp = {}; // a tmp object to use if we find a match
+
+        // iterate over all the file names we have, if we find a file name that
+        // matches for the summaries then munge this crappy data structure into
+        // something more manageable
+        for (var i = 0; i < state.st_files.length; i++) {
+            if (state.st_files[i].FILES.fileName === action.a_file_name) {
+                tmp.title         = state.st_files[i].FILES.title;
+                tmp.author        = state.st_files[i].FILES.author;
+                tmp.file_name     = state.st_files[i].FILES.fileName;
+                tmp.section_summs = action.a_file_summs;
+            };
+        }
+
+        // do a shallow copy of the old state
+        let better_file_data = state.st_file_summs.slice();
+
+        // if tmp is not empty, then we add the good object to the better array
+        if (!_.isEmpty(tmp)) {
+            better_file_data.push(tmp);
+        }
+
+        // now update state
         return Object.assign({}, state, {
-            //spread or else converts to set
-            st_file_summs: [...action.a_file_summs] 
+            st_file_summs: better_file_data
         });
 
 
