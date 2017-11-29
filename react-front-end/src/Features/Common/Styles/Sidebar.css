@@ -1,0 +1,63 @@
+/* Position and sizing of burger button */
+.bm-burger-button {
+  position: fixed;
+  width: 36px;
+  height: 30px;
+  left: 36px;
+  top: 36px;
+}
+
+/* Color/shape of burger icon bars */
+.bm-burger-bars {
+  background: #373a47;
+}
+
+/* override default <a> </a> tag */
+a {
+  color: #FEF0DB;
+  text-decoration: none;
+  padding-top:15px;
+  padding-right:75px;
+}
+
+/* General sidebar styles */
+.bm-menu {
+  background: #F0F0F0;
+  width: 230px;
+  padding: 0.5em 0.5em 0;
+  font-size: 1.15em;
+  min-height: 100%;
+  background-image: url('../../../Assets/indigoBack.png');
+  background-size: 270px 162px;
+  background-repeat: no-repeat;
+
+}
+
+/* user icon css */
+.user {
+  display: inline-block;
+  width: 70px;
+  height: 70px;
+  border-radius: 60%;
+  position:relative;
+  left:2px;
+  background-image: url('../../../Assets/greyBack.jpg');
+  
+}
+
+/* Morph shape necessary with bubble or elastic */
+.bm-morph-shape {
+  fill: #373a47;
+}
+
+/* Wrapper for item list */
+.bm-item-list {
+  color: #fffce1;
+  padding: 0.8em;
+  position:fixed;
+}
+
+/* Styling of overlay */
+.bm-overlay {
+  background: rgba(0, 0, 0, 0.3);
+}

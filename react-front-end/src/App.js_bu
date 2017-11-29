@@ -1,9 +1,7 @@
 import React from 'react';
 import './App.css';
-import {LoginOps} from './Features/Login/Login_Controller.js';
-import {UploadFile} from './Features/UploadFile/UploadFile_Controller.js';
-//import {UploadFile} from './AppBusinessLogic/UploadFile';
-//import { LoginOps } from './AppBusinessLogic/LoginOp';
+import {UploadFile} from './AppBusinessLogic/UploadFile';
+import { LoginOps } from './AppBusinessLogic/LoginOp';
 import { connect } from 'react-redux';
 import { Router, Route } from 'react-router-dom';
 import createBrowserHistory from 'history/createBrowserHistory';
@@ -16,8 +14,8 @@ class App extends React.Component {
       <div className="App">
             <Router history={history}>
                 <div>
-                <Route path="/" component={LoginOps} />
-                <Route path="/" component={UploadFile}/> 
+                    <Route path="/" component={LoginOps}/>
+                    <Route path="/" component={UploadFile}/> 
                 </div>
             </Router>
       </div>

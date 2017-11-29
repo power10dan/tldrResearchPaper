@@ -22,7 +22,7 @@
     },
     "scripts": {
         "start": "react-scripts start",
-        "build": "react-scripts build && babel src -d lib",
+        "build": "react-scripts build && babel blasrc -d lib",
         "test": "react-scripts test --env=jsdom && jest",
         "test:watch": "npm test --watch",
         "eject": "react-scripts eject"
