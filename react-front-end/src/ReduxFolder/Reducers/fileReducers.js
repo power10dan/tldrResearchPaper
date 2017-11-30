@@ -84,7 +84,6 @@ export default function genStateReducer(state = generalState, action) {
             };
         }
 
-        console.log("IN REDUCER", action.a_file_summs);
         // do a shallow copy of the old state
         let better_file_data = state.st_file_summs.slice();
 
