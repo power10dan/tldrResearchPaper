@@ -189,10 +189,10 @@ function _addSummariesAction(a_token,
 	  let authString = strAuth.replace("\\\\", "");
 	  let header = {
 		    method: 'POST',
-		    body: JSON.stringify({"file_name": a_name_of_file,
-			                        "section": a_sect_text,
+		    body: JSON.stringify({"file_name":    a_name_of_file,
+			                        "section":      a_sect_text,
 			                        "summary_text": a_new_sum,
-                              "author": a_name_of_author
+                              "author":       a_name_of_author
 			                       }),
 		    headers: {
 			      "Authorization": authString,
@@ -200,6 +200,7 @@ function _addSummariesAction(a_token,
 		    }
 	  };
 
+    console.log("IN ADD SUMMS", a_new_sum, a_sect_text)
 	  return fetch(urlAddSum, header);
 }
 
@@ -229,7 +230,7 @@ export function addSummariesAction(
 				          dispatch(getAllFilesAction(a_token));
 				          dispatch(isLoadingAction(false));
 			        }
-              
+
 		      }).catch((err)=>{
 			        console.log(err);
 		      });

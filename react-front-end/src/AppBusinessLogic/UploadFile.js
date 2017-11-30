@@ -100,7 +100,7 @@ class UploadFile extends React.Component{
   * addSummariesAction
 **/
 	  handleAddSummary = (filename, file_section) => {
-		    if(this.state.c_new_sum !== "" && this.state.c_sec_of_sum !== ""){
+		    if(this.state.c_new_sum !== ""){
 			      this.props.getAddSum(	this.state.c_token,
 								                 this.state.c_new_sum,
 								                 file_section,
@@ -139,6 +139,7 @@ class UploadFile extends React.Component{
 				     	            isOpenSum      = {this.state.c_is_open_sum}
 				     	            closeDia       = {this.handleCloseCardDialog}
                           p_handleCheck  = {this.handleCheck}
+				                  submitNewSummary = {this.handleAddSummary}
 				    />
 				  	</div>
 				);
