@@ -4,6 +4,7 @@ import uuid
 from io import BytesIO
 from django.conf import settings
 import os
+import shutil
 
 
 def zipFiles(root_dir="", files=[]):
@@ -14,19 +15,10 @@ def zipFiles(root_dir="", files=[]):
     # if both arguments are given
     if files and root_dir:
 
-        # for each file, open it to memory and write to zip file
-        for f in files:
+        zip_name = settings.TMP_DOCS + 'zip_file'
+        directory_name = root_dir
 
-            # match on the file name, glob returns a list of matches
-            fpath = root_dir + f
-            matches = glob.glob(fpath + ".*")
-
-            # if we have files matched in the directory then add them to the
-            # zip file
-            if matches:
-                zip_path = settings.TMP_DOCS + str(uuid.uuid4()) + '.zip'
-
-                with ZipFile(zip_path, 'w') as z:
-                    z.write(matches[0])
+        # Create 'path\to\zip_file.zip'
+        zip_path = shutil.make_archive(zip_name, 'zip', directory_name)
 
     return (zip_path)
