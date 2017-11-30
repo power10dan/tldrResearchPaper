@@ -92,17 +92,21 @@ class UploadFile extends React.Component{
 		this.setState({c_sec_of_sum: text});
 	}
 
+/**
+  * Function handleAddSummary checks to make sure global state section summary
+  * variables are not empty, it then takes a token, a new summary, a file section
+  * and a file name. The file seciton and name are bound in children props 
+  * GridList -> FileCard -> InputPopup. Function then kicks off the 
+  * addSummariesAction
+**/
 	  handleAddSummary = (filename, file_section) => {
-		// so far for demo purposes it only uploads
-		// to one file. In the future, we might want to change that
-    console.log("IN HANDLE", filename, file_section)
-		if(this.state.c_new_sum !== "" && this.state.c_sec_of_sum !== ""){
-			this.props.getAddSum(	this.state.c_token,
-								this.state.c_new_sum,
-								           file_section,
-                           filename,
-                this.state.c_user_name
-							 );
+		    if(this.state.c_new_sum !== "" && this.state.c_sec_of_sum !== ""){
+			      this.props.getAddSum(	this.state.c_token,
+								                 this.state.c_new_sum,
+								                 file_section,
+                                 filename,
+                                 this.state.c_user_name
+				    );
 		}
 			this.handleCloseCardDialog();
 	}
