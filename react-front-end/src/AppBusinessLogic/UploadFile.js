@@ -92,7 +92,7 @@ class UploadFile extends React.Component{
 		this.setState({c_sec_of_sum: text});
 	}
 
-	handleAddSummary = filename => file_section => {
+	  handleAddSummary = (filename, file_section) => {
 		// so far for demo purposes it only uploads
 		// to one file. In the future, we might want to change that
     console.log("IN HANDLE", filename, file_section)

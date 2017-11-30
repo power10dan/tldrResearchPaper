@@ -76,7 +76,8 @@ const styles = theme => ({
 class FileCardView extends React.Component {
     state = { expanded: false,
               p_sect_index: 0,  // index for section and summary array
-              p_section: ""
+              // section header for current summary, needed to pass to input card
+              p_header: this.props.p_summary_data[0].fields.header
     };
 
   handleExpandClick = () => {
@@ -85,20 +86,18 @@ class FileCardView extends React.Component {
 
     handleSelectChange = (event) => {
       this.setState({p_sect_index: event.target.value})
-        console.log("IN HANDLER FILE CARD", this.props.p_summary_data[event.target.value].fields.summary)
-      this.setState({p_section: this.props.p_summary_data[event.target.value].fields.summary})
+      this.setState({p_header: this.props.p_summary_data[event.target.value].fields.summary})
   };
 
   render () {
     const { classes } = this.props;
 	  return (
 		  <div>
-        {console.log("IN FILE CARD", this.state.p_section)}
           <AddSumDialog open = {this.props.open}
                         closeDialog = {this.props.closeDialog}
                         getSection = {this.props.getSection}
                         getNewSummary = {this.props.getNewSummary}
-                        submitNewSummary = {this.props.submitNewSummary(this.state.p_section)}
+                        submitNewSummary = {this.props.submitNewSummary.bind(this, this.state.p_header)}
           />
 			  <Card className={this.props.classes.card}>
           <CardHeader className = {this.props.classes.title}
