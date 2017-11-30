@@ -9,6 +9,7 @@ import IconButton from 'material-ui/IconButton';
 import CheckBox from 'material-ui/Checkbox';
 import ExpandMoreIcon from 'material-ui-icons/ExpandMore';
 import SimpleSelect from './DropDown';
+import AddSumDialog from '../AppComponents/InputPopup.js';
 
 const styles = theme => ({
 	card: {
@@ -58,10 +59,10 @@ const styles = theme => ({
 
 
   	buttonStyle:{
-  		marginTop: "110px",
-  		marginRight: "15px",
-  		borderRadius: "5px",
-  		marginLeft: "2px",
+  		  /* marginTop: "110px",
+  		     marginRight: "15px",
+  		     borderRadius: "5px",
+  		     marginLeft: "2px",*/
   		fontSize: 12,
   		color: "#FFFFFF"
   	},
@@ -75,6 +76,7 @@ const styles = theme => ({
 class FileCardView extends React.Component {
     state = { expanded: false,
               p_sect_index: 0,  // index for section and summary array
+              p_section: ""
     };
 
   handleExpandClick = () => {
@@ -83,12 +85,21 @@ class FileCardView extends React.Component {
 
     handleSelectChange = (event) => {
       this.setState({p_sect_index: event.target.value})
+        console.log("IN HANDLER FILE CARD", this.props.p_summary_data[event.target.value].fields.summary)
+      this.setState({p_section: this.props.p_summary_data[event.target.value].fields.summary})
   };
 
   render () {
     const { classes } = this.props;
 	  return (
 		  <div>
+        {console.log("IN FILE CARD", this.state.p_section)}
+          <AddSumDialog open = {this.props.open}
+                        closeDialog = {this.props.closeDialog}
+                        getSection = {this.props.getSection}
+                        getNewSummary = {this.props.getNewSummary}
+                        submitNewSummary = {this.props.submitNewSummary(this.state.p_section)}
+          />
 			  <Card className={this.props.classes.card}>
           <CardHeader className = {this.props.classes.title}
                       title     = {this.props.p_title}
@@ -104,13 +115,6 @@ class FileCardView extends React.Component {
 				  </CardContent>
 
 			    <CardActions className={this.props.classes.cardAction}>
-			      <Button color     = "primary"
-                    className = {this.props.classes.buttonStyle}
-                    onClick   = {this.props.p_card_dialog}>
-					    Add Summary
-					  </Button>
-
-
             <div className={classes.flexGrow} />
 
             <IconButton
@@ -131,6 +135,14 @@ class FileCardView extends React.Component {
             <CheckBox tabIndex = {-1}
                       onChange = {this.props.p_handleCheck}
             />
+			      <Button color     = "primary"
+                    dense
+                    className = {this.props.classes.buttonStyle}
+                    onClick   = {this.props.p_card_dialog}>
+					    Add Summary
+					  </Button>
+
+
 
 			    </CardActions>
           <Collapse in={this.state.expanded}

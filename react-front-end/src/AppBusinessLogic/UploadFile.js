@@ -89,31 +89,29 @@ class UploadFile extends React.Component{
   }
 
 	handleGetSectionOfSum = (text)=>{
-		this.setState({c_sec_of_sum: text.target.value});
+		this.setState({c_sec_of_sum: text});
 	}
 
-	handleAddSummary = () =>{
+	handleAddSummary = filename => file_section => {
 		// so far for demo purposes it only uploads
 		// to one file. In the future, we might want to change that
-		let fileToUpload = this.state.c_file_data[0].FILES.files[1].summary_file;
+    console.log("IN HANDLE", filename, file_section)
 		if(this.state.c_new_sum !== "" && this.state.c_sec_of_sum !== ""){
 			this.props.getAddSum(	this.state.c_token,
 								this.state.c_new_sum,
-								this.state.c_sec_of_sum,
-								fileToUpload,
+								           file_section,
+                           filename,
                 this.state.c_user_name
 							 );
+		}
 			this.handleCloseCardDialog();
-		} else{
-			this.handleCloseCardDialog();
-		}	
 	}
 
 	render(){
 		let c_is_fin = this.state.c_is_fin;
 		// if the app is uploading a file and is not finished with that yet, show loading bar
 		if(c_is_fin === false ){
-			if(this.state.c_file_data == null || this.state.c_file_summaries == null){
+			if(this.state.c_file_data === null || this.state.c_file_summaries === null){
 				return (
 					<div>
 			     	<AppTopBar uploadFile       = {this.handleClick}
