@@ -41,7 +41,7 @@ class SimpleSelect extends React.Component {
             </MenuItem>
 
             {this.props.p_section_summs.map(e => (
-                <MenuItem value={e.pk}>{e.fields.header}</MenuItem>
+                <MenuItem value={e.index}>{e.fields.header}</MenuItem>
             ))}
           </Select>
         </FormControl>
