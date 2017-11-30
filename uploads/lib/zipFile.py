@@ -20,7 +20,6 @@ def zipFiles(root_dir="", files=[]):
             # match on the file name, glob returns a list of matches
             fpath = root_dir + f
             matches = glob.glob(fpath + ".*")
-            print(matches)
 
             # if we have files matched in the directory then add them to the
             # zip file

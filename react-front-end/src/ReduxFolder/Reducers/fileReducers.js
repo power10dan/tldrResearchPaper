@@ -76,10 +76,15 @@ export default function genStateReducer(state = generalState, action) {
                 tmp.title         = state.st_files[i].FILES.title;
                 tmp.author        = state.st_files[i].FILES.author;
                 tmp.file_name     = state.st_files[i].FILES.fileName;
+                for (var j = 0; j < action.a_file_summs.length; j++) {
+                    action.a_file_summs[j].index = j;
+                }
                 tmp.section_summs = action.a_file_summs;
+
             };
         }
 
+        console.log("IN REDUCER", action.a_file_summs);
         // do a shallow copy of the old state
         let better_file_data = state.st_file_summs.slice();
 
