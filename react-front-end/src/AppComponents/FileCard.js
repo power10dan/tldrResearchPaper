@@ -10,6 +10,7 @@ import CheckBox from 'material-ui/Checkbox';
 import ExpandMoreIcon from 'material-ui-icons/ExpandMore';
 import SimpleSelect from './DropDown';
 import AddSumDialog from '../AppComponents/InputPopup.js';
+import SimpleMenu from '../AppComponents/RatingMenus.js';
 
 const styles = theme => ({
 	card: {
@@ -17,8 +18,6 @@ const styles = theme => ({
 		marginLeft: "35px",
 		borderRadius: "15px",
 		background: "#5C6BC0",
-
-		/* height: 185,*/
 	},
 
 	title: {
@@ -117,12 +116,12 @@ class FileCardView extends React.Component {
             <div className={classes.flexGrow} />
 
             <IconButton
-              className     = {classnames(classes.expand, {
-                  [classes.expandOpen]: this.state.expanded
-              })}
-              onClick       = {this.handleExpandClick}
-              aria-expanded = {this.state.expanded}
-              aria-label    = "Show more"
+                className     = {classnames(classes.expand, {
+                    [classes.expandOpen]: this.state.expanded
+                })}
+                onClick       = {this.handleExpandClick}
+                aria-expanded = {this.state.expanded}
+                aria-label    = "Show more"
             >
               <ExpandMoreIcon />
             </IconButton>
@@ -140,9 +139,7 @@ class FileCardView extends React.Component {
                     onClick   = {this.props.p_card_dialog}>
 					    Add Summary
 					  </Button>
-
-
-
+           <SimpleMenu />
 			    </CardActions>
           <Collapse in={this.state.expanded}
                     transitionDuration="auto" unmountOnExit>
