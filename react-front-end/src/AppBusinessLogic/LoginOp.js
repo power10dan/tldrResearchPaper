@@ -2,79 +2,82 @@ import React from 'react';
 import { connect } from 'react-redux';
 import LoginComp from '../AppComponents/LoginComp.js';
 import ErrSnack from '../AppComponents/ErrDialog.js';
-import { Login, LogInFailed} from '../ReduxFolder/Actions/LoginActions.js';
-import {isLoading } from '../ReduxFolder/Actions/LoadingActions.js';
-import {DialogOpen, DialogClose} from '../ReduxFolder/Actions/DialogActions.js';
+import { loginAction, logInFailedAction} from '../ReduxFolder/Actions/LoginActions.js';
+import {isLoadingAction } from '../ReduxFolder/Actions/LoadingActions.js';
+import {dialogOpenAction, dialogCloseAction} from '../ReduxFolder/Actions/DialogActions.js';
 import {SideNavStates} from '../AppBusinessLogic/SideBarUpdate';
 
  
 class LoginOperations extends React.Component{
 	constructor(props){
 		super(props);
+    
+   // all component state variables are prefix "c_" to denote they belong to the
+  // component state
 		this.state = {
-			userName: "",
-			userTempPass: "",
-			userPass: "",
-			isLoginSuccess: false,
-			errMessage: "",
-			successMessage: "",
-			opDialog: false,
-			isRegist: false,
+			c_user_name: "",                   // The user's user name
+			c_user_tmp_pass: "",               // A tmp password for the user
+			c_user_pass: "",                   // the user's password
+			c_is_login_success: false,         // Did the user login successfully?
+			c_err_msg: "",                     // an error message on failed login
+			c_success_msg: "",                 // success msg if successful login
+			c_op_dialog: false,                // open or close the dialog box
+			c_is_rgst: false,                  // is the user registered or not?
 		};
 	}
 
-	// because mapStatetoProps is async, props will 
-	// only be updated only when the component receives the props,
-	// which is in sometime we don't know. Thus, we use
-	// componentWillReceiveProps to set our new state
+  /** 
+  * Component will receive props maps nextProps, which are fields from the next
+  * state i.e. the state that is created from the old state and an action in the
+  * reducers to the controllers component props. this.setState is setting the
+  * controllers state with the new redux states fields
+  */
 	componentWillReceiveProps(nextProps) {
-		this.setState({isLoginSuccess: nextProps.isLoggedIn});
-		this.setState({errMessage: nextProps.errorMessage});
-		this.setState({opDialog: nextProps.isOpenDialog});
-		this.setState({isRegist: nextProps.isRegistered});
-		this.setState({successMessage: nextProps.successMess});
+		this.setState({c_is_login_success: nextProps.st_is_logged_in});
+		this.setState({c_err_msg: nextProps.st_error_msg});
+		this.setState({c_op_dialog: nextProps.st_is_open_dialog});
+		this.setState({c_is_rgst: nextProps.st_is_registered});
+		this.setState({c_success_msg: nextProps.st_success_msg});
 	}
 
 	formClean = ()=>{
 		// clean up
-	   	this.setState({userName: ""});
+	   	this.setState({c_user_name: ""});
 	   	// we have to clear out the text field variable
-		this.setState({userTempPass: ""});
+		this.setState({c_user_tmp_pass: ""});
 		// we also have to clear out our saved hash
-		this.setState({userPass: ""});
+		this.setState({c_user_pass: ""});
 
 	}
 
     handleSubmit = () => {
-    	//this.props.isLoading(true);
-        const { dispatch } = this.props;
 
-        if(this.state.userName === "" || typeof this.state.userName === "undefined") {
-        	this.props.updateFailed("Please enter user name");
-        	this.props.openDialog();
-        	setTimeout(()=>{this.props.closeDialog()}, 2000); // set dialog close after two seconds
-        	this.props.isLoading(false);
+        if(this.state.c_user_name === "" || typeof this.state.c_user_name === "undefined") {
+        	this.props.getUpdateFailed("Please enter user name");
+        	this.props.getOpenDialog();
+        	setTimeout(()=>{this.props.getCloseDialog()}, 2000); // set dialog close after two seconds
+        	this.props.getIsLoading(false);
        
-        } else if(this.state.userPass === "" || typeof this.state.userPass === "undefined"){
-        	this.props.updateFailed("Please enter password");
-        	this.props.openDialog();
-        	setTimeout(()=>{this.props.closeDialog()}, 2000); // set dialog close after two seconds
-        	this.props.isLoading(false);
+        } else if(this.state.c_user_pass === "" || typeof this.state.c_user_pass === "undefined"){
+        	this.props.getUpdateFailed("Please enter password");
+        	this.props.getOpenDialog();
+        	setTimeout(()=>{this.props.getCloseDialog()}, 2000); // set dialog close after two seconds
+        	this.props.getIsLoading(false);
         
         } else {
-        	//FIXME: Monkey patch: put userName in userEmail parameter. 
-        	this.props.loginOp(this.state.userName, this.state.userName, this.state.userPass);
-        	// we don't perform open dialog here because isLoginSuccess is set asyncally;
-        	// there will be a time where isLoginSuccess was not properly set. This results
-        	// in a dialog with failed to login message opened before the dialog 
+        	//FIXME: Monkey patch: put c_user_name in c_user_email parameter. 
+        	this.props.getLoginOp(this.state.c_user_name, this.state.c_user_name, this.state.c_user_pass);
+        	// we don't perform open dialog here because c_is_login_success is set asyncally;
+        	// there will be a time where c_is_login_success was not properly set. This results
+        	// in a dialog with failed to loginAction message opened before the dialog 
         	// with success message is opened.
-        	setTimeout(()=>{this.props.closeDialog()}, 2000); // set dialog close after two seconds
+        	setTimeout(()=>{this.props.getCloseDialog()}, 2000); // set dialog close after two seconds
         	this.formClean()
         } 
     }
 
     storeHash = ( hash) =>{
-    	this.setState({userPass: hash});
+    	this.setState({c_user_pass: hash});
     }
 
 	userPasswordGet = (userPassword) => {
@@ -84,16 +87,16 @@ class LoginOperations extends React.Component{
 		// is going to be displayed on the password textfield also.
 		// Thus, we save the password into a temp variable,
 		// then we hash the temp varible password and then
-		// return it to userPass.
-		this.setState({userTempPass: userPassword.target.value}, ()=>{
-			this.storeHash( this.state.userTempPass)
+		// return it to c_user_pass.
+		this.setState({c_user_tmp_pass: userPassword.target.value}, ()=>{
+			this.storeHash( this.state.c_user_tmp_pass)
 		});
 	}
 
 	userNameGet = (userNameAcc) => {
 		// we do not allow spaces in the user account name
 		let strippedUserNameAcc = userNameAcc.target.value.replace(/\s/g, "");
-		this.setState({userName: strippedUserNameAcc});
+		this.setState({c_user_name: strippedUserNameAcc});
 		
 	}
 
@@ -113,23 +116,30 @@ class LoginOperations extends React.Component{
 
 	render(){
       const packagesLogin = this.functionPackages();
-      let emptyState = null;
-      if(this.state.isRegist === true || this.state.isLoginSuccess === true){
+      if(this.state.c_is_rgst === true || this.state.c_is_login_success === true){
       	  	// in future, return something more meaningful
       	 	return(
       	 			<div>
 	      	 			<SideNavStates  />
-			      		<ErrSnack message={this.state.successMessage} openDialog={this.state.opDialog} />
+			      		<ErrSnack message       = {this.state.c_success_msg}
+                          getOpenDialog = {this.state.c_op_dialog}
+                />
 			      	</div>
 		      	);
       }
 
-      if(this.state.isLoginSuccess === false ){
+      if(this.state.c_is_login_success === false ){
 	      	return (
 	      		<div>
 	      			<SideNavStates  />
-		      		<LoginComp package={packagesLogin} name={this.state.userName} pass={this.state.userTempPass} />
-		      		<ErrSnack message={this.state.errMessage} openDialog={this.state.opDialog} />
+		      		<LoginComp package = {packagesLogin}
+                         name    = {this.state.c_user_name}
+                         pass    = {this.state.c_user_tmp_pass}
+              />
+
+		      		<ErrSnack message       = {this.state.c_err_msg}
+                        getOpenDialog = {this.state.c_op_dialog}
+              />
 		      	</div>
 	      	);
       } 
@@ -137,31 +147,42 @@ class LoginOperations extends React.Component{
     }
 }
 
-// "connects" to the state tree, and return updated 
-// states when state tree is updated.
+/** 
+  * mapStateToProps takes the redux state tree and maps fields, by name,
+  * from the redux state tree to nextProps. This function is where the names
+  * in nextProps, in ComponentWillReceiveProps, comes from
+*/
 function mapStateToProps(state) {
-    const { isLoggedIn, errorMessage, isOpenDialog, successMess} = state.authentication;
-    const {isRegistered} = state.createAccReducer;
+  const {st_is_logged_in,
+         st_error_msg,
+         st_is_open_dialog,
+         st_success_msg} = state.authentication;
+    const {st_is_registered} = state.createAccReducer;
     return {
-        isLoggedIn,
-        errorMessage,
-        isOpenDialog,
-        isRegistered,
-        successMess
+      st_is_logged_in,
+      st_error_msg,
+      st_is_open_dialog,
+      st_is_registered,
+      st_success_msg
     };
 }
 
-// maps dispatch function to props, so we can pass 
-// them in our props function 
+/** 
+  * mapDispatchToProps inserts functions that we define into the component props
+  * this is how the components handler functions, can be passed to child 
+  * components and how redux actions are hooked up to react components
+**/
 function mapDispatchToProps(dispatch){
 	return({
-		updateFailed: (message)=>{dispatch(LogInFailed(message));},
-		loginOp: (userName, userEmail, userPass) =>{dispatch(Login(userName, userEmail, userPass));},
-		isLoading: (stat)=>{dispatch(isLoading(stat));},
-		openDialog: () =>{dispatch(DialogOpen())},
-		closeDialog: () =>{dispatch(DialogClose())},
+		getUpdateFailed: (message)=>{dispatch(logInFailedAction(message));},
+		getLoginOp: (c_user_name, c_user_email, c_user_pass) =>{
+      dispatch(loginAction(c_user_name, c_user_email, c_user_pass));},
+		getIsLoading: (stat)=>{dispatch(isLoadingAction(stat));},
+		getOpenDialog: () =>{dispatch(dialogOpenAction())},
+		getCloseDialog: () =>{dispatch(dialogCloseAction())},
 	})
 }
 
-const connectedLogin = connect(mapStateToProps, mapDispatchToProps)(LoginOperations);
+const connectedLogin = connect(mapStateToProps,
+                               mapDispatchToProps)(LoginOperations);
 export { connectedLogin as LoginOps};

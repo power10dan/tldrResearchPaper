@@ -10,14 +10,16 @@ from uploads.views import views
 
 urlpatterns = [
     url(r'^api/uploadFile/(?P<filename>[^/]+)$', views.FileUploadView.as_view()),
-    url(r'^api/getAllFiles/$', views.GetAllFiles.as_view()),
+    url(r'^api/getAllFileNames/$', views.GetAllFileNames.as_view()),
     url(r'^api/deleteFile/(?P<filename>[^/]+)$', views.DeleteFile.as_view()),
     url(r'^admin/', admin.site.urls),
     url(r'^api/getSummary/', views.SummaryOutputView.as_view()),
     url(r'^api/getXMLFile/', views.getXMLFile.as_view(), name='getXMLFile'),
-    url(r'^api/getPDFFile/', views.getPDFFile.as_view(), name='getPDFFile'),
+    url(r'^api/getPDFFile/$', views.getPDFFile.as_view(), name='getPDFFile'),
     url(r'^api/getXMLAndSums/', views.getXMLAndSums.as_view(), name='getXMLAndSums'),
     url(r'^api/addUserSummary/', views.SummaryInputView.as_view(), name='summaryInput'),
+    url(r'^api/summaryVote/', views.SummaryVote.as_view(), name='SummaryVote'),
+    url(r'^api/summaryDownVote/', views.SummaryDownVote.as_view(), name='SummaryDownVote'),
     #url(r'^api/createUser/$'
     #    , views.CreateUser.as_view()
     #    , name='account-create'),

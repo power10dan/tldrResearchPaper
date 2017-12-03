@@ -1,9 +1,9 @@
 import * as types from '../Constants/ActionTypes';
-import { saveCred } from './SaveCred.js';
-import { CreateSuccess } from './CreateProfileActions.js';
-import { isLoading } from './LoadingActions.js';
-import { getAllFiles } from './FileActions.js';
-import { DialogOpen} from './DialogActions.js';
+import { saveCredAction } from './SaveCred.js';
+import { createSuccessAction } from './CreateProfileActions.js';
+import { isLoadingAction } from './LoadingActions.js';
+import { getAllFilesAction } from './FileActions.js';
+import { dialogOpenAction} from './DialogActions.js';
 /*
  * Action creators
  *
@@ -13,11 +13,11 @@ import { DialogOpen} from './DialogActions.js';
    asynchronously validates the response, and stores the auth token locally if
    success, then return the user
 */
-function _Login(userName, passWord) {
+function _loginAction(a_user_name, a_password) {
     let requestOptions = {
         method: 'POST',
-        body: JSON.stringify({ username: userName, 
-                               password: passWord
+        body: JSON.stringify({ username: a_user_name,
+                               password: a_password
                             }),
         headers: { 'Content-Type': 'application/json' }
     };
@@ -28,72 +28,70 @@ function _Login(userName, passWord) {
 }
 
 //actual login function
-export function Login(userName, userEmail, password) {
-    //let hash = bcrypt.hashSync(password, 10);
-    //console.log(hash);
+export function loginAction(a_user_name, a_user_email, a_password) {
     return dispatch => {
-        // save user password
-        _Login(userName, password).then((response) => {
-            let status = response.status;
-            if(response.ok != true){
-                dispatch(LogInFailed("Login Failed, we can't find your credentials"));
+        // save user a_password
+        _loginAction(a_user_name, a_password)
+            .then((response) => {
+
+            if(response.ok !== true){
+                dispatch(logInFailedAction(
+                    "Login Failed, we can't find your credentials"));
+
                 // only open dialog when it's asyncally reached here
-                dispatch(DialogOpen());
-                dispatch(isLoading(false));
+                dispatch(dialogOpenAction());
+                dispatch(isLoadingAction(false));
                 return;
+
             } else{
                 return response.json();
             }
         }).then((data) => {
+
             // if login fails, data will be undefined.
             // if not, then data should contain the login token.
             if(typeof data === 'undefined'){
                 return;
+
             } else {
-                let message = "Hello " + userName
+                let message = "Hello " + a_user_name;
+
                 // clear login failed message
-                dispatch(LogInSuccess(message));
-                dispatch(CreateSuccess(""));
-                dispatch(saveCred(userName, userEmail, data.token));
+                dispatch(logInSuccessAction(message));
+                dispatch(createSuccessAction(""));
+                dispatch(saveCredAction(a_user_name, a_user_email, data.token));
+
                  // only open dialog when it's asyncally reached here
-                dispatch(DialogOpen());
+                dispatch(dialogOpenAction());
 
                 // get all files
-                dispatch(getAllFiles(data.token))
+                dispatch(getAllFilesAction(data.token))
             }
         }).catch((err, status)=>{
             if(err.message === "Failed to fetch"){
-                dispatch(LogInFailed("Server Connection Refused, Please Contact Your System Admin"));
-               
+                dispatch(logInFailedAction(
+                    "Server Connection Refused, \
+                     Please Contact Your System Admin"));
+
             }
         });
     };
 }
 
-// action dispatch for when login succeds
-export  function LogInSuccess(message){
+// action dispatch for when login succeeds
+export function logInSuccessAction(a_message){
  	return {
- 		type: types.LOGIN_SUCCESS,
- 		isLogin: true,
-        successMessage: message
+ 		  type: types.LOGIN_SUCCESS,
+      a_is_logged_in: true,
+      a_success_msg: a_message
  	};
  }
 
  // action dispatch when loading failed
-export function LogInFailed(failureMessage){
+export function logInFailedAction(a_failure_message){
  	return {
  		  type: types.LOGIN_FAIL,
- 		  isLogin: false,
- 		  message: failureMessage
+      a_is_logged_in: false,
+      a_error_msg: a_failure_message
  	};
  }
-
-
- /*export function ForgotPass(email){
- 	return {type: types.FORGOTPass, recoverEmail: email};
- }
-
- export function ForgotAcc(email){
- 	return {type: types.FORGOTACC, recoverEmail: email};
- }
- */

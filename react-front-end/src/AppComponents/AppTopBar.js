@@ -14,84 +14,112 @@ const AppTopBar = (props) =>{
 		  <div className={props.classes.root} >
 		      <AppBar position="static" >
 		        <Toolbar>
-		          <Typography type="title" color="inherit" >
+		          <Typography type="title"
+                          color="inherit" >
 		            TL ; DR Please?
 		          </Typography>
-			          <ReactFileReader
-			                 base64={true}
-			                 fileTypes=".pdf"
-			                 handleFiles={props.uploadFile}>
-				          	 <Button color="contrast"
-						      	component="span"
-						       	className = {props.classes.menuButton} disabled >
-					         
-					            Upload Files
-					         
-					         </Button>
+
+			        <ReactFileReader base64={true}
+                               fileTypes=".pdf"
+                               handleFiles={props.uploadFile}>
+				        <Button color="contrast"
+						      	    component="span"
+						       	    className = {props.classes.menuButton} disabled >
+					        Upload Files
+					      </Button>
 
 				       </ReactFileReader>
-			          <Button color="contrast" className = {props.classes.menuButton} disabled>
+
+					      <Button color="contrast"
+                        className={props.classes.buttonStyle}
+                        onClick={props.p_getPDF}
+                        disabled >
+					        Download Selected Papers
+					      </Button>
+
+			         <Button color="contrast"
+                       className={props.classes.menuButton}
+                       disabled>
 			          			About This App
-			          </Button>
+			         </Button>
+
 		        </Toolbar>
 		      </AppBar>
 		       <LinearProgress color="accent" mode="query" />
-	    </div>	
+	    </div>
 		)
 	} else if (props.loggedIn === false){
 		return (
 		  <div className={props.classes.root} >
 		      <AppBar position="static" >
 		        <Toolbar>
-		          <Typography type="title" color="inherit" >
+		          <Typography type="title"
+                          color="inherit" >
 		            TL ; DR Please?
 		          </Typography>
-			          <ReactFileReader
-			                 base64={true}
-			                 fileTypes=".pdf"
-			                 handleFiles={props.uploadFile}>
-				          	 <Button color="contrast"
-						      	component="span"
-						       	className = {props.classes.menuButton} disabled >
-					         
-					            Upload Files
-					         
-					         </Button>
-
+			        <ReactFileReader base64={true}
+                               fileTypes=".pdf"
+                               handleFiles={props.uploadFile}>
+				        <Button color="contrast"
+                        component="span"
+                        className={props.classes.menuButton}
+                        disabled >
+					        Upload Files
+					      </Button>
 				       </ReactFileReader>
-			          <Button color="contrast" className = {props.classes.menuButton} disabled>
-			          			About This App
-			          </Button>
+
+					      <Button color="contrast"
+                        className={props.classes.buttonStyle}
+                        onClick={props.p_getPDF}
+                        disabled >
+					        Download Selected Papers
+					      </Button>
+
+			         <Button color="contrast"
+                       className={props.classes.menuButton}
+                       disabled>
+			           About This App
+			         </Button>
+
 		        </Toolbar>
 		      </AppBar>
-	    	</div>	
+	    	</div>
 		);
-
 	} else {
 		return (
 		    <div className={props.classes.root} >
 			      <AppBar position="static" >
 			        <Toolbar>
-			          <Typography type="title" color="inherit" >
+			          <Typography type="title"
+                            color="inherit" >
 			            TL ; DR Please?
 			          </Typography>
-				          <ReactFileReader
-				                 base64={true}
-				                 fileTypes=".pdf"
-				                 handleFiles={props.uploadFile}>
-
-				          	    <Button color="contrast"
-						          	component="span"
-						          	className = {props.classes.menuButton} >
-					          	   Upload Files
-					             </Button>
+				        <ReactFileReader base64={true}
+                                 fileTypes=".pdf"
+                                 handleFiles={props.uploadFile}>
+				          <Button color="contrast"
+                          component="span"
+						          	  className = {props.classes.menuButton} >
+					          Upload Files
+					        </Button>
 					       </ReactFileReader>
-			          <Button color="contrast" className = {props.classes.menuButton} >About This App</Button>
+
+					      <Button color="contrast"
+                        className={props.classes.buttonStyle}
+                        onClick={props.p_getPDF}>
+					        Download Selected Papers
+					      </Button>
+
+			         <Button color="contrast"
+                       className={props.classes.menuButton} >
+                 About This App
+               </Button>
+
 			        </Toolbar>
 			      </AppBar>
 		    </div>
 	  	);
-	}	
+	}
 };
 
 export default withStyles(stylesAppTopBar)(AppTopBar);

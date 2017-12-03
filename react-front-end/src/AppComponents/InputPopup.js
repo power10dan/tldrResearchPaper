@@ -4,7 +4,6 @@ import TextField from 'material-ui/TextField';
 import Dialog, {
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
 } from 'material-ui/Dialog';
 
@@ -14,25 +13,6 @@ const AddSumDialog = ( props )=>{
         <Dialog open={props.open} onRequestClose={props.closeDialog}>
           <DialogTitle>Add summary</DialogTitle>
           <DialogContent>
-             <TextField
-                autoFocus
-                margin="dense"
-                id="name"
-                label="File Name "
-                type="email"
-                fullWidth
-                onChange={props.getFileName}
-            />
-
-             <TextField
-                autoFocus
-                margin="dense"
-                id="name"
-                label="Section to add summary"
-                type="email"
-                fullWidth
-                onChange={props.getSection}
-            />
             <TextField
                 autoFocus
                 margin="dense"

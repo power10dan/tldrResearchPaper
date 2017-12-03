@@ -1,31 +1,99 @@
 from django.conf import settings
 
-from rest_framework.parsers import FileUploadParser, MultiPartParser
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.parsers import MultiPartParser
 from rest_framework.authtoken.models import Token
 
+from uploads.models.models import SectionSummary
 from uploads.permissions.permissions import isAdminOrReadOnly
 from uploads.serializers.serializers import UserSerializer
-from uploads.lib.summarize import summarize
+from uploads.lib.summarize import summarize, create_DB_summary
+from uploads.lib.cleanup import cleanUp
 
+from django.core import serializers
 from django.http import HttpResponse
 from django.http import HttpRequest
-from django.http import FileResponse
 from django.http.request import QueryDict, MultiValueDict
 
-from py4j.java_gateway import JavaGateway
 from uploads.lib.grabFile import grabFileToReq
+from uploads.lib.zipFile import zipFiles
 
 import os
 import json
-import re
 import base64
 import glob
-import xml.etree.ElementTree as ET
-from bs4 import BeautifulSoup
+import requests
 
+class SummaryDownVote(APIView):
+    """
+    Increase the vote count by one.
+    """
+    def post(self, request):
+        response = Response(status=status.HTTP_400_BAD_REQUEST)
+
+        filename = request.POST.get('file_name')
+        header = request.POST.get('header')
+        author = request.POST.get('author')
+
+        if filename and header and author:
+            summary_list = SectionSummary.objects.filter(filename=filename, header=header, author=author)
+            if len(summary_list) == 1:
+                summary = summary_list[0]
+                old_votes = summary.votes
+                new_votes = old_votes - 1
+                summary.votes = new_votes
+                summary.save()
+
+                response = Response(status=status.HTTP_200_OK)
+
+        return response
+
+class SummaryVote(APIView):
+    """
+    Increase the vote count by one.
+    """
+    def post(self, request):
+        response = Response(status=status.HTTP_400_BAD_REQUEST)
+
+        filename = request.POST.get('file_name')
+        header = request.POST.get('header')
+        author = request.POST.get('author')
+
+        if filename and header and author:
+            summary_list = SectionSummary.objects.filter(filename=filename, header=header, author=author)
+            if len(summary_list) == 1:
+                summary = summary_list[0]
+                old_votes = summary.votes
+                new_votes = old_votes + 1
+                summary.votes = new_votes
+                summary.save()
+
+                response = Response(status=status.HTTP_200_OK)
+
+        return response
+
+    """
+    Get the number of votes for a specific summary.
+    """
+    def get(self, request):
+        response = Response(status=status.HTTP_400_BAD_REQUEST)
+
+        filename = request.GET.get('file_name')
+        header = request.GET.get('header')
+        author = request.GET.get('author')
+
+        if filename and header and author:
+            summary_list = SectionSummary.objects.filter(filename=filename, header=header, author=author)
+            if len(summary_list) == 1:
+                summary = summary_list[0]
+                num_votes = summary.votes
+
+                votes_data = {'votes': num_votes}
+                response = HttpResponse(json.dumps(votes_data), content_type="application/json")
+
+        return response
 
 class SummaryOutputView(APIView):
     """
@@ -39,17 +107,32 @@ class SummaryOutputView(APIView):
         response = Response(status=status.HTTP_400_BAD_REQUEST)
         fail_str = "File not found!"
 
-        filename = request.GET.get("file_name")
+        filename = request.GET.get('file_name')
+        header = request.GET.get('header')
+        num = request.GET.get('num')
 
-        if filename:
-            path = settings.SUMMARY_DOCS + filename
-            matches = glob.glob(path + ".*")
+        if filename and header and num:
+            all_summary = SectionSummary.objects.filter(filename=filename, header=header)
 
-            if matches:
-                response = FileResponse(
-                    base64.b64encode(open(matches[0], 'rb').read()))
+            if len(all_summary) <= int(num):
+                qs_json = serializers.serialize('json', all_summary)
+                response = HttpResponse(qs_json, content_type='application/json')
+            else:
+                some_summaries = all_summary[:int(num)]
+                qs_json = serializers.serialize('json', some_summaries)
+                response = HttpResponse(qs_json, content_type='application/json')
 
-        if not filename or not matches:
+        elif filename and header:
+            all_summary = SectionSummary.objects.filter(filename=filename, header=header)
+            qs_json = serializers.serialize('json', all_summary)
+            response = HttpResponse(qs_json, content_type='application/json')
+
+        elif filename:
+            all_summary = SectionSummary.objects.filter(filename=filename)
+            qs_json = serializers.serialize('json', all_summary)
+            response = HttpResponse(qs_json, content_type='application/json')
+
+        else:
             response.reason_phrase = fail_str
 
         return response
@@ -67,37 +150,21 @@ class SummaryInputView(APIView):
         # vars
         permission_classes = (isAdminOrReadOnly, )
         response = Response(status=status.HTTP_400_BAD_REQUEST)
-        matched_files = []
 
         # default python 3.X behavior: request body is a byte string
-        body_unicode = request.body.decode('utf-8')
-        body_data = json.loads(body_unicode)
+
         # request.data is a dict in the response, the .get method returns none
         # if the fields are not in dict
-        file_name = body_data.get('file_name')
-        section = body_data.get('section')
-        summary_text = body_data.get('summary_text')
+        json_data = json.loads(request.body)
+        file_name = json_data['file_name']
+        section = json_data['section']
+        summary_text = json_data['summary_text']
+        username = json_data['author']
 
         # if request was well formed get the file from the file system
-        if file_name and section and summary_text:
-            # default file_name include full path already
-            path = file_name
-            matched_files = glob.glob(path + "*")
-
-        if matched_files:
-            server_file = matched_files[0]  # get first match
-
-            with open(server_file, 'r+') as f:
-                soup = BeautifulSoup(f, 'xml')
-                for match in soup.find_all(re.compile("(" + section + ")")):
-                    print(match)
-                    match.string = summary_text
-
-                f.seek(0)
-                f.write(soup.prettify())
-                f.truncate()
-
-            response.status_code = status.HTTP_200_OK
+        if file_name and section and summary_text and username:
+            create_DB_summary(file_name, section, summary_text, username)
+            response = Response(status=status.HTTP_200_OK)
 
         return response
 
@@ -122,7 +189,27 @@ class getPDFFile(APIView):
 
     def get(self, request):
         permission_classes = (isAdminOrReadOnly, )
-        return grabFileToReq(request, "pdf_files.tar.bz2", settings.MEDIA_DOCS)
+        root_dir = settings.MEDIA_DOCS
+        response = Response(status=status.HTTP_400_BAD_REQUEST)
+        response.reason_phrase = "No Files found!"
+
+        # try to get the file query strings from the request
+        req_files = request.GET.getlist('files')
+
+        # if we got them try to zip them all
+        if req_files:
+            (z_file_path) = zipFiles(root_dir, req_files)
+
+        # if we got back a zipfile then pack the request
+        if z_file_path:
+            response = HttpResponse(content=open(z_file_path, 'rb').read())
+            response.status_code = status.HTTP_200_OK
+            response['Content-Type'] = 'application/x-zip-compressed'
+            response['Content-Disposition'] = 'attachment; filename=%s' \
+                                              % os.path.basename(z_file_path)
+            response.reason_phrase = "Success!"
+
+        return response
 
 
 class getXMLAndSums(APIView):
@@ -132,6 +219,7 @@ class getXMLAndSums(APIView):
         num_files = None
         num_files = request.GET.get('num_files')
         file_names = request.GET.getlist("file_names")
+
         response = Response(status=status.HTTP_400_BAD_REQUEST)
 
         if file_names:
@@ -165,6 +253,12 @@ class getXMLAndSums(APIView):
                 settings.XML_DOCS,
                 settings.SUMMARY_DOCS)
 
+        #############################################
+
+        cleanUp()
+
+        #############################################
+        
         return response
 
 
@@ -183,20 +277,31 @@ class FileUploadView(APIView):
             fileopened.write(base64.decodestring(newString[1]))
         fileopened.close()
 
-        # GROBID STUFF USING PY4J
-        print("Grobid Working")
+
+        print("Connecting to Grobid server")
         inputDir = settings.MEDIA_DOCS
         outputDir = settings.XML_DOCS
-        gateway = JavaGateway()
-        grobidClass = gateway.entry_point
-        consolidateHead = False
-        consolidateCite = False
-        status = grobidClass.PDFXMLConverter(inputDir, outputDir, consolidateHead, consolidateCite)
+        url = 'http://192.168.99.100:8080/processFulltextDocument'
+
+        print("got to the request")
+
+        response = requests.post(url, files={'input':open(path,'rb')})
+
+        print("past the request")
+
+        print("trying to write to file")
+
+        with open(outputDir+filename[:-4]+'.fulltext.tei.xml','w') as outputFile:
+            outputFile.write(response.text)
+
+        print("wrote to file")
+
         print("Grobid Finished")
-        summarize(outputDir+filename[:-4]+'.fulltext.tei.xml',filename[:-4],[])
+        summarize(outputDir+filename[:-4]+'.fulltext.tei.xml',filename[:-4])
         return Response(status=204)
 
-class GetAllFiles(APIView):
+
+class GetAllFileNames(APIView):
     def get(self, request):
         fileRoot = settings.MEDIA_DOCS
         fileNames = [fileRoot + fileName for
@@ -208,6 +313,7 @@ class GetAllFiles(APIView):
         response = HttpResponse(json.dumps(fileData), content_type="application/json")
         return response
 
+
 class DeleteFile(APIView):
     def delete(self, request, filename, format=None):
         fileToBeDel = filename
@@ -218,6 +324,7 @@ class DeleteFile(APIView):
             return Response(status=204)
         else:
             return Response("File can't be found", status=404)
+
 
 class CreateUser(APIView):
     def post(self, request, format="json"):

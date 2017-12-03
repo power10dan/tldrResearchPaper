@@ -94,7 +94,7 @@ if 'TRAVIS' in os.environ:
             'ENGINE':   'django.db.backends.postgresql_psycopg2',
             'NAME':     'travisci',
             'USER':     'postgres',
-            'PASSWORD': '',
+            'PASSWORD': 'iampost',
             'HOST':     'localhost',
             'PORT':     '',
         }
@@ -144,7 +144,7 @@ REST_FRAMEWORK = {
 }
 
 JWT_AUTH = {
-        'JWT_EXPIRATION_DELTA' : datetime.timedelta(seconds=300)
+        'JWT_EXPIRATION_DELTA' : datetime.timedelta(seconds=30000)
         }
 
 # Internationalization
@@ -173,7 +173,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_DOCS = os.path.join(MEDIA_ROOT, 'documents/')
 XML_DOCS = os.path.join(MEDIA_ROOT, 'xmlFiles/')
 SUMMARY_DOCS = os.path.join(MEDIA_ROOT, 'summaries/')
-
+TMP_DOCS = os.path.join(MEDIA_ROOT, 'tmp/')
 
 # Setting max upload size in bytes (10 MB)
 DATA_UPLOAD_MAX_MEMORY_SIZE = 4 * 2621440

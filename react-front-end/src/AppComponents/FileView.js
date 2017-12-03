@@ -2,7 +2,6 @@ import React from 'react';
 import { withStyles } from 'material-ui/styles';
 import { GridList} from 'material-ui/GridList';
 import FileCard from './FileCard.js';
-import AddSumDialog from '../AppComponents/InputPopup.js';
 
 const styles = theme =>({
 	root: {
@@ -14,8 +13,8 @@ const styles = theme =>({
 	},
 
 	gridList: {
-	    width: 870,
-    	height: 'auto',
+    	height: 1500,
+      width: 'auto'
 	 },
 
 	title: {
@@ -27,26 +26,33 @@ const GridCardView = (props)=>{
 	const { classes } = props;
 	return (
 		<div className={classes.root} >
-			<GridList className={classes.gridList} cols={2} >
-				{  props.arrayOfData.map(card =>(
-						<FileCard 
-							title={card.FILES.title} 
-							summaryText = {card.FILES.Intro_summary} 
-							cardDialog={props.cardDia} 
-							closeDialog={props.closeDia}
-						/>
+			<GridList className={classes.gridList} cols={1} >
+				{props.arrayOfData.map(card =>(
+            <div>
+					      <FileCard p_title          = {card.title}
+					                p_card_dialog    = {props.cardDia}
+					                p_close_dialog   = {props.closeDia}
+                          p_handleCheck    = {props.p_handleCheck.bind(this, card.file_name)}
+                          p_summary_data   = {card.section_summs}
+                          open             = {props.isOpenSum}
+                          closeDialog      = {props.closeDia}
+			 	                  getSection       = {props.sectionFunc}
+			 	                  getNewSummary    = {props.summaryFunc}
+			 	                  submitNewSummary = {props.submitNewSummary.bind(this, card.file_name)}
+						    />
+            </div>
 					))
 				}
 			</GridList>
-			<AddSumDialog  
-			      open={props.isOpenSum} 
-			      closeDialog={props.closeDia} 
-			 	  getSection = {props.sectionFunc}
-			 	  getNewSummary = {props.summaryFunc}
-			 	  submitNewSummary = {props.submitNewSummary}
-			/>
 		</div>
 	); 
 }
 
+/* <AddSumDialog open             = {props.isOpenSum}
+	 closeDialog      = {props.closeDia}
+	 getSection       = {props.sectionFunc}
+	 getNewSummary    = {props.summaryFunc}
+	 submitNewSummary = {props.submitNewSummary.bind(this, card.file_name)}
+ *               p_summary_data   = {card.section_summs}
+	 />*/
 export default withStyles(styles)(GridCardView);
