@@ -4,7 +4,7 @@
   :url "http://example.com/FIXME"
 
   :dependencies [[buddy "2.0.0"]
-                 [cider/cider-nrepl "0.15.0-SNAPSHOT"]
+                 [cider/cider-nrepl "0.15.1-SNAPSHOT"]
                  [clj-time "0.14.2"]
                  [compojure "1.6.0"]
                  [conman "0.7.4"]
@@ -61,7 +61,7 @@
                                  [ring/ring-devel "1.6.3"]
                                  [pjstadig/humane-test-output "0.8.3"]]
                   :plugins      [[com.jakemccrary/lein-test-refresh "0.19.0"]]
-                  
+
                   :source-paths ["env/dev/clj"]
                   :resource-paths ["env/dev/resources"]
                   :repl-options {:init-ns user}
