@@ -6,6 +6,7 @@
             [buddy.auth.accessrules :refer [restrict]]
             [buddy.auth :refer [authenticated?]]))
 
+;; these functions just setup the auth-rules key to be used in service-routes
 (defn access-error [_ _]
   (unauthorized {:error "unauthorized"}))
 
@@ -21,19 +22,30 @@
   [_ binding acc]
   (update-in acc [:letks] into [binding `(:identity ~'+compojure-api-request+)]))
 
+;; This function defines the api routes for the app, use the :auth-rules key
+;; to add custom authentication
 (defapi service-routes
   {:swagger {:ui "/swagger-ui"
              :spec "/swagger.json"
              :data {:info {:version "1.0.0"
                            :title "Sample API"
                            :description "Sample Services"}}}}
-  
+
+  (POST "/login" req
+        :return {:userid String}
+        :body-params [userid :- String pass :- String]
+        :summary "User login handler"
+        (assoc-in (ok {:userid userid}) [:session :identity] {:userid userid}))
+
+
   (GET "/authenticated" []
        :auth-rules authenticated?
        :current-user user
        (ok {:user user}))
+
   (context "/api" []
     :tags ["thingie"]
+    :auth-rules authenticated? ;; this line forces auth for everything in /api context
 
     (GET "/plus" []
       :return       Long
