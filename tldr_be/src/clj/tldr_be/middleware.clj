@@ -17,8 +17,8 @@
             [buddy.auth.middleware :refer [wrap-authentication wrap-authorization]]
             [buddy.auth.accessrules :refer [restrict]]
             [buddy.auth :refer [authenticated?]]
-            [buddy.auth.backends.token :refer [jwe-backend]]
-            [buddy.sign.jwt :refer [encrypt]]
+            [buddy.auth.backends :as backends]
+            [buddy.sign.jwt :as jwt]
             [buddy.core.nonce :refer [random-bytes]]
             [clj-time.core :refer [plus now minutes]])
   (:import [javax.servlet ServletContext]
@@ -100,18 +100,20 @@
   (restrict handler {:handler authenticated?
                      :on-error on-error}))
 
-(def pubkey (keys/public-key "pubkey.pem"))
-(def privkey (keys/private-key "pubkey.pem"))
+;; this is the secret key
+(def secret (random-bytes 32))
 
+;; this is the backend that will be handled in the middleware, see the buddy docs
 (def token-backend
-  (jwe-backend {:secret secret
-                :options {:alg :a256kw
-                          :enc :a128gcm}}))
+  (backends/jws {:secret secret}))
 
-(defn token [username]
+(defn token
+  "Given a username and a key, generate a unique token for that user name with an
+  expiration time of an hour from now"
+  [username key]
   (let [claims {:user (keyword username)
                 :exp (plus (now) (minutes 60))}]
-    (encrypt claims secret {:alg :a256kw :enc :a128gcm})))
+    (jwt/sign claims key)))
 
 (defn wrap-auth [handler]
   (let [backend token-backend]
