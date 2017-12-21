@@ -100,7 +100,8 @@
   (restrict handler {:handler authenticated?
                      :on-error on-error}))
 
-(def secret (random-bytes 32))
+(def pubkey (keys/public-key "pubkey.pem"))
+(def privkey (keys/private-key "pubkey.pem"))
 
 (def token-backend
   (jwe-backend {:secret secret

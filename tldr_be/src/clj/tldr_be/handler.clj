@@ -12,6 +12,13 @@
                 :start ((or (:init defaults) identity))
                 :stop  ((or (:stop defaults) identity)))
 
+(defn login-handler
+  [request]
+  (let [data (:form-params request)
+        user (find-user (:user-name data)
+                        (:password data))
+        token (jwt/encrypt {:user (:id user)})]))
+
 (def app-routes
   (routes
     (-> #'home-routes
