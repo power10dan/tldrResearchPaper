@@ -1,3 +1,4 @@
 CREATE TABLE docs
- (id INT,
-  name VARCHAR(25));
+(id INT,
+ filename VARCHAR(30),
+ filestuff LONGBLOB);
