@@ -6,18 +6,27 @@
             [compojure.route :as route]
             [tldr-be.env :refer [defaults]]
             [mount.core :as mount]
-            [tldr-be.middleware :as middleware]))
+            [buddy.sign.jwt :as jwt]
+            [cheshire.core :as json]
+            [tldr-be.middleware :as middleware]
+            [ring.util.response :refer [redirect]]))
 
 (mount/defstate init-app
                 :start ((or (:init defaults) identity))
                 :stop  ((or (:stop defaults) identity)))
 
-(defn login-handler
+(defn do-login
+  "Given a request, get the username and password out of the request, check that
+  the user exists in the db, if good then return a 200 with a token, if not then
+  redirect to the home page"
   [request]
-  (let [data (:form-params request)
-        user (find-user (:user-name data)
-                        (:password data))
-        token (jwt/encrypt {:user (:id user)})]))
+  (let [data (:form-params request)]
+    (if-let [user (get-user (:username data) ;;get-user needs implementation
+                            (:password data))]
+      {:status 200
+       :headers {:content-type "application/json"}
+       :body (json/encode {:token (middleware/token user middleware/secret)})}
+      (redirect "/"))))
 
 (def app-routes
   (routes
