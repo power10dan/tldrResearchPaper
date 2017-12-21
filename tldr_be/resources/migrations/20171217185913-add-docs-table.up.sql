@@ -1,4 +1,4 @@
 CREATE TABLE docs
-(id INT,
+(id SERIAL PRIMARY KEY,
  filename VARCHAR(30),
  filestuff LONGBLOB);

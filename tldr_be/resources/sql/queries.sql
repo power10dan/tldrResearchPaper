@@ -1,8 +1,8 @@
 -- :name create-user! :! :n
 -- :doc creates a new user record
 INSERT INTO users
-(id, first_name, last_name, email, pass)
-VALUES (:id, :first_name, :last_name, :email, :pass)
+(first_name, last_name, email, pass)
+VALUES (:first_name, :last_name, :email, :pass)
 
 -- :name update-user! :! :n
 -- :doc updates an existing user record
@@ -25,8 +25,8 @@ WHERE id = :id
 -- :name create-doc! :! :n
 -- :doc creates a new document record
 INSERT INTO docs
-(id, filename, filestuff)
-VALUES (:id, :filename, :filestuff)
+(filename, filestuff)
+VALUES (:filename, :filestuff)
 
 -- :name get-doc :? :1
 -- :doc retrieves a document record given the id
@@ -43,8 +43,8 @@ WHERE id = :id
 -- :name create-summary! :! :n
 -- :doc creates a new summary record
 INSERT INTO summary
-(id, header, author, filename, summary, votes)
-VALUES (:id, :header, :author, :filename, :summary, :votes, :doc_id)
+(header, author, filename, summary, votes)
+VALUES (:header, :author, :filename, :summary, :votes, :doc_id)
 
 -- :name get-summary :? :1
 -- :doc retrieves a summary record given the id
