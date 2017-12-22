@@ -17,7 +17,7 @@
             [buddy.auth.middleware :refer [wrap-authentication wrap-authorization]]
             [buddy.auth.accessrules :refer [restrict]]
             [buddy.auth :refer [authenticated?]]
-            [tldr-be.auth.auth :refer [token-backend]])
+            [tldr-be.auth.core :refer [token-backend]])
   (:import [javax.servlet ServletContext]
            [org.joda.time ReadableInstant]))
 

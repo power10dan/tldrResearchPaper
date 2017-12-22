@@ -2,6 +2,7 @@
   (:require [tldr-be.layout :as layout]
             [compojure.core :refer [defroutes GET POST]]
             [ring.util.http-response :as response]
+            [tldr-be.auth.core :as handlers]
             [clojure.java.io :as io]))
 
 (defn home-page []
@@ -13,4 +14,5 @@
 
 (defroutes home-routes
   (GET "/" [] (home-page))
-  (GET "/about" [] (about-page)))
+  (GET "/about" [] (about-page))
+  (POST "/create-auth-token" [] handlers/create-auth-token))
