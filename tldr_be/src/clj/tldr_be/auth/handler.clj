@@ -11,3 +11,11 @@
     (if ok?
       {:status 201 :body res}
       {:status 401 :body res})))
+
+(defn get-user
+  [{headers :headers :as req}]
+  (if-let [token (:token headers)]
+    {:status 201
+     :body "Hello your token is"}
+    {:status 401
+     :body "You should't be here..."}))
