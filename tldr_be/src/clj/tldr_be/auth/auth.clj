@@ -48,7 +48,7 @@
   "Given credentials, form a response if the user can be auth'd. if they can be
   return an auth token"
   [creds]
-  (let [[ok? res] (auth-user creds)]
+  (let [[ok? res] (auth-user creds)] ;;using clojure destructuring for the ok?
     (if ok?
       [true {:token (_token (:username creds) secret)}]
       [false res])))
