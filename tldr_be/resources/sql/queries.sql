@@ -23,8 +23,7 @@ WHERE first_name = :first_name
 -- :name get-user-by-name-pass :? :n
 -- :doc retrieves a user record given the first name
 SELECT * FROM users
-WHERE first_name = :first_name
-      pass = :pass
+WHERE first_name = :first_name AND pass = :pass
 
 -- :name get-user-by-last-name :? :n
 -- :doc retrieves a user record given the last name
