@@ -1,4 +1,4 @@
-(ns tldr-be.auth.auth
+(ns tldr-be.auth.core
   (:require [cheshire.core :as json]
             [tldr-be.db.core :refer [get-user-by-name create-user!]]
             [buddy.core.nonce :refer [random-bytes]]
