@@ -5,7 +5,7 @@
             [buddy.auth.backends :as backends]
             [buddy.sign.jwt :as jwt]
             [buddy.hashers :as hs]
-            [clj-time.core :refer [plus now minutes]]
+            [clj-time.core :as t]
             [ring.util.response :refer [redirect]]))
 
 ;; this is the secret key
@@ -15,12 +15,12 @@
 (def token-backend
   (backends/jws {:secret secret}))
 
-(defn token
+(defn _token
   "Given a username and a key, generate a unique token for that user name with an
   expiration time of an hour from now"
   [username key]
   (let [claims {:user (keyword username)
-                :exp (plus (now) (minutes 60))}]
+                :exp (-> (t/plus (t/now) (t/days 1)))}]
     (jwt/sign claims key)))
 
 (defn auth-create-user!
@@ -43,3 +43,12 @@
       (when (hs/check (:password creds) (:pass user)) ;;verify passwords match
         [true {:user (dissoc user :password)}])       ;;remove pass from token
       unauthed)))
+
+(defn create-auth-token
+  "Given credentials, form a response if the user can be auth'd. if they can be
+  return an auth token"
+  [creds]
+  (let [[ok? res] (auth-user creds)]
+    (if ok?
+      [true {:token (_token (:username creds) secret)}]
+      [false res])))
