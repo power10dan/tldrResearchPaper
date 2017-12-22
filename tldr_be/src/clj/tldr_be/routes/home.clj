@@ -1,6 +1,6 @@
 (ns tldr-be.routes.home
   (:require [tldr-be.layout :as layout]
-            [compojure.core :refer [defroutes GET]]
+            [compojure.core :refer [defroutes GET POST]]
             [ring.util.http-response :as response]
             [clojure.java.io :as io]))
 
@@ -14,4 +14,3 @@
 (defroutes home-routes
   (GET "/" [] (home-page))
   (GET "/about" [] (about-page)))
-

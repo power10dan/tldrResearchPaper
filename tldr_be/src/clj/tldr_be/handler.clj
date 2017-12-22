@@ -2,10 +2,10 @@
   (:require [compojure.core :refer [routes wrap-routes]]
             [tldr-be.layout :refer [error-page]]
             [tldr-be.routes.home :refer [home-routes]]
-            [tldr-be.routes.services :refer [service-routes]]
             [compojure.route :as route]
             [tldr-be.env :refer [defaults]]
             [mount.core :as mount]
+            [tldr-be.middleware :as middleware]
             [ring.util.response :refer [redirect]]))
 
 (mount/defstate init-app
@@ -17,7 +17,6 @@
     (-> #'home-routes
         (wrap-routes middleware/wrap-csrf)
         (wrap-routes middleware/wrap-formats))
-    #'service-routes
     (route/not-found
       (:body
         (error-page {:status 404

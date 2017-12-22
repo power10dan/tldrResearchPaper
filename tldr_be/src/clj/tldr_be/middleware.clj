@@ -16,7 +16,8 @@
             [ring.middleware.defaults :refer [site-defaults wrap-defaults]]
             [buddy.auth.middleware :refer [wrap-authentication wrap-authorization]]
             [buddy.auth.accessrules :refer [restrict]]
-            [buddy.auth :refer [authenticated?]])
+            [buddy.auth :refer [authenticated?]]
+            [tldr-be.auth.auth :refer [token-backend]])
   (:import [javax.servlet ServletContext]
            [org.joda.time ReadableInstant]))
 
