@@ -31,6 +31,7 @@
                  [cheshire "5.8.0"]
                  [ring/ring-core "1.6.3"]
                  [ring/ring-defaults "0.3.1"]
+                 [ring/ring-json "0.4.0"]
                  [selmer "1.11.3"]]
 
   :min-lein-version "2.0.0"

@@ -6,6 +6,8 @@
             [tldr-be.env :refer [defaults]]
             [mount.core :as mount]
             [tldr-be.middleware :as middleware]
+            [ring.middleware.keyword-params :refer [wrap-keyword-params]]
+            [ring.middleware.json :refer [wrap-json-response wrap-json-params]]
             [ring.util.response :refer [redirect]]))
 
 (mount/defstate init-app
@@ -14,9 +16,12 @@
 
 (def app-routes
   (routes
-    (-> #'home-routes
-        (wrap-routes middleware/wrap-csrf)
-        (wrap-routes middleware/wrap-formats))
+   (-> #'home-routes
+       ;; (wrap-routes middleware/wrap-csrf)
+       (wrap-routes middleware/wrap-formats)
+       (wrap-routes wrap-keyword-params)
+       (wrap-routes wrap-json-params)
+       (wrap-routes wrap-json-response))
     (route/not-found
       (:body
         (error-page {:status 404
