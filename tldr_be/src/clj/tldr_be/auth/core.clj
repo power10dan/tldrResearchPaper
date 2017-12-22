@@ -39,8 +39,8 @@
 
 (defn auth-user
   "Given credentials, get the username and password out of the request, check that
-  the user exists in the db, if good then return a 200 with a token, if not then
-  redirect to the home page"
+  the user exists in the db, if good then return vector with true and the token
+  if bad then return a vector with false and a message"
   [creds]
   (let [unauthed [false {:message "Invalid username or password"}]]
     (if-let [user (get-user-by-name {:first_name (:username creds)})]
@@ -57,3 +57,11 @@
     (if ok?
       [true {:token (_token (:username creds) secret)}]
       [false res])))
+
+(defn is-auth?
+  "given a request, destructure to pull the header out, then check if the header
+  has a token if it does then unsign and verify against the secret"
+  [{headers :headers :as req}]
+  (if-let [token (:token headers)]
+    (= secret (jwt/unsign token))
+    false))
