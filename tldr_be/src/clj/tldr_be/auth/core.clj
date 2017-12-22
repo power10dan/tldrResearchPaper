@@ -11,9 +11,11 @@
 ;; this is the secret key
 (def secret (random-bytes 32))
 
+
 ;; this is the backend that will be handled in the middleware, see the buddy docs
 (def token-backend
   (backends/jws {:secret secret}))
+
 
 (defn _token
   "Given a username and a key, generate a unique token for that user name with an
@@ -22,6 +24,7 @@
   (let [claims {:user (keyword username)
                 :exp (-> (t/plus (t/now) (t/days 1)))}]
     (jwt/sign claims key)))
+
 
 (defn auth-create-user!
   "Given a first name, last name, email and password create a user with an
@@ -33,6 +36,7 @@
                    :email email
                    :pass hashed_pass})))
 
+
 (defn auth-user
   "Given credentials, get the username and password out of the request, check that
   the user exists in the db, if good then return a 200 with a token, if not then
@@ -43,6 +47,7 @@
       (when (hs/check (:password creds) (:pass user)) ;;verify passwords match
         [true {:user (dissoc user :password)}])       ;;remove pass from token
       unauthed)))
+
 
 (defn create-auth-token
   "Given credentials, form a response if the user can be auth'd. if they can be
