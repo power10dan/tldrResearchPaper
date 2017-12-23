@@ -14,7 +14,7 @@
 
 (defn get-user
   [{headers :headers :as req}]
-  (if-let [token (:token headers)]
+  (if-let [token (get headers "token")] ;;headers is a map with keys of type Str
     {:status 201
      :body "Hello your token is"}
     {:status 401

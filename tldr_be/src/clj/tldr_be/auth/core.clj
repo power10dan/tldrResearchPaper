@@ -9,8 +9,8 @@
             [ring.util.response :refer [redirect]]))
 
 ;; this is the secret key
-(def secret (random-bytes 32))
-
+;; (def secret (random-bytes 32))
+(def secret "mylittlesecret")
 
 ;; this is the backend that will be handled in the middleware, see the buddy docs
 (def token-backend
@@ -22,7 +22,8 @@
   expiration time of an hour from now"
   [username key]
   (let [claims {:user (keyword username)
-                :exp (-> (t/plus (t/now) (t/days 1)))}]
+                :exp (-> (t/plus (t/now) (t/days 1)))
+                :secret secret}]
     (jwt/sign claims key)))
 
 
@@ -53,7 +54,7 @@
   "Given credentials, form a response if the user can be auth'd. if they can be
   return an auth token"
   [creds]
-  (let [[ok? res] (auth-user creds)] ;;using clojure destructuring for the ok?
+  (let [[ok? res] (auth-user creds)] ;;using clojure destructuring for the "ok?"
     (if ok?
       [true {:token (_token (:username creds) secret)}]
       [false res])))
@@ -62,6 +63,7 @@
   "given a request, destructure to pull the header out, then check if the header
   has a token if it does then unsign and verify against the secret"
   [{headers :headers :as req}]
-  (if-let [token (:token headers)]
-    (= secret (jwt/unsign token))
-    false))
+  (let [token (get headers "token")]
+    (if token
+      (= secret (:secret (jwt/unsign token secret)))
+      false)))
