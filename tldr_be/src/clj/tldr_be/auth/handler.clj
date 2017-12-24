@@ -1,5 +1,6 @@
 (ns tldr-be.auth.handler
-  (:require [tldr-be.auth.core :as auth]))
+  (:require [tldr-be.auth.core :as auth]
+            [ring.util.http-response :as http]))
 
 
 (defn create-auth-token
@@ -9,15 +10,13 @@
   [req]
   (let [[ok? res] (auth/create-auth-token (:params req))]
     (if ok?
-      {:status 201 :body res}
-      {:status 401 :body res})))
+      (http/created)
+      (http/bad-request))))
 
 (defn get-user
   "this is just a proof of concept function, see routes/home.clj for an example
   of how to protect a route"
   [{headers :headers :as req}]
   (if-let [token (get headers "token")] ;;headers is a map with keys of type Str
-    {:status 201
-     :body "Hello your token is"}
-    {:status 401
-     :body "You should't be here..."}))
+    (http/created "This was merely a test")
+    (http/created "this is just the co of the test")))
