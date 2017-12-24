@@ -24,7 +24,7 @@
   (GET "/" [] (home-page))
   (GET "/about" [] (about-page)))
 
-(defroutes bus-routes
+(defroutes bus-routes ;;business-routes
   (POST "/create-auth-token" [] handler/create-auth-token)
   (GET "/get-user" [] (restrict handler/get-user {:handler auth/is-auth?
                                                   :on-error on-error})))

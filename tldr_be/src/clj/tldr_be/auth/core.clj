@@ -1,7 +1,6 @@
 (ns tldr-be.auth.core
   (:require [cheshire.core :as json]
             [tldr-be.db.core :refer [get-user-by-name create-user!]]
-            [buddy.core.nonce :refer [random-bytes]]
             [buddy.auth.backends :as backends]
             [buddy.sign.jwt :as jwt]
             [buddy.hashers :as hs]
@@ -9,7 +8,7 @@
             [ring.util.response :refer [redirect]]))
 
 ;; this is the secret key
-;; (def secret (random-bytes 32))
+;; TODO beef up this with a public private key encryption scheme
 (def secret "mylittlesecret")
 
 ;; this is the backend that will be handled in the middleware, see the buddy docs

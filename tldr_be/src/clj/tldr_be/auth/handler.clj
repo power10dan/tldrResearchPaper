@@ -13,6 +13,8 @@
       {:status 401 :body res})))
 
 (defn get-user
+  "this is just a proof of concept function, see routes/home.clj for an example
+  of how to protect a route"
   [{headers :headers :as req}]
   (if-let [token (get headers "token")] ;;headers is a map with keys of type Str
     {:status 201
