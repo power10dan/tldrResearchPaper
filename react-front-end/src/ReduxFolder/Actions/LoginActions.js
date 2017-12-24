@@ -16,6 +16,7 @@ import { dialogOpenAction} from './DialogActions.js';
 function _loginAction(a_user_name, a_password) {
     let requestOptions = {
         method: 'POST',
+        mode: 'no-cors',
         body: JSON.stringify({ username: a_user_name,
                                password: a_password
                             }),
@@ -23,7 +24,8 @@ function _loginAction(a_user_name, a_password) {
     };
 
     // set the url and use fetch to send request
-    var url = "http://127.0.0.1:8000/login/";
+    var url = "http://localhost:3000/login/";
+    console.log("Sending", requestOptions);
     return fetch(url, requestOptions);
 }
 
@@ -34,6 +36,7 @@ export function loginAction(a_user_name, a_user_email, a_password) {
         _loginAction(a_user_name, a_password)
             .then((response) => {
 
+            console.log("Received", response);
             if(response.ok !== true){
                 dispatch(logInFailedAction(
                     "Login Failed, we can't find your credentials"));
@@ -80,18 +83,18 @@ export function loginAction(a_user_name, a_user_email, a_password) {
 
 // action dispatch for when login succeeds
 export function logInSuccessAction(a_message){
- 	return {
- 		  type: types.LOGIN_SUCCESS,
+  return {
+      type: types.LOGIN_SUCCESS,
       a_is_logged_in: true,
       a_success_msg: a_message
- 	};
+  };
  }
 
  // action dispatch when loading failed
 export function logInFailedAction(a_failure_message){
- 	return {
- 		  type: types.LOGIN_FAIL,
+  return {
+      type: types.LOGIN_FAIL,
       a_is_logged_in: false,
       a_error_msg: a_failure_message
- 	};
+  };
  }

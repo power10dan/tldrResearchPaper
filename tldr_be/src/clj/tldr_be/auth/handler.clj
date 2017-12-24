@@ -9,9 +9,10 @@
   otherwise hit em with a saucy 401 unauth"
   [req]
   (let [[ok? res] (auth/create-auth-token (:params req))]
+    (println (:headers req))
     (if ok?
-      (http/created)
-      (http/bad-request))))
+      (http/created "welcome")
+      (http/bad-request "some saucy 401 unauth"))))
 
 (defn get-user
   "this is just a proof of concept function, see routes/home.clj for an example

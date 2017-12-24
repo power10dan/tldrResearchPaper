@@ -1,6 +1,5 @@
 (ns tldr-be.auth.core
-  (:require [cheshire.core :as json]
-            [tldr-be.db.core :refer [get-user-by-name create-user!]]
+  (:require [tldr-be.db.core :refer [get-user-by-name create-user!]]
             [buddy.auth.backends :as backends]
             [buddy.sign.jwt :as jwt]
             [buddy.hashers :as hs]
