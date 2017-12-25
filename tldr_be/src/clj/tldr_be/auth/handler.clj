@@ -8,10 +8,9 @@
   can be authenticated, if so, return a token and a 201 created response
   otherwise hit em with a saucy 401 unauth"
   [req]
-  (let [[ok? res] (auth/create-auth-token (:params req))]
-    (println (:headers req))
+  (let [[ok? res] (auth/create-auth-token (:body req))]
     (if ok?
-      (http/created "welcome")
+      (http/created "welcome" res)
       (http/bad-request "some saucy 401 unauth"))))
 
 (defn get-user

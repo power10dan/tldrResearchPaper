@@ -42,8 +42,8 @@
   if bad then return a vector with false and a message"
   [creds]
   (let [unauthed [false {:message "Invalid username or password"}]]
-    (if-let [user (get-user-by-name {:first_name (:username creds)})]
-      (when (hs/check (:password creds) (:pass user)) ;;verify passwords match
+    (if-let [user (get-user-by-name {:first_name (get creds "username")})]
+      (when (hs/check (get creds "password") (:pass user))  ;;verify passwords
         [true {:user (dissoc user :password)}])       ;;remove pass from token
       unauthed)))
 
