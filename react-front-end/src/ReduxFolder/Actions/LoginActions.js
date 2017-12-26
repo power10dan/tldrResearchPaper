@@ -14,13 +14,17 @@ import { dialogOpenAction} from './DialogActions.js';
    success, then return the user
 */
 function _loginAction(a_user_name, a_password) {
+    let headers = new Headers({
+        "Content-Type": "application/json",
+        "Access-Control-Request-Method": "POST",
+        "Access-Control-Allow-Origin": "localhost:3000/login/"
+    });
     let requestOptions = {
         method: 'POST',
-        mode: 'no-cors',
         body: JSON.stringify({ username: a_user_name,
                                password: a_password
                             }),
-        headers: { 'Content-Type': 'application/json' }
+        headers: headers
     };
 
     // set the url and use fetch to send request

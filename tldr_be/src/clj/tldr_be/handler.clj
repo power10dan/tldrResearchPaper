@@ -9,6 +9,7 @@
             [tldr-be.middleware :as middleware]
             [ring.middleware.keyword-params :refer [wrap-keyword-params]]
             [ring.middleware.json :refer [wrap-json-response wrap-json-body]]
+            [ring.middleware.cors :refer [wrap-cors]]
             [ring.util.response :refer [redirect]]))
 
 (mount/defstate init-app
@@ -19,12 +20,14 @@
   (routes
    (-> #'home-routes ;; #' desugars into (var foo), its binding a thing to a var
        (wrap-routes middleware/wrap-csrf)
-       (wrap-routes middleware/wrap-formats))
+       (wrap-routes middleware/wrap-formats)
+       )
    (-> #'bus-routes
        (wrap-routes wrap-keyword-params)
        (wrap-routes wrap-json-body)
-       (wrap-routes wrap-json-response)
-       )
+       (wrap-cors :access-control-allow-origin [#".*"] ;; this allows everything
+                  :access-control-allow-methods [:post])
+       (wrap-routes wrap-json-response))
     (route/not-found
       (:body
         (error-page {:status 404
