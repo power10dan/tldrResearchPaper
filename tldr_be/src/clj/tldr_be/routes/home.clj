@@ -6,6 +6,7 @@
             [tldr-be.auth.handler :as handler]
             [tldr-be.auth.core :as auth]
             [tldr-be.doc.core :as doc]
+            [tldr-be.summary.core :as summary]
             [clojure.java.io :as io]))
 
 (defn home-page []
@@ -25,6 +26,7 @@
 
 (defroutes bus-routes ;;business-routes
   (POST "/api/uploadFile/" [] doc/insert-doc!)
+  (POST "/api/addSummary/" [] summary/insert-sum!)
   (POST "/login/" [] handler/create-auth-token)
   (GET "/get-user" [] (restrict handler/get-user {:handler auth/is-auth?
                                                   :on-error on-error})))
