@@ -75,3 +75,15 @@ WHERE id = :id
 -- :doc deletes a summary record given the id
 DELETE FROM summary
 WHERE id = :id
+
+-- :name up-votes! :! :n
+-- :doc updates vote
+UPDATE summary
+SET votes = votes + 1
+WHERE header = :header AND author = :author AND filename = :filename AND summary = :summary AND doc_id = :doc_id
+
+-- :name down-votes! :! :n
+-- :doc updates vote
+UPDATE summary
+SET votes = votes - 1
+WHERE header = :header AND author = :author AND filename = :filename AND summary = :summary AND doc_id = :doc_id
