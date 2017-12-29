@@ -6,7 +6,7 @@
             [tldr-be.auth.handler :as auth_handler]
             [tldr-be.summary.handler :as sum_handler]
             [tldr-be.auth.core :as auth]
-            [tldr-be.doc.handler :as doc]
+            [tldr-be.doc.handler :as d]
             [tldr-be.summary.core :as summary]
             [clojure.java.io :as io]))
 
@@ -26,7 +26,7 @@
   (GET "/about" [] (about-page)))
 
 (defroutes bus-routes ;;business-routes
-  (POST "/api/uploadFile/"  [] doc/insert-doc!)
+  (POST "/api/uploadFile/"  [] d/insert-doc!)
   (POST "/api/addSummary/"  [] sum_handler/insert-sum)
   (POST "/api/sumUpVote/"   [] sum_handler/up-vote-sum)
   (POST "/api/sumDownVote/" [] sum_handler/down-vote-sum)
