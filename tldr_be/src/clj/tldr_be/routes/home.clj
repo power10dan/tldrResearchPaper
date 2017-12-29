@@ -26,10 +26,11 @@
   (GET "/about" [] (about-page)))
 
 (defroutes bus-routes ;;business-routes
-  (POST "/api/uploadFile/"  [] d/insert-doc!)
-  (POST "/api/addSummary/"  [] sum_handler/insert-sum)
-  (POST "/api/sumUpVote/"   [] sum_handler/up-vote-sum)
-  (POST "/api/sumDownVote/" [] sum_handler/down-vote-sum)
+  (POST "/api/uploadFile/"    [] d/insert-doc!)
+  (POST "/api/getFileByName/" [] d/get-doc-by-filename)
+  (POST "/api/addSummary/"    [] sum_handler/insert-sum)
+  (POST "/api/sumUpVote/"     [] sum_handler/up-vote-sum)
+  (POST "/api/sumDownVote/"   [] sum_handler/down-vote-sum)
   (POST "/login/" [] auth_handler/create-auth-token)
   (GET "/get-user" [] (restrict auth_handler/get-user {:handler auth/is-auth?
                                                        :on-error on-error})))

@@ -1,5 +1,5 @@
 (ns tldr-be.doc.core
-  (:require [tldr-be.db.core :refer [create-doc!]]
+  (:require [tldr-be.db.core :refer [create-doc! get-doc-by-name]]
             [clojure.string :refer [split]]
             [byte-streams :as bs]))
 
@@ -15,3 +15,11 @@
                       :filestuff (bs/to-byte-array file_blob)})
         [true "Your document successfully uploaded"])
       [false "Request Malformed"])))
+
+(defn get-doc-by-filename
+  "Given the params of a request, pull the filename out, if the filename is good
+  then query the db for the corresponding file by the filename"
+  [params]
+  (if-let [filename (:filename params)]
+    [true (get-doc-by-name {:filename filename})]
+    [false "file could not be found"]))
