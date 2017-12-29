@@ -10,6 +10,6 @@
         file_blob (get-in params [:file :tempfile])]
     (if (and filename file_blob)
       (do ;; if we have both filename and blob then perform the effect
-        (create-doc! {:filename "test" :filestuff (bs/to-byte-array file_blob)})
+        (create-doc! {:filename filename :filestuff (bs/to-byte-array file_blob)})
         [true "Your document successfully uploaded"])
       [false "Request Malformed"])))
