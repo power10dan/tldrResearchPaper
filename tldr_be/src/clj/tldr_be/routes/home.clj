@@ -28,8 +28,8 @@
 (defroutes bus-routes ;;business-routes
   (POST "/api/uploadFile/" [] doc/insert-doc!)
   (POST "/api/addSummary/" [] sum_handler/insert-sum)
-  (POST "/api/sumUpvote/" [] sum_handler/up-vote-sum)
-  (POST "/api/sumDownvote/" [] sum_handler/down-vote-sum)
+  (POST "/api/sumUpVote/" [] sum_handler/up-vote-sum)
+  (POST "/api/sumDownVote/" [] sum_handler/down-vote-sum)
   (POST "/login/" [] auth_handler/create-auth-token)
   (GET "/get-user" [] (restrict auth_handler/get-user {:handler auth/is-auth?
                                                        :on-error on-error})))
