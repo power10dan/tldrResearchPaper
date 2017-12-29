@@ -6,7 +6,7 @@
             [tldr-be.auth.handler :as auth_handler]
             [tldr-be.summary.handler :as sum_handler]
             [tldr-be.auth.core :as auth]
-            [tldr-be.doc.core :as doc]
+            [tldr-be.doc.handler :as doc]
             [tldr-be.summary.core :as summary]
             [clojure.java.io :as io]))
 
