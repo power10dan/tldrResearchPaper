@@ -53,6 +53,21 @@ VALUES (:filename, :filestuff)
 SELECT * FROM docs
 WHERE id = :id
 
+-- :name get-doc-by-name :? :1
+-- :doc retrieves a document given the file name
+SELECT * FROM docs
+WHERE filename = :filename
+
+-- :name get-doc-id :? :1
+-- :doc given a filename retrieve that docs doc_id
+SELECT doc_id from docs
+where filename = :filename
+
+-- :name get-doc-filename :? :1
+-- :doc given a doc_id retrieve the doc's filename
+SELECT filename from docs
+where doc_id = :doc_id
+
 -- :name delete-doc! :! :n
 -- :doc deletes a document record given the id
 DELETE FROM docs
