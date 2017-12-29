@@ -1,8 +1,6 @@
 (ns tldr-be.doc.core
   (:require [tldr-be.db.core :refer [create-doc!]]
-            [ring.util.http-response :as http]
-            [byte-streams :as bs]
-            [clojure.java.io :as io]))
+            [byte-streams :as bs]))
 
 (defn insert-doc!
   "Given params from a request, pull the filename and a blob of file data, insert
