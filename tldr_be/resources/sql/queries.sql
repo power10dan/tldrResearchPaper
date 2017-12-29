@@ -77,13 +77,13 @@ DELETE FROM summary
 WHERE id = :id
 
 -- :name up-votes! :! :n
--- :doc updates vote
+-- :doc increments a vote count by author filename summary and doc id
 UPDATE summary
 SET votes = votes + 1
 WHERE header = :header AND author = :author AND filename = :filename AND summary = :summary AND doc_id = :doc_id
 
 -- :name down-votes! :! :n
--- :doc updates vote
+-- :doc decrements a vote count by author filename summary and doc id
 UPDATE summary
 SET votes = votes - 1
 WHERE header = :header AND author = :author AND filename = :filename AND summary = :summary AND doc_id = :doc_id
