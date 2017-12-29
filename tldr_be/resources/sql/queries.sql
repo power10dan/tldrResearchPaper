@@ -63,8 +63,8 @@ WHERE id = :id
 -- :name create-summary! :! :n
 -- :doc creates a new summary record
 INSERT INTO summary
-(header, author, filename, summary)
-VALUES (:header, :author, :filename, :summary)
+(header, author, summary, doc_id)
+VALUES (:header, :author, :summary, :doc_id)
 
 -- :name get-summary :? :1
 -- :doc retrieves a summary record given the id
@@ -80,10 +80,10 @@ WHERE id = :id
 -- :doc increments a vote count by author filename summary and doc id
 UPDATE summary
 SET votes = votes + 1
-WHERE header = :header AND author = :author AND filename = :filename AND summary = :summary AND doc_id = :doc_id
+WHERE header = :header AND author = :author AND  doc_id = :doc_id
 
 -- :name down-votes! :! :n
 -- :doc decrements a vote count by author filename summary and doc id
 UPDATE summary
 SET votes = votes - 1
-WHERE header = :header AND author = :author AND filename = :filename AND summary = :summary AND doc_id = :doc_id
+WHERE header = :header AND author = :author AND doc_id = :doc_id

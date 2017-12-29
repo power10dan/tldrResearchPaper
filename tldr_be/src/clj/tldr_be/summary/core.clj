@@ -1,5 +1,5 @@
 (ns tldr-be.summary.core
-  (:require [tldr-be.db.core :refer [up-votes! down-votes!]]
+  (:require [tldr-be.db.core :refer [up-votes! down-votes! create-summary!]]
             [ring.util.http-response :as http]))
 
 (defn insert-sum!
@@ -7,18 +7,14 @@
   [body]
   (let [header (get body "header")
         author (get body "author")
-        filename (get body "filename")
-        summary (get body "summary")
-        votes (get body "votes")
-        doc_id (get body "doc_id")]
+        doc_id (get body "doc_id")
+        summary (get body "summary")]
 
-    (if (and header author filename summary votes doc_id)
+    (if (and header author summary doc_id)
       (do ;; if we have all of the required information, create summary
         (create-summary! {:header header
                           :author author
-                          :filename filename
                           :summary summary
-                          :votes votes
                           :doc_id doc_id})
         [true "Summary successfully created"])
       [false "Request Malformed"])))
@@ -29,16 +25,12 @@
   [body msg f]
   (let [header (get body "header")
         author (get body "author")
-        filename (get body "filename")
-        summary (get body "summary")
         doc_id (get body "doc_id")]
 
-    (if (and header author filename summary doc_id)
+    (if (and header author doc_id)
       (do ;; if we have all of the required information, down vote
         (f {:header header
             :author author
-            :filename filename
-            :summary summary
             :doc_id doc_id})
         [true msg])
       [false "Request Malformed"])))
