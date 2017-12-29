@@ -5,14 +5,13 @@
             [clojure.java.io :as io]))
 
 (defn insert-doc!
-  "Given a request that holds a filename and a blob of file data, insert that
-  blob into the db"
-  [{params :params :as req}]
+  "Given params from a request, pull the filename and a blob of file data, insert
+  that blob into the db after transforming blob to byte-array"
+  [params]
   (let [filename (get-in params [:file :filename])
         file_blob (get-in params [:file :tempfile])]
-    (println filename file_blob)
     (if (and filename file_blob)
       (do ;; if we have both filename and blob then perform the effect
         (create-doc! {:filename "test" :filestuff (bs/to-byte-array file_blob)})
-        (http/created "Your document successfully uploaded"))
-      (http/bad-request "Request Malformed"))))
+        [true "Your document successfully uploaded"])
+      [false "Request Malformed"])))
