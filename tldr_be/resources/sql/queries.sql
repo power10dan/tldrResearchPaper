@@ -63,8 +63,8 @@ WHERE id = :id
 -- :name create-summary! :! :n
 -- :doc creates a new summary record
 INSERT INTO summary
-(header, author, filename, summary, votes, doc_id)
-VALUES (:header, :author, :filename, :summary, :votes, :doc_id)
+(header, author, filename, summary)
+VALUES (:header, :author, :filename, :summary)
 
 -- :name get-summary :? :1
 -- :doc retrieves a summary record given the id

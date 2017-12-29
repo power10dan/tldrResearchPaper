@@ -4,5 +4,5 @@ CREATE TABLE summary
   author VARCHAR(30),
   filename VARCHAR(30),
   summary TEXT,
-  votes INT,
-  doc_id INT);
+  votes INT DEFAULT 0,
+  doc_id BIGSERIAL);
