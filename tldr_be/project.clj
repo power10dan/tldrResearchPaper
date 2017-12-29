@@ -33,6 +33,7 @@
                  [ring/ring-defaults "0.3.1"]
                  [ring/ring-json "0.4.0"]
                  [ring-cors "0.1.11"]
+                 [byte-streams "0.2.3"]
                  [selmer "1.11.3"]]
 
   :min-lein-version "2.0.0"
