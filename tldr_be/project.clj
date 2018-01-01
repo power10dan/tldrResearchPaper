@@ -33,6 +33,7 @@
                  [ring/ring-defaults "0.3.1"]
                  [ring/ring-json "0.4.0"]
                  [ring-cors "0.1.11"]
+                 [clj-http "2.3.0"]
                  [byte-streams "0.2.3"]
                  [selmer "1.11.3"]]
 
