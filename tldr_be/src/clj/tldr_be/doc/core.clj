@@ -31,7 +31,6 @@
   send restful request to Grobid. Returns a parsed xml in body"
   [fileblob]
   (when fileblob
-    (client/post "http://localhost:8080/processFullTextDocument"
-                 {:multipart
-                  [{:name "Content/type" :content "application/pdf"}
-                   {:name "input"} :content (io/input-stream fileblob)]})))
+    (client/post "http://localhost:8080/processFulltextDocument"
+                 {:multipart [{:name "Content/type" :content "application/pdf"}
+                              {:name "input" :content (io/input-stream fileblob)}]})))
