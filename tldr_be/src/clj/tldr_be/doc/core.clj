@@ -1,7 +1,9 @@
 (ns tldr-be.doc.core
   (:require [tldr-be.db.core :refer [create-doc! get-doc-by-name]]
             [clojure.string :refer [split]]
-            [byte-streams :as bs]))
+            [byte-streams :as bs]
+            [clj-http.client :as client]
+            [clojure.java.io :as io]))
 
 (defn insert-doc!
   "Given params from a request, pull the filename and a blob of file data, insert
@@ -23,3 +25,13 @@
   (if-let [filename (:filename params)]
     [true (get-doc-by-name {:filename filename})]
     [false "file could not be found"]))
+
+(defn pdf-to-xml
+  "Given a bytea blob from the postgres db, converts to BufferedInputStream, and
+  send restful request to Grobid. Returns a parsed xml in body"
+  [fileblob]
+  (when fileblob
+    (client/post "http://localhost:8080/processFullTextDocument"
+                 {:multipart
+                  [{:name "Content/type" :content "application/pdf"}
+                   {:name "input"} :content (io/input-stream fileblob)]})))
