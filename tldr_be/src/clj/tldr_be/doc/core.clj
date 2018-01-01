@@ -3,6 +3,7 @@
             [clojure.string :refer [split]]
             [byte-streams :as bs]
             [clj-http.client :as client]
+            [clojure.xml :as xml]
             [clojure.java.io :as io]))
 
 (defn insert-doc!
@@ -34,3 +35,12 @@
     (client/post "http://localhost:8080/processFulltextDocument"
                  {:multipart [{:name "Content/type" :content "application/pdf"}
                               {:name "input" :content (io/input-stream fileblob)}]})))
+
+(defn xml-to-map
+  "Given a grobid response, converts the xml to a deeply nested map"
+  [grobidres]
+  (-> grobidres
+      :body
+      bs/to-byte-array
+      io/input-stream
+      xml/parse))
