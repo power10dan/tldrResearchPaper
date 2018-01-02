@@ -32,7 +32,7 @@
   send restful request to Grobid. Returns a parsed xml in body"
   [fileblob]
   (when fileblob
-    (client/post "http://localhost:8080/processFulltextDocument"
+    (client/post "http://192.168.99.100:8080/processFulltextDocument"
                  {:multipart [{:name "Content/type" :content "application/pdf"}
                               {:name "input" :content (io/input-stream fileblob)}]})))
 
@@ -44,3 +44,24 @@
       bs/to-byte-array
       io/input-stream
       xml/parse))
+
+(defn get-fblob
+  "pull out a file blob from the database given the name"
+  [fname]
+  (-> (assoc {} :filename fname) get-doc-by-filename second :filestuff))
+
+(defn parse-grobid-map
+  "given the Grobid output map, traverse it and pull out header-content"
+  ([gmap]
+   (parse-grobid-map gmap 0))
+  ([gmap accu]
+   (if-let [res (_parse-grobid-map (:content (vector gmap)) (+ 1 accu))]
+     res
+     accu)))
+
+(defn _parse-grobid-map
+  "helper function to parsing the Grobid map output"
+  [vcon accu]
+ (if vcon
+   (reduce parse-grobid-map accu vcon)
+   accu))
