@@ -32,7 +32,7 @@
   send restful request to Grobid. Returns a parsed xml in body"
   [fileblob]
   (when fileblob
-    (client/post "http://192.168.99.100:8080/processFulltextDocument"
+    (client/post "http://localhost:8080/processFulltextDocument"
                  {:multipart [{:name "Content/type" :content "application/pdf"}
                               {:name "input" :content (io/input-stream fileblob)}]})))
 
@@ -50,18 +50,28 @@
   [fname]
   (-> (assoc {} :filename fname) get-doc-by-filename second :filestuff))
 
-(defn parse-grobid-map
-  "given the Grobid output map, traverse it and pull out header-content"
-  ([gmap]
-   (parse-grobid-map gmap 0))
-  ([gmap accu]
-   (if-let [res (_parse-grobid-map (:content (vector gmap)) (+ 1 accu))]
-     res
-     accu)))
+(defn traverse-xml-blob
+  [grobid-map f]
+  (cond
+    (nil? grobid-map) nil
+    (string? grobid-map) grobid-map
+    (and (map? grobid-map) (empty? grobid-map)) {}
+    (sequential? grobid-map) (map #(traverse-xml-blob % f) grobid-map)
+    (map? grobid-map) (f grobid-map (traverse-xml-blob (:content grobid-map) f))
+    :else nil))
 
-(defn _parse-grobid-map
-  "helper function to parsing the Grobid map output"
-  [vcon accu]
- (if vcon
-   (reduce parse-grobid-map accu vcon)
-   accu))
+;; (defn parse-grobid-map
+;;   "given the Grobid output map, traverse it and pull out header-content"
+;;   ([gmap]
+;;    (parse-grobid-map gmap 0))
+;;   ([gmap accu]
+;;    (if-let [res (_parse-grobid-map (:content (vector gmap)) (+ 1 accu))]
+;;      res
+;;      accu)))
+
+;; (defn _parse-grobid-map
+;;   "helper function to parsing the Grobid map output"
+;;   [vcon accu]
+;;  (if vcon
+;;    (reduce parse-grobid-map accu vcon)
+;;    accu))
