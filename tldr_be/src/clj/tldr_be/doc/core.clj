@@ -50,28 +50,30 @@
   [fname]
   (-> (assoc {} :filename fname) get-doc-by-filename second :filestuff))
 
-(defn traverse-xml-blob
+(defn map-xml-blob
   [grobid-map f]
   (cond
     (nil? grobid-map) nil
     (string? grobid-map) grobid-map
     (and (map? grobid-map) (empty? grobid-map)) {}
-    (sequential? grobid-map) (map #(traverse-xml-blob % f) grobid-map)
-    (map? grobid-map) (f grobid-map (traverse-xml-blob (:content grobid-map) f))
+    (sequential? grobid-map) (map #(map-xml-blob % f) grobid-map)
+    (map? grobid-map) (do (f grobid-map)
+                          (map-xml-blob (:content grobid-map) f))
     :else nil))
 
-;; (defn parse-grobid-map
-;;   "given the Grobid output map, traverse it and pull out header-content"
-;;   ([gmap]
-;;    (parse-grobid-map gmap 0))
-;;   ([gmap accu]
-;;    (if-let [res (_parse-grobid-map (:content (vector gmap)) (+ 1 accu))]
-;;      res
-;;      accu)))
+(defn fold-xml-blob
+  [f acc grobid-map]
+  (cond
+    (nil? grobid-map) acc
+    (string? grobid-map) (conj acc grobid-map)
+    (and (map? grobid-map) (empty? grobid-map) acc) acc
+    (sequential? grobid-map) (reduce #(fold-xml-blob f %1 %2) acc grobid-map)
+    (map? grobid-map) (fold-xml-blob f
+                                     (conj acc (f grobid-map))
+                                     (:content grobid-map))
+    :else acc))
 
-;; (defn _parse-grobid-map
-;;   "helper function to parsing the Grobid map output"
-;;   [vcon accu]
-;;  (if vcon
-;;    (reduce parse-grobid-map accu vcon)
-;;    accu))
+(defn formap
+  [grobid-map]
+  (for [x (xml-seq grobid-map)]
+    [(:tag x) (map formap (:content x))]))
