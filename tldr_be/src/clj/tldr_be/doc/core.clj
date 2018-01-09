@@ -32,7 +32,7 @@
   send restful request to Grobid. Returns a parsed xml in body"
   [fileblob]
   (when fileblob
-    (client/post "http://localhost:8080/processFulltextDocument"
+    (client/post "http://192.168.99.100:8080/processFulltextDocument"
                  {:multipart [{:name "Content/type" :content "application/pdf"}
                               {:name "input" :content (io/input-stream fileblob)}]})))
 
@@ -50,30 +50,15 @@
   [fname]
   (-> (assoc {} :filename fname) get-doc-by-filename second :filestuff))
 
-(defn map-xml-blob
-  [grobid-map f]
-  (cond
-    (nil? grobid-map) nil
-    (string? grobid-map) grobid-map
-    (and (map? grobid-map) (empty? grobid-map)) {}
-    (sequential? grobid-map) (map #(map-xml-blob % f) grobid-map)
-    (map? grobid-map) (do (f grobid-map)
-                          (map-xml-blob (:content grobid-map) f))
-    :else nil))
+(defn fblob-cljmap
+ "make a clojure map given filename as string"
+  [fname]
+  (-> fname get-fblob pdf-to-xml xml-to-map))
 
-(defn fold-xml-blob
-  [f acc grobid-map]
-  (cond
-    (nil? grobid-map) acc
-    (string? grobid-map) (conj acc grobid-map)
-    (and (map? grobid-map) (empty? grobid-map) acc) acc
-    (sequential? grobid-map) (reduce #(fold-xml-blob f %1 %2) acc grobid-map)
-    (map? grobid-map) (fold-xml-blob f
-                                     (conj acc (f grobid-map))
-                                     (:content grobid-map))
-    :else acc))
-
-(defn formap
+(defn get-sections
+ "take a nested xml cloujure representation and pull out
+  tags and respective content when content is a string"
   [grobid-map]
-  (for [x (xml-seq grobid-map)]
-    [(:tag x) (map formap (:content x))]))
+  (for [x (xml-seq grobid-map)
+        :when (string? (first (:content x)))]
+    [(:tag x) (first (:content x))]))
