@@ -32,7 +32,7 @@
   send restful request to Grobid. Returns a parsed xml in body"
   [fileblob]
   (when fileblob
-    (client/post "http://192.168.99.100:8080/processFulltextDocument"
+    (client/post "http://localhost:8080/processFulltextDocument"
                  {:multipart [{:name "Content/type" :content "application/pdf"}
                               {:name "input" :content (io/input-stream fileblob)}]})))
 
@@ -62,3 +62,17 @@
   (for [x (xml-seq grobid-map)
         :when (string? (first (:content x)))]
     [(:tag x) (first (:content x))]))
+
+(defn make-sections
+  "Given a processed map from get-sections this function filters everything out
+  keeping headings and paragraphs and then combines all paragraphs per section"
+  [sections]
+  (let [predicate (fn [a] (or (= :head (first a)) (= :p (first a))))
+        hs_and_ps (flatten (filter predicate sections))]
+    #dbg (loop [[hd snd & rest] hs_and_ps
+           acc []]
+           (cond
+             (empty? rest) acc
+             (= :head hd) (conj acc (keyword snd))
+             (= :p hd) (conj acc snd))
+           (recur rest acc))))
