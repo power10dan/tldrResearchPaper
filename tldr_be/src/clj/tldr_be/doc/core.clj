@@ -5,6 +5,7 @@
             [clj-http.client :as client]
             [tldr-be.config :refer [env]]
             [clojure.xml :as xml]
+            [tldr-be.doc.pdf-parse :as pdf]
             [clojurewerkz.neocons.rest.nodes :as nn]
             [clojurewerkz.neocons.rest.relationships :as nrl]
             [clojure.java.io :as io]))
@@ -60,11 +61,7 @@
         cached_xml (get-xml-by-filename fname)]
     (if cached_xml
       (:xml_content cached_xml)
-      (let [{xml_file :body}
-            (client/post (:grobid env)
-                         {:multipart
-                          [{:name "Content/type" :content "application/pdf"}
-                           {:name "input" :content (io/input-stream fileblob)}]})]
+      (let [{xml_file :body} (pdf/pdf-ref-parser fileblob)]
         (insert-xml! id fname xml_file) ;; this line couples the pdf-parser to this function
         xml_file))))
 
