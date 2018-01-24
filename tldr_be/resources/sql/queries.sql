@@ -103,18 +103,34 @@ UPDATE summary
 SET votes = votes - 1
 WHERE header = :header AND author = :author AND doc_id = :doc_id
 
--- :name create-xml! :! :n
+-- :name create-xml-refs! :! :n
 -- :doc creates a new xml record
-INSERT INTO xml
+INSERT INTO xml-refs
 (id, filename, xml_content)
 VALUES (:id, :filename, :xml_content)
 
--- :name get-xml :? :1
+-- :name get-xml-refs :? :1
 -- :doc retrieves an xml doc record given the id
 SELECT * FROM xml
 WHERE id = :id
 
--- :name get-xml-by-name :? :1
+-- :name get-xml-refs-by-name :? :1
 -- :doc retrieves an xml doc given the file name
 SELECT * FROM xml
+WHERE filename = :filename
+
+-- :name create-xml-headers! :! :n
+-- :doc creates a new xml record
+INSERT INTO xml-headers
+(id, filename, xml_content)
+VALUES (:id, :filename, :xml_content)
+
+-- :name get-xml-headers:? :1
+-- :doc retrieves an xml doc record given the id
+SELECT * FROM xml-headers
+WHERE id = :id
+
+-- :name get-xml-headers-by-name :? :1
+-- :doc retrieves an xml doc given the file name
+SELECT * FROM xml-headers
 WHERE filename = :filename

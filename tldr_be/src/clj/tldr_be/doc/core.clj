@@ -1,5 +1,5 @@
 (ns tldr-be.doc.core
-  (:require [tldr-be.db.core :refer [create-doc! get-doc-by-name create-xml! get-xml-by-name get-xml]]
+  (:require [tldr-be.db.core :refer [create-doc! get-doc-by-name create-xml-refs! get-xml-refs-by-name get-xml-refs]]
             [clojure.string :refer [split]]
             [byte-streams :as bs]
             [tldr-be.config :refer [env]]
@@ -7,6 +7,7 @@
             [tldr-be.doc.pdf-parse :as pdf]
             [clojurewerkz.neocons.rest.nodes :as nn]
             [clojurewerkz.neocons.rest.relationships :as nrl]
+            [clojure.data.xml :as x]
             [clojure.java.io :as io]))
 
 (defn insert-doc!
@@ -38,18 +39,18 @@
   [id filename xml_content]
   (when (and id filename xml_content)
     (do ;; if we have all parameters, create an entry
-      (create-xml! {:id id
+      (create-xml-refs! {:id id
                     :filename filename
                     :xml_content xml_content})
       "Your document successfully uploaded")))
 
 
-(defn get-xml-by-filename
+(defn get-xml-refs-by-filename
   "Given the params of a request, pull the filename out, if the filename is good
   then query the db for the corresponding xml by the filename"
   [name]
   (when name
-    (get-xml-by-name {:filename name})))
+    (get-xml-refs-by-name {:filename name})))
 
 
 (defn pdf-to-xml
@@ -57,7 +58,7 @@
   send restful request to Grobid. Returns a parsed xml in body"
   [filemap] ;; expecting {:id id :filename "filename" :filestuff bytea}
   (let [{id :id fname :filename fileblob :filestuff} filemap
-        cached_xml (get-xml-by-filename fname)]
+        cached_xml (get-xml-refs-by-filename fname)]
     (if cached_xml
       (:xml_content cached_xml)
       (let [{xml_file :body} (pdf/pdf-ref-parser fileblob)]
