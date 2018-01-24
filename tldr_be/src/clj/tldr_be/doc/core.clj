@@ -13,7 +13,6 @@
             [tldr-be.doc.engines :as eng]
             [clojurewerkz.neocons.rest.nodes :as nn]
             [clojurewerkz.neocons.rest.relationships :as nrl]
-            [clojure.data.xml :as x]
             [clojure.java.io :as io]))
 
 (defn insert-doc!
@@ -102,10 +101,11 @@
   (-> (assoc {} :filename fname) get-doc-by-filename second))
 
 
-(defn fblob-cljmap
+(defn fname-to-cljmap
  "make a clojure map given filename as string"
-  [fname]
-  (-> fname get-fblob pdf-to-xml-refs xml-to-map))
+  [f fname]
+  ;; (-> fname get-fblob pdf-to-xml-headers xml-to-map))
+  (-> fname get-fblob f xml-to-map))
 
 
 (defn get-sections
@@ -149,3 +149,20 @@
          (recur tail (cond
                        (contains? acc x) (add x y acc)
                        :else (add-new x y acc))))))))
+
+(defn workhorse
+  "given a filename, grab the file bytea blob out of the db, parse the headers and
+  the references and then collect like keys, this function returns 2-tuple where
+  the fst is the filename headers, and snd is a collection of references"
+  [fname]
+  [(->> fname
+        (fname-to-cljmap pdf-to-xml-headers)
+        get-sections
+        make-sections
+        (map collect)
+        second)
+   (->> fname
+        (fname-to-cljmap pdf-to-xml-refs)
+        get-sections
+        make-sections
+        (map collect))])
