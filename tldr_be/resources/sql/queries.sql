@@ -102,3 +102,19 @@ WHERE header = :header AND author = :author AND  doc_id = :doc_id
 UPDATE summary
 SET votes = votes - 1
 WHERE header = :header AND author = :author AND doc_id = :doc_id
+
+-- :name create-xml! :! :n
+-- :doc creates a new xml record
+INSERT INTO xml
+(id, filename, xml_content)
+VALUES (:id, :filename, :xml_content)
+
+-- :name get-xml :? :1
+-- :doc retrieves an xml doc record given the id
+SELECT * FROM xml
+WHERE id = :id
+
+-- :name get-xml-by-name :? :1
+-- :doc retrieves an xml doc given the file name
+SELECT * FROM xml
+WHERE filename = :filename
