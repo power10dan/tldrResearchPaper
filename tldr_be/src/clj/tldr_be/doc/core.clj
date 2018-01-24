@@ -2,7 +2,6 @@
   (:require [tldr-be.db.core :refer [create-doc! get-doc-by-name create-xml! get-xml-by-name get-xml]]
             [clojure.string :refer [split]]
             [byte-streams :as bs]
-            [clj-http.client :as client]
             [tldr-be.config :refer [env]]
             [clojure.xml :as xml]
             [tldr-be.doc.pdf-parse :as pdf]
@@ -62,7 +61,7 @@
     (if cached_xml
       (:xml_content cached_xml)
       (let [{xml_file :body} (pdf/pdf-ref-parser fileblob)]
-        (insert-xml! id fname xml_file) ;; this line couples the pdf-parser to this function
+        (insert-xml! id fname xml_file)
         xml_file))))
 
 
