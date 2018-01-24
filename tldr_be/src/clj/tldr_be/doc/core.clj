@@ -10,6 +10,7 @@
             [tldr-be.config :refer [env]]
             [clojure.xml :as xml]
             [tldr-be.doc.pdf-parse :as pdf]
+            [tldr-be.doc.engines :as eng]
             [clojurewerkz.neocons.rest.nodes :as nn]
             [clojurewerkz.neocons.rest.relationships :as nrl]
             [clojure.data.xml :as x]
@@ -38,80 +39,52 @@
     [false "file could not be found"]))
 
 
-(defn insert-xml-engine
-  "Given required fields id, filename, and xml content, and a function. Use the
-  supplied function to insert the xml in the database that the function
-  specifies"
-  [id filename xml_content f]
-  (when (and id filename xml_content)
-    (do ;; if we have all parameters, create an entry
-      (f {:id id
-                    :filename filename
-                    :xml_content xml_content})
-      "Your document successfully uploaded")))
-
-
 (defn insert-xml-refs!
   "Given params from a request, pull the filename and a xml of file data, insert
   that xml into the xml reference table in the db"
   [id fname xml_content]
-  (insert-xml-engine id fname xml_content create-xml-refs!))
+  (eng/insert-xml-engine id fname xml_content create-xml-refs!))
 
 
 (defn insert-xml-headers!
   "Given params from a request, pull the filename and a xml of file data, insert
   that xml into the xml headers table in the db"
   [id fname xml_content]
-  (insert-xml-engine id fname xml_content create-xml-headers!))
-
-
-(defn get-xml-engine
-  "given the name of a file and a function that dictates a database. Use the
-  supplied function to pull out the xml from the appropriate database table"
-  [name f]
-  (when name (f {:filename name})))
+  (eng/insert-xml-engine id fname xml_content create-xml-headers!))
 
 
 (defn get-xml-refs-by-filename
   "Given the name of a file, if the filename is good
   then query the db for the corresponding xml references by the filename"
   [name]
-  (get-xml-engine name get-xml-refs-by-name))
+  (eng/get-xml-engine name get-xml-refs-by-name))
 
 
 (defn get-xml-headers-by-filename
   "Given the name of a file, if the filename is good
   then query the db for the corresponding xml headers by the filename"
   [name]
-  (get-xml-engine name get-xml-headers-by-name))
+  (eng/get-xml-engine name get-xml-headers-by-name))
 
-
-(defn pdf-to-xml-engine
-  "given a filemap: {:id id :filename \"filename\" :filestuff bytea}, a function to
-  pull out a filename from a database and a function that connects to the
-  restful pdf parser, check if the file has already been processed via db_f, if
-  not then process it with pdf_parser_f"
-  [filemap db_f pdf_parser_f] ;; expecting
-  (let [{id :id fname :filename fileblob :filestuff} filemap
-        cached_xml (db_f fname)]
-    (if cached_xml
-      (:xml_content cached_xml)
-      (let [{xml_file :body} (pdf_parser_f fileblob)]
-        (insert-xml! id fname xml_file)
-        xml_file))))
 
 (defn pdf-to-xml-refs
   "Given a filemap, like: {:id id :filename \"filename\" :filestuff bytea} process
   the file and return the parsed xml references from the file"
   [filemap]
-  (pdf-to-xml-engine filemap get-xml-refs-by-filename pdf/pdf-ref-parser))
+  (eng/pdf-to-xml-engine filemap
+                         get-xml-refs-by-filename
+                         insert-xml-refs!
+                         pdf/pdf-ref-parser))
 
 
 (defn pdf-to-xml-headers
   "Given a filemap, like: {:id id :filename \"filename\" :filestuff bytea} process
   the file and return the parsed xml headers from the file"
   [filemap]
-  (pdf-to-xml-engine filemap get-xml-headers-by-filename pdf/pdf-header-parser))
+  (eng/pdf-to-xml-engine filemap
+                         get-xml-headers-by-filename
+                         insert-xml-headers!
+                         pdf/pdf-header-parser))
 
 
 (defn xml-to-map
@@ -132,7 +105,7 @@
 (defn fblob-cljmap
  "make a clojure map given filename as string"
   [fname]
-  (-> fname get-fblob pdf-to-xml-refs xml-to-map))
+  (-> fname get-fblob pdf-to-xml-headers xml-to-map))
 
 
 (defn get-sections

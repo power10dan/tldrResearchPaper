@@ -105,32 +105,32 @@ WHERE header = :header AND author = :author AND doc_id = :doc_id
 
 -- :name create-xml-refs! :! :n
 -- :doc creates a new xml record
-INSERT INTO xml-refs
+INSERT INTO xml_refs
 (id, filename, xml_content)
 VALUES (:id, :filename, :xml_content)
 
 -- :name get-xml-refs :? :1
 -- :doc retrieves an xml doc record given the id
-SELECT * FROM xml
+SELECT * FROM xml_refs
 WHERE id = :id
 
 -- :name get-xml-refs-by-name :? :1
 -- :doc retrieves an xml doc given the file name
-SELECT * FROM xml
+SELECT * FROM xml_refs
 WHERE filename = :filename
 
 -- :name create-xml-headers! :! :n
 -- :doc creates a new xml record
-INSERT INTO xml-headers
+INSERT INTO xml_headers
 (id, filename, xml_content)
 VALUES (:id, :filename, :xml_content)
 
 -- :name get-xml-headers:? :1
 -- :doc retrieves an xml doc record given the id
-SELECT * FROM xml-headers
+SELECT * FROM xml_headers
 WHERE id = :id
 
 -- :name get-xml-headers-by-name :? :1
 -- :doc retrieves an xml doc given the file name
-SELECT * FROM xml-headers
+SELECT * FROM xml_headers
 WHERE filename = :filename
