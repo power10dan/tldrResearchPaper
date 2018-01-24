@@ -105,7 +105,7 @@
 (defn fblob-cljmap
  "make a clojure map given filename as string"
   [fname]
-  (-> fname get-fblob pdf-to-xml-headers xml-to-map))
+  (-> fname get-fblob pdf-to-xml-refs xml-to-map))
 
 
 (defn get-sections
@@ -133,15 +133,17 @@
 
 
 (defn collect
-  "Given a flat lazy seq like :key0 value0 :key1 value1 where duplicate keys
-  exist. This function collects all values of duplicate keys into a key vector
-  pair e.g. (lazy-seq (k0 v0 k1 v1 k0 v2)) => {k0 [v0 v2] k1 v1}. Usage in this
-  document should be:  (map #(collect % :forename :surname) y)"
-  ([coll & ks]
-   (let [add (fn [a b c] (update c a #(conj % b)))
+  "Given a flat lazy seq like :key0 value0 :key0 value1 :key1 v2 where duplicate
+  keys exist. This function collects all values of duplicate keys into a key
+  vector pair e.g. (lazy-seq (k0 v0 k1 v1 k0 v2)) => {k0 [v0 v1] k1 v2}. Usage
+  in this document should be: (map #(collect %) y)"
+  ([coll]
+   (let [add (fn [a b c] (if (not (vector? (a c)))
+                          (update c a #(conj [%] b))
+                          (update c a #(conj % b))))
          add-new (fn [a b c] (conj c {a b}))]
      (loop [[x y & tail] coll
-            acc (zipmap ks (repeat []))]
+            acc {}]
        (if (not x)
          acc
          (recur tail (cond
