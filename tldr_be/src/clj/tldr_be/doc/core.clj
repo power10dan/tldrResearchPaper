@@ -1,10 +1,12 @@
 (ns tldr-be.doc.core
   (:require [tldr-be.db.core :refer [create-doc!
                                      get-doc-by-name
+                                     get-doc-id
                                      create-xml-refs!
                                      create-xml-headers!
                                      get-xml-refs-by-name
-                                     get-xml-headers-by-name]]
+                                     get-xml-headers-by-name
+                                     *neo4j_db*]]
             [clojure.string :refer [split]]
             [byte-streams :as bs]
             [tldr-be.config :refer [env]]
@@ -166,3 +168,13 @@
         get-sections
         make-sections
         (map collect))])
+
+(defn insert-neo4j
+  "Given a filemap {:id n :fname fname :fblob blob}"
+  [fname]
+  (when-let [id (get-doc-id {:filename fname})]
+    (let [[heds refs] (workhorse fname)
+          parent (nn/create *neo4j_db* (assoc heds :pgid (:id id)))
+          children (nn/create-batch *neo4j_db* refs)]
+      (println (type (into [] refs)))
+      (nrl/create-many *neo4j_db* parent children :cites))))

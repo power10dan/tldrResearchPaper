@@ -60,7 +60,7 @@ WHERE filename = :filename
 
 -- :name get-doc-id :? :1
 -- :doc given a filename retrieve that docs doc_id
-SELECT doc_id from docs
+SELECT id from docs
 where filename = :filename
 
 -- :name get-doc-filename :? :1

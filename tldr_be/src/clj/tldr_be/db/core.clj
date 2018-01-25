@@ -5,6 +5,7 @@
     [clojure.java.jdbc :as jdbc]
     [conman.core :as conman]
     [tldr-be.config :refer [env]]
+    [clojurewerkz.neocons.rest :as nr]
     [mount.core :refer [defstate]])
   (:import org.postgresql.util.PGobject
            java.sql.Array
