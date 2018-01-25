@@ -167,7 +167,8 @@
         (fname-to-cljmap pdf-to-xml-refs)
         get-sections
         make-sections
-        (map collect))])
+        (map collect)
+        (filter #(contains? % :surname)))])
 
 (defn insert-neo4j
   "Given a filemap {:id n :fname fname :fblob blob}"
@@ -175,6 +176,12 @@
   (when-let [id (get-doc-id {:filename fname})]
     (let [[heds refs] (workhorse fname)
           parent (nn/create *neo4j_db* (assoc heds :pgid (:id id)))
-          children (nn/create-batch *neo4j_db* refs)]
-      (println (type (into [] refs)))
+          children (map
+                    #(nn/create-unique-in-index
+                      *neo4j_db*
+                      "by-title"
+                      "title"
+                      (:title %)
+                      %)
+                    refs)]
       (nrl/create-many *neo4j_db* parent children :cites))))
