@@ -175,7 +175,12 @@
   [fname]
   (when-let [id (get-doc-id {:filename fname})]
     (let [[heds refs] (workhorse fname)
-          parent (nn/create *neo4j_db* (assoc heds :pgid (:id id)))
+          parent (nn/create-unique-in-index
+                  *neo4j_db*
+                  "by-title"
+                  "title"
+                  (:title heds)
+                  (assoc heds :pgid (:id id)))
           children (map
                     #(nn/create-unique-in-index
                       *neo4j_db*
