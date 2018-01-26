@@ -14,6 +14,7 @@
             [tldr-be.doc.pdf-parse :as pdf]
             [tldr-be.doc.engines :as eng]
             [clojurewerkz.neocons.rest.nodes :as nn]
+            [clojurewerkz.neocons.rest.labels :as nl]
             [clojurewerkz.neocons.rest.relationships :as nrl]
             [clojurewerkz.neocons.rest.cypher :as cy]
             [clojure.java.io :as io]))
