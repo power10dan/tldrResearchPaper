@@ -15,6 +15,7 @@
             [tldr-be.doc.engines :as eng]
             [clojurewerkz.neocons.rest.nodes :as nn]
             [clojurewerkz.neocons.rest.relationships :as nrl]
+            [clojurewerkz.neocons.rest.cypher :as cy]
             [clojure.java.io :as io]))
 
 (defn insert-doc!
@@ -189,4 +190,6 @@
                       (:title %)
                       %)
                     refs)]
+      (nl/add *neo4j_db* parent "Original")
+      (doall (map #(nl/add *neo4j_db* % "Cited") children))
       (nrl/create-many *neo4j_db* parent children :cites))))
