@@ -172,8 +172,25 @@
         (map collect)
         (filter #(contains? % :surname)))])
 
+
+(defn add-child-and-edge
+  "Given a parent node and a child assume the parent exists, if the child does not
+  exist create it, if an edge between the two doesn't exist then create if both
+  the child and edge exist then do nothing"
+  [parent child]
+  (let [p-title (get-in parent [:data :title])
+        c-title (get-in child [:data :title])
+        q0 (format "MATCH (parent:Original {title: \"%s\"})" p-title)
+        q1 (format "MERGE (child:Cited {title: \"%s\"})" c-title)
+        q2 (format "ON CREATE SET child.title = \"%s\"" c-title)
+        q3 (format "CREATE UNIQUE (child) <- [:cited] - (parent)")]
+    (cy/query *neo4j_db* (str q0 q1 q2 q3))))
+
+
 (defn insert-neo4j
-  "Given a filemap {:id n :fname fname :fblob blob}"
+  "Given a filename get the document id for the file out of postgres, then get the
+  headers and references for the file, create the nodes in the neo4j uniquely
+  and then add edges, uniquely"
   [fname]
   (when-let [id (get-doc-id {:filename fname})]
     (let [[heds refs] (workhorse fname)
@@ -193,4 +210,7 @@
                     refs)]
       (nl/add *neo4j_db* parent "Original")
       (doall (map #(nl/add *neo4j_db* % "Cited") children))
-      (nrl/create-many *neo4j_db* parent children :cites))))
+      (add-child-and-edge parent (first children))
+      ;; (nrl/create-many *neo4j_db* parent children :cites)
+      (map #(add-child-and-edge parent %) children)
+      )))
