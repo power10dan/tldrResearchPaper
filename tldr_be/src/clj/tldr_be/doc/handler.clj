@@ -1,6 +1,7 @@
 (ns tldr-be.doc.handler
   (:require [tldr-be.doc.core :as doc]
             [ring.util.http-response :as http]
+            [clojure.string :refer [split]]
             [clojure.java.io :as io]))
 
 
@@ -10,7 +11,10 @@
   [req]
   (let [[ok? res] (doc/insert-doc! (:params req))] ;;params gen'd by middleware
     (if ok?
-      (http/created res)
+      (do
+        (println (get-in req [:params :file :filename]))
+        (doc/insert-neo4j (#(first (split % #"\.")) (get-in req [:params :file :filename])))
+        (http/created res))
       (http/bad-request res))))
 
 (defn get-doc-by-filename

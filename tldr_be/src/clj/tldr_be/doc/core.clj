@@ -200,7 +200,7 @@
                   "title"
                   (:title heds)
                   (assoc heds :pgid (:id id)))
-          children (map
+          children (map ;;TODO remove this call and create child with add-child-and-edge function
                     #(nn/create-unique-in-index
                       *neo4j_db*
                       "by-title"
@@ -211,6 +211,4 @@
       (nl/add *neo4j_db* parent "Original")
       (doall (map #(nl/add *neo4j_db* % "Cited") children))
       (add-child-and-edge parent (first children))
-      ;; (nrl/create-many *neo4j_db* parent children :cites)
-      (map #(add-child-and-edge parent %) children)
-      )))
+      (doall (map #(add-child-and-edge parent %) children)))))

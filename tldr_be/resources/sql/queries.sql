@@ -66,7 +66,7 @@ where filename = :filename
 -- :name get-doc-filename :? :1
 -- :doc given a doc_id retrieve the doc's filename
 SELECT filename from docs
-where doc_id = :doc_id
+where id = :id
 
 -- :name delete-doc! :! :n
 -- :doc deletes a document record given the id
