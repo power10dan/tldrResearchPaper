@@ -3,6 +3,7 @@
                                      get-doc-filename
                                      *neo4j_db*]]
             [tldr-be.doc.core :refer [workhorse]]
+            [tldr-be.utils.core :refer [escape-string]]
             [clojurewerkz.neocons.rest.nodes :as nn]
             [clojurewerkz.neocons.rest.labels :as nl]
             [clojurewerkz.neocons.rest.relationships :as nrl]
@@ -14,8 +15,8 @@
   exist create it, if an edge between the two doesn't exist then create if both
   the child and edge exist then do nothing"
   [parent child]
-  (let [p-title (get-in parent [:data :title])
-        c-title (get-in child [:data :title])
+  (let [p-title (escape-string (get-in parent [:data :title]))
+        c-title (escape-string (get-in child [:data :title]))
         q0 (format "MATCH (parent:Original {title: \"%s\"})" p-title)
         q1 (format "MERGE (child:Cited {title: \"%s\"})" c-title)
         q2 (format "ON CREATE SET child.title = \"%s\"" c-title)
