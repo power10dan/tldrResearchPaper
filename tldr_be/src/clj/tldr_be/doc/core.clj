@@ -2,6 +2,7 @@
   (:require [tldr-be.db.core :refer [create-doc!
                                      get-doc-by-name
                                      get-doc-id
+                                     get-doc-filename
                                      create-xml-refs!
                                      create-xml-headers!
                                      get-xml-refs-by-name
@@ -187,28 +188,49 @@
     (cy/query *neo4j_db* (str q0 q1 q2 q3))))
 
 
+(defn find-node-by-title
+  "Given the title of a paper traverse the graph and retrieve that nodes data,
+  neo4j id, and postgres id"
+  [title]
+  (let [result (-> (cy/tquery
+                    *neo4j_db*
+                    (format "MATCH (n:Original) WHERE n.title = \"%s\" RETURN n" title))
+                   first
+                   (get "n"))
+        metadata (:metadata result)]
+    (when result
+      (conj (get-in result [:data]) (select-keys metadata [:id])))))
+
+
+(defn node-exists?
+  "Given the title of a paper traverse the graph and check if node exist"
+  [title]
+  (not (nil? (find-node-by-title title))))
+
+
 (defn insert-neo4j
   "Given a filename get the document id for the file out of postgres, then get the
   headers and references for the file, create the nodes in the neo4j uniquely
   and then add edges, uniquely"
   [fname]
   (when-let [id (get-doc-id {:filename fname})]
-    (let [[heds refs] (workhorse fname)
-          parent (nn/create-unique-in-index
-                  *neo4j_db*
-                  "by-title"
-                  "title"
-                  (:title heds)
-                  (assoc heds :pgid (:id id)))
-          children (map ;;TODO remove this call and create child with add-child-and-edge function
-                    #(nn/create-unique-in-index
-                      *neo4j_db*
-                      "by-title"
-                      "title"
-                      (:title %)
-                      %)
-                    refs)]
-      (nl/add *neo4j_db* parent "Original")
-      (doall (map #(nl/add *neo4j_db* % "Cited") children))
-      (add-child-and-edge parent (first children))
-      (doall (map #(add-child-and-edge parent %) children)))))
+    (when-not (-> (get-doc-filename id) :filename node-exists?)
+      (let [[heds refs] (workhorse fname)
+            parent (nn/create-unique-in-index
+                    *neo4j_db*
+                    "by-title"
+                    "title"
+                    (:title heds)
+                    (assoc heds :pgid (:id id)))
+            children (map ;;TODO remove this call and create child with add-child-and-edge function
+                      #(nn/create-unique-in-index
+                        *neo4j_db*
+                        "by-title"
+                        "title"
+                        (:title %)
+                        %)
+                      refs)]
+        (nl/add *neo4j_db* parent "Original")
+        (doall (map #(nl/add *neo4j_db* % "Cited") children))
+        (add-child-and-edge parent (first children))
+        (doall (map #(add-child-and-edge parent %) children))))))
