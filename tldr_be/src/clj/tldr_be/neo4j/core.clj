@@ -58,7 +58,7 @@
           (apply function)))))
 
 
-(defn get-all-children
+(defn _get-all-children
   "given n many nodes find all the children of each node in a set union"
   [& ts]
   (let [titles (map #(format "'%s'" %) ts)
@@ -67,6 +67,15 @@
         q2 "WHERE p.title in titles RETURN c \n"]
     (cy/query *neo4j_db* (apply str q0 q1 q2))))
 
+
+(defn get-all-children
+  [& ts]
+  (if ts
+    [true ((_get-all-children ts))]
+    [false "No papers found"]))
+
+
+;; TODO (defn get-all-shared-children)
 
 (defn insert-neo4j
   "Given a filename get the document id for the file out of postgres, then get the
