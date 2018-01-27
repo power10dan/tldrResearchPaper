@@ -43,6 +43,31 @@
   (not (nil? (find-node-by-title title))))
 
 
+;; TODO add to utilities and write a description
+(defn flip [function]
+  (fn
+    ([] (function))
+    ([x] (function x))
+    ([x y] (function y x))
+    ([x y z] (function z y x))
+    ([a b c d] (function d c b a))
+    ([a b c d & rest]
+     (->> rest
+          (concat [a b c d])
+          reverse
+          (apply function)))))
+
+
+(defn get-all-children
+  "given n many nodes find all the children of each node in a set union"
+  [& ts]
+  (let [titles (map #(format "'%s'" %) ts)
+        q0 (format "WITH [%s] as titles %n" (apply str (interpose "," titles)))
+        q1 "MATCH (p:Original)-[:cited]->(c:Cited) \n"
+        q2 "WHERE p.title in titles RETURN c \n"]
+    (cy/query *neo4j_db* (apply str q0 q1 q2))))
+
+
 (defn insert-neo4j
   "Given a filename get the document id for the file out of postgres, then get the
   headers and references for the file, create the nodes in the neo4j uniquely
