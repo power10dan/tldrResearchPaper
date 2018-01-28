@@ -26,7 +26,7 @@
        (wrap-routes wrap-keyword-params)
        (wrap-routes wrap-json-body)
        (wrap-cors :access-control-allow-origin [#".*"] ;; this allows everything
-                  :access-control-allow-methods [:post])
+                  :access-control-allow-methods [:post :get])
        (wrap-routes wrap-json-response))
     (route/not-found
       (:body
