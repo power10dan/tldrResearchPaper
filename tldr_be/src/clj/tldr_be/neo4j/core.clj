@@ -24,6 +24,13 @@
     (cy/query *neo4j_db* (str q0 q1 q2 q3))))
 
 
+(defn massage-node
+  "Given a node, remove all the neo4j specific data and return the id and data we
+  injected"
+  [node]
+  (conj (get-in node [:data]) (select-keys (:metadata node) [:id])))
+
+
 (defn find-node-by-title
   "Given the title of a paper traverse the graph and retrieve that nodes data,
   neo4j id, and postgres id"
@@ -34,29 +41,13 @@
                    first
                    (get "n"))
         metadata (:metadata result)]
-    (when result
-      (conj (get-in result [:data]) (select-keys metadata [:id])))))
+    (when result (massage-node result))))
 
 
 (defn node-exists?
   "Given the title of a paper traverse the graph and check if node exist"
   [title]
   (not (nil? (find-node-by-title title))))
-
-
-;; TODO add to utilities and write a description
-(defn flip [function]
-  (fn
-    ([] (function))
-    ([x] (function x))
-    ([x y] (function y x))
-    ([x y z] (function z y x))
-    ([a b c d] (function d c b a))
-    ([a b c d & rest]
-     (->> rest
-          (concat [a b c d])
-          reverse
-          (apply function)))))
 
 
 (defn _get-all-children
@@ -66,14 +57,21 @@
         q0 (format "WITH [%s] as titles %n" (apply str (interpose "," titles)))
         q1 "MATCH (p:Original)-[:cited]->(c:Cited) \n"
         q2 "WHERE p.title in titles RETURN c \n"]
-    (cy/query *neo4j_db* (apply str q0 q1 q2))))
+    (map massage-node
+         (-> (cy/query *neo4j_db* (apply str q0 q1 q2))
+             (get-in [:data])
+             flatten))))
 
 
 (defn get-all-children
+  "Wrapper around the engine _get-all-children this function checks the results of
+  the service api, if good returns a 2-tuple (true, results) if bad return false
+  an error message"
   [& ts]
-  (if ts
-    [true ((_get-all-children ts))]
-    [false "No papers found"]))
+  (let [res (apply _get-all-children ts)]
+    (if (not (empty? res))
+      [true res]
+      [false "No papers found"])))
 
 
 ;; TODO (defn get-all-shared-children)
