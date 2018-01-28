@@ -61,7 +61,7 @@ export const styles = theme =>({
 });
 // TODO: Make Select your favorite confernece expansion panel,
 // and make what type of researcher are you grid view
-function ResearcherSelection(props){
+const ResearcherSelection = (props)=>{
 	const {classes} = props;
 	return(
 		<GridList 
@@ -93,7 +93,7 @@ function ResearcherSelection(props){
 	)
 }
 
-export function CustomizationList(props){
+export const CustomizationList = (props)=>{
 	const { classes } = props;
 	return(
 		<div className={classes.root} >

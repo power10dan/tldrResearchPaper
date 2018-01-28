@@ -2,14 +2,14 @@ import React, { Component } from 'react';
 import DashBoardComps from '../AppComponent/DashBoardComps.js';
 import { withStyles } from 'material-ui/styles';
 
-function DashBoardControlHOC(DashBoardElem){
+const DashBoardControlHOC = (DashBoardElem) =>{
 	return(
 		class DashBoardControl extends Component{
 			constructor(props){
 				super(props);
 				this.state={
 					open: false,
-					filterData: ["Author", "Conferene"],
+					filterData: ["Author"],
 				}
 				this.marginLeft=""
 			}

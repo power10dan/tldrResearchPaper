@@ -46,8 +46,8 @@ class ConferenceExpansionPanel extends Component{
 			   {
 				this.props.conferences.map((elem) =>(
 					<ExpansionPanel 
-						  expanded={expanded === {elem}} 
-						  onChange={this.handleChange(elem)}
+						expanded={expanded === {elem}} 
+						sonChange={this.handleChange(elem)}
 					>
 						<ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} >
 							<Typography className={classes.heading} >
