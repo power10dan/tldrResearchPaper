@@ -23,17 +23,3 @@
   "function accepts a string and returns one with specified characters removed."
   [str]
   (str/replace str "\"" "'"))
-
-(defn flip [function]
-  "takes func a->b->c and transfroms it to b->a->c"
-  (fn
-    ([] (function))
-    ([x] (function x))
-    ([x y] (function y x))
-    ([x y z] (function z y x))
-    ([a b c d] (function d c b a))
-    ([a b c d & rest
-        (->> rest
-            (concat [a b c d])
-            reverse
-            (apply function))])))
