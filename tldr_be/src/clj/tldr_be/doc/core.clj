@@ -1,6 +1,7 @@
 (ns tldr-be.doc.core
   (:require [tldr-be.db.core :refer [create-doc!
                                      get-doc-by-name
+                                     get-doc-by-filename
                                      get-doc-by-id
                                      get-doc-id
                                      get-doc-filename

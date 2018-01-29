@@ -48,7 +48,7 @@ INSERT INTO docs
 (filename, filestuff)
 VALUES (:filename, :filestuff)
 
--- :name get-doc-by-name :? :1
+-- :name get-doc-by-filename :? :1
 -- :doc retrieves a document given the file name
 SELECT * FROM docs
 WHERE filename = :filename
