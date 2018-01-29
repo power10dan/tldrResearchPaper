@@ -32,14 +32,6 @@
       [false "Request Malformed"])))
 
 
-(defn get-doc-by-filename
-  "Given the params of a request, pull the filename out, if the filename is good
-  then query the db for the corresponding file by the filename"
-  [params]
-  (if-let [filename (:filename params)]
-    [true (get-doc-by-name {:filename filename})]
-    [false "file could not be found"]))
-
 (defn get-doc
   "Given the params of a request, try to pull out the filename, if that fails try
   to pull out the postgres id (pgid), with either pull out the file, if neither
@@ -52,6 +44,7 @@
       [true (cond fname (get-doc-by-name {:filename fname})
                   pgid (get-doc-by-id {:id (parse-int pgid)}))]
       [false ("file could not be found")])))
+
 
 (defn insert-xml-refs!
   "Given params from a request, pull the filename and a xml of file data, insert

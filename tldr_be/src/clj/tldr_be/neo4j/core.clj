@@ -31,23 +31,23 @@
   (conj (get-in node [:data]) (select-keys (:metadata node) [:id])))
 
 
-(defn find-node-by-title
-  "Given the title of a paper traverse the graph and retrieve that nodes data,
+(defn find-node
+  "Given the title or id of a paper traverse the graph and retrieve that nodes data,
   neo4j id, and postgres id"
-  [title]
+  [arg]
   (let [result (-> (cy/tquery
                     *neo4j_db*
-                    (format "MATCH (n:Original) WHERE n.title = \"%s\" RETURN n" title))
+                    ;; TODO fix this horrendously long line, also notice that we let neo4j deal with the type errors
+                    (format "MATCH (n:Original) where n.title = '%s' or ID(n) = %d RETURN n UNION MATCH (n:Cited) WHERE n.title = '%s' or ID(n) = %d RETURN n" arg arg arg arg))
                    first
                    (get "n"))
-        metadata (:metadata result)]
     (when result (massage-node result))))
 
 
 (defn node-exists?
-  "Given the title of a paper traverse the graph and check if node exist"
-  [title]
-  (not (nil? (find-node-by-title title))))
+  "Given the title or id of a paper traverse the graph and check if node exist"
+  [arg]
+  (not (nil? (find-node arg))))
 
 
 (defn _get-all-children

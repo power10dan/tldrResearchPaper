@@ -19,7 +19,7 @@
       (http/bad-request res))))
 
 
-(defn get-doc-by-filename
+(defn get-doc
   "Given a request that specifies a filename in the body, retrieve the first blob
   corresponding to that filename from the db"
   [req]
