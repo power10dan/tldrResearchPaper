@@ -1,6 +1,7 @@
 (ns tldr-be.doc.core
   (:require [tldr-be.db.core :refer [create-doc!
                                      get-doc-by-name
+                                     get-doc-by-id
                                      get-doc-id
                                      get-doc-filename
                                      create-xml-refs!
@@ -10,15 +11,11 @@
                                      *neo4j_db*]]
             [clojure.string :refer [split]]
             [byte-streams :as bs]
-            [tldr-be.config :refer [env]]
             [clojure.xml :as xml]
+            [tldr-be.utils.core :refer [parse-int]]
             [tldr-be.doc.pdf-parse :as pdf]
             [tldr-be.doc.engines :as eng]
             [tldr-be.utils.core :refer [collect]]
-            [clojurewerkz.neocons.rest.nodes :as nn]
-            [clojurewerkz.neocons.rest.labels :as nl]
-            [clojurewerkz.neocons.rest.relationships :as nrl]
-            [clojurewerkz.neocons.rest.cypher :as cy]
             [clojure.java.io :as io]))
 
 (defn insert-doc!
@@ -50,9 +47,10 @@
   [params]
   (let [fname (:filename params)
         pgid (:pgid params)]
+    (println "HERHEHERE" pgid)
     (if (or fname pgid)
       [true (cond fname (get-doc-by-name {:filename fname})
-                  pgid (get-doc-by-id {:id pgid}))]
+                  pgid (get-doc-by-id {:id (parse-int pgid)}))]
       [false ("file could not be found")])))
 
 (defn insert-xml-refs!

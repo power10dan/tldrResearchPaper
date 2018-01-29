@@ -23,7 +23,7 @@
   "Given a request that specifies a filename in the body, retrieve the first blob
   corresponding to that filename from the db"
   [req]
-  (let [[ok? res] (doc/get-doc-by-filename (:params req))]
+  (let [[ok? res] (doc/get-doc (:params req))]
     (if ok?
       {:status 200
        :headers {"Content-Type" "application/pdf"}
