@@ -7,6 +7,7 @@
             [tldr-be.summary.handler :as sum_handler]
             [tldr-be.auth.core :as auth]
             [tldr-be.doc.handler :as d]
+            [tldr-be.neo4j.handler :as neo]
             [tldr-be.summary.core :as summary]
             [clojure.java.io :as io]))
 
@@ -28,9 +29,10 @@
 (defroutes bus-routes ;;business-routes
   (POST "/api/uploadFile/"    [] d/insert-doc!)
   (POST "/api/getFileByName/" [] d/get-doc-by-filename)
-  (POST "/api/addSummary/"    [] sum_handler/insert-sum)
-  (POST "/api/sumUpVote/"     [] sum_handler/up-vote-sum)
-  (POST "/api/sumDownVote/"   [] sum_handler/down-vote-sum)
+  (GET "/api/getChildrenUnion/" [] neo/get-all-children)
+  ;; (POST "/api/addSummary/"    [] sum_handler/insert-sum)
+  ;; (POST "/api/sumUpVote/"     [] sum_handler/up-vote-sum)
+  ;; (POST "/api/sumDownVote/"   [] sum_handler/down-vote-sum)
   (POST "/login/" [] auth_handler/create-auth-token)
   (GET "/get-user" [] (restrict auth_handler/get-user {:handler auth/is-auth?
                                                        :on-error on-error})))
