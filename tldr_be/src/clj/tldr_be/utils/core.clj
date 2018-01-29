@@ -23,3 +23,7 @@
   "function accepts a string and returns one with specified characters removed."
   [str]
   (str/replace str "\"" "'"))
+
+(defn parse-int [s]
+  "given a messy string grab the numbers out of it and convert to integers"
+  (Integer. (re-find  #"\d+" s )))
