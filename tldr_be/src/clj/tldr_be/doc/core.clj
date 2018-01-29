@@ -43,6 +43,17 @@
     [true (get-doc-by-name {:filename filename})]
     [false "file could not be found"]))
 
+(defn get-doc
+  "Given the params of a request, try to pull out the filename, if that fails try
+  to pull out the postgres id (pgid), with either pull out the file, if neither
+  works return failure"
+  [params]
+  (let [fname (:filename params)
+        pgid (:pgid params)]
+    (if (or fname pgid)
+      [true (cond fname (get-doc-by-name {:filename fname})
+                  pgid (get-doc-by-id {:id pgid}))]
+      [false ("file could not be found")])))
 
 (defn insert-xml-refs!
   "Given params from a request, pull the filename and a xml of file data, insert

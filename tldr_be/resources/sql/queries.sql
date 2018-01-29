@@ -58,6 +58,12 @@ WHERE id = :id
 SELECT * FROM docs
 WHERE filename = :filename
 
+
+-- :name get-doc-by-id :? :1
+-- :doc retrieves a document given the file name
+SELECT * FROM docs
+WHERE id = :id
+
 -- :name get-doc-id :? :1
 -- :doc given a filename retrieve that docs doc_id
 SELECT id from docs
