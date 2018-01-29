@@ -61,6 +61,7 @@
         q2 (condp = tpe
                :titles "WHERE p.title in ts RETURN DISTINCT c \n"
                :ids "WHERE ID(p) in ts RETURN DISTINCT c")]
+    (println (map type ts))
     (map massage-node
          (-> (cy/query *neo4j_db* (apply str q0 q1 q2))
              (get-in [:data])
