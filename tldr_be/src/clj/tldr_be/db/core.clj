@@ -5,6 +5,7 @@
     [clojure.java.jdbc :as jdbc]
     [conman.core :as conman]
     [tldr-be.config :refer [env]]
+    [clojurewerkz.neocons.rest :as nr]
     [mount.core :refer [defstate]])
   (:import org.postgresql.util.PGobject
            java.sql.Array
@@ -17,6 +18,9 @@
 (defstate ^:dynamic *db*
            :start (conman/connect! {:jdbc-url (env :database-url)})
            :stop (conman/disconnect! *db*))
+
+(defstate ^:dynamic *neo4j_db*
+  :start (nr/connect (env :neo4j-db-url)))
 
 (conman/bind-connection *db* "sql/queries.sql")
 

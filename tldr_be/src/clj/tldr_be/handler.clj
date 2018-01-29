@@ -8,6 +8,7 @@
             [tldr-be.auth.core :as auth]
             [tldr-be.middleware :as middleware]
             [ring.middleware.keyword-params :refer [wrap-keyword-params]]
+            [ring.middleware.params :refer [wrap-params]]
             [ring.middleware.json :refer [wrap-json-response wrap-json-body]]
             [ring.middleware.cors :refer [wrap-cors]]
             [ring.util.response :refer [redirect]]))
@@ -24,9 +25,10 @@
        )
    (-> #'bus-routes
        (wrap-routes wrap-keyword-params)
+       (wrap-routes wrap-params)
        (wrap-routes wrap-json-body)
        (wrap-cors :access-control-allow-origin [#".*"] ;; this allows everything
-                  :access-control-allow-methods [:post])
+                  :access-control-allow-methods [:post :get])
        (wrap-routes wrap-json-response))
     (route/not-found
       (:body
