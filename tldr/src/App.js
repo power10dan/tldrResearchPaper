@@ -11,15 +11,10 @@ import LogIn from './AppComponent/LogIn.js';
 
 class App extends Component {
 
-  componentWillReceiveProps(nextProp){
-    this.setState({currPage: nextProp.CurrPage});
-  }
-
   render() {
   	let DownloadedContent = GetContentFromServer(CustomizationList, DataSubscriptionDummyFunc);
 	  let StyledCustomizationComponent = withStyles(styles)(DownloadedContent);
-    //if(this.state.currPage === "")
-    let CustomPage = DashBoardControlHOC(LogIn);
+    let CustomPage = DashBoardControlHOC(SignUp);
     return (
       <div className="App">
           <CustomPage />
