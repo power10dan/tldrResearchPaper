@@ -20,7 +20,7 @@
         q0 (format "MATCH (parent:Original {title: \"%s\"})" p-title)
         q1 (format "MERGE (child:Cited {title: \"%s\"})" c-title)
         q2 (format "ON CREATE SET child.title = \"%s\"" c-title)
-        q3 (format "CREATE UNIQUE (child) <- [:cited] - (parent)")]
+        q3 (format "CREATE UNIQUE (child) <- [:cites] - (parent)")]
     (cy/query *neo4j_db* (str q0 q1 q2 q3))))
 
 
@@ -40,7 +40,7 @@
                     ;; TODO fix this horrendously long line, also notice that we let neo4j deal with the type errors
                     (format "MATCH (n:Original) where n.title = '%s' or ID(n) = %d RETURN n UNION MATCH (n:Cited) WHERE n.title = '%s' or ID(n) = %d RETURN n" arg arg arg arg))
                    first
-                   (get "n"))
+                   (get "n"))]
     (when result (massage-node result))))
 
 
@@ -53,10 +53,14 @@
 (defn _get-all-children
   "given n many nodes find all the children of each node in a set union"
   [& ts]
-  (let [titles (map #(format "'%s'" %) ts)
-        q0 (format "WITH [%s] as titles %n" (apply str (interpose "," titles)))
-        q1 "MATCH (p:Original)-[:cited]->(c:Cited) \n"
-        q2 "WHERE p.title in titles RETURN c \n"]
+  (let [[tpe nodes] (cond
+                      (every? string? ts) [:titles (map #(format "'%s'" %) ts)]
+                      (every? number? ts)  [:ids (map #(format "%d" %) ts)])
+        q0 (format "WITH [%s] as ts %n" (apply str (interpose "," nodes)))
+        q1 "MATCH (p:Original)-[:cites]->(c:Cited) \n"
+        q2 (condp = tpe
+               :titles "WHERE p.title in ts RETURN DISTINCT c \n"
+               :ids "WHERE ID(p) in ts RETURN DISTINCT c")]
     (map massage-node
          (-> (cy/query *neo4j_db* (apply str q0 q1 q2))
              (get-in [:data])
@@ -98,7 +102,8 @@
                         (:title %)
                         %)
                       refs)]
-        (nl/add *neo4j_db* parent "Original")
+        (nl/add *neo4j_db* parent "Original") ;; add Original label to parent
+        ;; add Cited label to children
         (doall (map #(nl/add *neo4j_db* % "Cited") children))
-        (add-child-and-edge parent (first children))
+        ;; smart add the edges between parent and children
         (doall (map #(add-child-and-edge parent %) children))))))

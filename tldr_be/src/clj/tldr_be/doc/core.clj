@@ -1,6 +1,5 @@
 (ns tldr-be.doc.core
   (:require [tldr-be.db.core :refer [create-doc!
-                                     get-doc-by-name
                                      get-doc-by-filename
                                      get-doc-by-id
                                      get-doc-id
@@ -42,7 +41,7 @@
         pgid (:pgid params)]
     (println "HERHEHERE" pgid)
     (if (or fname pgid)
-      [true (cond fname (get-doc-by-name {:filename fname})
+      [true (cond fname (get-doc-by-filename {:filename fname})
                   pgid (get-doc-by-id {:id (parse-int pgid)}))]
       [false ("file could not be found")])))
 
