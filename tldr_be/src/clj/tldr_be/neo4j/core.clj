@@ -35,12 +35,10 @@
   "Given the title or id of a paper traverse the graph and retrieve that nodes data,
   neo4j id, and postgres id"
   [arg]
-  (let [result (-> (cy/tquery
-                    *neo4j_db*
-                    ;; TODO fix this horrendously long line, also notice that we let neo4j deal with the type errors
-                    (format "MATCH (n:Original) where n.title = '%s' or ID(n) = %d RETURN n UNION MATCH (n:Cited) WHERE n.title = '%s' or ID(n) = %d RETURN n" arg arg arg arg))
-                   first
-                   (get "n"))]
+  (let [q0 (cond
+             (string? arg) (format "MATCH (n:Original) where n.title = '%s' RETURN n UNION MATCH (n:Cited) WHERE n.title = '%s' RETURN n" arg arg)
+             (number? arg) (format "MATCH (n:Original) where ID(n) = %d RETURN n UNION MATCH (n:Cited) WHERE ID(n) = %d RETURN n" arg arg))
+        result (-> (cy/tquery *neo4j_db* q0) first (get "n"))]
     (when result (massage-node result))))
 
 
