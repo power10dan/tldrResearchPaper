@@ -1,4 +1,8 @@
 import React from 'react'
+import TextField from 'material-ui/TextField';
+import { withStyles } from 'material-ui/styles';
+import Button from 'material-ui/Button';
+
 
 
 class SignUpForm extends React.Component {
@@ -18,48 +22,45 @@ class SignUpForm extends React.Component {
 
   render() {
     return(
-      <form>
-       <h1> Sign Up Folks !</h1>
-       <div>
-        <label> First Name</label>
-        <input type="text"
-        placeHolder="First Name"
-        value={this.state.FirstName}
-        onChange={e => this.setState({FirstName: e.target.value}) }
-        required></input>
-       </div>
-       <div>
-        <label>Last Name</label>
-        <input type="text" value={this.state.LastName}
-        placeHolder="Last Name"
-        onChange={e => this.setState({LastName: e.target.value}) }
-        required></input>
-       </div>
-       <div>
-        <label>User Name</label>
-        <input type="text" value={this.state.UserName}
-        onChange={e => this.setState({UserName: e.target.value}) }
-        placeHolder="User Name"
-        required></input>
-       </div>
-       <div>
-        <label>Email </label>
-        <input type="text"
-        value={this.state.Email}
-        placeHolder="Email"
-        onChange={e => this.setState({Email: e.target.value}) }required></input>
-       </div>
-       <div>
-        <label>Password</label>
-        <input type="Password"
-        placeHolder="Password"
-        value={this.state.Password}
-        onChange = { e => this.setState({Password : e.target.value})}
-        required></input>
-       </div>
-       <button onClick={(e) => this.Submit(e)}>SignUp</button>
-       <br></br>
-       <a href="">Already have an account? Log In</a>
+      <form class="form-group" >
+         <h1> Sign Up Folks !</h1>
+         <div>
+          <TextField
+          label="First Name"
+          value={this.state.FirstName}
+          onChange={e => this.setState({FirstName: e.target.value})} />
+         </div>
+         <div>
+
+          <TextField value={this.state.LastName}
+          label="Last Name"
+          onChange={e => this.setState({LastName: e.target.value})} />
+         </div>
+         <div>
+          <TextField value={this.state.UserName}
+          onChange={e => this.setState({UserName: e.target.value}) }
+          label="User Name" />
+         </div>
+         <div>
+
+          <TextField
+          value={this.state.Email}
+          label="Email"
+          onChange={e => this.setState({Email: e.target.value}) } />
+         </div>
+         <div>
+
+          <TextField type="Password"
+          label="Password"
+          value={this.state.Password}
+          onChange = { e => this.setState({Password : e.target.value})}
+          />
+         </div>
+         <br></br>
+         <Button raised color="primary" onClick={(e) => this.Submit(e)}>SignUp</Button>
+         <br></br>
+         <br></br>
+         <a href="">Already have an account? Log In</a>
       </form>
     );
   }
