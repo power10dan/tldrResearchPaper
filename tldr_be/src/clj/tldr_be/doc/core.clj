@@ -39,7 +39,6 @@
   [params]
   (let [fname (:filename params)
         pgid (:pgid params)]
-    (println "HERHEHERE" pgid)
     (if (or fname pgid)
       [true (cond fname (get-doc-by-filename {:filename fname})
                   pgid (get-doc-by-id {:id (parse-int pgid)}))]
@@ -106,13 +105,12 @@
 (defn get-fblob
   "pull out a file blob from the database given the name"
   [fname]
-  (-> (assoc {} :filename fname) get-doc-by-filename second))
+  (-> (assoc {} :filename fname) get-doc-by-filename))
 
 
 (defn fname-to-cljmap
  "make a clojure map given filename as string"
   [f fname]
-  ;; (-> fname get-fblob pdf-to-xml-headers xml-to-map))
   (-> fname get-fblob f xml-to-map))
 
 
