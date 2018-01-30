@@ -50,10 +50,16 @@
 
   :plugins [[lein-cprop "1.0.3"]
             [migratus-lein "0.5.3"]
-            [lein-immutant "2.1.0"]]
+            [lein-immutant "2.1.0"]
+            [lein-heroku "0.5.3"]]
+
 
   :profiles
-  {:uberjar {:omit-source true
+  {:heroku {:app-name "cryptic-lowlands-51249"
+            :jdk-version "1.8"
+            :include-files ["target/tldr_be.jar"]}
+  
+   :uberjar {:omit-source true
              :aot :all
              :uberjar-name "tldr_be.jar"
              :source-paths ["env/prod/clj"]
