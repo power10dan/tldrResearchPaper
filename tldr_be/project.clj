@@ -53,13 +53,13 @@
             [lein-immutant "2.1.0"]
             [lein-heroku "0.5.3"]]
 
+  :heroku {:app-name "vast-scrubland-81582"
+           :jdk-version "1.8"
+           :include-files ["target/tldr_be.jar"]}
+
 
   :profiles
-  {:heroku {:app-name "cryptic-lowlands-51249"
-            :jdk-version "1.8"
-            :include-files ["target/tldr_be.jar"]}
-  
-   :uberjar {:omit-source true
+  {:uberjar {:omit-source true
              :aot :all
              :uberjar-name "tldr_be.jar"
              :source-paths ["env/prod/clj"]
