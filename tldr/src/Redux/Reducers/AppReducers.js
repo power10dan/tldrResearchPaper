@@ -44,7 +44,8 @@ const ReducerTutorialSettings = (state= InitialStates.TutorialSettings, actions)
 
 const tldrApp = combineReducers({
 	ReducerPapers,
-	ReducerAppState
+	ReducerAppState,
+	ReducerTutorialSettings
 });
 
 export default tldrApp;

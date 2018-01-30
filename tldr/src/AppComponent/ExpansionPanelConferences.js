@@ -1,4 +1,4 @@
-import React, { Fragment, Component } from 'react';
+import React, { Component } from 'react';
 import { withStyles } from 'material-ui/styles';
 import ExpansionPanel, {
 		ExpansionPanelDetails,

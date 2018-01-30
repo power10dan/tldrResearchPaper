@@ -1,10 +1,8 @@
-import React, {Fragment} from "react";
-import { withStyles } from 'material-ui/styles';
-import GridList, { GridListTile } from 'material-ui/GridList';
+import React from "react";
+import GridList from 'material-ui/GridList';
 import Typography from 'material-ui/Typography';
-import Card, {CardContent, CardHeader, CardActions, CardMedia } from 'material-ui/Card';
+import Card, {CardContent, CardMedia } from 'material-ui/Card';
 import Divider from 'material-ui/Divider';
-import Button from 'material-ui/Button';
 import Grid from 'material-ui/Grid';
 import ConferenceExpansionPanel from './ExpansionPanelConferences.js';
 
@@ -74,7 +72,10 @@ const ResearcherSelection = (props)=>{
 			 	props.element.selectionContent.map((content, idx)=> (
 				   	<Grid item className={classes.gridList}>
 				       	<Card className={classes.cardProps}>      		
-					      	<CardContent className={classes.cardContent} >
+					      	<CardContent 
+					      		className={classes.cardContent}
+					      		onClick={props.cardClickFunc}
+					        >
 					        	<CardMedia
 						    		className={classes.mediaImg}
 								    image={props.element.selectionImage[idx]}

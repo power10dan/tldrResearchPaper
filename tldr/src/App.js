@@ -26,6 +26,7 @@ class App extends Component {
       let ConfPanel = GetContentFromServer(ConferenceExpansionPanel, DataSubscriptionConference); 
   	  let StyledCustomizationComponent = withStyles(styles)(DownloadedContent);
       let CustomPage = null;
+      
       if(this.state.CurrPage === 0){
           CustomPage = DashBoardControlHOC(StyledCustomizationComponent);
       } else {
@@ -33,9 +34,11 @@ class App extends Component {
       }
 
       return (
+      
         <div className="App">      
             <CustomPage />
         </div>
+
       );
     }
 }

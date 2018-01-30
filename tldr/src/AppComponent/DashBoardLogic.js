@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import DashBoardComps from '../AppComponent/DashBoardComps.js';
-import { withStyles } from 'material-ui/styles';
 
 const DashBoardControlHOC = (DashBoardElem) =>{
 	return(
@@ -22,7 +21,6 @@ const DashBoardControlHOC = (DashBoardElem) =>{
 				this.setState({open: false});
 			}
 
-			
 			render(){
 				if(this.state.open === false){
 					this.marginLeft= "270px";
