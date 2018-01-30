@@ -20,7 +20,7 @@
         q0 (format "MATCH (parent:Original {title: \"%s\"})" p-title)
         q1 (format "MERGE (child:Cited {title: \"%s\"})" c-title)
         q2 (format "ON CREATE SET child.title = \"%s\"" c-title)
-        q3 (format "CREATE UNIQUE (child) <- [:cited] - (parent)")]
+        q3 (format "CREATE UNIQUE (child) <- [:cites] - (parent)")]
     (cy/query *neo4j_db* (str q0 q1 q2 q3))))
 
 
@@ -31,32 +31,30 @@
   (conj (get-in node [:data]) (select-keys (:metadata node) [:id])))
 
 
-(defn find-node-by-title
-  "Given the title of a paper traverse the graph and retrieve that nodes data,
+(defn find-node
+  "Given the title or id of a paper traverse the graph and retrieve that nodes data,
   neo4j id, and postgres id"
-  [title]
-  (let [result (-> (cy/tquery
-                    *neo4j_db*
-                    (format "MATCH (n:Original) WHERE n.title = \"%s\" RETURN n" title))
-                   first
-                   (get "n"))
-        metadata (:metadata result)]
+  [arg]
+  (let [q0 (cond
+             (string? arg) (format "MATCH (n:Original) where n.title = '%s' RETURN n UNION MATCH (n:Cited) WHERE n.title = '%s' RETURN n" arg arg)
+             (number? arg) (format "MATCH (n:Original) where ID(n) = %d RETURN n UNION MATCH (n:Cited) WHERE ID(n) = %d RETURN n" arg arg))
+        result (-> (cy/tquery *neo4j_db* q0) first (get "n"))]
     (when result (massage-node result))))
 
 
 (defn node-exists?
-  "Given the title of a paper traverse the graph and check if node exist"
-  [title]
-  (not (nil? (find-node-by-title title))))
+  "Given the title or id of a paper traverse the graph and check if node exist"
+  [arg]
+  (not (nil? (find-node arg))))
 
 
 (defn _get-all-children
   "given n many nodes find all the children of each node in a set union"
   [& ts]
-  (let [titles (map #(format "'%s'" %) ts)
-        q0 (format "WITH [%s] as titles %n" (apply str (interpose "," titles)))
-        q1 "MATCH (p:Original)-[:cited]->(c:Cited) \n"
-        q2 "WHERE p.title in titles RETURN c \n"]
+  (let [q0 (format "WITH [%s] as ts %n" (apply str (interpose "," ts)))
+        q1 "MATCH (p:Original)-[:cites]->(c:Cited) \n"
+        q2 "WHERE p.title in ts OR ID(p) in ts RETURN DISTINCT c \n"]
+    (println (apply str q0 q1 q2))
     (map massage-node
          (-> (cy/query *neo4j_db* (apply str q0 q1 q2))
              (get-in [:data])
@@ -74,7 +72,33 @@
       [false "No papers found"])))
 
 
-;; TODO (defn get-all-shared-children)
+(defn _get-all-shared-children
+  [& ts]
+  (let [[tpe nodes] (cond
+                      (every? string? ts) [:titles (map #(format "'%s'" %) ts)]
+                      (every? number? ts)  [:ids (map #(format "%d" %) ts)])
+        q0 (format "WITH [%s] as ts %n" (apply str (interpose "," nodes)))
+        q1 "MATCH (p:Original)-[:cites]->(c:Cited) \n"
+        q2 (condp = tpe
+             :titles "WHERE p.title in ts\n"
+             :ids "WHERE ID(p) in ts\n")
+        q3 "WITH p. collect(c) as childrenPerParent \n WITH collect(childrenPerParent) as children\n"
+        q4 "WITH reduce(commonChildren == head(children). children in tail(children) | apoc.coll.intersection(commonChildren, children)) as commonChildren RETURN commonChildren"]
+    (map massage-node
+         (-> (cy/query *neo4j_db* (apply str q0 q1 q2 q3 q4))
+             (get-in [:data])
+             flatten))))
+
+
+(defn get-all-shared-children
+"Wrapper around the engine _get-all-children this function checks the results of
+  the service api, if good returns a 2-tuple (true, results) if bad return false
+  an error message"
+[& ts]
+(let [res (apply _get-all-shared-children ts)]
+  (if (not (empty? res))
+    [true res]
+    [false "No papers found"])))
 
 (defn insert-neo4j
   "Given a filename get the document id for the file out of postgres, then get the
@@ -98,7 +122,9 @@
                         (:title %)
                         %)
                       refs)]
-        (nl/add *neo4j_db* parent "Original")
+        (nl/add *neo4j_db* parent "Original") ;; add Original label to parent
+        ;; add Cited label to children
         (doall (map #(nl/add *neo4j_db* % "Cited") children))
-        (add-child-and-edge parent (first children))
+        ;; (add-child-and-edge parent (first children))
+        ;; smart add the edges between parent and children
         (doall (map #(add-child-and-edge parent %) children))))))
