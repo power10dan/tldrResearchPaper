@@ -11,9 +11,10 @@
   [req]
   (let [ts (not-empty (select-keys (:query-params req) ["titles"]))
         is (not-empty (select-keys (:query-params req) ["ids"]))
-        args (if ts
-               (map #(str/replace % "\"" "") (get ts "titles"))
-               (map parse-int (get is "ids")))
+        args (distinct (concat
+                        (map #(format "'%s'" (str/replace % "\"" ""))
+                             (get ts "titles"))
+                        (map parse-int (get is "ids"))))
         [ok? res] (apply neo/get-all-children args)]
     (if ok?
       {:status 200

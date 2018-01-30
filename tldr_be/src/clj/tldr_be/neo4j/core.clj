@@ -53,14 +53,10 @@
 (defn _get-all-children
   "given n many nodes find all the children of each node in a set union"
   [& ts]
-  (let [[tpe nodes] (cond
-                      (every? string? ts) [:titles (map #(format "'%s'" %) ts)]
-                      (every? number? ts)  [:ids (map #(format "%d" %) ts)])
-        q0 (format "WITH [%s] as ts %n" (apply str (interpose "," nodes)))
+  (let [q0 (format "WITH [%s] as ts %n" (apply str (interpose "," ts)))
         q1 "MATCH (p:Original)-[:cites]->(c:Cited) \n"
-        q2 (condp = tpe
-               :titles "WHERE p.title in ts RETURN DISTINCT c \n"
-               :ids "WHERE ID(p) in ts RETURN DISTINCT c")]
+        q2 "WHERE p.title in ts OR ID(p) in ts RETURN DISTINCT c \n"]
+    (println (apply str q0 q1 q2))
     (map massage-node
          (-> (cy/query *neo4j_db* (apply str q0 q1 q2))
              (get-in [:data])
