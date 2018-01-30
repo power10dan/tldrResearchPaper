@@ -10,7 +10,7 @@ const ReducerPapers = (state=InitialStates.CachedPapers, actions) =>{
 			return [...state.papersSelected, actions.data];
 
 		case types.CACHED_PAPER_AUTHORS:
-			return [...state.cachedPaperAuthors, action.data]
+			return [...state.cachedPaperAuthors, actions.data]
 		default:
 			return state;
 	}
@@ -26,6 +26,17 @@ const ReducerAppState = (state = InitialStates.AppState, actions) => {
 			return [...state, {isLogin: actions.dataPayload}];
 		case types.TOKEN_UPDATE:
 			return [...state, {token: actions.dataPayload}];
+		default:
+			return state;
+	}
+}
+
+const ReducerTutorialSettings = (state= InitialStates.TutorialSettings, actions)=>{
+	switch(actions.type){
+		case types.CONFERENCE_FILTER:
+			return {...state, conferenceFilters: [...state.conferenceFilters, actions.payLoad]};
+		case types.RESEARCHER_FILTER:
+			return {...state, researcherFilters: [...state.researcherFilters, actions.payLoad]};
 		default:
 			return state;
 	}

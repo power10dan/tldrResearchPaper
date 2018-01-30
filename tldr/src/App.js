@@ -5,8 +5,9 @@ import DashBoardControlHOC from './AppComponent/DashBoardLogic.js';
 import { withStyles } from 'material-ui/styles';
 import { styles, CustomizationList } from './AppComponent/CustomizationAction.js';
 import GetContentFromServer from './AppBusinessLogic/PaperDownloadLogic.js';
-import { DataSubscriptionDummyFunc } from './DummyData.js';
-import { ConferenceExpansionPanel } from './AppComponent/ExpansionPanelConferences.js';
+import { DataSubscriptionDummyFunc, DataSubscriptionConference } from './DummyData.js';
+import  ConferenceExpansionPanel from './AppComponent/ExpansionPanelConferences.js';
+import { connect } from 'react-redux';
 
 class App extends Component {
     constructor(props){
@@ -22,12 +23,13 @@ class App extends Component {
 
     render() {
     	let DownloadedContent = GetContentFromServer(CustomizationList, DataSubscriptionDummyFunc);
+      let ConfPanel = GetContentFromServer(ConferenceExpansionPanel, DataSubscriptionConference); 
   	  let StyledCustomizationComponent = withStyles(styles)(DownloadedContent);
       let CustomPage = null;
       if(this.state.CurrPage === 0){
           CustomPage = DashBoardControlHOC(StyledCustomizationComponent);
       } else {
-          CustomPage = DashBoardControlHOC(ConferenceExpansionPanel);
+          CustomPage = DashBoardControlHOC(ConfPanel);
       }
 
       return (
@@ -38,4 +40,13 @@ class App extends Component {
     }
 }
 
-export default App;
+const mapStateToProps = (state)=>{
+    const { currPage } = state.ReducerAppState.CurrPage;
+    return {
+        currPage 
+    }
+}
+
+let Application = connect(mapStateToProps, null)(App)
+
+export default Application;

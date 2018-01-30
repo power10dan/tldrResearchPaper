@@ -7,3 +7,6 @@ export const CURR_PAGE = "CURR_PAGE";
 export const IS_GET_TOKEN = "IS_GET_TOKEN";
 export const IS_LOGIN = "IS_LOGIN";
 export const TOKEN_UPDATE = "TOKEN_UPDATE";
+// Constants for tutorial related filters
+export const CONFERENCE_FILTER = "CONFERENCE_FILTER";
+export const RESEARCHER_FILTER = "RESEARCHER_FILTER";
