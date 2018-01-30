@@ -61,7 +61,6 @@
         q2 (condp = tpe
                :titles "WHERE p.title in ts RETURN DISTINCT c \n"
                :ids "WHERE ID(p) in ts RETURN DISTINCT c")]
-    (println (map type ts))
     (map massage-node
          (-> (cy/query *neo4j_db* (apply str q0 q1 q2))
              (get-in [:data])
@@ -79,7 +78,33 @@
       [false "No papers found"])))
 
 
-;; TODO (defn get-all-shared-children)
+(defn _get-all-shared-children
+  [& ts]
+  (let [[tpe nodes] (cond
+                      (every? string? ts) [:titles (map #(format "'%s'" %) ts)]
+                      (every? number? ts)  [:ids (map #(format "%d" %) ts)])
+        q0 (format "WITH [%s] as ts %n" (apply str (interpose "," nodes)))
+        q1 "MATCH (p:Original)-[:cites]->(c:Cited) \n"
+        q2 (condp = tpe
+             :titles "WHERE p.title in ts\n"
+             :ids "WHERE ID(p) in ts\n")
+        q3 "WITH p. collect(c) as childrenPerParent \n WITH collect(childrenPerParent) as children\n"
+        q4 "WITH reduce(commonChildren == head(children). children in tail(children) | apoc.coll.intersection(commonChildren, children)) as commonChildren RETURN commonChildren"]
+    (map massage-node
+         (-> (cy/query *neo4j_db* (apply str q0 q1 q2 q3 q4))
+             (get-in [:data])
+             flatten))))
+
+
+(defn get-all-shared-children
+"Wrapper around the engine _get-all-children this function checks the results of
+  the service api, if good returns a 2-tuple (true, results) if bad return false
+  an error message"
+[& ts]
+(let [res (apply _get-all-shared-children ts)]
+  (if (not (empty? res))
+    [true res]
+    [false "No papers found"])))
 
 (defn insert-neo4j
   "Given a filename get the document id for the file out of postgres, then get the
@@ -106,5 +131,6 @@
         (nl/add *neo4j_db* parent "Original") ;; add Original label to parent
         ;; add Cited label to children
         (doall (map #(nl/add *neo4j_db* % "Cited") children))
+        ;; (add-child-and-edge parent (first children))
         ;; smart add the edges between parent and children
         (doall (map #(add-child-and-edge parent %) children))))))
