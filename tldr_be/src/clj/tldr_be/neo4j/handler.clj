@@ -5,21 +5,26 @@
             [clojure.string :as str]))
 
 
+(defn massage-req
+  "Given a request pull out titles and ids and process them returns a collection
+  of valid titles and ids"
+  [req]
+  (let [_ts (get-in req [:query-params "title"])
+        _is (get-in req [:query-params "ids"])
+        ts (cond (coll? _ts) _ts (not-nil? _ts) (vector _ts) :else nil)
+        is (cond (coll? _is) _is (not-nil? _is) (vector _is) :else nil)]
+    (distinct (concat
+               (when ts
+                 (map #(format "'%s'" (str/replace % "\"" "")) ts))
+               (when is
+                 (map parse-int is))))))
+
+
 (defn get-all-children
   "Given a request that specifies a n-many paper titles get all children for each
   paper with no duplicates"
   [req]
-  ;; TODO fix this repetition
-  (let [_ts (get-in req [:query-params "title"])
-        ts (cond (coll? _ts) _ts (not-nil? _ts) (vector _ts) :else nil)
-        _is (get-in req [:query-params "ids"])
-        is (cond (coll? _is) _is (not-nil? _is) (vector _is) :else nil)
-        args (distinct (concat
-                        (when ts
-                          (map #(format "'%s'" (str/replace % "\"" "")) ts))
-                        (when is
-                          (map parse-int is))))
-        [ok? res] (apply neo/get-all-children args)]
+  (let [[ok? res] (apply neo/get-all-children (massage-req req))]
     (if ok?
       {:status 200
        :headers {"Content-Type" "application/json"}
