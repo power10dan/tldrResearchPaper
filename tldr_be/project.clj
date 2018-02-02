@@ -63,8 +63,8 @@
              :aot :all
              :uberjar-name "tldr_be.jar"
              :source-paths ["env/prod/clj"]
-             :resource-paths ["env/prod/resources"]
-             :profiles [:project/prod]}
+             :env {:production true}
+             :resource-paths ["env/prod/resources"]}
 
    :prod          [:project/prod :profiles/prod]
    :dev           [:project/dev :profiles/dev]
