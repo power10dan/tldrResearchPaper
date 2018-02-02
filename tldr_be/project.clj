@@ -64,9 +64,9 @@
              :uberjar-name "tldr_be.jar"
              :source-paths ["env/prod/clj"]
              :resource-paths ["env/prod/resources"]
-             :project/prod
-             :profiles/prod}
+             :profiles [:project/prod]}
 
+   :prod          [:project/prod :profiles/prod]
    :dev           [:project/dev :profiles/dev]
    :test          [:project/dev :project/test :profiles/test]
 
@@ -83,4 +83,5 @@
                                (pjstadig.humane-test-output/activate!)]}
    :project/test {:resource-paths ["env/test/resources"]}
    :profiles/dev {}
-   :profiles/test {}})
+   :profiles/test {}
+   :profiles/prod {}})
