@@ -8,7 +8,7 @@ export function DataSubscriptionDummyFunc(){
 	let CustomizationAction = [
 		{
 			sectionLabel: "What type of researcher are you?",
-			selectionContent: ["Professor", "Post-Doc", "Graduate Student", "Undergradudate Student"],
+			selectionContent: ["Professor", "Post-Doc", "Graduate Student", "Undergraduate Student"],
 			selectionImage: [Professor, PostDoc, Student, Student]
 		},
 	]
@@ -17,10 +17,13 @@ export function DataSubscriptionDummyFunc(){
 }
 
 export function DataSubscriptionConference(){
-	let ConferenceSubscription = [
-		{
+	let ConferenceSubscription = {
 			conferenceLabel: "Select your favorite conferences",
 			conferences: ["OOPSLA", "SIGCHI", "POPL", "ICSE"],
+			conferenceType: ["Programming Languages", 
+							 "Human-Computer Interaction", 
+							 "Programming Languages", 
+							 "Software Engineering"],
 			numPageSupported: [15, 24, 10, 13],
 			description: [
 							  "OOPSLA is my favorite conference because OOPSLA is cool",
@@ -29,8 +32,7 @@ export function DataSubscriptionConference(){
 							  "ICSE is just your average neighborhood friendly software engineering conference"
 						 ],
 			images: [ ]
-		}
-	]
+	}
 	
 	return ConferenceSubscription;
 }

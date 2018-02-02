@@ -14,6 +14,8 @@ export const AppState = {
 	isGetToken: false,
 	isLogin: false,
 	token: "",
+	typeResearcher: "",
+	prefConferences: []
 };
 
 

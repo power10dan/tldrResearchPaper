@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-
-
 // because get paper can be a whole graph or
 // sub-graph, to prevent code duplication,
 // we let user write their own graph component

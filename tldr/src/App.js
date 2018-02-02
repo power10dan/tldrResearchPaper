@@ -18,35 +18,37 @@ class App extends Component {
     }
 
     componentWillReceiveProps(nextProp){
-        this.setState({CurrPage: nextProp.currPage});
+        this.setState({CurrPage: nextProp.CurrPage});
     }
 
     render() {
-    	let DownloadedContent = GetContentFromServer(CustomizationList, DataSubscriptionDummyFunc);
+      let CustomizationListWithStyle = withStyles(styles)(CustomizationList);
+    	let DownloadedContent = GetContentFromServer(CustomizationListWithStyle, DataSubscriptionDummyFunc);
       let ConfPanel = GetContentFromServer(ConferenceExpansionPanel, DataSubscriptionConference); 
   	  let StyledCustomizationComponent = withStyles(styles)(DownloadedContent);
       let CustomPage = null;
       
       if(this.state.CurrPage === 0){
           CustomPage = DashBoardControlHOC(StyledCustomizationComponent);
-      } else {
+      } else  if (this.state.CurrPage === 1){
           CustomPage = DashBoardControlHOC(ConfPanel);
+      } else {
+          // dummy pagination. 
+          CustomPage = DashBoardControlHOC(StyledCustomizationComponent);
       }
 
       return (
-      
-        <div className="App">      
-            <CustomPage />
-        </div>
-
+          <div className="App">      
+              <CustomPage />
+          </div>
       );
     }
 }
 
 const mapStateToProps = (state)=>{
-    const { currPage } = state.ReducerAppState.CurrPage;
+    const { CurrPage } = state.ReducerAppState;
     return {
-        currPage 
+        CurrPage 
     }
 }
 

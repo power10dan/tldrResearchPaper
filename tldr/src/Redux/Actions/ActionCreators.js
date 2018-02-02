@@ -25,5 +25,5 @@ export const CachedPaperActionCreator = (actionType, dataPayload) =>{
 }
 
 export const AppStateActionCreator = (actionType, newPayLoad) =>{
-	return {type: actionType, data: newPayLoad};
+	return {type: actionType, dataPayload: newPayLoad};
 }

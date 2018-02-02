@@ -5,12 +5,12 @@ import { combineReducers } from 'redux';
 const ReducerPapers = (state=InitialStates.CachedPapers, actions) =>{
 	switch(actions.type){
 		case types.CACHED_PAPERS:
-			return [ ...state.papersQueried, actions.data];
+			return {...state, papersQueried: [...state.papersQueried, actions.data]};
 		case types.PAPERS_SELECTED:
-			return [...state.papersSelected, actions.data];
+			return {...state, papersSelected: [...state.papersSelected, actions.data]};
 
 		case types.CACHED_PAPER_AUTHORS:
-			return [...state.cachedPaperAuthors, actions.data]
+			return {...state, cachedPaperAuthors: [...state.cachedPaperAuthors, actions.data]};
 		default:
 			return state;
 	}
@@ -19,13 +19,17 @@ const ReducerPapers = (state=InitialStates.CachedPapers, actions) =>{
 const ReducerAppState = (state = InitialStates.AppState, actions) => {
 	switch(actions.type){
 		case types.CURR_PAGE:
-			return [...state, {CurrPage: actions.dataPayload}];
+			return {...state, CurrPage: actions.dataPayload};
 		case types.IS_GET_TOKEN:
-			return [...state, {isGetToken: actions.dataPayload}];
+			return {...state, isGetToken: actions.dataPayload};
 		case types.IS_LOGIN:
-			return [...state, {isLogin: actions.dataPayload}];
+			return {...state, isLogin: actions.dataPayload};
 		case types.TOKEN_UPDATE:
-			return [...state, {token: actions.dataPayload}];
+			return {...state, token: actions.dataPayload};
+		case types.TYPE_OF_RESEARCHER:
+			return {...state, typeOfResearcher: actions.dataPayload};
+		case types.PREF_CONFERENCE:
+			return {...state, prefConference: actions.dataPayload};
 		default:
 			return state;
 	}
