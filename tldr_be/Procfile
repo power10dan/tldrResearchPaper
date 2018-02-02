@@ -1,1 +1,1 @@
-web: lein with-profile prod trampoline run clojure.main -m tldr-be.core
+web: lein with-profile prod trampoline run -m tldr-be.core
