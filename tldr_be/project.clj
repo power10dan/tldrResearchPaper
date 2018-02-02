@@ -53,7 +53,7 @@
             [lein-immutant "2.1.0"]
             [lein-heroku "0.5.3"]]
 
-  :heroku {:app-name "vast-scrubland-81582"
+  :heroku {:app-name "desolate-basin-39383"
            :jdk-version "1.8"
            :include-files ["target/tldr_be.jar"]}
 

@@ -1,1 +1,1 @@
-web: java -cp target/uberjar/tldr_be.jar clojure.main -m tldr-be.core
+web: lein with-profile prod trampoline run clojure.main -m tldr-be.core
