@@ -82,6 +82,7 @@
                   :injections [(require 'pjstadig.humane-test-output)
                                (pjstadig.humane-test-output/activate!)]}
    :project/test {:resource-paths ["env/test/resources"]}
+   :project/prod {}
    :profiles/dev {}
    :profiles/test {}
    :profiles/prod {}})
