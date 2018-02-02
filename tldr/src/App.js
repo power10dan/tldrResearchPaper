@@ -5,22 +5,53 @@ import DashBoardControlHOC from './AppComponent/DashBoardLogic.js';
 import { withStyles } from 'material-ui/styles';
 import { styles, CustomizationList } from './AppComponent/CustomizationAction.js';
 import GetContentFromServer from './AppBusinessLogic/PaperDownloadLogic.js';
-import { DataSubscriptionDummyFunc } from './DummyData.js';
-import SignUp from './AppComponent/SignUp.js';
-import LogIn from './AppComponent/LogIn.js';
+import { DataSubscriptionDummyFunc, DataSubscriptionConference } from './DummyData.js';
+import  ConferenceExpansionPanel from './AppComponent/ExpansionPanelConferences.js';
+import { connect } from 'react-redux';
 
 class App extends Component {
+    constructor(props){
+        super(props);
+        this.state={
+            CurrPage: 0,
+        }
+    }
 
-  render() {
-  	let DownloadedContent = GetContentFromServer(CustomizationList, DataSubscriptionDummyFunc);
-	  let StyledCustomizationComponent = withStyles(styles)(DownloadedContent);
-    let CustomPage = DashBoardControlHOC(SignUp);
-    return (
-      <div className="App">
-          <CustomPage />
-      </div>
-    );
-  }
+    componentWillReceiveProps(nextProp){
+        this.setState({CurrPage: nextProp.CurrPage});
+    }
+
+    render() {
+      let CustomizationListWithStyle = withStyles(styles)(CustomizationList);
+    	let DownloadedContent = GetContentFromServer(CustomizationListWithStyle, DataSubscriptionDummyFunc);
+      let ConfPanel = GetContentFromServer(ConferenceExpansionPanel, DataSubscriptionConference);
+  	  let StyledCustomizationComponent = withStyles(styles)(DownloadedContent);
+      let CustomPage = null;
+
+      if(this.state.CurrPage === 0){
+          CustomPage = DashBoardControlHOC(StyledCustomizationComponent);
+      } else  if (this.state.CurrPage === 1){
+          CustomPage = DashBoardControlHOC(ConfPanel);
+      } else {
+          // dummy pagination.
+          CustomPage = DashBoardControlHOC(StyledCustomizationComponent);
+      }
+
+      return (
+          <div className="App">
+              <CustomPage />
+          </div>
+      );
+    }
 }
 
-export default App;
+const mapStateToProps = (state)=>{
+    const { CurrPage } = state.ReducerAppState;
+    return {
+        CurrPage
+    }
+}
+
+let Application = connect(mapStateToProps, null)(App)
+
+export default Application;

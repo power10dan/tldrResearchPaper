@@ -1,4 +1,4 @@
-import React, { Component, Fragment} from 'react';
+import React, { Fragment} from 'react';
 import Drawer from 'material-ui/Drawer';
 import List,  { ListItem, ListItemIcon, ListItemText } from 'material-ui/List';
 import { withStyles } from 'material-ui/styles';
@@ -121,7 +121,7 @@ const styleOfSideBar = theme => ({
 	}
 });
 
-function DashboardAppBar(props){
+const DashboardAppBar = (props)=>{
 	const {classes } = props;
 	// we don't want to wrap app bar in another container, so we use React Fragment here
 	return(
@@ -145,7 +145,7 @@ function DashboardAppBar(props){
 	);
 }
 
-function SideDrawer(props){
+const SideDrawer = (props)=>{
 	const { classes, theme} = props;
 	return(
 		<Fragment>
@@ -187,7 +187,7 @@ function SideDrawer(props){
 	);
 }
 
-function DashBoardComp(props){
+const DashBoardComp = (props)=>{
 	const {classes} = props;
 	return (
 		<div className={classes.root}>
