@@ -8,6 +8,8 @@ import GetContentFromServer from './AppBusinessLogic/PaperDownloadLogic.js';
 import { DataSubscriptionDummyFunc, DataSubscriptionConference } from './DummyData.js';
 import  ConferenceExpansionPanel from './AppComponent/ExpansionPanelConferences.js';
 import { connect } from 'react-redux';
+import LogIn  from './AppComponent/LogIn.js';
+import SignUp from './AppComponent/SignUp.js';
 
 class App extends Component {
     constructor(props){
@@ -29,9 +31,13 @@ class App extends Component {
       let CustomPage = null;
 
       if(this.state.CurrPage === 0){
-          CustomPage = DashBoardControlHOC(StyledCustomizationComponent);
+          CustomPage = DashBoardControlHOC(LogIn);
       } else  if (this.state.CurrPage === 1){
           CustomPage = DashBoardControlHOC(ConfPanel);
+      } else if(this.state.CurrPage === 2){
+        CustomPage = DashBoardControlHOC(SignUp);
+      }else if(this.state.CurrPage === 3){
+        CustomPage = DashBoardControlHOC(StyledCustomizationComponent);
       } else {
           // dummy pagination.
           CustomPage = DashBoardControlHOC(StyledCustomizationComponent);

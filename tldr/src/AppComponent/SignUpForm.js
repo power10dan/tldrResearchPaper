@@ -2,11 +2,17 @@ import React from 'react'
 import TextField from 'material-ui/TextField';
 import { withStyles } from 'material-ui/styles';
 import Button from 'material-ui/Button';
+import { AppStateActionCreator } from '../Redux/Actions/ActionCreators.js';
+import {CURR_PAGE } from '../Redux/Actions/ActionConstants.js';
+import { connect } from 'react-redux';
 
 
 
-class SignUpForm extends React.Component {
-
+class SignUpFormPanel extends React.Component {
+  goto_Login_page = (event)=>{
+    let payload=0;
+    this.props.updatePage(payload)
+  }
   state={
     FirstName:"",
     LastName:"",
@@ -18,6 +24,7 @@ class SignUpForm extends React.Component {
   Submit = e =>{
     e.preventDefault();
     console.log(JSON.parse(JSON.stringify(this.state)));
+    this.goto_Login_page(e);
   }
 
   render() {
@@ -60,10 +67,18 @@ class SignUpForm extends React.Component {
          <Button raised color="primary" onClick={(e) => this.Submit(e)}>SignUp</Button>
          <br></br>
          <br></br>
-         <a href="">Already have an account? Log In</a>
+         <a href="" onClick={this.goto_Login_page}>Already have an account? Log In</a>
       </form>
     );
   }
 }
+
+const mapDispatchToProps = (dispatch)=>{
+	return ({
+		updatePage: (payLoad)=>{dispatch(AppStateActionCreator(CURR_PAGE, payLoad));},
+	});
+}
+
+let SignUpForm = connect(null, mapDispatchToProps)(SignUpFormPanel);
 
 export default SignUpForm;
