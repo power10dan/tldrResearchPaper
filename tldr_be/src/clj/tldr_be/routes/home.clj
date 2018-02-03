@@ -28,7 +28,7 @@
 
 (defroutes bus-routes ;;business-routes
   (POST "/api/uploadFile/"       [] d/insert-doc!)
-  (POST "/api/getFile/"          [] d/get-doc)
+  (GET "/api/getFile/"           [] d/get-doc)
   (GET  "/api/getChildrenUnion/" [] neo/get-all-children)
   (GET  "/api/getChildrenInter/" [] neo/get-all-shared-children)
   ;; (POST "/api/addSummary/"    [] sum_handler/insert-sum)
