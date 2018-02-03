@@ -33,14 +33,14 @@ class App extends Component {
       if(this.state.CurrPage === 0){
           CustomPage = DashBoardControlHOC(LogIn);
       } else  if (this.state.CurrPage === 1){
-          CustomPage = DashBoardControlHOC(ConfPanel);
+          CustomPage = DashBoardControlHOC(ConfPanel, "Conference Selection");
       } else if(this.state.CurrPage === 2){
-        CustomPage = DashBoardControlHOC(SignUp);
+          CustomPage = DashBoardControlHOC(SignUp);
       }else if(this.state.CurrPage === 3){
-        CustomPage = DashBoardControlHOC(StyledCustomizationComponent);
+          CustomPage = DashBoardControlHOC(StyledCustomizationComponent);
       } else {
           // dummy pagination.
-          CustomPage = DashBoardControlHOC(StyledCustomizationComponent);
+          CustomPage = DashBoardControlHOC(StyledCustomizationComponent, "App Configuration");
       }
 
       return (
