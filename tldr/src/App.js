@@ -31,17 +31,14 @@ class App extends Component {
       let CustomPage = null;
 
       if(this.state.CurrPage === 0){
-          CustomPage = DashBoardControlHOC(LogIn);
-      } else  if (this.state.CurrPage === 1){
-          CustomPage = DashBoardControlHOC(ConfPanel, "Conference Selection");
+          CustomPage = DashBoardControlHOC(LogIn, "Login");
+      } else if (this.state.CurrPage === 1){
+           CustomPage = DashBoardControlHOC(StyledCustomizationComponent, "App Configuration");
       } else if(this.state.CurrPage === 2){
-          CustomPage = DashBoardControlHOC(SignUp);
-      }else if(this.state.CurrPage === 3){
-          CustomPage = DashBoardControlHOC(StyledCustomizationComponent);
+           CustomPage = DashBoardControlHOC(ConfPanel, "Conference Selection");
       } else {
-          // dummy pagination.
-          CustomPage = DashBoardControlHOC(StyledCustomizationComponent, "App Configuration");
-      }
+           CustomPage = DashBoardControlHOC(StyledCustomizationComponent, "App Configuration");
+      } 
 
       return (
           <div className="App">

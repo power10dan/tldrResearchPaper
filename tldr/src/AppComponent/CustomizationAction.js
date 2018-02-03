@@ -116,7 +116,7 @@ class CustomizationListItems extends React.Component{
 			|| target === "Post-Doc"
 			|| target === "Undergraduate Student"
 			|| target === "Graduate Student"){
-			let payLoad = 1;
+			let payLoad = 2;
 			let researcherPayLoad = target;
 			
 			this.props.updateResearcher(target);

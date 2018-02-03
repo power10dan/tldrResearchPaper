@@ -62,7 +62,7 @@ class ConferenceExpansionPanel extends Component{
 	}
 
 	handleNext = (event)=>{
-		let payLoadNextPage = 0;
+		let payLoadNextPage = 1;
 		let payLoadConferences = this.state.selectedConferences;
 		this.props.uploadPreference(payLoadConferences);
 		this.props.updatePage(payLoadNextPage);

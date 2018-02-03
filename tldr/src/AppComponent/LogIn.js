@@ -32,40 +32,36 @@ export const loginstyles = theme => ({
 
 
 class LogInPanel extends React.Component {
-
-  state={
-    OSU_Id:"",
-    Password:"",
+  constructor(props){
+     super(props);
+     this.state = {
+        OSU_Id:"",
+        Password:"",
+      }
   }
-
+ 
   signup_click = (event) => {
     let payload=2
     this.props.updatePage(payload);
   }
 
   successful_login = e => {
-    if (this.state.OSU_Id.length != 0 && this.state.Password != 0){e.preventDefault();
-    console.log(JSON.parse(JSON.stringify(this.state)));
-    let payload=3
-    this.props.updatePage(payload);
+    if (this.state.OSU_Id.length != 0 && this.state.Password != 0){
+        e.preventDefault();
+        let payload=3
+        this.props.updatePage(payload);
     }
-
   }
 
   render() {
-
       const { classes } = this.props;
       //const { spacing } = this.state;
-
-
-
       return(
         <Grid>
           <Grid item xs={12}>
             <Grid container className={classes.demo} justify="center" >
               {[0].map(value => (
                 <Grid key={value} item>
-
                   <Paper className={classes.paper}>
                     <form class="form-group" >
                       <div className={classes.root}>

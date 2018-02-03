@@ -91,14 +91,12 @@ class CheckBoxs extends React.Component{
 
 	handleNext = ()=>{
 		let payLoad = 0;
-		
 		this.props.updatePage(payLoad);
 		this.props.uploadPreference(this.state.selectedConfs);
 	}
 
 	render(){
 		const {classes} = this.props;
-		console.log(this.props)
 		return(
 			<Fragment>
 				<GridList 

@@ -10,7 +10,7 @@ export const TutorialSettings = {
 };
 
 export const AppState = {
-	CurrPage: "",
+	CurrPage: 1,
 	isGetToken: false,
 	isLogin: false,
 	token: "",
