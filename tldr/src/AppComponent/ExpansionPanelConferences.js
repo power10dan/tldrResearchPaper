@@ -41,7 +41,7 @@ class ConferenceExpansionPanel extends Component{
 
 	handlePanelExpand = panel =>(event, expanded) =>{
 		this.setState({
-			expanded: expanded ? panel : false 
+			expanded: expanded ? panel : false
 		});
 	}
 
@@ -50,7 +50,7 @@ class ConferenceExpansionPanel extends Component{
 		if(this.state.selectedConferences.indexOf(this.state.expanded) === -1){
 			confSelect.push(this.state.expanded);
 			this.setState({selectedConferences: confSelect});
-		} 
+		}
 	}
 
 	onClickUnSelect = (event)=>{
@@ -93,12 +93,89 @@ class ConferenceExpansionPanel extends Component{
 		}
 		
 		return(
+<<<<<<< HEAD
 			<div className={classes.root}>
 				<div className={classes.divLabelDisplay}>
 					<Typography className={classes.sectionLabel}>
 						{this.props.data.conferenceLabel}
 					</Typography>
 					{ Selection }
+=======
+				<div className={classes.root}>
+					<div className={classes.divLabelDisplay}>
+						<Typography className={classes.sectionLabel}>
+							{this.props.data.conferenceLabel}
+						</Typography>
+						<Button
+							raised
+							color="accent"
+							className={classes.buttonNext}
+							onClick={this.handleNext}
+						>
+					   		 Next
+					    </Button>
+					</div>
+
+					{
+						this.props.data.conferences.map((elem, idx) =>(
+							<ExpansionPanel
+								expanded={expanded === elem}
+								onChange={this.handlePanelExpand(elem)}
+							>
+								<ExpansionPanelSummary
+									key={elem}
+									expandIcon={<ExpandMoreIcon />}
+
+								>
+									<Typography
+										className={classes.heading}
+									>
+										{elem}
+									</Typography>
+									<Typography className={classes.secondaryHeading} >
+										{ this.props.data.conferenceType[idx] }
+									</Typography>
+								</ExpansionPanelSummary>
+								<ExpansionPanelDetails>
+									<Typography
+										className={classes.expansionPanelDetail}
+									>
+										{this.props.data.description[idx]}
+									</Typography>
+								</ExpansionPanelDetails>
+								<ExpansionPanelActions>
+						            <Button
+							          	size="small"
+							          	color="primary"
+							          	onClick={this.onClickUnSelect}
+						            >
+							         	 Unselect Conference
+							        </Button>
+							        <Button
+								      	size="small"
+								       	color="primary"
+								       	onClick={this.onClickSelect}
+							        >
+							        	 Select Conference
+							        </Button>
+							    </ExpansionPanelActions>
+							</ExpansionPanel>
+						))
+					}
+					<div className={classes.groupChipStyle}>
+						{
+							this.state.selectedConferences.map(data=>{
+						    	return(
+						    		<Chip
+						    			key={data}
+						    			label={data}
+						    			className={classes.chipProps}
+						    		/>
+						    	)
+						    })
+					    }
+					</div>
+>>>>>>> origin/FE_login_signup
 				</div>
 			</div>
 		);

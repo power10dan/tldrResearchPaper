@@ -8,6 +8,8 @@ import GetContentFromServer from './AppBusinessLogic/PaperDownloadLogic.js';
 import { DataSubscriptionDummyFunc, DataSubscriptionConference } from './DummyData.js';
 import  ConferenceExpansionPanel from './AppComponent/ExpansionPanelConferences.js';
 import { connect } from 'react-redux';
+import LogIn  from './AppComponent/LogIn.js';
+import SignUp from './AppComponent/SignUp.js';
 
 class App extends Component {
     constructor(props){
@@ -22,33 +24,37 @@ class App extends Component {
     }
 
     render() {
-        let CustomizationListWithStyle = withStyles(styles)(CustomizationList);
-      	let DownloadedContent = GetContentFromServer(CustomizationListWithStyle, DataSubscriptionDummyFunc);
-        let ConfPanel = GetContentFromServer(ConferenceExpansionPanel, DataSubscriptionConference); 
-    	  let StyledCustomizationComponent = withStyles(styles)(DownloadedContent);
-        let CustomPage = null;
+      let CustomizationListWithStyle = withStyles(styles)(CustomizationList);
+    	let DownloadedContent = GetContentFromServer(CustomizationListWithStyle, DataSubscriptionDummyFunc);
+      let ConfPanel = GetContentFromServer(ConferenceExpansionPanel, DataSubscriptionConference);
+  	  let StyledCustomizationComponent = withStyles(styles)(DownloadedContent);
+      let CustomPage = null;
 
-        if(this.state.CurrPage === 0){
-            CustomPage = DashBoardControlHOC(StyledCustomizationComponent, "App Configuration");
-        } else  if (this.state.CurrPage === 1){
-            CustomPage = DashBoardControlHOC(ConfPanel, "Conference Selection");
-        } else {
-            // dummy pagination. 
-            CustomPage = DashBoardControlHOC(StyledCustomizationComponent, "App Configuration");
-        }
+      if(this.state.CurrPage === 0){
+          CustomPage = DashBoardControlHOC(LogIn);
+      } else  if (this.state.CurrPage === 1){
+          CustomPage = DashBoardControlHOC(ConfPanel);
+      } else if(this.state.CurrPage === 2){
+        CustomPage = DashBoardControlHOC(SignUp);
+      }else if(this.state.CurrPage === 3){
+        CustomPage = DashBoardControlHOC(StyledCustomizationComponent);
+      } else {
+          // dummy pagination.
+          CustomPage = DashBoardControlHOC(StyledCustomizationComponent);
+      }
 
-        return (
-            <div className="App">      
-                <CustomPage />
-            </div>
-        );
+      return (
+          <div className="App">
+              <CustomPage />
+          </div>
+      );
     }
 }
 
 const mapStateToProps = (state)=>{
     const { CurrPage } = state.ReducerAppState;
     return {
-        CurrPage 
+        CurrPage
     }
 }
 
