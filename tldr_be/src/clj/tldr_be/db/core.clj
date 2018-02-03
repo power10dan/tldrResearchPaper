@@ -19,9 +19,10 @@
            :start (conman/connect! {:jdbc-url (env :database-url)})
            :stop (conman/disconnect! *db*))
 
-;; (defstate ^:dynamic *neo4j_db*
-;;   :start (nr/connect (env :neo4j-db-url)))
+(defstate ^:dynamic *neo4j_db*
+  :start (nr/connect (env :neo4j-db-url)))
 
+(println "ALSKDJALSKDJ" *neo4j_db*)
 (conman/bind-connection *db* "sql/queries.sql")
 
 (extend-protocol jdbc/IResultSetReadColumn
