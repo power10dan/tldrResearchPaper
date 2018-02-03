@@ -64,7 +64,6 @@
              ;; :omit-source true
              :uberjar-name "tldr_be.jar"
              :aot [tldr-be.env
-                   user
                    tldr-be.config
                    tldr-be.auth.core
                    tldr-be.auth.handler
