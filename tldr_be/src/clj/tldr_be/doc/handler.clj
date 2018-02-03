@@ -23,7 +23,9 @@
   "Given a request that specifies a filename in the body, retrieve the first blob
   corresponding to that filename from the db"
   [req]
-  (let [[ok? res] (doc/get-doc (:params req))]
+  (let [_title (get-in req [:query-params "title"])
+        _id    (get-in req [:query-params "pgid"])
+        [ok? res] (doc/get-doc (merge _title _id))]
     (if ok?
       {:status 200
        :headers {"Content-Type" "application/pdf"}
