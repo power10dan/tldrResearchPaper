@@ -24,10 +24,11 @@
   "Given a request that specifies a filename in the body, retrieve the first blob
   corresponding to that filename from the db"
   [req]
-  (let [[ok? res] (doc/get-doc (update-in
-                                (get req :query-params)
-                                ["filename"]
-                                (fn [a] (str/replace a "\"" ""))))]
+  (let [_args (get req :query-params)
+        args (if (contains? _args "filename")
+               (update-in _args ["filename"] (fn [a] (str/replace a "\"" "")))
+               _args)
+        [ok? res] (doc/get-doc args)]
     (if ok?
       {:status 200
        :headers {"Content-Type" "application/pdf"}
