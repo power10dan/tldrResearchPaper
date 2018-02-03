@@ -20,6 +20,7 @@
                  [metosin/ring-http-response "0.9.0"]
                  [mount "0.1.11"]
                  [org.clojure/clojure "1.9.0"]
+                 [org.clojure/tools.nrepl "0.2.12"]
                  [org.clojure/tools.cli "0.3.5"]
                  [org.clojure/tools.logging "0.4.0"]
                  [org.postgresql/postgresql "42.1.4"]
@@ -63,8 +64,7 @@
              :aot :all
              :uberjar-name "tldr_be.jar"
              :source-paths ["env/prod/clj"]
-             :env {:production true}
-             :resource-paths ["env/prod/resources"]}
+             :env {:production true}}
 
    :prod          [:project/prod :profiles/prod]
    :dev           [:project/dev :profiles/dev]
@@ -82,7 +82,9 @@
                   :injections [(require 'pjstadig.humane-test-output)
                                (pjstadig.humane-test-output/activate!)]}
    :project/test {:resource-paths ["env/test/resources"]}
-   :project/prod {}
+   :project/prod {:resource-paths ["env/prod/resources"]
+                  :source-paths ["env/prod/clj"]
+                  :repl-options {:init-ns user}}
    :profiles/dev {}
    :profiles/test {}
    :profiles/prod {}})
