@@ -19,7 +19,7 @@ export const sigupstyles = theme => ({
     flexGrow: 1,
   },
   paper: {
-    height: 440,
+    height: 500,
     width: 400,
   },
 
@@ -79,7 +79,7 @@ class SignUpFormPanel extends React.Component {
                     </Toolbar>
                   </AppBar>
                 </div>
-                
+
                 <br></br>
 
                    <div>
@@ -114,7 +114,9 @@ class SignUpFormPanel extends React.Component {
                     onChange = { e => this.setState({Password : e.target.value})} required/>
                    </div>
                    <br></br>
+                   <br></br>
                    <Button raised color="primary" onClick={(e) => this.Submit(e)}>SignUp</Button>
+                   <br></br>
                    <br></br>
                    <br></br>
                    <a href="" onClick={this.goto_Login_page}>Already have an account? Log In</a>

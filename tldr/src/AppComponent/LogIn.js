@@ -21,7 +21,7 @@ export const loginstyles = theme => ({
     flexGrow: 1,
   },
   paper: {
-    height: 440,
+    height: 400,
     width: 400,
   },
 
