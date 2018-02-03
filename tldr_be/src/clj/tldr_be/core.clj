@@ -52,7 +52,9 @@
   (cond
     (some #{"init"} args)
     (do
+      (println "I GOT HERE")
       (mount/start #'tldr-be.config/env)
+      (println "I DIDNT GET GOT HERE")
       (migrations/init (select-keys env [:database-url :init-script]))
       (System/exit 0))
     (some #{"migrate" "rollback"} args)

@@ -105,8 +105,7 @@
                                (pjstadig.humane-test-output/activate!)]}
    :project/test {:resource-paths ["env/test/resources"]}
    :project/prod {:resource-paths ["env/prod/resources"]
-                  :source-paths ["env/prod/clj"]
-                  :repl-options {:init-ns user}}
+                  :source-paths ["env/prod/clj"]}}
    :profiles/dev {}
    :profiles/test {}
    :profiles/prod {}})
