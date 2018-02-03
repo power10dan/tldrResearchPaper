@@ -3,7 +3,8 @@
             [ring.util.http-response :as http]
             [clojure.string :refer [split]]
             [tldr-be.neo4j.core :refer [insert-neo4j]]
-            [clojure.java.io :as io]))
+            [clojure.java.io :as io]
+            [clojure.string :as str]))
 
 
 (defn insert-doc!
@@ -23,9 +24,10 @@
   "Given a request that specifies a filename in the body, retrieve the first blob
   corresponding to that filename from the db"
   [req]
-  (let [_title (get-in req [:query-params "title"])
-        _id    (get-in req [:query-params "pgid"])
-        [ok? res] (doc/get-doc (merge _title _id))]
+  (let [[ok? res] (doc/get-doc (update-in
+                                (get req :query-params)
+                                ["filename"]
+                                (fn [a] (str/replace a "\"" ""))))]
     (if ok?
       {:status 200
        :headers {"Content-Type" "application/pdf"}

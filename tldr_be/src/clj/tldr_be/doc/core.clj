@@ -37,11 +37,11 @@
   to pull out the postgres id (pgid), with either pull out the file, if neither
   works return failure"
   [params]
-  (let [fname (:filename params)
-        pgid (:pgid params)]
-    (if (or fname pgid)
-      [true (cond fname (get-doc-by-filename {:filename fname})
-                  pgid (get-doc-by-id {:id (parse-int pgid)}))]
+  (let [fname (get params "filename")
+        pgid (get params "pgid")]
+    (if (or pgid fname)
+      [true (cond pgid (get-doc-by-id {:id (parse-int pgid)})
+                  fname (get-doc-by-filename {:filename fname}))]
       [false ("file could not be found")])))
 
 
