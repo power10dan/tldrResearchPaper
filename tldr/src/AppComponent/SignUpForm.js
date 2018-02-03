@@ -76,6 +76,7 @@ class SignUpFormPanel extends React.Component {
                 </div>
 
                 <br></br>
+                  
                    <div>
                     <TextField
                     label="First Name"

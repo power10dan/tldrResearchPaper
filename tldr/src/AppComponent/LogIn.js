@@ -68,6 +68,7 @@ class LogInPanel extends React.Component {
                           </Toolbar>
                         </AppBar>
                     </div>
+                      <br></br>
                     <br></br>
                       <div>
                        <TextField placeHolder="Email" label="User Name" required/>
@@ -78,10 +79,12 @@ class LogInPanel extends React.Component {
                       </div>
 
                       <br></br>
+                        <br></br>
                       <Button raised color="primary" onClick={this.successful_login}> Login</Button>
 
                       <div>
                       <br></br>
+                        <br></br>
                         <a href="#" onClick={this.signup_click}>Dont have an account? Please Sign up </a>
                       </div>
                     </form>
