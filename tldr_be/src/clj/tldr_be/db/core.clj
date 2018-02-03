@@ -19,7 +19,6 @@
            :start (conman/connect! {:jdbc-url (env :database-url)})
            :stop (conman/disconnect! *db*))
 
-(println "Hello from Heroku!!!!!!!!!!!!!!!!!" env)
 (defstate ^:dynamic *neo4j_db*
   :start (nr/connect (env :neo4j-db-url)))
 
