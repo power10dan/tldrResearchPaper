@@ -1,1 +1,0 @@
-web: java -cp target/uberjar/tldr_be.jar clojure.main -m tldr-be.core
