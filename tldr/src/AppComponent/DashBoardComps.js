@@ -118,7 +118,10 @@ const styleOfSideBar = theme => ({
 		paddingTop: "15px",
 		marginLeft: "-65px",
 		marginBottom: "-72px"
-	}
+	},
+	titleBarStyle: {
+    	flex: 1,
+  	},
 });
 
 const DashboardAppBar = (props)=>{
@@ -128,6 +131,7 @@ const DashboardAppBar = (props)=>{
 		<Fragment>
 			<AppBar className={classNames(classes.appBar, props.open && classes.appBarShift)}>
 	            <Toolbar disableGutters={!props.open} className={classes.toolBarBackground}>
+
 		            <IconButton
 		                color="contrast"
 		                aria-label="open drawer"

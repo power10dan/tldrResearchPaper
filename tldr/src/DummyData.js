@@ -2,14 +2,15 @@ import GradStudent from './Assets/Graduate_Student-512.png';
 import Student from './Assets/student.png';
 import Professor from './Assets/professor.svg';
 import PostDoc from './Assets/postdoc.png';
-
+import CHI from './Assets/CHI.png';
+import PL from './Assets/smallPopl.png';
 
 export function DataSubscriptionDummyFunc(){
 	let CustomizationAction = [
 		{
 			sectionLabel: "What type of researcher are you?",
 			selectionContent: ["Professor", "Post-Doc", "Graduate Student", "Undergraduate Student"],
-			selectionImage: [Professor, PostDoc, Student, Student]
+			selectionImage: [ Professor, PostDoc, Student, Student]
 		},
 	]
 
@@ -20,6 +21,7 @@ export function DataSubscriptionConference(){
 	let ConferenceSubscription = {
 			conferenceLabel: "Select your favorite conferences",
 			conferences: ["OOPSLA", "SIGCHI", "POPL", "ICSE"],
+			conferenceImage: [PL, CHI, PL, CHI],
 			conferenceType: ["Programming Languages", 
 							 "Human-Computer Interaction", 
 							 "Programming Languages", 

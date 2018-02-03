@@ -13,7 +13,7 @@ class App extends Component {
     constructor(props){
         super(props);
         this.state={
-            CurrPage: 0,
+            CurrPage: props.CurrPage,
         }
     }
 
@@ -27,14 +27,14 @@ class App extends Component {
       let ConfPanel = GetContentFromServer(ConferenceExpansionPanel, DataSubscriptionConference); 
   	  let StyledCustomizationComponent = withStyles(styles)(DownloadedContent);
       let CustomPage = null;
-      
+
       if(this.state.CurrPage === 0){
-          CustomPage = DashBoardControlHOC(StyledCustomizationComponent);
+          CustomPage = DashBoardControlHOC(StyledCustomizationComponent, "App Configuration");
       } else  if (this.state.CurrPage === 1){
-          CustomPage = DashBoardControlHOC(ConfPanel);
+          CustomPage = DashBoardControlHOC(ConfPanel, "Conference Selection");
       } else {
           // dummy pagination. 
-          CustomPage = DashBoardControlHOC(StyledCustomizationComponent);
+          CustomPage = DashBoardControlHOC(StyledCustomizationComponent, "App Configuration");
       }
 
       return (
@@ -53,5 +53,4 @@ const mapStateToProps = (state)=>{
 }
 
 let Application = connect(mapStateToProps, null)(App)
-
 export default Application;

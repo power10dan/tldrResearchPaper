@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import DashBoardComps from '../AppComponent/DashBoardComps.js';
 
-const DashBoardControlHOC = (DashBoardElem) =>{
+const DashBoardControlHOC = (DashBoardElem, typeOfDashContent) =>{
 	return(
 		class DashBoardControl extends Component{
 			constructor(props){
@@ -35,6 +35,7 @@ const DashBoardControlHOC = (DashBoardElem) =>{
 							handleDrawerClose={this.handleDrawerClose}
 							open={this.state.open}
 							FilterData={this.state.filterData}
+							actionBarTitle={typeOfDashContent} // hardcoded for now, better make it dynamic in the future
 						/>	
 						<DashBoardElem 
 							{...this.props}
