@@ -33,14 +33,23 @@ export const loginstyles = theme => ({
 
 class LogInPanel extends React.Component {
 
+  state={
+    OSU_Id:"",
+    Password:"",
+  }
+
   signup_click = (event) => {
     let payload=2
     this.props.updatePage(payload);
   }
 
-  successful_login = (event) => {
+  successful_login = e => {
+    if (this.state.OSU_Id.length != 0 && this.state.Password != 0){e.preventDefault();
+    console.log(JSON.parse(JSON.stringify(this.state)));
     let payload=3
     this.props.updatePage(payload);
+    }
+
   }
 
   render() {
@@ -71,16 +80,22 @@ class LogInPanel extends React.Component {
                       <br></br>
                     <br></br>
                       <div>
-                       <TextField placeHolder="Email" label="User Name" required/>
+                       <TextField value={this.state.OSU_Id}
+                       placeHolder="Enter OSU ID" label="OSU ID"
+                       onChange={e => this.setState({OSU_Id: (e.target.value)})} required/>
                       </div>
 
                       <div>
-                       <TextField placeHolder="Password" label="Password" required/>
+                       <TextField value={this.state.Password}
+                         type="Password"
+                         placeHolder="Password"
+                          label="Password"
+                          onChange={e => this.setState({Password: e.target.value})} required/>
                       </div>
 
                       <br></br>
                         <br></br>
-                      <Button raised color="primary" onClick={this.successful_login}> Login</Button>
+                      <Button raised color="primary" onClick={(e) => this.successful_login(e)}> Login</Button>
 
                       <div>
                       <br></br>

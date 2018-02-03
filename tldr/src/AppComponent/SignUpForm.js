@@ -40,13 +40,18 @@ class SignUpFormPanel extends React.Component {
     LastName:"",
     UserName:"",
     Email:"",
-    Password:""
+    Password:"",
+    error:""
   }
 
   Submit = e =>{
     e.preventDefault();
-    console.log(JSON.parse(JSON.stringify(this.state)));
-    this.goto_Login_page(e);
+    if (this.state.FirstName.length != 0 && this.state.LastName.length != 0 && this.state.UserName.length != 0
+      && this.state.Email.length != 0 && this.state.Password.length != 0 ){
+        console.log(JSON.parse(JSON.stringify(this.state)));
+        this.goto_Login_page(e);
+      }
+
   }
 
   render() {
@@ -74,9 +79,9 @@ class SignUpFormPanel extends React.Component {
                     </Toolbar>
                   </AppBar>
                 </div>
-
+                
                 <br></br>
-                  
+
                    <div>
                     <TextField
                     label="First Name"
