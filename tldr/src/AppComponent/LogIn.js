@@ -33,7 +33,6 @@ export const loginstyles = theme => ({
 
 class LogInPanel extends React.Component {
 
-
   signup_click = (event) => {
     let payload=2
     this.props.updatePage(payload);

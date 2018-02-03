@@ -80,33 +80,32 @@ class SignUpFormPanel extends React.Component {
                     <TextField
                     label="First Name"
                     value={this.state.FirstName}
-                    onChange={e => this.setState({FirstName: e.target.value})} />
+                    onChange={e => this.setState({FirstName: e.target.value})} required/>
                    </div>
                    <div>
 
                     <TextField value={this.state.LastName}
                     label="Last Name"
-                    onChange={e => this.setState({LastName: e.target.value})} />
+                    onChange={e => this.setState({LastName: e.target.value})} required />
                    </div>
                    <div>
                     <TextField value={this.state.UserName}
                     onChange={e => this.setState({UserName: e.target.value}) }
-                    label="User Name" />
+                    label="User Name" required />
                    </div>
                    <div>
 
                     <TextField
                     value={this.state.Email}
                     label="Email"
-                    onChange={e => this.setState({Email: e.target.value}) } />
+                    onChange={e => this.setState({Email: e.target.value}) } required />
                    </div>
                    <div>
 
                     <TextField type="Password"
                     label="Password"
                     value={this.state.Password}
-                    onChange = { e => this.setState({Password : e.target.value})}
-                    />
+                    onChange = { e => this.setState({Password : e.target.value})} required/>
                    </div>
                    <br></br>
                    <Button raised color="primary" onClick={(e) => this.Submit(e)}>SignUp</Button>
