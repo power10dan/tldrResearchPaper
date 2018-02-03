@@ -19,6 +19,7 @@
            :start (conman/connect! {:jdbc-url (env :database-url)})
            :stop (conman/disconnect! *db*))
 
+(println "HEREHEHREHRHERH" (env :neo4j-db-url))
 (defstate ^:dynamic *neo4j_db*
   :start (nr/connect (env :neo4j-db-url)))
 
