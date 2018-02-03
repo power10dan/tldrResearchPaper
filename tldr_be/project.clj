@@ -60,11 +60,13 @@
 
 
   :profiles
-  {:uberjar {:omit-source true
+  {:uberjar {
+             ;; :omit-source true
              :aot :all
              :uberjar-name "tldr_be.jar"
-             :source-paths ["env/prod/clj"]
-             :env {:production true}}
+             ;; :source-paths ["env/prod/clj"]
+             ;; :env {:production true}
+             }
 
    :prod          [:project/prod :profiles/prod]
    :dev           [:project/dev :profiles/dev]
