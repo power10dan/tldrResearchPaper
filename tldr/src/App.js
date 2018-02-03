@@ -22,26 +22,26 @@ class App extends Component {
     }
 
     render() {
-      let CustomizationListWithStyle = withStyles(styles)(CustomizationList);
-    	let DownloadedContent = GetContentFromServer(CustomizationListWithStyle, DataSubscriptionDummyFunc);
-      let ConfPanel = GetContentFromServer(ConferenceExpansionPanel, DataSubscriptionConference); 
-  	  let StyledCustomizationComponent = withStyles(styles)(DownloadedContent);
-      let CustomPage = null;
+        let CustomizationListWithStyle = withStyles(styles)(CustomizationList);
+      	let DownloadedContent = GetContentFromServer(CustomizationListWithStyle, DataSubscriptionDummyFunc);
+        let ConfPanel = GetContentFromServer(ConferenceExpansionPanel, DataSubscriptionConference); 
+    	  let StyledCustomizationComponent = withStyles(styles)(DownloadedContent);
+        let CustomPage = null;
 
-      if(this.state.CurrPage === 0){
-          CustomPage = DashBoardControlHOC(StyledCustomizationComponent, "App Configuration");
-      } else  if (this.state.CurrPage === 1){
-          CustomPage = DashBoardControlHOC(ConfPanel, "Conference Selection");
-      } else {
-          // dummy pagination. 
-          CustomPage = DashBoardControlHOC(StyledCustomizationComponent, "App Configuration");
-      }
+        if(this.state.CurrPage === 0){
+            CustomPage = DashBoardControlHOC(StyledCustomizationComponent, "App Configuration");
+        } else  if (this.state.CurrPage === 1){
+            CustomPage = DashBoardControlHOC(ConfPanel, "Conference Selection");
+        } else {
+            // dummy pagination. 
+            CustomPage = DashBoardControlHOC(StyledCustomizationComponent, "App Configuration");
+        }
 
-      return (
-          <div className="App">      
-              <CustomPage />
-          </div>
-      );
+        return (
+            <div className="App">      
+                <CustomPage />
+            </div>
+        );
     }
 }
 

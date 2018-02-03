@@ -27,3 +27,63 @@ export const CachedPaperActionCreator = (actionType, dataPayload) =>{
 export const AppStateActionCreator = (actionType, newPayLoad) =>{
 	return {type: actionType, dataPayload: newPayLoad};
 }
+
+const FetchPaperChildren= (url)=>{
+	return fetch(url);
+}
+
+export const FetchPapers = (url)=>{
+	return dispatch =>{
+		FetchPaperChildren(url)
+		.then((response)=>{
+			if(response.ok){
+				return response.json();
+			}
+		}).then((data)=>{
+			dispatch(CachedPaperActionCreator(
+						actionTypes.CACHED_PAPERS,
+						data 
+					));
+		}).catch((err)=>{
+			console.log(err);
+		});
+	}
+}
+
+const UploadPaper = (url)=>{
+	return fetch(url);
+}
+
+export const UploadNewPaper = (url)=>{
+	return dispatch =>{
+		UploadPaper(url)
+			.then((response)=>{
+				if(response.ok){
+					return response.json();
+				}
+
+
+			}).catch((err)=>{
+				console.log(err);
+			});
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
