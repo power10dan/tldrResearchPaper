@@ -25,8 +25,12 @@ class App extends Component {
 
     render() {
       let CustomizationListWithStyle = withStyles(styles)(CustomizationList);
-    	let DownloadedContent = GetContentFromServer(CustomizationListWithStyle, DataSubscriptionDummyFunc);
-      let ConfPanel = GetContentFromServer(ConferenceExpansionPanel, DataSubscriptionConference);
+    	let DownloadedContent = GetContentFromServer(CustomizationListWithStyle, 
+                                                   DataSubscriptionDummyFunc());
+      let ConfPanel = GetContentFromServer( ConferenceExpansionPanel, 
+                                            DataSubscriptionConference());
+      
+
   	  let StyledCustomizationComponent = withStyles(styles)(DownloadedContent);
       let CustomPage = null;
 
