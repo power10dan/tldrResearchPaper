@@ -19,13 +19,8 @@
            :start (conman/connect! {:jdbc-url (env :database-url)})
            :stop (conman/disconnect! *db*))
 
-;; (defstate ^:dynamic *neo4j_db*
-;;   :start (nr/connect (env :neo4j-db-url)))
-
-
-(println (System/getenv "GRAPHENEDB_URL"))
 (defstate ^:dynamic *neo4j_db*
-  :start (nr/connect (System/getenv "GRAPHENEDB_URL")))
+  :start (nr/connect (System/getenv "GRAPHENEDB_URL"))) ;; TODO check for this first
 
 (conman/bind-connection *db* "sql/queries.sql")
 
