@@ -38,7 +38,7 @@
 ;;     :start (nr/connect (get-in env [:neo4j-db-url :uri]))))
 
 (defstate ^:dynamic *neo4j_db*
-  :start (nr/connect (get-in env [:neo4j-db-url :uri])))
+  :start (nr/connect (System/getenv "GRAPHENEDB_URL")))
 
 (conman/bind-connection *db* "sql/queries.sql")
 
