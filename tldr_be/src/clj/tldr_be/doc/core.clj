@@ -12,6 +12,7 @@
             [clojure.string :refer [split]]
             [byte-streams :as bs]
             [clojure.xml :as xml]
+            [clojure.tools.logging :as log]
             [tldr-be.utils.core :refer [parse-int]]
             [tldr-be.doc.pdf-parse :as pdf]
             [tldr-be.doc.engines :as eng]
@@ -22,6 +23,7 @@
   "Given params from a request, pull the filename and a blob of file data, insert
   that blob into the db after transforming blob to byte-array"
   [params]
+  (log/info "inserting " params)
   (let [filename (get-in params [:file :filename])
         file_blob (get-in params [:file :tempfile])]
     (if (and filename file_blob)
@@ -37,6 +39,7 @@
   to pull out the postgres id (pgid), with either pull out the file, if neither
   works return failure"
   [params]
+  (log/info "getting " params)
   (let [fname (get params "filename")
         pgid (get params "pgid")]
     (if (or pgid fname)
@@ -142,6 +145,7 @@
   the references and then collect like keys, this function returns 2-tuple where
   the fst is the filename headers, and snd is a collection of references"
   [fname]
+  (log/info "performing workhorse on " fname)
   [(->> fname
         (fname-to-cljmap pdf-to-xml-headers)
         get-sections
