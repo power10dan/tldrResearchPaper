@@ -19,11 +19,11 @@
            :start (conman/connect! {:jdbc-url (env :database-url)})
            :stop (conman/disconnect! *db*))
 
-(if-let [conn (System/getenv "GRAPHENEDB")]
-  (defstate ^:dynamic *neo4j_db*
-    :start (nr/connect (System/getenv "GRAPHENEDB")))
-  (defstate ^:dynamic *neo4j_db*
-    :start (nr/connect (env :neo4j-db-url))))
+
+(defstate ^:dynamic *neo4j_db*
+  :start (nr/connect (if-let [conn (System/getenv "GRAPHENEDB")]
+                       conn
+                       (env :neo4j-db-url))))
 
 (conman/bind-connection *db* "sql/queries.sql")
 
