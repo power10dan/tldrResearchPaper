@@ -29,10 +29,9 @@
     (if (and filename file_blob)
       (do ;; if we have both filename and blob then perform the effect
         (println "creating " filename)
-        (try (create-doc! {:filename (first (split filename #"\.")) ;;fname is basename
-                           :filestuff (bs/to-byte-array file_blob)})
-             (catch Exception ex
-               (println "I exploded:  \n\n" ex)))
+        (create-doc! {:filename (first (split filename #"\.")) ;;fname is basename
+                      :filestuff (bs/to-byte-array file_blob)})
+        (println "all done!")
         [true "Your document successfully uploaded"])
       [false "Request Malformed"])))
 
