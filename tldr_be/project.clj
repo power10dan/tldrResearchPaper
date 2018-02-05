@@ -20,6 +20,7 @@
                  [metosin/ring-http-response "0.9.0"]
                  [mount "0.1.11"]
                  [org.clojure/clojure "1.9.0"]
+                 [org.clojure/tools.nrepl "0.2.12"]
                  [org.clojure/tools.cli "0.3.5"]
                  [org.clojure/tools.logging "0.4.0"]
                  [org.postgresql/postgresql "42.1.4"]
@@ -50,15 +51,43 @@
 
   :plugins [[lein-cprop "1.0.3"]
             [migratus-lein "0.5.3"]
-            [lein-immutant "2.1.0"]]
+            [lein-immutant "2.1.0"]
+            [lein-heroku "0.5.3"]]
+
+  :heroku {:app-name "afternoon-ocean-38536"
+           :jdk-version "1.8"
+           :include-files ["target/tldr_be.jar"]}
+
 
   :profiles
-  {:uberjar {:omit-source true
-             :aot :all
+  {:uberjar {
+             ;; :omit-source true
              :uberjar-name "tldr_be.jar"
-             :source-paths ["env/prod/clj"]
-             :resource-paths ["env/prod/resources"]}
+             :aot [tldr-be.env
+                   tldr-be.config
+                   tldr-be.auth.core
+                   tldr-be.auth.handler
+                   tldr-be.summary.core
+                   tldr-be.summary.handler
+                   tldr-be.neo4j.core
+                   tldr-be.neo4j.handler
+                   tldr-be.core
+                   tldr-be.utils.core
+                   tldr-be.middleware
+                   tldr-be.handler
+                   tldr-be.db.core
+                   tldr-be.layout
+                   tldr-be.doc.core
+                   tldr-be.doc.pdf-parse
+                   tldr-be.doc.handler
+                   tldr-be.doc.engines
+                   tldr-be.routes.services
+                   tldr-be.routes.home]
+             ;; :source-paths ["env/prod/clj"]
+             ;; :env {:production true}
+             }
 
+   :prod          [:project/prod :profiles/prod]
    :dev           [:project/dev :profiles/dev]
    :test          [:project/dev :project/test :profiles/test]
 
@@ -74,5 +103,8 @@
                   :injections [(require 'pjstadig.humane-test-output)
                                (pjstadig.humane-test-output/activate!)]}
    :project/test {:resource-paths ["env/test/resources"]}
+   :project/prod {:resource-paths ["env/prod/resources"]
+                  :source-paths ["env/prod/clj"]}
    :profiles/dev {}
-   :profiles/test {}})
+   :profiles/test {}
+   :profiles/prod {}})

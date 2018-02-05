@@ -1,6 +1,7 @@
 (ns tldr-be.doc.core
   (:require [tldr-be.db.core :refer [create-doc!
-                                     get-doc-by-name
+                                     get-doc-by-filename
+                                     get-doc-by-id
                                      get-doc-id
                                      get-doc-filename
                                      create-xml-refs!
@@ -10,21 +11,19 @@
                                      *neo4j_db*]]
             [clojure.string :refer [split]]
             [byte-streams :as bs]
-            [tldr-be.config :refer [env]]
             [clojure.xml :as xml]
+            [clojure.tools.logging :as log]
+            [tldr-be.utils.core :refer [parse-int]]
             [tldr-be.doc.pdf-parse :as pdf]
             [tldr-be.doc.engines :as eng]
             [tldr-be.utils.core :refer [collect]]
-            [clojurewerkz.neocons.rest.nodes :as nn]
-            [clojurewerkz.neocons.rest.labels :as nl]
-            [clojurewerkz.neocons.rest.relationships :as nrl]
-            [clojurewerkz.neocons.rest.cypher :as cy]
             [clojure.java.io :as io]))
 
 (defn insert-doc!
   "Given params from a request, pull the filename and a blob of file data, insert
   that blob into the db after transforming blob to byte-array"
   [params]
+  (log/info "inserting " params)
   (let [filename (get-in params [:file :filename])
         file_blob (get-in params [:file :tempfile])]
     (if (and filename file_blob)
@@ -35,13 +34,18 @@
       [false "Request Malformed"])))
 
 
-(defn get-doc-by-filename
-  "Given the params of a request, pull the filename out, if the filename is good
-  then query the db for the corresponding file by the filename"
+(defn get-doc
+  "Given the params of a request, try to pull out the filename, if that fails try
+  to pull out the postgres id (pgid), with either pull out the file, if neither
+  works return failure"
   [params]
-  (if-let [filename (:filename params)]
-    [true (get-doc-by-name {:filename filename})]
-    [false "file could not be found"]))
+  (log/info "getting " params)
+  (let [fname (get params "filename")
+        pgid (get params "pgid")]
+    (if (or pgid fname)
+      [true (cond pgid (get-doc-by-id {:id (parse-int pgid)})
+                  fname (get-doc-by-filename {:filename fname}))]
+      [false ("file could not be found")])))
 
 
 (defn insert-xml-refs!
@@ -104,13 +108,12 @@
 (defn get-fblob
   "pull out a file blob from the database given the name"
   [fname]
-  (-> (assoc {} :filename fname) get-doc-by-filename second))
+  (-> (assoc {} :filename fname) get-doc-by-filename))
 
 
 (defn fname-to-cljmap
  "make a clojure map given filename as string"
   [f fname]
-  ;; (-> fname get-fblob pdf-to-xml-headers xml-to-map))
   (-> fname get-fblob f xml-to-map))
 
 
@@ -142,6 +145,7 @@
   the references and then collect like keys, this function returns 2-tuple where
   the fst is the filename headers, and snd is a collection of references"
   [fname]
+  (log/info "performing workhorse on " fname)
   [(->> fname
         (fname-to-cljmap pdf-to-xml-headers)
         get-sections

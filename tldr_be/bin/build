@@ -1,0 +1,3 @@
+#! /bin/bash
+echo "Its happening!"
+lein with-profile prod uberjar
