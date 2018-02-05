@@ -4,6 +4,7 @@
             [clojure.string :refer [split]]
             [tldr-be.neo4j.core :refer [insert-neo4j]]
             [clojure.java.io :as io]
+            [clojure.tools.logging :as log]
             [clojure.string :as str]))
 
 
@@ -11,6 +12,7 @@
   "Given a request that specifies a summary information, validate summary and
    if good, add to database, otherwise give a bad request"
   [req]
+  (log/info "Request to insert with req: " req)
   (let [[ok? res] (doc/insert-doc! (:params req))] ;;params gen'd by middleware
     (if ok?
       (do
