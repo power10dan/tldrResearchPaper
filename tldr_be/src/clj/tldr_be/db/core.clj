@@ -15,6 +15,7 @@
             BatchUpdateException
             PreparedStatement]))
 
+(println (System/getenv "DATABASE_URL"))
 (defstate ^:dynamic *db*
            :start (conman/connect! {:jdbc-url (env :database-url)})
            :stop (conman/disconnect! *db*))
