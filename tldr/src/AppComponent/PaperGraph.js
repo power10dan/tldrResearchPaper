@@ -23,8 +23,8 @@ function configGeneration(configType){
   		"panAndZoom": false,
   		"staticGraph": false,
   		"width": 800,
-  		"node": nodeConf,
-  		"link": linkConf;
+  		"node": nodeConfig,
+  		"link": linkConfig,
 	}
 
 	return myConfig;

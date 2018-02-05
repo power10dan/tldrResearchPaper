@@ -4,9 +4,11 @@ import './App.css';
 import DashBoardControlHOC from './AppComponent/DashBoardLogic.js';
 import { withStyles } from 'material-ui/styles';
 import { styles, CustomizationList } from './AppComponent/CustomizationAction.js';
+import { style, PapersPanel} from './AppComponent/GraphDisplay.js';
 import GetContentFromServer from './AppBusinessLogic/PaperDownloadLogic.js';
 import { DataSubscriptionDummyFunc, DataSubscriptionConference } from './DummyData.js';
 import  ConferenceExpansionPanel from './AppComponent/ExpansionPanelConferences.js';
+import { uploadFile, cachedPaper} from './AppUrlConstants.js';
 import { connect } from 'react-redux';
 import LogIn  from './AppComponent/LogIn.js';
 import SignUp from './AppComponent/SignUp.js';
@@ -25,17 +27,21 @@ class App extends Component {
 
     render() {
       let CustomizationListWithStyle = withStyles(styles)(CustomizationList);
-    	let DownloadedContent = GetContentFromServer(CustomizationListWithStyle, 
-                                                   DataSubscriptionDummyFunc());
+      //let PaperPanels = withStyles(style)(PapersPanel);
+      let DownloadedContent = GetContentFromServer(
+                                                      CustomizationListWithStyle,  
+                                                      DataSubscriptionDummyFunc()
+                                                  );
       let ConfPanel = GetContentFromServer( ConferenceExpansionPanel, 
                                             DataSubscriptionConference());
-      
 
+
+      //slet PaperGraphPanel = GetContentFromServer(PaperPanels, FetchPapers)
   	  let StyledCustomizationComponent = withStyles(styles)(DownloadedContent);
       let CustomPage = null;
 
       if(this.state.CurrPage === 0){
-          CustomPage = DashBoardControlHOC(LogIn, "Login");
+           CustomPage = DashBoardControlHOC(LogIn, "Login");
       } else if (this.state.CurrPage === 1){
            CustomPage = DashBoardControlHOC(StyledCustomizationComponent, "App Configuration");
       } else if(this.state.CurrPage === 2){

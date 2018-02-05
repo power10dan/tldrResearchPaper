@@ -5,11 +5,11 @@ import ExpansionPanel, {
 		ExpansionPanelActions
 	} from 'material-ui/ExpansionPanel';
 import Typography from 'material-ui/Typography';
-import { withStyles } from 'material-ui/style';
-import PaperDependComp from './AppComponent/PaperDependComp.js';
+import { withStyles } from 'material-ui/styles';
+import PaperDependComp from './PaperDependComp.js';
 import Button from "material-ui/Button";
 
-export const style = theme=>({
+export const styles = theme=>({
 	panelLength: {
 		width: "800px",
 	},
@@ -24,24 +24,21 @@ export const style = theme=>({
 
 export const PaperPanel = (props)=>{
 	const {classes } = props;
+	console.log("Paper panel graph");
+	console.log(props.data);
 	return(
 		<div>
 			<ExpansionPanel>
 				<ExpansionPanelSummary>
 					<Typography>
-
+						{props.paperTitle}
 					</Typography>
 					<Typography>
-
-
+						{props.paperAuxilliaryInfo}
 					</Typography>
 				</ExpansionPanelSummary>
 				<ExpansionPanelDetails>
-					<PaperDependComp 
 
-
-
-					/>
 				</ExpansionPanelDetails>
 				<ExpansionPanelActions>
 					<Button>

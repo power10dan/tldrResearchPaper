@@ -40,10 +40,12 @@ export const FetchPapers = (url)=>{
 				return response.json();
 			}
 		}).then((data)=>{
-			dispatch(CachedPaperActionCreator(
+			data.forEach((elem)=>{
+				dispatch(CachedPaperActionCreator(
 						actionTypes.CACHED_PAPERS,
-						data 
-					));
+						elem 
+				));
+			});
 		}).catch((err)=>{
 			console.log(err);
 		});
@@ -61,29 +63,8 @@ export const UploadNewPaper = (url)=>{
 				if(response.ok){
 					return response.json();
 				}
-
-
 			}).catch((err)=>{
 				console.log(err);
 			});
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

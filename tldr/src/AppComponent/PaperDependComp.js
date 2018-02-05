@@ -8,7 +8,7 @@ import Typography from 'material-ui/Typography';
 import ExpandMoreIcon from 'material-ui-icons/ExpandMore';
 import GraphComp from './PaperGraph.js';
 
-const style = {
+const style = theme=>({
 	 root: {
 	    width: '100%',
 	  },
@@ -27,14 +27,14 @@ const style = {
 	  details: {
 	    alignItems: 'center',
 	  },
-}
+})
 
 function PaperExpansionLabel(props){
 	const{ classes } = props;
 	return(
 		<Fragment>
 			<ExpansionPanel 
-			    expanded={expanded === 'panel1'} 
+			    expanded={props.expanded === 'panel1'} 
 			    onChange={this.handleChange('panel1')}
 			>
 		        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
@@ -66,11 +66,13 @@ function PaperExpansionPanel(props){
 		<div className={classes.root}>
 			{
 				props.sections.map(elem => (
-					<Typography className={classes.heading}>{props.sectionTitle}</Typography>
-					<PaperExpansionLabel
-						{...props}
-					/>
-				));
+					<Fragment>
+						<Typography className={classes.heading}>{props.sectionTitle}</Typography>
+						<PaperExpansionLabel
+							{...props}
+						/>
+					</Fragment>
+				))
 			}
 		</div>
 	);
