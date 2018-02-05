@@ -31,6 +31,7 @@
   (GET "/api/getFile/"           [] d/get-doc)
   (GET  "/api/getChildrenUnion/" [] neo/get-all-children)
   (GET  "/api/getChildrenInter/" [] neo/get-all-shared-children)
+  (GET "/api/testing/" [] (http/ok "Hi there!"))
   ;; (POST "/api/addSummary/"    [] sum_handler/insert-sum)
   ;; (POST "/api/sumUpVote/"     [] sum_handler/up-vote-sum)
   ;; (POST "/api/sumDownVote/"   [] sum_handler/down-vote-sum)
