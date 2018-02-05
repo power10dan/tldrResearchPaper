@@ -28,6 +28,7 @@
         file_blob (get-in params [:file :tempfile])]
     (if (and filename file_blob)
       (do ;; if we have both filename and blob then perform the effect
+        (println "creating " filename)
         (create-doc! {:filename (first (split filename #"\.")) ;;fname is basename
                       :filestuff (bs/to-byte-array file_blob)})
         [true "Your document successfully uploaded"])
