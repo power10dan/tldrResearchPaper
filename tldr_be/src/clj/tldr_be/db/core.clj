@@ -22,7 +22,7 @@
 
 (defstate ^:dynamic *neo4j_db*
   :start (nr/connect (if-let [conn (System/getenv "GRAPHENEDB")]
-                       conn
+                       (System/getenv "GRAPHENEDB")
                        (env :neo4j-db-url))))
 
 (conman/bind-connection *db* "sql/queries.sql")
