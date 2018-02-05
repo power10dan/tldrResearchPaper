@@ -29,7 +29,8 @@
   (defstate ^:dynamic *neo4j_db*
     :start (nr/connect conn))
   (defstate ^:dynamic *neo4j_db*
-    :start (nr/connect (env :neo4j-db-url))))
+    ;; :start (nr/connect (env :neo4j-db-url))))
+    :start (nr/connect (get-in env [:neo4j-db-url :uri]))))
 (println "PRINTING neo4j" *neo4j_db*)
 (println "PRINTING SYS Var" (System/getenv "GRAPHENEDB_URL"))
 
