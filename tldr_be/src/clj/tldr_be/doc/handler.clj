@@ -16,10 +16,8 @@
   (let [[ok? res] (doc/insert-doc! (:params req))] ;;params gen'd by middleware
     (if ok?
       (do
-        (println ok? res)
         (insert-neo4j (#(first (split % #"\."))
                            (get-in req [:params :file :filename])))
-        (println "It was neo4j")
         (http/created res))
       (http/bad-request res))))
 
