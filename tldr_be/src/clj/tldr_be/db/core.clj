@@ -15,10 +15,15 @@
             BatchUpdateException
             PreparedStatement]))
 
-(println (System/getenv "DATABASE_URL"))
+
 (defstate ^:dynamic *db*
-           :start (conman/connect! {:jdbc-url (env :database-url)})
-           :stop (conman/disconnect! *db*))
+  :start (conman/connect! {:jdbc-url (if-let [conn (System/getenv "DATABASE_URL")]
+                                       conn
+                                       (env :database-url))})
+  :stop (conman/disconnect! *db*))
+;; (defstate ^:dynamic *db*
+;;            :start (conman/connect! {:jdbc-url (env :database-url)})
+;;            :stop (conman/disconnect! *db*))
 
 (if-let [conn (System/getenv "GRAPHENEDB_URL")]
   (defstate ^:dynamic *neo4j_db*
