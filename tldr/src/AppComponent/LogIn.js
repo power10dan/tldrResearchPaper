@@ -46,8 +46,9 @@ class LogInPanel extends React.Component {
   successful_login = e => {
     if (this.state.OSU_Id.length != 0 && this.state.Password != 0){e.preventDefault();
     console.log(JSON.parse(JSON.stringify(this.state)));
-    let payload=3
-    this.props.updatePage(payload);
+    window.location="https://prometheus.eecs.oregonstate.edu/token?asid=6353211108641695"
+    // let payload=3;
+    // this.props.updatePage(payload)
     }
 
   }
@@ -55,9 +56,6 @@ class LogInPanel extends React.Component {
   render() {
 
       const { classes } = this.props;
-      //const { spacing } = this.state;
-
-
 
       return(
         <Grid>

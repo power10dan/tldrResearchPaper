@@ -37,7 +37,7 @@ class App extends Component {
       } else if(this.state.CurrPage === 2){
         CustomPage = DashBoardControlHOC(SignUp);
       }else if(this.state.CurrPage === 3){
-        CustomPage = DashBoardControlHOC(StyledCustomizationComponent);
+          CustomPage = DashBoardControlHOC(StyledCustomizationComponent);
       } else {
           // dummy pagination.
           CustomPage = DashBoardControlHOC(StyledCustomizationComponent);
