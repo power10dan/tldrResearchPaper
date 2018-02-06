@@ -89,6 +89,7 @@
   "Given a filemap, like: {:id id :filename \"filename\" :filestuff bytea} process
   the file and return the parsed xml headers from the file"
   [filemap]
+  (println "Running headers on: " filemap)
   (eng/pdf-to-xml-engine filemap
                          get-xml-headers-by-filename
                          insert-xml-headers!
@@ -113,7 +114,6 @@
 (defn fname-to-cljmap
  "make a clojure map given filename as string"
   [f fname]
-  (println "Trying " f " " fname)
   (-> fname get-fblob f xml-to-map))
 
 
