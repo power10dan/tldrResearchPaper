@@ -102,7 +102,6 @@
   headers and references for the file, create the nodes in the neo4j uniquely
   and then add edges, uniquely"
   [fname]
-  (println *neo4j_db*)
   (when-let [id (get-doc-id {:filename fname})]
     (try (when-not (-> (get-doc-filename id) :filename node-exists?)
        (let [[heds refs] (workhorse fname)

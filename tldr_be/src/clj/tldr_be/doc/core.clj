@@ -99,6 +99,7 @@
 (defn xml-to-map
   "Given a grobid response, converts the xml to a deeply nested map"
   [grobidres]
+  (println grobidres)
   (-> grobidres
       bs/to-byte-array
       io/input-stream
