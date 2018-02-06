@@ -106,7 +106,10 @@
   (when-let [id (get-doc-id {:filename fname})]
     (try (when-not (-> (get-doc-filename id) :filename node-exists?)
        (let [[heds refs] (workhorse fname)
-             test (cy/query *neo4j_db* "CREATE (NEWTEST:NEWPAPER {p :'p'})")
+             c (nr/connect (System/getenv "GRAPHENEDB_BOLT_URL")
+                           (System/getenv "GRAPHENEDB_BOLT_USER")
+                           (System/getenv "GRAPHENEDB_BOLT_PASSWORD"))
+             test (cy/query c "CREATE (NEWTEST:NEWPAPER {p :'p'})")
              parent (nn/create-unique-in-index
                      *neo4j_db*
                      "by-title"
