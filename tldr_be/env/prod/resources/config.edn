@@ -1,5 +1,4 @@
 {:port 3000
- :nrepl-port 7000
  :production true
- :grobid-ref "http://52.170.208.237:8080/processReferences"
- :grobid-hed "http://52.170.208.237:8080/processHeaderDocument"}
+ :grobid-ref "https://52.170.208.237:8080/processReferences"
+ :grobid-hed "https://52.170.208.237:8080/processHeaderDocument"}
