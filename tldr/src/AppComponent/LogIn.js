@@ -36,6 +36,8 @@ class LogInPanel extends React.Component {
   state={
     OSU_Id:"",
     Password:"",
+    disabled: true,
+    Token:""
   }
 
   signup_click = (event) => {
@@ -44,12 +46,14 @@ class LogInPanel extends React.Component {
   }
 
   successful_login = e => {
-    if (this.state.OSU_Id.length != 0 && this.state.Password != 0){e.preventDefault();
+    if (this.state.OSU_Id.length != 0 && this.state.Password != 0 && this.state.disabled==true){e.preventDefault();
     console.log(JSON.parse(JSON.stringify(this.state)));
-    window.location="https://prometheus.eecs.oregonstate.edu/token?asid=6353211108641695"
-    // let payload=3;
-    // this.props.updatePage(payload)
-    }
+    window.open("https://prometheus.eecs.oregonstate.edu/token?asid=6353211108641695","_blank")
+    this.setState( {disabled: !this.state.disabled} )
+  }else if (this.state.OSU_Id.length != 0 && this.state.Password.length != 0 && this.state.Token.length!=0){
+    let payload=3;
+    this.props.updatePage(payload)
+  }
 
   }
 
@@ -89,6 +93,16 @@ class LogInPanel extends React.Component {
                          placeHolder="Password"
                           label="Password"
                           onChange={e => this.setState({Password: e.target.value})} required/>
+                      </div>
+
+                      <div>
+                      <TextField value={this.state.Token}
+                        type="Token"
+                        placeHolder="Token"
+                         label="Token"
+                         disabled={(this.state.disabled)? "disabled" : ""}
+                         onChange={e => this.setState({Token: e.target.value})}/>
+
                       </div>
 
                       <br></br>
