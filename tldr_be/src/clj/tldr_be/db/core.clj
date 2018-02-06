@@ -30,7 +30,7 @@
     (println conn)
     (println (str conn "/db/data"))
     (defstate ^:dynamic *neo4j_db*
-      :start (nr/connect (str conn "/db/data"))))
+      :start (nr/connect (str conn "/db/data/"))))
   (defstate ^:dynamic *neo4j_db*
     :start (nr/connect (get-in env [:neo4j-db-url]))))
 
