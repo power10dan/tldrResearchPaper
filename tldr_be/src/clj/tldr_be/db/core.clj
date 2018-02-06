@@ -28,7 +28,7 @@
 (if-let [conn (System/getenv "GRAPHENEDB_URL")]
   (do
     (defstate ^:dynamic *neo4j_db*
-     :start (nr/connect conn)))
+      :start (nr/connect (str conn "db/data"))))
   (defstate ^:dynamic *neo4j_db*
     :start (nr/connect (get-in env [:neo4j-db-url]))))
 
