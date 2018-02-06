@@ -12,7 +12,6 @@
   "Given a request that specifies a summary information, validate summary and
    if good, add to database, otherwise give a bad request"
   [req]
-  (println "Request to insert with req: " req)
   (let [[ok? res] (doc/insert-doc! (:params req))] ;;params gen'd by middleware
     (if ok?
       (do

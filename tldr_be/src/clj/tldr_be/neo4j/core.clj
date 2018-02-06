@@ -7,7 +7,8 @@
             [clojurewerkz.neocons.rest.nodes :as nn]
             [clojurewerkz.neocons.rest.labels :as nl]
             [clojurewerkz.neocons.rest.relationships :as nrl]
-            [clojurewerkz.neocons.rest.cypher :as cy]))
+            [clojurewerkz.neocons.rest.cypher :as cy]
+            [clojurewerkz.neocons.rest :as nr]))
 
 
 (defn add-child-and-edge
@@ -101,10 +102,11 @@
   headers and references for the file, create the nodes in the neo4j uniquely
   and then add edges, uniquely"
   [fname]
-  (println "INSERT NEO4J CONNECTION" (:uri *neo4j_db*))
+  (println *neo4j_db*)
   (when-let [id (get-doc-id {:filename fname})]
     (try (when-not (-> (get-doc-filename id) :filename node-exists?)
        (let [[heds refs] (workhorse fname)
+             test (cy/query *neo4j_db* "CREATE (NEWTEST:NEWPAPER {p :'p'})")
              parent (nn/create-unique-in-index
                      *neo4j_db*
                      "by-title"

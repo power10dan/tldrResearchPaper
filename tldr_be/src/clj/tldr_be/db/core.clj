@@ -25,20 +25,12 @@
 ;;            :start (conman/connect! {:jdbc-url (env :database-url)})
 ;;            :stop (conman/disconnect! *db*))
 
-;; (if-let [conn (System/getenv "GRAPHENEDB_URL")]
-;;   (do
-;;     (println conn)
-;;     (println "PRINTING NEO4J" (get-in env [:neo4j-db-url]))
-;;     (println "PRINTING NEO4J----" (get-in env [:neo4j-db-url :uri]))
-;;     (println "PRINTING SYS Var" (System/getenv "GRAPHENEDB_URL"))
-;;     (defstate ^:dynamic *neo4j_db*
-;;      :start (nr/connect conn)))
-;;   (defstate ^:dynamic *neo4j_db*
-;;     ;; :start (nr/connect (env :neo4j-db-url))))
-;;     :start (nr/connect (get-in env [:neo4j-db-url :uri]))))
-
-(defstate ^:dynamic *neo4j_db*
-  :start (nr/connect (System/getenv "GRAPHENEDB_URL")))
+(if-let [conn (System/getenv "GRAPHENEDB_URL")]
+  (do
+    (defstate ^:dynamic *neo4j_db*
+     :start (nr/connect conn)))
+  (defstate ^:dynamic *neo4j_db*
+    :start (nr/connect (get-in env [:neo4j-db-url]))))
 
 (conman/bind-connection *db* "sql/queries.sql")
 
