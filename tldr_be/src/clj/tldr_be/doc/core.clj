@@ -23,7 +23,6 @@
   "Given params from a request, pull the filename and a blob of file data, insert
   that blob into the db after transforming blob to byte-array"
   [params]
-  (println "inserting " params)
   (let [filename (get-in params [:file :filename])
         file_blob (get-in params [:file :tempfile])]
     (if (and filename file_blob)
@@ -99,7 +98,6 @@
 (defn xml-to-map
   "Given a grobid response, converts the xml to a deeply nested map"
   [grobidres]
-  (println grobidres)
   (-> grobidres
       bs/to-byte-array
       io/input-stream
@@ -115,6 +113,7 @@
 (defn fname-to-cljmap
  "make a clojure map given filename as string"
   [f fname]
+  (println "Trying " f " " fname)
   (-> fname get-fblob f xml-to-map))
 
 
