@@ -21,7 +21,7 @@ export const loginstyles = theme => ({
     flexGrow: 1,
   },
   paper: {
-    height: 400,
+    height: 425,
     width: 400,
   },
 
@@ -34,8 +34,8 @@ export const loginstyles = theme => ({
 class LogInPanel extends React.Component {
 
   state={
-    OSU_Id:"",
-    Password:"",
+    // OSU_Id:"",
+    // Password:"",
     disabled: true,
     Token:""
   }
@@ -46,13 +46,18 @@ class LogInPanel extends React.Component {
   }
 
   successful_login = e => {
-    if (this.state.OSU_Id.length != 0 && this.state.Password != 0 && this.state.disabled==true){e.preventDefault();
+    if (
+      //this.state.OSU_Id.length != 0 && this.state.Password != 0 &&
+      this.state.disabled==true){e.preventDefault();
     console.log(JSON.parse(JSON.stringify(this.state)));
-    window.open("https://prometheus.eecs.oregonstate.edu/token?asid=6353211108641695","_blank")
+    window.open("https://prometheus.eecs.oregonstate.edu/token/generate?asid=321398945712335&then=","_blank")
     this.setState( {disabled: !this.state.disabled} )
-  }else if (this.state.OSU_Id.length != 0 && this.state.Password.length != 0 && this.state.Token.length!=0){
+  }else if (
+    //this.state.OSU_Id.length != 0 && this.state.Password.length != 0 && 
+    this.state.Token.length!=0){
     let payload=3;
     this.props.updatePage(payload)
+    console.log(JSON.parse(JSON.stringify(this.state)));
   }
 
   }
@@ -81,29 +86,30 @@ class LogInPanel extends React.Component {
                     </div>
                       <br></br>
                     <br></br>
-                      <div>
+
+                    {/*<div>
                        <TextField value={this.state.OSU_Id}
                        placeHolder="Enter OSU ID" label="OSU ID"
                        onChange={e => this.setState({OSU_Id: (e.target.value)})} required/>
-                      </div>
+                    </div>
 
-                      <div>
+                    <div>
                        <TextField value={this.state.Password}
                          type="Password"
                          placeHolder="Password"
                           label="Password"
                           onChange={e => this.setState({Password: e.target.value})} required/>
-                      </div>
+                    </div> */}
 
                       <div>
                       <TextField value={this.state.Token}
                         type="Token"
                         placeHolder="Token"
                          label="Token"
-                         disabled={(this.state.disabled)? "disabled" : ""}
+                         disabled={(this.state.disabled)? "disabled" : false}
                          onChange={e => this.setState({Token: e.target.value})}/>
 
-                      </div>
+                    </div>
 
                       <br></br>
                         <br></br>
@@ -112,7 +118,7 @@ class LogInPanel extends React.Component {
                       <div>
                       <br></br>
                         <br></br>
-                        <a href="#" onClick={this.signup_click}>Dont have an account? Please Sign up </a>
+                      {/* <a href="#" onClick={this.signup_click}>Dont have an account? Please Sign up </a> */}
                       </div>
                     </form>
                 </Paper>
