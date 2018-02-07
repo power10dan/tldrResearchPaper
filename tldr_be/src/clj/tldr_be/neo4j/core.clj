@@ -97,6 +97,13 @@
       [false "No papers found"])))
 
 
+(defn get-nodes
+  "Given nothing return 50 random nodes"
+  []
+  (map massage-node (-> (cy/query *neo4j_db* "MATCH (n) RETURN n LIMIT 50")
+                        (get-in [:data])
+                        flatten)))
+
 (defn insert-neo4j
   "Given a filename get the document id for the file out of postgres, then get the
   headers and references for the file, create the nodes in the neo4j uniquely
