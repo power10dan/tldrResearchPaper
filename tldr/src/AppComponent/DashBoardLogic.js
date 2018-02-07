@@ -9,8 +9,11 @@ const DashBoardControlHOC = (DashBoardElem, typeOfDashContent) =>{
 				this.state={
 					open: false,
 					filterData: ["Author"],
+					currentPage: 0,
 				}
-				this.marginLeft=""
+				this.marginLeft="";
+				this.handleCurrPage();
+
 			}
 
 			handleDrawerOpen = () => {
@@ -21,13 +24,25 @@ const DashBoardControlHOC = (DashBoardElem, typeOfDashContent) =>{
 				this.setState({open: false});
 			}
 
+			handleCurrPage = ()=>{
+				if(typeOfDashContent === "Login"){
+					this.setState({currentPage: 0});
+				} else if(typeOfDashContent === "App Configuration"){
+					this.setState({currentPage: 1});
+				} else if(typeOfDashContent === "Conference Selection"){
+					this.setState({currPage: 2});
+				} else{
+					this.setState({currentPage: 3});
+				}
+			}
+
 			render(){
 				if(this.state.open === false){
 					this.marginLeft= "270px";
 				} else{
 					this.marginLeft = "320px";
 				}
-				
+
 				return(
 					<div>
 						<DashBoardComps
@@ -35,7 +50,8 @@ const DashBoardControlHOC = (DashBoardElem, typeOfDashContent) =>{
 							handleDrawerClose={this.handleDrawerClose}
 							open={this.state.open}
 							FilterData={this.state.filterData}
-							actionBarTitle={typeOfDashContent} // hardcoded for now, better make it dynamic in the future
+							actionBarTitle={typeOfDashContent} 
+							currPage={this.state.currentPage}
 						/>	
 						<DashBoardElem 
 							{...this.props}

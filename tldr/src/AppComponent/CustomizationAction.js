@@ -106,10 +106,6 @@ const ResearcherSelection = (props)=>{
 }
 
 class CustomizationListItems extends React.Component{
-	constructor(props){
-		super(props);
-	}
-
 	onClickCard = ( event)=>{
 		let target = event.target.innerHTML;
 		if(target === "Professor" 

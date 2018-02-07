@@ -15,7 +15,8 @@ export const AppState = {
 	isLogin: false,
 	token: "",
 	typeResearcher: "",
-	prefConferences: []
+	prefConferences: [],
+	selectedPaper: ""
 };
 
 

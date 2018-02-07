@@ -12,32 +12,47 @@ import { uploadFile, cachedPaper} from './AppUrlConstants.js';
 import { connect } from 'react-redux';
 import LogIn  from './AppComponent/LogIn.js';
 import SignUp from './AppComponent/SignUp.js';
+import ConferencePaperPanel from './AppComponent/MainSelectionPage.js';
+import {
+        GetChildrenUnionHeader, 
+        GetChildrenIntersectionHeader} from './AppBusinessLogic/FileOperations.js';
 
 class App extends Component {
     constructor(props){
         super(props);
         this.state={
             CurrPage: props.CurrPage,
+            paperUpload: props.selectedPaper.title,
+            idOfPaper: props.selectedPaper.id
+
         }
     }
 
     componentWillReceiveProps(nextProp){
         this.setState({CurrPage: nextProp.CurrPage});
+        this.setState({paperUpload: nextProp.selectedPaper});
     }
 
     render() {
       let CustomizationListWithStyle = withStyles(styles)(CustomizationList);
       //let PaperPanels = withStyles(style)(PapersPanel);
-      let DownloadedContent = GetContentFromServer(
-                                                      CustomizationListWithStyle,  
-                                                      DataSubscriptionDummyFunc()
-                                                  );
+      let DownloadedContent = GetContentFromServer( CustomizationListWithStyle,  
+                                                    DataSubscriptionDummyFunc());
       let ConfPanel = GetContentFromServer( ConferenceExpansionPanel, 
                                             DataSubscriptionConference());
-
+      //let PapersPanel = GetContentFromServer( ConferenceExpansionPanel, 
+       //                                       DataPaperSubscription());
 
       //slet PaperGraphPanel = GetContentFromServer(PaperPanels, FetchPapers)
   	  let StyledCustomizationComponent = withStyles(styles)(DownloadedContent);
+      let ConfPanel = null;
+      if(this.state.paperUpload !== ""){
+          ConfPanel = GetContentFromServer(ConferencePaperPanel, 
+                                           GetChildrenUnionHeader(this.state.idOfPaper, 
+                                                                  this.state.paperUpload)
+                                           );
+      } 
+
       let CustomPage = null;
 
       if(this.state.CurrPage === 0){
@@ -47,7 +62,8 @@ class App extends Component {
       } else if(this.state.CurrPage === 2){
            CustomPage = DashBoardControlHOC(ConfPanel, "Conference Selection");
       } else {
-           CustomPage = DashBoardControlHOC(StyledCustomizationComponent, "App Configuration");
+           CustomPage = DashBoardControlHOC(ConferencePaperPanel, "Paper Selection Panel");
+           CustomPage = null;
       } 
 
       return (
@@ -59,9 +75,10 @@ class App extends Component {
 }
 
 const mapStateToProps = (state)=>{
-    const { CurrPage } = state.ReducerAppState;
+    const { CurrPage, selectedPaper } = state.ReducerAppState;
     return {
-        CurrPage
+        CurrPage,
+        selectedPaper
     }
 }
 

@@ -52,13 +52,25 @@ export const FetchPapers = (url)=>{
 	}
 }
 
-const UploadPaper = (url)=>{
-	return fetch(url);
+const UploadPaper = (url, filePayLoad)=>{
+	let options = {
+		method: 'POST',
+		headers:{
+			mode: 'cors',
+			'Content-Type': 'application/json'
+		},
+
+		formData: { 
+				file: filePayLoad
+		},
+	}
+
+	return fetch(url, options);
 }
 
-export const UploadNewPaper = (url)=>{
-	return dispatch =>{
-		UploadPaper(url)
+export const UploadNewPaper = (url, fileToUpload)=>{
+	return dispatch => {
+		UploadPaper(url, fileToUpload)
 			.then((response)=>{
 				if(response.ok){
 					return response.json();

@@ -158,9 +158,7 @@ const DashboardAppBar = (props)=>{
 		<Fragment>
 			<AppBar className={classNames(classes.appBar, props.open && classes.appBarShift)}>
 	            <Toolbar disableGutters={!props.open} className={classes.toolBarBackground}>
-
 		              {innerComp}
-		         
 		              {
 		            	props.CurrPage > 2 ? <UploadFileButton /> : null
 		              }
@@ -218,7 +216,7 @@ const DashBoardComp = (props)=>{
 	if(props.currPage > 2){
 		sideBar = <SideDrawer 
 					{...props}
-				/>
+				 />
 	} else {
 		sideBar = null;
 	}
@@ -228,7 +226,7 @@ const DashBoardComp = (props)=>{
 			<div className={classes.appFrame}>
 				<DashboardAppBar
 					{...props}
-					CurrPage = {2}
+					CurrPage = {props.currPage}
 				/>
 
 				{ sideBar }

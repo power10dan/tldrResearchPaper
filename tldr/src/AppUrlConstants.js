@@ -1,3 +1,4 @@
-export const uploadFile = "http://127.0.0.1/api/uploadFile/";
-export const cachePaper = "http://127.0.0.1:/api/getFileByName/";
+export const uploadFile = "https://secret-inlet-27367.herokuapp.com/api/uploadFile";
+export const getChildrenUnion = "https://secret-inlet-27367.herokuapp.com/api/getChildrenUnion";
+export const getChildrenIntersection = "https://secret-inlet-27367.herokuapp.com/api/getChildrenInter";
 

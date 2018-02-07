@@ -1,36 +1,40 @@
 import React, { Component, Fragment} from 'react';
-import { withStyles } from 'material-ui/styles';
-import Button from 'material-ui/Button';
+import { AppStateActionCreator } from '../Redux/Actions/ActionCreators.js';
+import { uploadFile } from '../AppUrlConstants.js';
+import { connect } from 'react-redux';
+import ButtonUpload from '../AppComponent/UploadButton.js';
 
-const style = theme=>({
-	buttonBackground: {
-		color: "#ffffff",
-		position: "absolute",
-		marginTop: "14px",
-		marginRight: "75px",
-		top: "0",
-		right: "0"
-	},
-})
 
 class UploadPaperToServer extends Component{
 	constructor(props){
 		super(props);
+		this.state={
+			uploadFileTag:false
+		}
 	}
 
-	uploadFile = ()=>{
+	uploadFileCallBack = (fileObj)=>{
+		console.log(fileObj.fileList[0].name);
 		console.log("hello world");
-
+		let payLoad = fileObj;
+		this.props.uploadFileToRedux(payLoad);
 	}
 
 	render(){
-		const {classes} = this.props;
+		const { classes } = this.props;
 		return(
-			<Button color={"accent"}onClick={this.uploadFile} className={classes.buttonBackground}>
-				Upload A File 
-			</Button>
+			<ButtonUpload
+				uploadFile={this.uploadFileCallBack}
+			/>
 		);
 	}
 } 
 
-export default withStyles(style)(UploadPaperToServer);
+const mapDispatchToProps = (dispatch)=>{
+	return({
+		uploadFileToRedux: (payLoad)=>{dispatch(AppStateActionCreator(payLoad))},
+	})
+}
+
+const UploadPaperComp = connect(null, mapDispatchToProps)(UploadPaperToServer);
+export default UploadPaperComp;

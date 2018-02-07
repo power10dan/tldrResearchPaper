@@ -9,6 +9,7 @@ export const IS_LOGIN = "IS_LOGIN";
 export const TOKEN_UPDATE = "TOKEN_UPDATE";
 export const TYPE_OF_RESEARCHER = "TYPE_OF_RESEARCHER";
 export const PREF_CONFERENCE = "PREFERENCE_CONFERENCE";
+export const FILE_TO_UPLOAD = "FILE_TO_UPLOAD";
 // Constants for tutorial related filters
 export const CONFERENCE_FILTER = "CONFERENCE_FILTER";
 export const RESEARCHER_FILTER = "RESEARCHER_FILTER";

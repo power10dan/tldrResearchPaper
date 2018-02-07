@@ -90,7 +90,7 @@ class CheckBoxs extends React.Component{
 	}
 
 	handleNext = ()=>{
-		let payLoad = 0;
+		let payLoad = 3;
 		this.props.updatePage(payLoad);
 		this.props.uploadPreference(this.state.selectedConfs);
 	}
@@ -114,14 +114,10 @@ class CheckBoxs extends React.Component{
 						       	<Card 
 						       		className={classes.cardProps}
 						       	>      	
-						       		
-						       			<CardMedia className={classes.mediaImg}
-							       			className={classes.mediaImg}
-									    	image={this.props.conferenceImage[idx]}
-							       		/>
-
-
-						       		
+						       		<CardMedia className={classes.mediaImg}
+							       		className={classes.mediaImg}
+									   	image={this.props.conferenceImage[idx]}
+							       	/>
 							    	<Button 
 									    className={classes.cardContent}
 									    onClick={this.handleClickCard}
