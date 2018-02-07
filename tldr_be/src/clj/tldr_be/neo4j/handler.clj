@@ -41,3 +41,14 @@
        :headers {"Content-Type" "application/json"}
        :body res}
       (http/bad-request res))))
+
+(defn get-nodes
+  "Given a request that specifies a number of nodes to query, return that many
+  nodes"
+  [req]
+  (let [[ok? res] (neo/get-nodes (->
+                                  (get-in req [:query-params "numNodes"])
+                                  parse-int))]
+    (if ok?
+      (http/ok res)
+      (http/bad-request res))))

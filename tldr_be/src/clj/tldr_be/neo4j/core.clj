@@ -98,11 +98,14 @@
 
 
 (defn get-nodes
-  "Given nothing return 50 random nodes"
-  [& _] ;; even if you were given something just ignore it
-  (map massage-node (-> (cy/query *neo4j_db* "MATCH (n) RETURN n LIMIT 50")
-                        (get-in [:data])
-                        flatten)))
+  "Given an integer return that many nodes"
+  [n]
+  (condp #(%1 %2) n
+    pos-int? [true (map massage-node
+               (-> (cy/query *neo4j_db* (str "MATCH (n) RETURN n LIMIT " n))
+                   (get-in [:data])
+                   flatten))]
+    [false "Malformed request! Check for mischievous gnomes!"]))
 
 (defn insert-neo4j
   "Given a filename get the document id for the file out of postgres, then get the
