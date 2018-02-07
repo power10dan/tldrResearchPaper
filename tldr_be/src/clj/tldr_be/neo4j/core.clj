@@ -99,7 +99,7 @@
 
 (defn get-nodes
   "Given nothing return 50 random nodes"
-  []
+  [& _] ;; even if you were given something just ignore it
   (map massage-node (-> (cy/query *neo4j_db* "MATCH (n) RETURN n LIMIT 50")
                         (get-in [:data])
                         flatten)))
