@@ -23,7 +23,6 @@
   "Given params from a request, pull the filename and a blob of file data, insert
   that blob into the db after transforming blob to byte-array"
   [params]
-  (log/info "inserting " params)
   (let [filename (get-in params [:file :filename])
         file_blob (get-in params [:file :tempfile])]
     (if (and filename file_blob)
@@ -90,6 +89,7 @@
   "Given a filemap, like: {:id id :filename \"filename\" :filestuff bytea} process
   the file and return the parsed xml headers from the file"
   [filemap]
+  (println "Running headers on: " filemap)
   (eng/pdf-to-xml-engine filemap
                          get-xml-headers-by-filename
                          insert-xml-headers!

@@ -26,6 +26,8 @@
 
 (defn parse-int [s]
   "given a messy string grab the numbers out of it and convert to integers"
-  (Integer. (re-find  #"\d+" s )))
+  (try (Integer. (re-find  #"\d+" s ))
+       (catch Exception ex
+         nil)))
 
 (def not-nil? (complement nil?))

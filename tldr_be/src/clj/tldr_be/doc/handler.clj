@@ -4,6 +4,7 @@
             [clojure.string :refer [split]]
             [tldr-be.neo4j.core :refer [insert-neo4j]]
             [clojure.java.io :as io]
+            [clojure.tools.logging :as log]
             [clojure.string :as str]))
 
 

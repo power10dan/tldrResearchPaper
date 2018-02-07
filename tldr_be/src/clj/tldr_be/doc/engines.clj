@@ -28,6 +28,7 @@
   parser, check if the file has already been processed via db_f, if not then
   process it with pdf_parser_f"
   [filemap db_get db_put pdf_parser_f]
+  (println "Trying: " filemap db_get db_put pdf_parser_f)
   (let [{id :id fname :filename fileblob :filestuff} filemap
         cached_xml (db_get fname)]
     (if cached_xml
