@@ -51,6 +51,11 @@
   (not (nil? (find-node arg))))
 
 
+(defn original-exists?
+  [arg]
+  (let [node (find-node arg)]
+    (some #(= % @parent-label) (:labels node))))
+
 (defn _get-all-children
   "given n many nodes find all the children of each node in a set union"
   [& ts]
@@ -78,10 +83,11 @@
 (defn _get-all-shared-children
   [& ts]
   (let [q0 (format "WITH [%s] as ts %n" (apply str (interpose "," ts)))
-        q1 (format "MATCH (p%s)-[%s]->(c:%s) \n" @parent-label @child-label)
+        q1 (format "MATCH (p:%s)-[]->(c:%s) \n" @parent-label @child-label)
         q2 "WHERE p.title in ts OR ID(p) in ts\n"
         q3 "WITH p, collect(c) as childrenPerParent \n WITH collect(childrenPerParent) as children\n"
         q4 "WITH reduce(commonChildren = head(children), children in tail(children) | apoc.coll.intersection(commonChildren, children)) as commonChildren RETURN commonChildren"]
+    (println (apply str q0 q1 q2 q3 q4))
     (map massage-node
          (-> (cy/query *neo4j_db* (apply str q0 q1 q2 q3 q4))
              (get-in [:data])
@@ -117,17 +123,27 @@
   [fname]
   (try
     (when-let [heds (process-headers fname)]
-      (when-not (-> heds :title first node-exists?)
+      (when-not (-> heds :title first original-exists?)
         (let [refs (process-refs fname)
               id (get-doc-id {:filename fname})
-              parent (nn/create *neo4j_db* (assoc heds
-                                                  :pgid (:id id)
+              parent (nn/create *neo4j_db* (assoc heds :pgid (:id id)
                                                   :filename fname))
-              children (nn/create-batch *neo4j_db* refs)]
-          (nl/add *neo4j_db* parent @parent-label) ;; add Uploaded label to parent
-          ;; add Cited label to children
+              ;; WARNING THIS LINE ENSURES CREATED CITED NODES ARE REFERENCED IF
+              ;; YOU USE A NORMAL CREATE CALL YOU'LL GET A CONSTRAIN ERROR
+              ;; HERE THERE BE DRAGON
+              children (map
+                        #(nn/create-unique-in-index
+                          *neo4j_db*
+                          "by-title"
+                          "title"
+                          (:title %)
+                          %)
+                        refs)]
+          ;; add label to parent
+          (nl/add *neo4j_db* parent @parent-label)
+          ;; add label to children, doall forces evaluations
           (doall (map #(nl/add *neo4j_db* % @child-label) children))
-          ;; dd edges to parent efficiently NOTE THIS DOES NOT CHECK FOR UNIQUENESS
-          (nrl/create-many *neo4j_db* parent children @cites))))
-    (catch Exception ex
-      (println "ASHAHAHAHAHA" ex))))
+          ;; smart add the edges between parent and children
+          (doall (nrl/create-many *neo4j_db* parent children @cites)))))
+      (catch Exception ex
+        (println "ASHAHAHAHAHA" ex))))
