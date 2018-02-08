@@ -11,19 +11,16 @@
   [req]
   ;; TODO: Convert to middleware
   (let [to-vec (fn [a] (cond (coll? a) a (not-nil? a) (vector a) :else nil))
+        massage-str (fn [a] (map #(format "'%s'" (str/replace % "\"" "")) a))
         ts (to-vec (get-in req [:query-params "title"]))
         is (to-vec (get-in req [:query-params "id"]))
         fs (to-vec (get-in req [:query-params "forename"]))
         ss (to-vec (get-in req [:query-params "surname"]))]
     (distinct (concat
-               (when ts
-                 (map #(format "'%s'" (str/replace % "\"" "")) ts))
-               (when is
-                 (map parse-int is))
-               (when fs
-                 (map #(format "'%s'" (str/replace % "\"" "")) ts))
-               (when ss
-                 (map #(format "'%s'" (str/replace % "\"" "")) ts))))))
+               (when ts (massage-str ts))
+               (when is (map parse-int is))
+               (when fs (massage-str fs))
+               (when ss (massage-str ss))))))
 
 
 (defn response-wrapper
@@ -50,6 +47,16 @@
   paper with no duplicates"
   [req]
   (response-wrapper req neo/handler-wrapper neo/get-all-shared-children))
+
+
+(defn get-all-shared-children-by
+  [req]
+  (response-wrapper req neo/handler-wrapper neo/get-all-shared-children-by))
+
+
+(defn get-all-children-by
+  [req]
+  (response-wrapper req neo/handler-wrapper neo/get-all-children-by))
 
 
 (defn get-nodes

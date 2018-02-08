@@ -72,6 +72,7 @@
   "Given any list of strings that represent a cypher query, run the query then
   post process"
   [& strs]
+  (println (apply str strs))
   (map massage-node (-> (cy/query *neo4j_db* (apply str strs))
                         (get-in [:data])
                         flatten)))
@@ -92,7 +93,7 @@
   [& ts]
   (let [q0 (format "WITH [%s] as ts %n" (apply str (interpose "," ts)))
         q1 (format "MATCH (p:%s)-[]->(c:%s) \n" @parent-label @child-label)
-        q2 "WHERE p.title in ts OR ID(p) AND ANY(x in c.surname where x in ts) RETURN c\n"]
+        q2 "WHERE (p.title in ts OR ID(p) in ts) AND ANY(x in c.surname where x in ts) RETURN c\n"]
     (query-neo4j q0 q1 q2)))
 
 
