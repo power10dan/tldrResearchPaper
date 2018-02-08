@@ -9,15 +9,21 @@
   "Given a request pull out titles and ids and process them returns a collection
   of valid titles and ids"
   [req]
-  (let [_ts (get-in req [:query-params "title"])
-        _is (get-in req [:query-params "id"])
-        ts (cond (coll? _ts) _ts (not-nil? _ts) (vector _ts) :else nil)
-        is (cond (coll? _is) _is (not-nil? _is) (vector _is) :else nil)]
+  ;; TODO: Convert to middleware
+  (let [to-vec (fn [a] (cond (coll? a) a (not-nil? a) (vector a) :else nil))
+        ts (to-vec (get-in req [:query-params "title"]))
+        is (to-vec (get-in req [:query-params "id"]))
+        fs (to-vec (get-in req [:query-params "forename"]))
+        ss (to-vec (get-in req [:query-params "surname"]))]
     (distinct (concat
                (when ts
                  (map #(format "'%s'" (str/replace % "\"" "")) ts))
                (when is
-                 (map parse-int is))))))
+                 (map parse-int is))
+               (when fs
+                 (map #(format "'%s'" (str/replace % "\"" "")) ts))
+               (when ss
+                 (map #(format "'%s'" (str/replace % "\"" "")) ts))))))
 
 
 (defn get-all-children

@@ -84,7 +84,7 @@
   [& ts]
   (let [q0 (format "WITH [%s] as ts %n" (apply str (interpose "," ts)))
         q1 (format "MATCH (p:%s)-[]->(c:%s) \n" @parent-label @child-label)
-        q2 "WHERE p.title in ts OR ID(p) in ts\n"
+        q2 "WHERE p.title in ts OR ID(p) in ts or filter(x in ts where x in p.forename) or filter(x in ts where x in p.surname)\n"
         q3 "WITH p, collect(c) as childrenPerParent \n WITH collect(childrenPerParent) as children\n"
         q4 "WITH reduce(commonChildren = head(children), children in tail(children) | apoc.coll.intersection(commonChildren, children)) as commonChildren RETURN commonChildren"]
     (println (apply str q0 q1 q2 q3 q4))
