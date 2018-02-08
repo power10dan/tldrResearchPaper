@@ -114,8 +114,8 @@
   headers and references for the file, create the nodes in the neo4j uniquely
   and then add edges, uniquely"
   [fname]
-  (when-let [heds (process-headers fname)]
-    (try
+  (try
+    (when-let [heds (process-headers fname)]
       (when-not (-> heds :title first node-exists?)
         (let [refs (process-refs fname)
               id (get-doc-id {:filename fname})
@@ -127,6 +127,6 @@
           ;; add Cited label to children
           (doall (map #(nl/add *neo4j_db* % @child-label) children))
           ;; dd edges to parent efficiently NOTE THIS DOES NOT CHECK FOR UNIQUENESS
-          (nrl/create-many *neo4j_db* parent children @cites)))
-      (catch Exception ex
-        (println "ASHAHAHAHAHA" ex)))))
+          (nrl/create-many *neo4j_db* parent children @cites))))
+    (catch Exception ex
+      (println "ASHAHAHAHAHA" ex))))
