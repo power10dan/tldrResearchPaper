@@ -55,7 +55,7 @@
   "given n many nodes find all the children of each node in a set union"
   [& ts]
   (let [q0 (format "WITH [%s] as ts %n" (apply str (interpose "," ts)))
-        q1 "MATCH (p:Original)-[:cites]->(c:Cited) \n"
+        q1 (format "MATCH (p:%s)-[%s]->(c:%s) \n" @parent-label @cites @child-label)
         q2 "WHERE p.title in ts OR ID(p) in ts RETURN DISTINCT c \n"]
     (map massage-node
          (-> (cy/query *neo4j_db* (apply str q0 q1 q2))
@@ -77,7 +77,7 @@
 (defn _get-all-shared-children
   [& ts]
   (let [q0 (format "WITH [%s] as ts %n" (apply str (interpose "," ts)))
-        q1 "MATCH (p:Original)-[:cites]->(c:Cited) \n"
+        q1 (format "MATCH (p%s)-[%s]->(c:%s) \n" @parent-label @cites @child-label)
         q2 "WHERE p.title in ts OR ID(p) in ts\n"
         q3 "WITH p, collect(c) as childrenPerParent \n WITH collect(childrenPerParent) as children\n"
         q4 "WITH reduce(commonChildren = head(children), children in tail(children) | apoc.coll.intersection(commonChildren, children)) as commonChildren RETURN commonChildren"]
