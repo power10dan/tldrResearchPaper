@@ -5,7 +5,7 @@
                                      *neo4j_db*]]
             [tldr-be.doc.core :refer [workhorse process-headers process-refs]]
             [tldr-be.utils.core :refer [escape-string map-keys]]
-            [clojure.walk :refer [stringify-keys]]
+            [clojure.walk :refer [stringify-keys postwalk]]
             [clojure.set :refer [rename-keys]]
             [clojurewerkz.neocons.rest.nodes :as nn]
             [clojurewerkz.neocons.rest.labels :as nl]
@@ -52,57 +52,57 @@
 
 
 (defn original-exists?
+  "Given a title or id see if an original node exists that fits the argument"
   [arg]
   (let [node (find-node arg)]
     (some #(= % @parent-label) (:labels node))))
 
-(defn _get-all-children
+
+(defn handler-wrapper
+  "Given a function that performs a neo4j query. Wrap the function nice and pretty
+  for the handler"
+  [f & ts]
+  (let [res (apply f ts)]
+    (if (not (empty? res))
+      [true res]
+      [false "No papers found"])))
+
+(defn query-neo4j
+  "Given any list of strings that represent a cypher query, run the query then
+  post process"
+  [& strs]
+  (map massage-node (-> (cy/query *neo4j_db* (apply str strs))
+                        (get-in [:data])
+                        flatten)))
+
+
+(defn get-all-children
   "given n many nodes find all the children of each node in a set union"
   [& ts]
   (let [q0 (format "WITH [%s] as ts %n" (apply str (interpose "," ts)))
         q1 (format "MATCH (p:%s)-[]->(c:%s) \n" @parent-label @child-label)
         q2 "WHERE p.title in ts OR ID(p) in ts RETURN DISTINCT c \n"]
-    (println (apply str q0 q1 q2))
-    (map massage-node
-         (-> (cy/query *neo4j_db* (apply str q0 q1 q2))
-             (get-in [:data])
-             flatten))))
+    (query-neo4j q0 q1 q2)))
 
 
-(defn get-all-children
-  "Wrapper around the engine _get-all-children this function checks the results of
-  the service api, if good returns a 2-tuple (true, results) if bad return false
-  an error message"
-  [& ts]
-  (let [res (apply _get-all-children ts)]
-    (if (not (empty? res))
-      [true res]
-      [false "No papers found"])))
-
-
-(defn _get-all-shared-children
+(defn _get-all-children-by
+  "given n many nodes find all the children of each node in a set union filtered
+  by surnames"
   [& ts]
   (let [q0 (format "WITH [%s] as ts %n" (apply str (interpose "," ts)))
         q1 (format "MATCH (p:%s)-[]->(c:%s) \n" @parent-label @child-label)
-        q2 "WHERE p.title in ts OR ID(p) in ts or filter(x in ts where x in p.forename) or filter(x in ts where x in p.surname)\n"
-        q3 "WITH p, collect(c) as childrenPerParent \n WITH collect(childrenPerParent) as children\n"
-        q4 "WITH reduce(commonChildren = head(children), children in tail(children) | apoc.coll.intersection(commonChildren, children)) as commonChildren RETURN commonChildren"]
-    (println (apply str q0 q1 q2 q3 q4))
-    (map massage-node
-         (-> (cy/query *neo4j_db* (apply str q0 q1 q2 q3 q4))
-             (get-in [:data])
-             flatten))))
+        q2 "WHERE p.title in ts OR ID(p) AND ANY(x in c.surname where x in ts) RETURN c\n"]
+    (query-neo4j q0 q1 q2)))
 
 
 (defn get-all-shared-children
-"Wrapper around the engine _get-all-children this function checks the results of
-  the service api, if good returns a 2-tuple (true, results) if bad return false
-  an error message"
   [& ts]
-  (let [res (apply _get-all-shared-children ts)]
-    (if (not (empty? res))
-      [true res]
-      [false "No papers found"])))
+  (let [q0 (format "WITH [%s] as ts %n" (apply str (interpose "," ts)))
+        q1 (format "MATCH (p:%s)-[]->(c:%s) \n" @parent-label @child-label)
+        q2 "WHERE (p.title in ts OR ID(p) in ts) \n"
+        q3 "WITH p, collect(c) as childrenPerParent \n WITH collect(childrenPerParent) as children\n"
+        q4 "WITH reduce(commonChildren = head(children), children in tail(children) | apoc.coll.intersection(commonChildren, children)) as commonChildren RETURN commonChildren"]
+    (query-neo4j q0 q1 q2 q3 q4)))
 
 
 (defn get-nodes

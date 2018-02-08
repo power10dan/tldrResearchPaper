@@ -30,23 +30,25 @@
   "Given a request that specifies a n-many paper titles get all children for each
   paper with no duplicates"
   [req]
-  (let [[ok? res] (apply neo/get-all-children (massage-req req))]
+  (let [[ok? res] (apply neo/handler-wrapper neo/get-all-children (massage-req req))]
     (if ok?
       {:status 200
        :headers {"Content-Type" "application/json"}
        :body res}
       (http/bad-request res))))
 
+
 (defn get-all-shared-children
   "Given a request that specifies a n-many paper titles get all children for each
   paper with no duplicates"
   [req]
-  (let [[ok? res] (apply neo/get-all-shared-children (massage-req req))]
+  (let [[ok? res] (apply neo/handler-wrapper neo/get-all-shared-children (massage-req req))]
     (if ok?
       {:status 200
        :headers {"Content-Type" "application/json"}
        :body res}
       (http/bad-request res))))
+
 
 (defn get-nodes
   "Given a request that specifies a number of nodes to query, return that many
