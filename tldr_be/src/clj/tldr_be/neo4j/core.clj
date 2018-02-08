@@ -17,32 +17,33 @@
 (def parent-label (atom "Uploaded"))
 (def child-label (atom "Cited"))
 
-;; (defn add-child-and-edge
-;;   "Given a parent node and a child assume the parent exists, if the child does not
-;;   exist create it, if an edge between the two doesn't exist then create if both
-;;   the child and edge exist then do nothing"
-;;   [parent child]
-;;   (let [p-title (escape-string (get-in parent [:data :title]))
-;;         c-title (escape-string (get-in child [:data :title]))
-;;         q0 (format "MATCH (parent:Original {title: \"%s\"})" p-title)
-;;         q1 (format "MERGE (child:Cited {title: \"%s\"})" c-title)
-;;         q2 (format "ON CREATE SET child.title = \"%s\"" c-title)
-;;         q3 (format "CREATE UNIQUE (child) <- [:cites] - (parent)")]
-;;     (cy/query *neo4j_db* (str q0 q1 q2 q3))))
-
 (defn add-child-and-edge
   "Given a parent node and a child assume the parent exists, if the child does not
   exist create it, if an edge between the two doesn't exist then create if both
   the child and edge exist then do nothing"
   [parent child]
-  (let [p-title (escape-string (get-in parent [:data :title]))
-        c-title (escape-string (get-in child [:data :title]))
-        q0 (format "MERGE (p:%s {title: \"%s\"})-[:cites]->(c:%s)"
-                   @parent-label p-title @child-label)]
-    ;; (cy/query *neo4j_db* (str q0))
-    (println parent)
-    ;; (str q0)
+  (let [p-title (escape-string (first (get-in parent [:data :title])))
+        c-title (escape-string (first (get-in child [:data :title])))
+        q0 (format "MATCH (parent:%s {title: \"%s\"})" @parent-label p-title)
+        q1 (format "MERGE (child:%s {title: \"%s\"})" @child-label c-title)
+        q2 (format " ON CREATE SET child.title = \"%s\"" c-title)
+        q3 (format "CREATE UNIQUE (child) <- [:cites] - (parent)")]
+    ;; (str q0 q1 q2 q3)
+    (cy/query *neo4j_db* (str q0 q1 q2 q3))
     ))
+
+;; (defn add-child-and-edge
+;;   "Given a parent node and a child assume the parent exists, if the child does not
+;;   exist create it, if an edge between the two doesn't exist then create if both
+;;   the child and edge exist then do nothing"
+;;   [parent child]
+;;   (let [p-title (escape-string (first (get-in parent [:data :title])))
+;;         c-title (escape-string (first (get-in child [:title])))
+;;         q0 (format "Merge (p:%s {title: \"%s\"})-[:cites]->(c:%s {title: \"%s\"})"
+;;                    @parent-label p-title @child-label c-title)]
+;;     (println (str q0))
+;;     (cy/query *neo4j_db* (str q0))
+;;     ))
 
 
 (defn keys-to-neo4j
@@ -51,15 +52,6 @@
   [m]
   (->> (stringify-keys m)
        (map-keys #(-> (str % ":")))))
-
-
-(defn create-node
-  "given data for a node, create is smartly, that is if it exists return it, if it
-  doesn't exist create and return it"
-  [data]
-  ;; cy/tquery *neo4j_db*
-  (format "MERGE (n %s)"
-          (keys-to-neo4j (update-in data [:title] first))))
 
 
 (defn massage-node
@@ -116,7 +108,6 @@
         q2 "WHERE p.title in ts OR ID(p) in ts\n"
         q3 "WITH p, collect(c) as childrenPerParent \n WITH collect(childrenPerParent) as children\n"
         q4 "WITH reduce(commonChildren = head(children), children in tail(children) | apoc.coll.intersection(commonChildren, children)) as commonChildren RETURN commonChildren"]
-    (println "asdfsdf" ts (apply str q0 q1 q2 q3 q4))
     (map massage-node
          (-> (cy/query *neo4j_db* (apply str q0 q1 q2 q3 q4))
              (get-in [:data])
@@ -144,54 +135,54 @@
                    flatten))]
     [false "Malformed request! Check for mischievous gnomes!"]))
 
-;; (defn insert-neo4j
-;;   "Given a filename get the document id for the file out of postgres, then get the
-;;   headers and references for the file, create the nodes in the neo4j uniquely
-;;   and then add edges, uniquely"
-;;   [fname]
-;;   (when-let [id (get-doc-id {:filename fname})]
-;;     (try (when-not (-> (get-doc-filename id) :filename node-exists?)
-;;        (let [[heds refs] (workhorse fname)
-;;              parent (nn/create-unique-in-index
-;;                      *neo4j_db*
-;;                      "by-title"
-;;                      "title"
-;;                      (:title heds)
-;;                      (assoc heds :pgid (:id id)))
-;;              children (map ;;TODO remove this call and create child with add-child-and-edge function
-;;                        #(nn/create-unique-in-index
-;;                          *neo4j_db*
-;;                          "by-title"
-;;                          "title"
-;;                          (:title %)
-;;                          %)
-;;                        refs)]
-;;          (nl/add *neo4j_db* parent "Original") ;; add Original label to parent
-;;          ;; add Cited label to children
-;;          (doall (map #(nl/add *neo4j_db* % "Cited") children))
-;;          ;; smart add the edges between parent and children
-;;          (doall (map #(add-child-and-edge parent %) children))))
-;;          (catch Exception ex
-;;            (println "ASHAHAHAHAHA" ex)))))
-
-
 (defn insert-neo4j
   "Given a filename get the document id for the file out of postgres, then get the
   headers and references for the file, create the nodes in the neo4j uniquely
   and then add edges, uniquely"
   [fname]
-  (when-let [fmap (get-doc-by-filename {:filename fname})]
-    (try
-      (when-not (-> fmap :filename node-exists?)
-        (let [[heds refs] (workhorse fname)
-              parent (nn/create *neo4j_db* (assoc heds
-                                                  :pgid (:id fmap)
-                                                  :filename (:filename fmap)))
-              children (nn/create-batch *neo4j_db* refs)]
-          (nl/add *neo4j_db* parent @parent-label) ;; add Uploaded label to parent
-          ;; add Cited label to children
-          (doall (map #(nl/add *neo4j_db* % @child-label) children))
-          ;; smart add the edges between parent and children
-          (map #(add-child-and-edge parent %) children)))
-      (catch Exception ex
-        (println "ASHAHAHAHAHA" ex)))))
+  (when-let [id (get-doc-id {:filename fname})]
+    (try (when-not (-> (get-doc-filename id) :filename node-exists?)
+       (let [[heds refs] (workhorse fname)
+             parent (nn/create-unique-in-index
+                     *neo4j_db*
+                     "by-title"
+                     "title"
+                     (first (:title heds))
+                     (assoc heds :pgid (:id id)))
+             children (map ;;TODO remove this call and create child with add-child-and-edge function
+                       #(nn/create-unique-in-index
+                         *neo4j_db*
+                         "by-title"
+                         "title"
+                         (:title %)
+                         %)
+                       refs)]
+         (nl/add *neo4j_db* parent @parent-label) ;; add Original label to parent
+         ;; add Cited label to children
+         (doall (map #(nl/add *neo4j_db* % @child-label) children))
+         ;; smart add the edges between parent and children
+         (doall (map #(add-child-and-edge parent %) children))))
+         (catch Exception ex
+           (println "ASHAHAHAHAHA" ex)))))
+
+
+;; (defn insert-neo4j
+;;   "Given a filename get the document id for the file out of postgres, then get the
+;;   headers and references for the file, create the nodes in the neo4j uniquely
+;;   and then add edges, uniquely"
+;;   [fname]
+;;   (when-let [fmap (get-doc-by-filename {:filename fname})]
+;;     (try
+;;       (when-not (-> fmap :filename node-exists?)
+;;         (let [[heds refs] (workhorse fname)
+;;               parent (nn/create *neo4j_db* (assoc heds
+;;                                                   :pgid (:id fmap)
+;;                                                   :filename (:filename fmap)))
+;;               children (nn/create-batch *neo4j_db* refs)]
+;;           (nl/add *neo4j_db* parent @parent-label) ;; add Uploaded label to parent
+;;           ;; add Cited label to children
+;;           (doall (map #(nl/add *neo4j_db* % @child-label) children))
+;;           ;; smart add the edges between parent and children
+;;           (map #(add-child-and-edge parent %) refs)))
+;;       (catch Exception ex
+;;         (println "ASHAHAHAHAHA" ex)))))
