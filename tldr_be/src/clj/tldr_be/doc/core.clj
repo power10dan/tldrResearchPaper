@@ -140,21 +140,28 @@
        (filter #(not (= :title (first %))))
        (map #(doall (cons :title %)))))
 
+(defn process-headers
+  [fname]
+  (->> fname
+       (fname-to-cljmap pdf-to-xml-headers)
+       get-sections
+       make-sections
+       (map collect)
+       second))
+
+(defn process-refs
+  [fname]
+  (->> fname
+       (fname-to-cljmap pdf-to-xml-refs)
+       get-sections
+       make-sections
+       (map collect)
+       (filter #(contains? % :surname))))
+
 (defn workhorse
   "given a filename, grab the file bytea blob out of the db, parse the headers and
   the references and then collect like keys, this function returns 2-tuple where
   the fst is the filename headers, and snd is a collection of references"
   [fname]
   (log/info "performing workhorse on " fname)
-  [(->> fname
-        (fname-to-cljmap pdf-to-xml-headers)
-        get-sections
-        make-sections
-        (map collect)
-        second)
-   (->> fname
-        (fname-to-cljmap pdf-to-xml-refs)
-        get-sections
-        make-sections
-        (map collect)
-        (filter #(contains? % :surname)))])
+  [(process-headers fname) (process-refs fname)])
