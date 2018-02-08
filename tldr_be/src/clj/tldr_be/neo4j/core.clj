@@ -29,7 +29,7 @@
   "Given a node, remove all the neo4j specific data and return the id and data we
   injected"
   [node]
-  (conj (get-in node [:data]) (select-keys (:metadata node) [:id])))
+  (conj (get-in node [:data]) (:metadata node)))
 
 
 (defn find-node
