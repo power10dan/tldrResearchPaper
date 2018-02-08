@@ -1,50 +1,57 @@
 import * as actionTypes from './ActionConstants.js';
+import {
+          GetChildrenUnionHeader, 
+          GetChildrenIntersectionHeader,
+          GetNumNodeHeader,
+          UploadFile
+        } from '../../AppBusinessLogic/FileOperations.js';
 
 export const CachedPaperActionCreator = (actionType, dataPayload) =>{
 	let actionPayLoad = {};
-	if(actionType === actionTypes.CACHED_PAPERS){
-		if("forename" in  dataPayload
-			&& "surname" in  dataPayload 
-			&& "title" in  dataPayload 
-			&& "id" in dataPayload
-			&& "pgid" in dataPayload){
-
-			actionPayLoad = {
-				type: actionType,
-				data: dataPayload
-			};
-
-			return actionPayLoad;
-		} else {
-			return false;
-		}
-	} else {
-		actionPayLoad = {types: actionType, data: dataPayload};
-		return actionPayLoad;
-	}
+	actionPayLoad = {type: actionType, data: dataPayload};
+	return actionPayLoad;
 }
 
 export const AppStateActionCreator = (actionType, newPayLoad) =>{
 	return {type: actionType, dataPayload: newPayLoad};
 }
 
-const FetchPaperChildren= (url)=>{
-	return fetch(url);
+const FetchPaperChildren= (url, paperId, paperTitle)=>{
+	return fetch(url, GetChildrenUnionHeader(paperId, paperTitle));
 }
 
-export const FetchPapers = (url)=>{
+const FetchNumNodes = (url, numNode)=>{
+	return fetch(url, GetNumNodeHeader(numNode));
+
+}
+
+export const FetchNumberNodes = (url, numNode)=>{
 	return dispatch =>{
-		FetchPaperChildren(url)
-		.then((response)=>{
-			if(response.ok){
+		FetchNumNodes(url, numNode)
+			.then((response)=>{
 				return response.json();
-			}
-		}).then((data)=>{
-			data.forEach((elem)=>{
-				dispatch(CachedPaperActionCreator(
-						actionTypes.CACHED_PAPERS,
-						elem 
-				));
+			}).then((res)=>{
+				res.map(elem=>{
+					dispatch(CachedPaperActionCreator(actionTypes.CACHED_PAPERS, elem));
+				})
+				
+			}).catch((err)=>{
+		 	   console.log(err);
+			})
+	}
+
+}
+
+export const FetchPapers = (url, paperId, paperTitle)=>{
+	return dispatch =>{
+		FetchPaperChildren(url, paperId, paperTitle)
+		.then((response)=>{
+			return response.json();
+		}).then((res)=>{
+			res.map(elem=>{
+				dispatch(
+					CachedPaperActionCreator( actionTypes.CACHED_PAPERS, elem)
+				);
 			});
 		}).catch((err)=>{
 			console.log(err);
@@ -53,19 +60,7 @@ export const FetchPapers = (url)=>{
 }
 
 const UploadPaper = (url, filePayLoad)=>{
-	let options = {
-		method: 'POST',
-		headers:{
-			mode: 'cors',
-			'Content-Type': 'application/json'
-		},
-
-		formData: { 
-				file: filePayLoad
-		},
-	}
-
-	return fetch(url, options);
+	return fetch(url, UploadPaper(filePayLoad));
 }
 
 export const UploadNewPaper = (url, fileToUpload)=>{

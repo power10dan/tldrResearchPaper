@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import DashBoardComps from '../AppComponent/DashBoardComps.js';
 
-const DashBoardControlHOC = (DashBoardElem, typeOfDashContent) =>{
+const DashBoardControlHOC = (DashBoardElem, typeOfDashContent, CurrPage) =>{
 	return(
 		class DashBoardControl extends Component{
 			constructor(props){
@@ -12,8 +12,11 @@ const DashBoardControlHOC = (DashBoardElem, typeOfDashContent) =>{
 					currentPage: 0,
 				}
 				this.marginLeft="";
-				this.handleCurrPage();
+				
+			}
 
+			componentWillReceiveProps(){
+				this.handleCurrPage();
 			}
 
 			handleDrawerOpen = () => {
@@ -22,18 +25,6 @@ const DashBoardControlHOC = (DashBoardElem, typeOfDashContent) =>{
 
 			handleDrawerClose = ()=>{
 				this.setState({open: false});
-			}
-
-			handleCurrPage = ()=>{
-				if(typeOfDashContent === "Login"){
-					this.setState({currentPage: 0});
-				} else if(typeOfDashContent === "App Configuration"){
-					this.setState({currentPage: 1});
-				} else if(typeOfDashContent === "Conference Selection"){
-					this.setState({currPage: 2});
-				} else{
-					this.setState({currentPage: 3});
-				}
 			}
 
 			render(){
@@ -51,7 +42,7 @@ const DashBoardControlHOC = (DashBoardElem, typeOfDashContent) =>{
 							open={this.state.open}
 							FilterData={this.state.filterData}
 							actionBarTitle={typeOfDashContent} 
-							currPage={this.state.currentPage}
+							currPage={CurrPage}
 						/>	
 						<DashBoardElem 
 							{...this.props}

@@ -1,45 +1,76 @@
+import Graph from 'react-graph-vis';
 import React from 'react';
-import { Graph } from 'react-d3-graph';
 
-function transformDataToNode(rawData){
-	let nodes = rawData.nodes;
-	let links = rawData.links;
 
-	return [nodes, links]
+function transformDataToNode(rawData, type){
+	let data = {
+		nodes: [
+				{id: 1, label: "Hello"}, 
+				{id: 2, label: "boohoo"}, 
+				{id: 3, label: "mooho"}, 
+				{id: 4, label: "moon"},
+				{id: 5, label: "bae"}],
+		edges:[]		
+			
+	}
+
+	if(type==="cited"){
+		console.log("hi")
+		data.nodes.push({id: 6, label:rawData});
+		data.edges.push({from: 6, to: 1})
+		data.edges.push({from: 6, to: 2})
+		data.edges.push({from: 6, to: 3})
+		data.edges.push({from: 6, to: 4})
+		data.edges.push({from: 6, to: 5})
+	} 
+
+	return data;
 }
 
-function configGeneration(configType){
-	let nodeConfig = configType.nodeConf;
-	let linkConfig = configType.linkConf;
+const configGeneration =()=>{
 	let myConfig = {
-		"automaticRearrangeAfterDropNode": false,
-  		"height": 400,
-  		"highlightDegree": 1,
-  		"highlightOpacity": 1,
-  		"linkHighlightBehavior": true,
-  		"maxZoom": 8,
-  		"minZoom": 0.1,
-  		"nodeHighlightBehavior": false,
-  		"panAndZoom": false,
-  		"staticGraph": false,
-  		"width": 800,
-  		"node": nodeConfig,
-  		"link": linkConfig,
+		layout: {
+		    hierarchical: true
+		},
+		
+		edges: {
+		   color: "#000000"
+		},
+
+		interaction:{
+			zoomView:false,
+		},
+
+		manipulation:{
+			enabled: false
+		}
+		
 	}
 
 	return myConfig;
 }
 
+const events = ()=>{
+	let event = {
+		select: (event)=> {
+        	const { nodes, edges } = event;
+    	}
+	}
+
+	return event;	 
+}
+
 
 function GraphComp(props){
-	let data = transformDataToNode(props.data);
-	let myConfig = configGeneration(props.configType);
+	let data = transformDataToNode(props.data, props.type);
+	let myConfig = configGeneration();
+	let eventsCallback = events();
 	return(
 		<Graph 
-			id='graph-id'
-			data={data}
-			config={myConfig}
-			onClickNode={props.onClickNodeFunc}
+			graph={data}
+			options={myConfig}
+			events={eventsCallback}
+			style={{height: "250px"}}
 		/>
 	);
 }

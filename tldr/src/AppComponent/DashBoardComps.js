@@ -21,8 +21,7 @@ const drawerWidth = 240;
 const styleOfSideBar = theme => ({
 	root: {
 		width: '100%',
-		height: "350px",
-		marginTop: theme.spacing.unit * 3,
+		height: "50px",
 		zIndex: 1,
 		marginTop: "0px",
 	},
@@ -30,7 +29,8 @@ const styleOfSideBar = theme => ({
 		position: 'relative',
 		display: 'flex',
 		width: '100%',
-		height: "350px",
+		height: "50px",
+		marginBottom: "310px"
 	},
 
 	appBar: {
@@ -74,7 +74,7 @@ const styleOfSideBar = theme => ({
 	drawerPaperClose: {
 		width: 60,
 		overflowX: "hidden",
-		height: "800px",
+		minHeight: "1200px",
 		transition: theme.transitions.create('width', {
 			easing: theme.transitions.easing.sharp,
 			duration: theme.transitions.duration.leavingScreen,
@@ -222,7 +222,7 @@ const DashBoardComp = (props)=>{
 	}
 
 	return (
-		<div className={classes.root}>
+		<Fragment>
 			<div className={classes.appFrame}>
 				<DashboardAppBar
 					{...props}
@@ -233,7 +233,7 @@ const DashBoardComp = (props)=>{
 				
 				 <Divider className={classes.dividerBottom} />
 			</div>
-		</div>
+		</Fragment>
 	);
 }
 

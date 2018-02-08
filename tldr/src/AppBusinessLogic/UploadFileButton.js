@@ -4,7 +4,6 @@ import { uploadFile } from '../AppUrlConstants.js';
 import { connect } from 'react-redux';
 import ButtonUpload from '../AppComponent/UploadButton.js';
 
-
 class UploadPaperToServer extends Component{
 	constructor(props){
 		super(props);
@@ -14,10 +13,13 @@ class UploadPaperToServer extends Component{
 	}
 
 	uploadFileCallBack = (fileObj)=>{
-		console.log(fileObj.fileList[0].name);
-		console.log("hello world");
-		let payLoad = fileObj;
-		this.props.uploadFileToRedux(payLoad);
+		console.log(fileObj)
+		if(fileObj !== undefined){
+			console.log(fileObj.fileList[0].name);
+			console.log("hello world");
+			let payLoad = fileObj;
+			this.props.uploadFileToRedux(payLoad);
+		}
 	}
 
 	render(){
