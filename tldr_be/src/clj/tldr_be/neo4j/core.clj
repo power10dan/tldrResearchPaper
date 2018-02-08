@@ -67,6 +67,7 @@
       [true res]
       [false "No papers found"])))
 
+
 (defn query-neo4j
   "Given any list of strings that represent a cypher query, run the query then
   post process"
@@ -85,7 +86,7 @@
     (query-neo4j q0 q1 q2)))
 
 
-(defn _get-all-children-by
+(defn get-all-children-by
   "given n many nodes find all the children of each node in a set union filtered
   by surnames"
   [& ts]
@@ -100,6 +101,16 @@
   (let [q0 (format "WITH [%s] as ts %n" (apply str (interpose "," ts)))
         q1 (format "MATCH (p:%s)-[]->(c:%s) \n" @parent-label @child-label)
         q2 "WHERE (p.title in ts OR ID(p) in ts) \n"
+        q3 "WITH p, collect(c) as childrenPerParent \n WITH collect(childrenPerParent) as children\n"
+        q4 "WITH reduce(commonChildren = head(children), children in tail(children) | apoc.coll.intersection(commonChildren, children)) as commonChildren RETURN commonChildren"]
+    (query-neo4j q0 q1 q2 q3 q4)))
+
+
+(defn get-all-shared-children-by
+  [& ts]
+  (let [q0 (format "WITH [%s] as ts %n" (apply str (interpose "," ts)))
+        q1 (format "MATCH (p:%s)-[]->(c:%s) \n" @parent-label @child-label)
+        q2 "WHERE (p.title in ts OR ID(p) in ts) AND ANY(x in c.surname where x in ts) \n"
         q3 "WITH p, collect(c) as childrenPerParent \n WITH collect(childrenPerParent) as children\n"
         q4 "WITH reduce(commonChildren = head(children), children in tail(children) | apoc.coll.intersection(commonChildren, children)) as commonChildren RETURN commonChildren"]
     (query-neo4j q0 q1 q2 q3 q4)))
