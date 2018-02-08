@@ -26,28 +26,30 @@
                  (map #(format "'%s'" (str/replace % "\"" "")) ts))))))
 
 
-(defn get-all-children
-  "Given a request that specifies a n-many paper titles get all children for each
-  paper with no duplicates"
-  [req]
-  (let [[ok? res] (apply neo/handler-wrapper neo/get-all-children (massage-req req))]
+(defn response-wrapper
+  "Given a function and a function to feed the first one and request call the
+  function and wrap the response appropriately"
+  [req f g]
+  (let [[ok? res] (apply f g (massage-req req))]
     (if ok?
       {:status 200
        :headers {"Content-Type" "application/json"}
        :body res}
       (http/bad-request res))))
+
+
+(defn get-all-children
+  "Given a request that specifies a n-many paper titles get all children for each
+  paper with no duplicates"
+  [req]
+  (response-wrapper req neo/handler-wrapper neo/get-all-children))
 
 
 (defn get-all-shared-children
   "Given a request that specifies a n-many paper titles get all children for each
   paper with no duplicates"
   [req]
-  (let [[ok? res] (apply neo/handler-wrapper neo/get-all-shared-children (massage-req req))]
-    (if ok?
-      {:status 200
-       :headers {"Content-Type" "application/json"}
-       :body res}
-      (http/bad-request res))))
+  (response-wrapper req neo/handler-wrapper neo/get-all-shared-children))
 
 
 (defn get-nodes
