@@ -10,7 +10,7 @@
    (let [add (fn [a b c] (if (not (vector? (a c)))
                           (update c a #(conj [%] b))
                           (update c a #(conj % b))))
-         add-new (fn [a b c] (conj c {a b}))]
+         add-new (fn [a b c] (conj c {a [b]}))]
      (loop [[x y & tail] coll
             acc {}]
        (if (not x)
