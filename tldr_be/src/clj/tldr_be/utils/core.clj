@@ -31,3 +31,13 @@
          nil)))
 
 (def not-nil? (complement nil?))
+
+(defn map-keys
+  "Given a function and a map apply the function to every key in the map"
+  [f m]
+  (loop [[k & ks] (keys m)
+         [v & vs] (vals m)
+         acc {}]
+    (if (not k)
+      acc
+      (recur ks vs (assoc acc (f k) v)))))
