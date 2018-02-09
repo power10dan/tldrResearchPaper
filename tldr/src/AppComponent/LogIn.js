@@ -53,7 +53,7 @@ class LogInPanel extends React.Component {
     window.open("https://prometheus.eecs.oregonstate.edu/token/generate?asid=321398945712335&then=","_blank")
     this.setState( {disabled: !this.state.disabled} )
   }else if (
-    //this.state.OSU_Id.length != 0 && this.state.Password.length != 0 && 
+    //this.state.OSU_Id.length != 0 && this.state.Password.length != 0 &&
     this.state.Token.length!=0){
     let payload=3;
     this.props.updatePage(payload)
@@ -105,7 +105,7 @@ class LogInPanel extends React.Component {
                       <TextField value={this.state.Token}
                         type="Token"
                         placeHolder="Token"
-                         label="Token"
+                         label="Login"
                          disabled={(this.state.disabled)? "disabled" : false}
                          onChange={e => this.setState({Token: e.target.value})}/>
 
@@ -113,7 +113,7 @@ class LogInPanel extends React.Component {
 
                       <br></br>
                         <br></br>
-                      <Button raised color="primary" onClick={(e) => this.successful_login(e)}> Login</Button>
+                      <Button raised color="primary" onClick={(e) => this.successful_login(e)}>Login</Button>
 
                       <div>
                       <br></br>
