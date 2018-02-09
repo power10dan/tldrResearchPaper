@@ -54,7 +54,7 @@ class LogInPanel extends React.Component {
     this.setState( {disabled: !this.state.disabled} )
   }else if (
     //this.state.OSU_Id.length != 0 && this.state.Password.length != 0 &&
-    this.state.Token.length!=0){
+    this.state.Token.length==12){
     let payload=3;
     this.props.updatePage(payload)
     console.log(JSON.parse(JSON.stringify(this.state)));
@@ -78,7 +78,7 @@ class LogInPanel extends React.Component {
                       <div className={classes.root}>
                           <AppBar position="static" title={<span style={loginstyles.title}>Title</span>} titleStyle={loginstyles.title_color} >
                             <Toolbar>
-                              <Typography type="Sign_Up"  color="inherit">
+                              <Typography type="Log_In"  color="inherit">
                                     <h1>Login</h1>
                               </Typography>
                           </Toolbar>
@@ -86,7 +86,6 @@ class LogInPanel extends React.Component {
                     </div>
                       <br></br>
                     <br></br>
-
                     {/*<div>
                        <TextField value={this.state.OSU_Id}
                        placeHolder="Enter OSU ID" label="OSU ID"
@@ -105,7 +104,7 @@ class LogInPanel extends React.Component {
                       <TextField value={this.state.Token}
                         type="Token"
                         placeHolder="Token"
-                         label="Login"
+                         label="Add 12 digit Token"
                          disabled={(this.state.disabled)? "disabled" : false}
                          onChange={e => this.setState({Token: e.target.value})}/>
 
@@ -119,10 +118,11 @@ class LogInPanel extends React.Component {
                       <br></br>
                         <br></br>
                       {/* <a href="#" onClick={this.signup_click}>Dont have an account? Please Sign up </a> */}
+
                       </div>
                     </form>
                 </Paper>
-
+                  <h4>* PLease fill the survey by pressing the Login button <br></br>if token textfield is disabled</h4>
               </Grid>
             ))}
           </Grid>
