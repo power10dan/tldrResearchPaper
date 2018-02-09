@@ -57,15 +57,14 @@ export const FetchPapers = (url, paperId, paperTitle, actionType)=>{
 }
 
 const UploadPaperFunc = (url, filePayLoad)=>{
-	console.log(UploadFileHeader(filePayLoad));
-	console.log("my header")
 	let uploadFileHeader = UploadFileHeader(filePayLoad);
 	return fetch(url, uploadFileHeader);
 }
 
 export const UploadNewPaper = (url, fileToUpload)=>{
+	console.log(fileToUpload)
 	return dispatch => {
-		UploadPaperFunc(url, fileToUpload)
+		UploadPaperFunc(url, UploadPaperFunc(url, fileToUpload))
 			.then((response)=>{
 				if(response.ok){
 					return response.json();
