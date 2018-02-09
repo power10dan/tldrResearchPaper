@@ -16,7 +16,7 @@ function GetContentFromServer(WrappedComp, subscriptionFunction){
 			constructor(props){
 				super(props);
 				this.state={
-					inputData: subscriptionFunction(),
+					inputData: subscriptionFunction,
 				};
 			}
 

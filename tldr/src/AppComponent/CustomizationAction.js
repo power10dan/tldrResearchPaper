@@ -106,17 +106,13 @@ const ResearcherSelection = (props)=>{
 }
 
 class CustomizationListItems extends React.Component{
-	constructor(props){
-		super(props);
-	}
-
 	onClickCard = ( event)=>{
 		let target = event.target.innerHTML;
 		if(target === "Professor" 
 			|| target === "Post-Doc"
 			|| target === "Undergraduate Student"
 			|| target === "Graduate Student"){
-			let payLoad = 1;
+			let payLoad = 2;
 			let researcherPayLoad = target;
 			
 			this.props.updateResearcher(target);

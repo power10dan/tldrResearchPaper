@@ -10,7 +10,7 @@
    (let [add (fn [a b c] (if (not (vector? (a c)))
                           (update c a #(conj [%] b))
                           (update c a #(conj % b))))
-         add-new (fn [a b c] (conj c {a b}))]
+         add-new (fn [a b c] (conj c {a [b]}))]
      (loop [[x y & tail] coll
             acc {}]
        (if (not x)
@@ -23,3 +23,21 @@
   "function accepts a string and returns one with specified characters removed."
   [str]
   (str/replace str "\"" "'"))
+
+(defn parse-int [s]
+  "given a messy string grab the numbers out of it and convert to integers"
+  (try (Integer. (re-find  #"\d+" s ))
+       (catch Exception ex
+         nil)))
+
+(def not-nil? (complement nil?))
+
+(defn map-keys
+  "Given a function and a map apply the function to every key in the map"
+  [f m]
+  (loop [[k & ks] (keys m)
+         [v & vs] (vals m)
+         acc {}]
+    (if (not k)
+      acc
+      (recur ks vs (assoc acc (f k) v)))))

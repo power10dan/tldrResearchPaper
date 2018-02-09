@@ -14,14 +14,14 @@ import ChevronLeftIcon from 'material-ui-icons/ChevronLeft';
 import ChevronRightIcon from 'material-ui-icons/ChevronRight';
 import Face from 'material-ui-icons/Face';
 import FindInPage from 'material-ui-icons/FindInPage';
+import UploadFileButton from '../AppBusinessLogic/UploadFileButton.js';
 
 const drawerWidth = 240;
 
 const styleOfSideBar = theme => ({
 	root: {
 		width: '100%',
-		height: "350px",
-		marginTop: theme.spacing.unit * 3,
+		height: "50px",
 		zIndex: 1,
 		marginTop: "0px",
 	},
@@ -29,7 +29,8 @@ const styleOfSideBar = theme => ({
 		position: 'relative',
 		display: 'flex',
 		width: '100%',
-		height: "350px",
+		height: "50px",
+		marginBottom: "310px"
 	},
 
 	appBar: {
@@ -73,7 +74,7 @@ const styleOfSideBar = theme => ({
 	drawerPaperClose: {
 		width: 60,
 		overflowX: "hidden",
-		height: "800px",
+		minHeight: "1200px",
 		transition: theme.transitions.create('width', {
 			easing: theme.transitions.easing.sharp,
 			duration: theme.transitions.duration.leavingScreen,
@@ -118,27 +119,49 @@ const styleOfSideBar = theme => ({
 		paddingTop: "15px",
 		marginLeft: "-65px",
 		marginBottom: "-72px"
-	}
+	},
+	titleBarStyle: {
+    	flex: 1,
+  	},
+
+  	titleStyle: {
+  		marginLeft: "50px"
+  	}
 });
 
 const DashboardAppBar = (props)=>{
 	const {classes } = props;
 	// we don't want to wrap app bar in another container, so we use React Fragment here
+	let innerComp = null;
+	if(props.CurrPage > 2){
+		innerComp = <Fragment>
+						<IconButton
+			                color="contrast"
+			                aria-label="open drawer"
+			                onClick={props.handleDrawerOpen}
+			                className={classNames(classes.menuButton, props.open && classes.hide)}
+			             >
+			            	<MenuIcon />
+			            </IconButton>
+			             <Typography  type="title" color="inherit" noWrap>
+			                	{props.actionBarTitle}
+			             </Typography>
+			        </Fragment>
+	} else {
+		innerComp =  <Typography className= {classes.titleStyle} type="title" color="inherit" noWrap>
+		                	{props.actionBarTitle}
+		              </Typography>
+	}
+
+
 	return(
 		<Fragment>
 			<AppBar className={classNames(classes.appBar, props.open && classes.appBarShift)}>
 	            <Toolbar disableGutters={!props.open} className={classes.toolBarBackground}>
-		            <IconButton
-		                color="contrast"
-		                aria-label="open drawer"
-		                onClick={props.handleDrawerOpen}
-		                className={classNames(classes.menuButton, props.open && classes.hide)}
-		             >
-		            <MenuIcon />
-		            </IconButton>
-		              <Typography type="title" color="inherit" noWrap>
-		                	{props.actionBarTitle}
-		              </Typography>
+		              {innerComp}
+		              {
+		            	props.CurrPage > 2 ? <UploadFileButton /> : null
+		              }
 		        </Toolbar>
 	        </AppBar>
 	    </Fragment>
@@ -189,19 +212,28 @@ const SideDrawer = (props)=>{
 
 const DashBoardComp = (props)=>{
 	const {classes} = props;
+	let sideBar = null;
+	if(props.currPage > 2){
+		sideBar = <SideDrawer 
+					{...props}
+				 />
+	} else {
+		sideBar = null;
+	}
+
 	return (
-		<div className={classes.root}>
+		<Fragment>
 			<div className={classes.appFrame}>
 				<DashboardAppBar
 					{...props}
+					CurrPage = {props.currPage}
 				/>
 
-				<SideDrawer 
-					{...props}
-				/>
+				{ sideBar }
+				
 				 <Divider className={classes.dividerBottom} />
 			</div>
-		</div>
+		</Fragment>
 	);
 }
 

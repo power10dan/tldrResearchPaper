@@ -6,11 +6,18 @@ const ReducerPapers = (state=InitialStates.CachedPapers, actions) =>{
 	switch(actions.type){
 		case types.CACHED_PAPERS:
 			return {...state, papersQueried: [...state.papersQueried, actions.data]};
+
 		case types.PAPERS_SELECTED:
 			return {...state, papersSelected: [...state.papersSelected, actions.data]};
 
-		case types.CACHED_PAPER_AUTHORS:
-			return {...state, cachedPaperAuthors: [...state.cachedPaperAuthors, actions.data]};
+		case types.CACHED_PAPER_ORIGINAL:
+			return {...state, cachedPaperOriginal: {...state.cachedPaperOriginal, [actions.data.title]:actions.data}};
+
+		case types.CACHED_PAPER_CITED:
+			return {...state, cachedPaperCited: {...state.cachedPaperCited, [actions.data.title]:actions.data}};
+
+		case types.CACHED_PAPER_ORIGINAL_CHILDREN:
+			return {...state, cachedPaperOriginalChildren: {...state.cachedPaperOriginalChildren, [actions.data.title]:actions.data}};
 		default:
 			return state;
 	}
@@ -30,6 +37,8 @@ const ReducerAppState = (state = InitialStates.AppState, actions) => {
 			return {...state, typeOfResearcher: actions.dataPayload};
 		case types.PREF_CONFERENCE:
 			return {...state, prefConference: actions.dataPayload};
+		case types.FILE_TO_UPLOAD:
+			return {...state, selectedFile: actions.dataPayload}
 		default:
 			return state;
 	}

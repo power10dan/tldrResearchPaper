@@ -48,15 +48,15 @@ INSERT INTO docs
 (filename, filestuff)
 VALUES (:filename, :filestuff)
 
--- :name get-doc :? :1
--- :doc retrieves a document record given the id
-SELECT * FROM docs
-WHERE id = :id
-
--- :name get-doc-by-name :? :1
+-- :name get-doc-by-filename :? :1
 -- :doc retrieves a document given the file name
 SELECT * FROM docs
 WHERE filename = :filename
+
+-- :name get-doc-by-id :? :1
+-- :doc retrieves a document given the
+SELECT * FROM docs
+WHERE id = :id
 
 -- :name get-doc-id :? :1
 -- :doc given a filename retrieve that docs doc_id

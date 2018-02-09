@@ -11,10 +11,7 @@ import Paper from 'material-ui/Paper';
 import AppBar from 'material-ui/AppBar';
 import Toolbar from 'material-ui/Toolbar';
 import Typography from 'material-ui/Typography';
-
 import red from 'material-ui/colors/red';
-
-
 
 export const loginstyles = theme => ({
   root: {
@@ -63,7 +60,6 @@ class LogInPanel extends React.Component {
   }
 
   render() {
-
       const { classes } = this.props;
 
       return(
@@ -72,7 +68,6 @@ class LogInPanel extends React.Component {
             <Grid container className={classes.demo} justify="center" >
               {[0].map(value => (
                 <Grid key={value} item>
-
                   <Paper className={classes.paper}>
                     <form class="form-group" >
                       <div className={classes.root}>

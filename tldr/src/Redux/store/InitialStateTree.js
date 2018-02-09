@@ -1,7 +1,9 @@
 export const CachedPapers = {
 	papersQueried: [],
 	papersSelected: [],
-	cachedPaperAuthors: [],
+	cachedPaperOriginal: {},
+	cachedPaperCited: {},
+	cachedPaperOriginalChildren: {},
 };
 
 export const TutorialSettings = {
@@ -10,12 +12,13 @@ export const TutorialSettings = {
 };
 
 export const AppState = {
-	CurrPage: "",
+	CurrPage: 1,
 	isGetToken: false,
 	isLogin: false,
 	token: "",
 	typeResearcher: "",
-	prefConferences: []
+	prefConferences: [],
+	selectedPaper: ""
 };
 
 

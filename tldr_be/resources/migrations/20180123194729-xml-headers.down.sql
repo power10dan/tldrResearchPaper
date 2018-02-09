@@ -1,1 +1,1 @@
-DROP TABLE xml-headers;
+DROP TABLE xml_headers;

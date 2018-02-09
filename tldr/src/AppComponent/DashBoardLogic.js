@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import DashBoardComps from '../AppComponent/DashBoardComps.js';
 
-const DashBoardControlHOC = (DashBoardElem) =>{
+const DashBoardControlHOC = (DashBoardElem, typeOfDashContent, CurrPage) =>{
 	return(
 		class DashBoardControl extends Component{
 			constructor(props){
@@ -9,8 +9,14 @@ const DashBoardControlHOC = (DashBoardElem) =>{
 				this.state={
 					open: false,
 					filterData: ["Author"],
+					currentPage: 0,
 				}
-				this.marginLeft=""
+				this.marginLeft="";
+				
+			}
+
+			componentWillReceiveProps(){
+				this.handleCurrPage();
 			}
 
 			handleDrawerOpen = () => {
@@ -27,7 +33,7 @@ const DashBoardControlHOC = (DashBoardElem) =>{
 				} else{
 					this.marginLeft = "320px";
 				}
-				
+
 				return(
 					<div>
 						<DashBoardComps
@@ -35,6 +41,8 @@ const DashBoardControlHOC = (DashBoardElem) =>{
 							handleDrawerClose={this.handleDrawerClose}
 							open={this.state.open}
 							FilterData={this.state.filterData}
+							actionBarTitle={typeOfDashContent} 
+							currPage={CurrPage}
 						/>	
 						<DashBoardElem 
 							{...this.props}
