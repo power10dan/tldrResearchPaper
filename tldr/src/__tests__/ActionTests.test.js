@@ -4,26 +4,26 @@ import { CachedPaperActionCreator } from '../Redux/Actions/ActionCreators.js';
 
 describe("Tests the action creator function", ()=>{
 	it('tests whether action creator returns a valid action given the correct payload', ()=>{
-		let expectedReturn = { 
-							type: types.CACHED_PAPERS, 
+		let expectedReturn = {
+							type: types.CACHED_PAPERS,
 							data: {
-									forename: "Sir Francis", 
+									forename: "Sir Francis",
 									surname: "The Hun",
-									orgName: "Captain Spiral", 
+									orgName: "Captain Spiral",
 									title: "My Best paper On Spiralling out of control",
 									email: "sir.francis@gmail.com",
 									id: 676,
-									pgid: 464			 
+									pgid: 464
 								},
 						  }
 		let payLoad =   {
-							forename: "Sir Francis", 
+							forename: "Sir Francis",
 							surname: "The Hun",
-							orgName: "Captain Spiral", 
+							orgName: "Captain Spiral",
 							title: "My Best paper On Spiralling out of control",
 							email: "sir.francis@gmail.com",
 							id: 676,
-							pgid: 464			 
+							pgid: 464
 					    };
 
 		let returnedAction = CachedPaperActionCreator(types.CACHED_PAPERS, payLoad );
@@ -40,9 +40,3 @@ describe("Tests the action creator function", ()=>{
 		expect(CachedPaperActionCreator(types.CACHED_PAPERS, incorrectPayLoad)).toEqual(false);
 	});
 });
-
-
-
-
-
-
