@@ -11,10 +11,7 @@ import Paper from 'material-ui/Paper';
 import AppBar from 'material-ui/AppBar';
 import Toolbar from 'material-ui/Toolbar';
 import Typography from 'material-ui/Typography';
-
 import red from 'material-ui/colors/red';
-
-
 
 export const loginstyles = theme => ({
   root: {

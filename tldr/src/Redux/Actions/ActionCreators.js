@@ -59,7 +59,8 @@ export const FetchPapers = (url, paperId, paperTitle, actionType)=>{
 const UploadPaperFunc = (url, filePayLoad)=>{
 	console.log(UploadFileHeader(filePayLoad));
 	console.log("my header")
-	return fetch(url, UploadFileHeader(filePayLoad));
+	let uploadFileHeader = UploadFileHeader(filePayLoad);
+	return fetch(url, uploadFileHeader);
 }
 
 export const UploadNewPaper = (url, fileToUpload)=>{

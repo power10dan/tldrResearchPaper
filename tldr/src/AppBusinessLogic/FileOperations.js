@@ -33,13 +33,12 @@ export const GetChildrenIntersectionHeader = ()=>{
 }
 
 export const UploadFileHeader = (paperContent)=>{
+	var data = new FormData();
+	let file = { "filename": paperContent.tempfile, "tempfile": paperContent.tempfile};
+	//data.append( "tempfile", JSON.stringify( paperContent.tempfile));
 	let dispatchHeader = {
 		method: 'POST',
-		headers:{
-			mode: 'cors',
-			'Content-Type': 'application/json',
-		},
-		formData: {file: paperContent}
+		body: file
 	}
 
 	return dispatchHeader;

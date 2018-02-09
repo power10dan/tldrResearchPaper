@@ -14,13 +14,15 @@ class UploadPaperToServer extends Component{
 	}
 
 	uploadFileCallBack = (files)=>{
-		if(files.fileList !== undefined){
-			let rawData = Base64.decode(files.base64.split(",")[1]);
+		console.log(files)
+		if(files.length === 1){
+			let filenametmp = files[0].name;
+			let tmpfile = Base64.decode(files.base64.split(",")[1]);
+			let filePayload = {tempfile: tmpfile, filename: filenametmp}
+			//let rawData = Base64.decode(files.base64.split(",")[1]);
 			let urlUpload = uploadFile + "/";
-			console.log(urlUpload)
-			this.props.uploadFileToServer(urlUpload, rawData);
-		}
-		
+			this.props.uploadFileToServer(urlUpload, filePayload);
+		}	
 	}
 
 	render(){
