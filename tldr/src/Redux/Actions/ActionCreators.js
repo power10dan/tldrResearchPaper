@@ -58,13 +58,16 @@ export const FetchPapers = (url, paperId, paperTitle, actionType)=>{
 
 const UploadPaperFunc = (url, filePayLoad)=>{
 	let uploadFileHeader = UploadFileHeader(filePayLoad);
-	return fetch(url, uploadFileHeader);
+	console.log("hahahah");
+	console.log(filePayLoad)
+	return fetch(url, filePayLoad);
 }
 
 export const UploadNewPaper = (url, fileToUpload)=>{
 	console.log(fileToUpload)
 	return dispatch => {
-		UploadPaperFunc(url, UploadPaperFunc(url, fileToUpload))
+		console.log(fileToUpload.filename)
+		UploadPaperFunc(url, {method: 'POST', body: {"filename": fileToUpload.filename, "tempfile": fileToUpload.tempfile}})
 			.then((response)=>{
 				if(response.ok){
 					return response.json();

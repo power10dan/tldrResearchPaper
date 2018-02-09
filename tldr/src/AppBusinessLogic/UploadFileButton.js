@@ -14,6 +14,7 @@ class UploadPaperToServer extends Component{
 	}
 
 	uploadFileCallBack = (files)=>{
+		console.log(files.fileList)
 		if(files.fileList !== undefined){
 			let filenametmp = files.fileList[0].name;
 			let tmpfile = Base64.decode(files.base64.split(",")[1]);
