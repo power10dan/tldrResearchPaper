@@ -13,7 +13,8 @@ import LogIn  from './AppComponent/LogIn.js';
 import SignUp from './AppComponent/SignUp.js';
 import ConferencePaperPanels from './AppComponent/MainSelectionPage.js';
 import { FetchPapers, FetchNumberNodes} from './Redux/Actions/ActionCreators.js';
-import { getChildrenUnion, getNumNodes} from './AppUrlConstants.js';
+import { getNumNodes, getChildrenUnion} from './AppUrlConstants.js';
+import * as types from './Redux/Actions/ActionConstants.js';
 
 class App extends Component {
     constructor(props){
@@ -24,6 +25,8 @@ class App extends Component {
             idOfPaper: props.selectedPaper.id,
             downloadFinish: false,
             uploadFileArr: [],
+            originalFiles: [],
+            citedFiles: [],
         }    
     }
 
@@ -33,37 +36,45 @@ class App extends Component {
         this.setState({uploadFileArr: nextProp.papersQueried});
     }
 
-    componentWillMount(){
+    componentDidMount(){
         this.populateRedux();
     }
 
-    populateRedux = ()=>{
-      let defaultPopulateNode = 3; 
-      let urlForFetch = getNumNodes + "/"+ "?numNodes=" + defaultPopulateNode;
-      this.props.getNumNode(urlForFetch, defaultPopulateNode);
+    populateRedux = () => {
+        let defaultPopulateNode = 14; 
+        let urlForFetch = getNumNodes + "/"+ "?numNodes=" + defaultPopulateNode;
+        this.props.getNumNode(urlForFetch, defaultPopulateNode);
     }
 
-  
+    seperateChildrenByLabel = ()=>{
+         let originalFile = [];
+         let citedFile = [];
+         this.state.uploadFileArr.map((elem)=>{
+            if(elem.labels[0] === "Original"){
+                originalFile.push(elem);
+            } else {
+                citedFile.push(elem);
+            }
+         });
+
+         return [originalFile, citedFile];
+        
+    }
+
     render() {
-      let CustomizationListWithStyle = withStyles(styles)(CustomizationList);
+      let arrSeparated = this.seperateChildrenByLabel();
+      
+      let CustomizationListWithStyle = withStyles(styles)(CustomizationList);    
       let DownloadedContent = GetContentFromServer( CustomizationListWithStyle,  
                                                     DataSubscriptionDummyFunc());
-      let PapersPanel = GetContentFromServer(
-                                              ConferencePaperPanels, 
-                                              this.state.uploadFileArr
-                                           );
+      let combinedData = {uploadedFile: this.state.uploadFileArr, originalCitedSep: arrSeparated}
+      let PapersPanel = GetContentFromServer( ConferencePaperPanels, 
+                                              combinedData);
+
       let ConfPanel = GetContentFromServer( ConferenceExpansionPanel, 
                                             DataSubscriptionConference());
 
   	  let StyledCustomizationComponent = withStyles(styles)(DownloadedContent);
-      
-      if(this.state.paperUpload !== ""){
-          let urlForFetch = getChildrenUnion + "/" + "?id=" + this.state.paperUpload;
-          this.props.getFileChildrenUnion( urlForFetch,  
-                                           this.state.idOfPaper, 
-                                           this.state.paperUpload);
-      } 
-    
       let CustomPage = null;
 
       if(this.state.CurrPage === 0){
@@ -96,8 +107,8 @@ const mapStateToProps = (state)=>{
 
 const mapDispatchToProps = (dispatch)=>{
     return({
-        getFileChildrenUnion: (urlFetch, idOfPaper, titleOfPaper)=>{dispatch(FetchPapers(urlFetch, idOfPaper, titleOfPaper))},
-        getNumNode: (url, numNode)=>{dispatch(FetchNumberNodes(url, numNode))}
+        getNumNode: (url, numNode)=>{dispatch(FetchNumberNodes(url, numNode))},
+        fetchOriginalPapers: (url, paperId, title)=>{dispatch(FetchNumberNodes(url, paperId, title, types.CACHED_PAPER_ORIGINAL_CHILDREN))}
     });
 }
 

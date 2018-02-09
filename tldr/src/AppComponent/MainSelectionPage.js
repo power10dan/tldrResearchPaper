@@ -10,25 +10,30 @@ import Typography from 'material-ui/Typography';
 import ExpandMoreIcon from 'material-ui-icons/ExpandMore';
 import Button from 'material-ui/Button';
 import GraphControl from '../AppBusinessLogic/GraphBusinessLogic.js';
+import Divider from 'material-ui/Divider';
+import Chip from 'material-ui/Chip';
+
 
 const conferencePanelStyle = theme=>({
 	divProps:{
 		marginTop: "-260px",
 		width: "800px",
-		marginLeft: "120px",
+		marginLeft: "160px",
 	},
 	heading: {
-		fontSize: theme.typography.pxToRem(25),
+		fontSize: theme.typography.pxToRem(15),
 		fontFamily: 'Dosis, sans-serif',
-		flexBasis: '10.33%',
+		flexBasis: '35.33%',
 		flexShrink: 0,
-		textAlign: "left",
-		marginBottom: "5px"
+		textAlign: "left"
 	},
 
 	secondaryHeading:{
-		fontSize: theme.typography.pxToRem(10),
-		color: theme.palette.text.secondary
+		fontSize: theme.typography.pxToRem(15),
+		color: theme.palette.text.secondary,
+		fontFamily: 'Dosis, sans-serif',
+		paddingLeft: "65px",
+		paddingTop: "15px",
 	},
 
 	expansionPanelProps:{
@@ -47,47 +52,65 @@ const conferencePanelStyle = theme=>({
 		height: "10px",
 	},
 
-	cardProps:{
-		marginBottom: "25px",
-		
+	
+	expandSummary:{
+		width: "800px"
 	},
 
-	cardContentProps:{
-		marginLeft: "55px",
+	chip:{
+		backgroundColor: "#90CAF9",
+		color: "#FAFAFA",
+		position: "absolute",
+    	right: "95px",
+    	top: "20px"
 	}
 
 })
 
 const ConferencePaperPanels = (props)=>{
 	const {classes} = props;
-
-    let newFileArray = [];
-    props.data.map((elem)=>{
-        let title = elem.title;
-        if(title.split(' ').length > 5){
-            let newTitle = title.split(' ').slice(0,3).join(" ") + "..."
-            newFileArray.push(newTitle);
-        }
+    let surNameArr = [];
+    props.data.uploadedFile.map((elem)=>{
+    	let surName = elem.surname;
+    	let newSurName = surName[0] + " " + "et al.";
+    	surNameArr.push(newSurName);
     });
 
 	return(
 		<div className={classes.divProps} >
-		{
-			props.data.map((elem,idx)=>{
-				return(
-					<Fragment>
-						<Typography className={classes.heading} >
-							{elem.title}
-						</Typography>
+			{
+				props.data.uploadedFile.map((elem,idx)=>{
+					return(
+						<Fragment>
+							<ExpansionPanel>
+								<ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} >
+									<Typography className={classes.heading} >
+										{elem.title}
+									</Typography>
+									<Typography className={classes.secondaryHeading} >
+										{surNameArr[idx]}
+									</Typography>
+									<Chip label={elem.labels[0]} className={classes.chip} />
+								</ExpansionPanelSummary>
+								<Divider />
 
-						<GraphControl
-							data={newFileArray[idx]}
-							type={"cited"}
-						/>
-					</Fragment>
-				)
-			})
-		}
+								<ExpansionPanelDetails className={classes.ExpansionPanelDetails}>
+									{
+										elem.labels[0] === "Original" ? <GraphControl
+																			data={props.data.originalCitedSep[0][idx]}
+																			type={elem.labels[0]}
+																		/> : <GraphControl
+																			data={props.data.originalCitedSep[1][idx]}
+																			type={elem.labels[0]}
+																		/>
+
+									}
+								</ExpansionPanelDetails>
+							</ExpansionPanel>
+						</Fragment>
+					)
+				})
+			}
 		</div>
 	);
 }

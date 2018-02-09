@@ -1,8 +1,9 @@
 import React, { Component, Fragment} from 'react';
-import { AppStateActionCreator } from '../Redux/Actions/ActionCreators.js';
+import { UploadNewPaper } from '../Redux/Actions/ActionCreators.js';
 import { uploadFile } from '../AppUrlConstants.js';
 import { connect } from 'react-redux';
 import ButtonUpload from '../AppComponent/UploadButton.js';
+import { Base64 } from 'js-base64';
 
 class UploadPaperToServer extends Component{
 	constructor(props){
@@ -12,14 +13,14 @@ class UploadPaperToServer extends Component{
 		}
 	}
 
-	uploadFileCallBack = (fileObj)=>{
-		console.log(fileObj)
-		if(fileObj !== undefined){
-			console.log(fileObj.fileList[0].name);
-			console.log("hello world");
-			let payLoad = fileObj;
-			this.props.uploadFileToRedux(payLoad);
+	uploadFileCallBack = (files)=>{
+		if(files.fileList !== undefined){
+			let rawData = Base64.decode(files.base64.split(",")[1]);
+			let urlUpload = uploadFile + "/";
+			console.log(urlUpload)
+			this.props.uploadFileToServer(urlUpload, rawData);
 		}
+		
 	}
 
 	render(){
@@ -34,7 +35,7 @@ class UploadPaperToServer extends Component{
 
 const mapDispatchToProps = (dispatch)=>{
 	return({
-		uploadFileToRedux: (payLoad)=>{dispatch(AppStateActionCreator(payLoad))},
+		uploadFileToServer: (url, payLoad)=>{dispatch(UploadNewPaper(url, payLoad))},
 	})
 }
 

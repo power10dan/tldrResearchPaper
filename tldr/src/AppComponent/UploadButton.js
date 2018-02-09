@@ -17,7 +17,7 @@ const style = theme=>({
 const ButtonUpload = (props)=>{
 	const { classes } = props;
 	return(
-		<ReactFileReader handleFiles={props.uploadFile}>
+		<ReactFileReader fileTypes={[".pdf"]} base64={true} handleFiles={props.uploadFile}>
 			<Button color={"accent"}
 				onClick={props.uploadFile} 
 				className={classes.buttonBackground}

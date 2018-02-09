@@ -41,6 +41,8 @@ export const UploadFileHeader = (paperContent)=>{
 		},
 		formData: {file: paperContent}
 	}
+
+	return dispatchHeader;
 }
 
 export const GetNumNodeHeader = ()=>{

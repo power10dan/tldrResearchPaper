@@ -3,7 +3,7 @@ import {
           GetChildrenUnionHeader, 
           GetChildrenIntersectionHeader,
           GetNumNodeHeader,
-          UploadFile
+          UploadFileHeader
         } from '../../AppBusinessLogic/FileOperations.js';
 
 export const CachedPaperActionCreator = (actionType, dataPayload) =>{
@@ -33,8 +33,7 @@ export const FetchNumberNodes = (url, numNode)=>{
 			}).then((res)=>{
 				res.map(elem=>{
 					dispatch(CachedPaperActionCreator(actionTypes.CACHED_PAPERS, elem));
-				})
-				
+				});
 			}).catch((err)=>{
 		 	   console.log(err);
 			})
@@ -42,30 +41,30 @@ export const FetchNumberNodes = (url, numNode)=>{
 
 }
 
-export const FetchPapers = (url, paperId, paperTitle)=>{
+export const FetchPapers = (url, paperId, paperTitle, actionType)=>{
 	return dispatch =>{
 		FetchPaperChildren(url, paperId, paperTitle)
 		.then((response)=>{
 			return response.json();
 		}).then((res)=>{
 			res.map(elem=>{
-				dispatch(
-					CachedPaperActionCreator( actionTypes.CACHED_PAPERS, elem)
-				);
-			});
+				dispatch(CachedPaperActionCreator(actionType, elem));
+			})
 		}).catch((err)=>{
 			console.log(err);
 		});
 	}
 }
 
-const UploadPaper = (url, filePayLoad)=>{
-	return fetch(url, UploadPaper(filePayLoad));
+const UploadPaperFunc = (url, filePayLoad)=>{
+	console.log(UploadFileHeader(filePayLoad));
+	console.log("my header")
+	return fetch(url, UploadFileHeader(filePayLoad));
 }
 
 export const UploadNewPaper = (url, fileToUpload)=>{
 	return dispatch => {
-		UploadPaper(url, fileToUpload)
+		UploadPaperFunc(url, fileToUpload)
 			.then((response)=>{
 				if(response.ok){
 					return response.json();

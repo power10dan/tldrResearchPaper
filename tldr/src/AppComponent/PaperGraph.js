@@ -5,24 +5,34 @@ import React from 'react';
 function transformDataToNode(rawData, type){
 	let data = {
 		nodes: [
-				{id: 1, label: "Hello"}, 
-				{id: 2, label: "boohoo"}, 
-				{id: 3, label: "mooho"}, 
-				{id: 4, label: "moon"},
-				{id: 5, label: "bae"}],
-		edges:[]		
-			
+					{id: 2, label: "boohoo"}, 
+					{id: 3, label: "mooho"}, 
+					{id: 4, label: "moon"},
+					{id: 5, label: "bae"}
+			   ],
+		edges:[]			
 	}
 
-	if(type==="cited"){
-		console.log("hi")
-		data.nodes.push({id: 6, label:rawData});
-		data.edges.push({from: 6, to: 1})
+	if(type==="Original"){
+		data.nodes.push({id: 6, 
+						 widthConstraint: {minimum: 10}, 
+						 heightConstraint: { minimum: 30 }, 
+						 label:rawData, 
+						 color: '#FF9800', 
+						 font: '15px Dosis' });
 		data.edges.push({from: 6, to: 2})
 		data.edges.push({from: 6, to: 3})
 		data.edges.push({from: 6, to: 4})
 		data.edges.push({from: 6, to: 5})
-	} 
+	}  else {
+		data.nodes.push({id: 6, 
+						 widthConstraint: {minimum: 10}, 
+						 heightConstraint: { minimum: 30 }, 
+						 label:rawData, 
+						 color: '#FF9800', 
+						 font: '15px Dosis' });
+		data.edges.push({from: 6, to: 2})
+	}
 
 	return data;
 }
@@ -30,20 +40,17 @@ function transformDataToNode(rawData, type){
 const configGeneration =()=>{
 	let myConfig = {
 		layout: {
-		    hierarchical: true
+		    hierarchical: false
 		},
 		
 		edges: {
 		   color: "#000000"
 		},
 
-		interaction:{
-			zoomView:false,
+		nodes:{
+			size: 25,
 		},
 
-		manipulation:{
-			enabled: false
-		}
 		
 	}
 
@@ -56,7 +63,6 @@ const events = ()=>{
         	const { nodes, edges } = event;
     	}
 	}
-
 	return event;	 
 }
 
@@ -70,7 +76,7 @@ function GraphComp(props){
 			graph={data}
 			options={myConfig}
 			events={eventsCallback}
-			style={{height: "250px"}}
+			style={{height: "350px", width: "550px"}}
 		/>
 	);
 }

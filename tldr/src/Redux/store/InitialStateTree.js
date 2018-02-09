@@ -1,7 +1,9 @@
 export const CachedPapers = {
 	papersQueried: [],
 	papersSelected: [],
-	cachedPaperAuthors: [],
+	cachedPaperOriginal: {},
+	cachedPaperCited: {},
+	cachedPaperOriginalChildren: {},
 };
 
 export const TutorialSettings = {
