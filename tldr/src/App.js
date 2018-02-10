@@ -50,15 +50,23 @@ class App extends Component {
          let originalFile = [];
          let citedFile = [];
          this.state.uploadFileArr.map((elem)=>{
-            if(elem.labels[0] === "Original"){
+            if(elem.labels[0] === "Uploaded"){
                 originalFile.push(elem);
             } else {
                 citedFile.push(elem);
             }
          });
 
-         return [originalFile, citedFile];
-        
+         return [originalFile, citedFile];    
+    }
+     // fetch all of the children of all of the 
+    // original papers. We are passing this as a prop. 
+    getChildrenOfOriginalPaper = (originalPapers)=>{
+          console.log(originalPapers)
+          let originalPaperUrl = getChildrenUnion;
+          let paperQuery = getChildrenUnion + "/" + "?id=" + originalPapers.id+ "/";
+          console.log(paperQuery);
+          this.props.fetchOriginalPapers(paperQuery, originalPapers.id, originalPapers.title, types.CACHED_PAPER_ORIGINAL_CHILDREN);
     }
 
     render() {
@@ -67,7 +75,11 @@ class App extends Component {
       let CustomizationListWithStyle = withStyles(styles)(CustomizationList);    
       let DownloadedContent = GetContentFromServer( CustomizationListWithStyle,  
                                                     DataSubscriptionDummyFunc());
-      let combinedData = {uploadedFile: this.state.uploadFileArr, originalCitedSep: arrSeparated}
+     
+      let combinedData = {  
+                          uploadedFile: this.state.uploadFileArr, 
+                          originalCitedSep: arrSeparated,
+                          callBackGetOriginalPaper: this.getChildrenOfOriginalPaper}
       let PapersPanel = GetContentFromServer( ConferencePaperPanels, 
                                               combinedData);
 
@@ -108,7 +120,7 @@ const mapStateToProps = (state)=>{
 const mapDispatchToProps = (dispatch)=>{
     return({
         getNumNode: (url, numNode)=>{dispatch(FetchNumberNodes(url, numNode))},
-        fetchOriginalPapers: (url, paperId, title)=>{dispatch(FetchNumberNodes(url, paperId, title, types.CACHED_PAPER_ORIGINAL_CHILDREN))}
+        fetchOriginalPapers: (url, paperId, title)=>{dispatch(FetchPapers(url, paperId, title, types.CACHED_PAPER_ORIGINAL_CHILDREN))}
     });
 }
 

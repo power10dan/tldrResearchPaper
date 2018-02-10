@@ -17,7 +17,7 @@ class UploadPaperToServer extends Component{
 		console.log(files.fileList)
 		if(files.fileList !== undefined){
 			let filenametmp = files.fileList[0].name;
-			let tmpfile = Base64.decode(files.base64.split(",")[1]);
+			let tmpfile = files.base64.split(",")[1];
 			let filePayload = {tempfile: tmpfile, filename: filenametmp}
 			//let rawData = Base64.decode(files.base64.split(",")[1]);
 			let urlUpload = uploadFile + "/";

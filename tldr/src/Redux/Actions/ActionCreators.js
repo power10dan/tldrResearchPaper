@@ -47,6 +47,7 @@ export const FetchPapers = (url, paperId, paperTitle, actionType)=>{
 		.then((response)=>{
 			return response.json();
 		}).then((res)=>{
+			console.log(res);
 			res.map(elem=>{
 				dispatch(CachedPaperActionCreator(actionType, elem));
 			})
@@ -58,22 +59,30 @@ export const FetchPapers = (url, paperId, paperTitle, actionType)=>{
 
 const UploadPaperFunc = (url, filePayLoad)=>{
 	let uploadFileHeader = UploadFileHeader(filePayLoad);
-	console.log("hahahah");
-	console.log(filePayLoad)
 	return fetch(url, filePayLoad);
 }
 
 export const UploadNewPaper = (url, fileToUpload)=>{
 	console.log(fileToUpload)
 	return dispatch => {
-		console.log(fileToUpload.filename)
-		UploadPaperFunc(url, {method: 'POST', body: {"filename": fileToUpload.filename, "tempfile": fileToUpload.tempfile}})
-			.then((response)=>{
-				if(response.ok){
-					return response.json();
-				}
-			}).catch((err)=>{
-				console.log(err);
-			});
+		 var FormData = require('form-data');
+	     var form = new FormData();
+	     form.append('filename', fileToUpload.filename);
+	     form.append('file', fileToUpload.tempfile);
+	     UploadPaperFunc(url, {
+	          method: 'POST',
+	          headers: {
+	              mode:'cors'
+	          },
+	          body: form}
+	      )
+	     .then((response)=>{
+	        if(response.ok){
+	        	console.log(response)
+	            return response;
+	        }
+	      }).catch((err)=>{
+	        console.log(err);
+	      });
 	}
 }

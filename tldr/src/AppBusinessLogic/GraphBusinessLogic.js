@@ -12,28 +12,11 @@ class GraphControl extends Component{
 			data: props.data,
 			originalPaperChildren: []
 		}
-		if(props.type === "Original"){
-			this.getChildrenOfOriginalPaper(props.data)
-		}
 	}
 
 	onClickFilter = (nodeId)=>{
 		console.log(nodeId);
 	}
-
-    // fetch all of the children of all of the 
-    // original papers 
-    getChildrenOfOriginalPaper = (originalPapers)=>{
-    	let originalPaperUrl = getChildrenUnion;
-    	console.log(originalPapers)
-
-   		let paperQuery = getChildrenUnion + "/" + "?id=" + originalPapers.id+ "/";
-   		this.props.fetchOriginalPapers(paperQuery, originalPapers.id, originalPapers.title);
-    	
-    	//let child = this.props.fetchOriginalPapers(paperQuery, originalPaperId, originalPapersTitle);
-    	//return 
-    }
-
 	render(){
 		return(
 			<GraphComp

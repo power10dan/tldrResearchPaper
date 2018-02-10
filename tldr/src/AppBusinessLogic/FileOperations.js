@@ -33,11 +33,25 @@ export const GetChildrenIntersectionHeader = ()=>{
 }
 
 export const UploadFileHeader = (paperContent)=>{
-	let file = { "filename": paperContent.filename, "tempfile": paperContent.tempfile};
+	console.log(paperContent)
+	var form = new FormData();
+	console.log(paperContent)
+	form.append("filename", paperContent.filename);
+	form.append("tempfile", paperContent.tempfile);
+
 	//data.append( "tempfile", JSON.stringify( paperContent.tempfile));
 	let dispatchHeader = {
-		method: 'POST',
-		body: file
+		"async": true,
+		 "crossDomain": true,
+		 "method": "POST",
+		  "headers": {
+		    "Cache-Control": "no-cache",
+   			"Postman-Token": "4328a6de-f86c-eb0c-8bed-fc79e1879edd"
+		  },
+		  "processData": false,
+		  "contentType": false,
+		  "mimeType": "multipart/form-data",
+		  "data": form
 	}
 
 	return dispatchHeader;

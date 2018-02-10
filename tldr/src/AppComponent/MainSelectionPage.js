@@ -71,10 +71,19 @@ const ConferencePaperPanels = (props)=>{
 	const {classes} = props;
     let surNameArr = [];
     props.data.uploadedFile.map((elem)=>{
-    	let surName = elem.surname;
-    	let newSurName = surName[0] + " " + "et al.";
-    	surNameArr.push(newSurName);
+    	if(elem.surname !== undefined){
+	    	let surName = elem.surname;
+	    	let newSurName = surName[0] + " " + "et al.";
+	    	surNameArr.push(newSurName);
+	    } else {
+	    	let surNamePlaceHolder = "No Surname available";
+	    	surNameArr.push(surNamePlaceHolder);
+	    }
     });
+
+    props.data.originalCitedSep[0].map((elem)=>{
+    	props.data.callBackGetOriginalPaper(elem);
+    })
 
 	return(
 		<div className={classes.divProps} >
