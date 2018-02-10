@@ -17,7 +17,7 @@
       (do
         (insert-neo4j (#(first (split % #"\."))
                            (get-in req [:params :file :filename])))
-        (http/created res))
+        (http/created res res));; (http/created url body)
       (http/bad-request res))))
 
 
