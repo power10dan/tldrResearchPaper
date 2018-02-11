@@ -3,8 +3,6 @@ import * as InitialStates from '../store/InitialStateTree.js';
 import { combineReducers } from 'redux';
 
 const ReducerPapers = (state=InitialStates.CachedPapers, actions) =>{
-	console.log("hahah i am in reducers")
-	console.log(actions);
 	switch(actions.type){
 		case types.CACHED_PAPERS:
 			return {...state, papersQueried: [...state.papersQueried, actions.data]};

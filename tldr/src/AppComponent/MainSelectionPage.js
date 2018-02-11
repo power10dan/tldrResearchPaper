@@ -63,6 +63,11 @@ const conferencePanelStyle = theme=>({
 		position: "absolute",
     	right: "95px",
     	top: "20px"
+	},
+
+	border:{
+
+		
 	}
 
 })
@@ -70,7 +75,12 @@ const conferencePanelStyle = theme=>({
 const ConferencePaperPanels = (props)=>{
 	const {classes} = props;
     let surNameArr = [];
-    props.data.uploadedFile.map((elem)=>{
+    let shorterTitle = [];
+    props.data.map((elem)=>{
+    	if(elem.title[0].split('').length > 5){
+    		shorterTitle.push(elem.title.slice(0,4));
+    	}
+
     	if(elem.surname !== undefined){
 	    	let surName = elem.surname;
 	    	let newSurName = surName[0] + " " + "et al.";
@@ -81,20 +91,16 @@ const ConferencePaperPanels = (props)=>{
 	    }
     });
 
-    props.data.originalCitedSep[0].map((elem)=>{
-    	props.data.callBackGetOriginalPaper(elem);
-    })
-
 	return(
 		<div className={classes.divProps} >
 			{
-				props.data.uploadedFile.map((elem,idx)=>{
+				props.data.map((elem,idx)=>{
 					return(
 						<Fragment>
 							<ExpansionPanel>
 								<ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} >
 									<Typography className={classes.heading} >
-										{elem.title}
+										{shorterTitle[idx]}
 									</Typography>
 									<Typography className={classes.secondaryHeading} >
 										{surNameArr[idx]}
@@ -102,19 +108,15 @@ const ConferencePaperPanels = (props)=>{
 									<Chip label={elem.labels[0]} className={classes.chip} />
 								</ExpansionPanelSummary>
 								<Divider />
-
 								<ExpansionPanelDetails className={classes.ExpansionPanelDetails}>
-									{
-										elem.labels[0] === "Original" ? <GraphControl
-																			data={props.data.originalCitedSep[0][idx]}
-																			type={elem.labels[0]}
-																		/> : <GraphControl
-																			data={props.data.originalCitedSep[1][idx]}
-																			type={elem.labels[0]}
-																		/>
-
-									}
+									<div className={classes.border}>
+										<GraphControl 
+											currPaper={elem}
+											typeOfPaper={elem.labels[0]}
+										 />
+									</div>
 								</ExpansionPanelDetails>
+
 							</ExpansionPanel>
 						</Fragment>
 					)

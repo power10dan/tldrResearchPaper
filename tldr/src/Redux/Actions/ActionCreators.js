@@ -47,10 +47,8 @@ export const FetchPapers = (url, paperId, paperTitle, actionType)=>{
 		.then((response)=>{
 			return response.json();
 		}).then((res)=>{
-			console.log(res);
-			res.map(elem=>{
-				dispatch(CachedPaperActionCreator(actionType, elem));
-			})
+			let titleChildrenPair = {title: paperTitle, children: res};
+			dispatch(CachedPaperActionCreator(actionType, titleChildrenPair));
 		}).catch((err)=>{
 			console.log(err);
 		});
@@ -77,8 +75,8 @@ export const UploadNewPaper = (url, fileToUpload)=>{
 	          body: form}
 	      )
 	     .then((response)=>{
+	     	console.log(response)
 	        if(response.ok){
-	        	console.log(response)
 	            return response;
 	        }
 	      }).catch((err)=>{

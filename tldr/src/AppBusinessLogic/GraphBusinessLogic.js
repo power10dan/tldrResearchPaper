@@ -9,8 +9,10 @@ class GraphControl extends Component{
 	constructor(props){
 		super(props);
 		this.state = {
-			data: props.data,
-			originalPaperChildren: []
+			data: props.cachedPaperOriginalChildren,
+			currPaper: props.currPaper,
+			typeOfPaper: props.typeOfPaper,
+			children: props.cachedPaperOriginalChildren
 		}
 	}
 
@@ -18,13 +20,30 @@ class GraphControl extends Component{
 		console.log(nodeId);
 	}
 	render(){
-		return(
-			<GraphComp
-				data={this.props.data}
-				type={this.props.type}
-				nodeCallBack = {this.onClickNode}
-			/>
-		)
+		if(this.state.typeOfPaper === "Uploaded"){
+			return(
+				<GraphComp
+					rootNode={this.state.currPaper}
+					citedNode={this.state.children[this.state.currPaper.title].children}
+					typeOfPap={this.state.typeOfPaper}
+				/>
+			) 
+		} else {
+			return(
+				<GraphComp
+					node={this.state.currPaper}
+					typeOfPap={this.state.typeOfPaper}
+				/>
+			) 	
+		}
+	}
+}
+
+const mapStateToProps = (state)=>{
+	const { cachedPaperOriginalChildren } = state.ReducerPapers
+	
+	return {
+		cachedPaperOriginalChildren
 	}
 }
 
@@ -33,4 +52,4 @@ const mapDispatchToProps = (dispatch)=>{
 		fetchOriginalPapers: (url, paperId, title)=>{dispatch(FetchNumberNodes(url, paperId, title, types.CACHED_PAPER_ORIGINAL_CHILDREN))}
 	})
 }
-export default connect(null, mapDispatchToProps)(GraphControl);
+export default connect(mapStateToProps, mapDispatchToProps)(GraphControl);

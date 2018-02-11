@@ -65,23 +65,21 @@ class App extends Component {
           console.log(originalPapers)
           let originalPaperUrl = getChildrenUnion;
           let paperQuery = getChildrenUnion + "/" + "?id=" + originalPapers.id+ "/";
-          console.log(paperQuery);
           this.props.fetchOriginalPapers(paperQuery, originalPapers.id, originalPapers.title, types.CACHED_PAPER_ORIGINAL_CHILDREN);
     }
 
     render() {
       let arrSeparated = this.seperateChildrenByLabel();
+      arrSeparated[0].map((elem)=>{
+          this.getChildrenOfOriginalPaper(elem);
+      })
       
       let CustomizationListWithStyle = withStyles(styles)(CustomizationList);    
       let DownloadedContent = GetContentFromServer( CustomizationListWithStyle,  
                                                     DataSubscriptionDummyFunc());
-     
-      let combinedData = {  
-                          uploadedFile: this.state.uploadFileArr, 
-                          originalCitedSep: arrSeparated,
-                          callBackGetOriginalPaper: this.getChildrenOfOriginalPaper}
+    
       let PapersPanel = GetContentFromServer( ConferencePaperPanels, 
-                                              combinedData);
+                                              this.state.uploadFileArr);
 
       let ConfPanel = GetContentFromServer( ConferenceExpansionPanel, 
                                             DataSubscriptionConference());
