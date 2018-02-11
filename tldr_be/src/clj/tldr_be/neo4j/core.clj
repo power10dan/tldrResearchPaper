@@ -58,7 +58,7 @@
     (some #(= % @parent-label) (:labels node))))
 
 
-(defn handler-wrapper
+(defn core-wrapper
   "Given a function that performs a neo4j query. Wrap the function nice and pretty
   for the handler"
   [f & ts]
