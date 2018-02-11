@@ -1,1 +1,1 @@
-DROP TABLE xml-refs;
+DROP TABLE xml_refs;

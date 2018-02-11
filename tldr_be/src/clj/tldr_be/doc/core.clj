@@ -12,6 +12,7 @@
             [clojure.string :refer [split]]
             [byte-streams :as bs]
             [clojure.xml :as xml]
+            [clojure.tools.logging :as log]
             [tldr-be.utils.core :refer [parse-int]]
             [tldr-be.doc.pdf-parse :as pdf]
             [tldr-be.doc.engines :as eng]
@@ -37,11 +38,12 @@
   to pull out the postgres id (pgid), with either pull out the file, if neither
   works return failure"
   [params]
-  (let [fname (:filename params)
-        pgid (:pgid params)]
-    (if (or fname pgid)
-      [true (cond fname (get-doc-by-filename {:filename fname})
-                  pgid (get-doc-by-id {:id (parse-int pgid)}))]
+  (log/info "getting " params)
+  (let [fname (get params "filename")
+        pgid (get params "pgid")]
+    (if (or pgid fname)
+      [true (cond pgid (get-doc-by-id {:id (parse-int pgid)})
+                  fname (get-doc-by-filename {:filename fname}))]
       [false ("file could not be found")])))
 
 
@@ -87,6 +89,7 @@
   "Given a filemap, like: {:id id :filename \"filename\" :filestuff bytea} process
   the file and return the parsed xml headers from the file"
   [filemap]
+  (println "Running headers on: " filemap)
   (eng/pdf-to-xml-engine filemap
                          get-xml-headers-by-filename
                          insert-xml-headers!
@@ -137,20 +140,28 @@
        (filter #(not (= :title (first %))))
        (map #(doall (cons :title %)))))
 
+(defn process-headers
+  [fname]
+  (->> fname
+       (fname-to-cljmap pdf-to-xml-headers)
+       get-sections
+       make-sections
+       (map collect)
+       second))
+
+(defn process-refs
+  [fname]
+  (->> fname
+       (fname-to-cljmap pdf-to-xml-refs)
+       get-sections
+       make-sections
+       (map collect)
+       (filter #(contains? % :surname))))
+
 (defn workhorse
   "given a filename, grab the file bytea blob out of the db, parse the headers and
   the references and then collect like keys, this function returns 2-tuple where
   the fst is the filename headers, and snd is a collection of references"
   [fname]
-  [(->> fname
-        (fname-to-cljmap pdf-to-xml-headers)
-        get-sections
-        make-sections
-        (map collect)
-        second)
-   (->> fname
-        (fname-to-cljmap pdf-to-xml-refs)
-        get-sections
-        make-sections
-        (map collect)
-        (filter #(contains? % :surname)))])
+  (log/info "performing workhorse on " fname)
+  [(process-headers fname) (process-refs fname)])
