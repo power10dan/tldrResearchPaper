@@ -9,8 +9,7 @@ import { DataSubscriptionDummyFunc, DataSubscriptionConference } from './DummyDa
 import  ConferenceExpansionPanel from './AppComponent/ExpansionPanelConferences.js';
 import { uploadFile, cachedPaper} from './AppUrlConstants.js';
 import { connect } from 'react-redux';
-import LogIn  from './AppComponent/LogIn.js';
-import SignUp from './AppComponent/SignUp.js';
+import LogInControl  from './AppBusinessLogic/LoginBusinessLogic.js';
 import MainPageSelectionLogic from './AppBusinessLogic/MainSelectionPageBusinessLogic.js';
 import { FetchPapers, FetchNumberNodes} from './Redux/Actions/ActionCreators.js';
 import { getNumNodes, getChildrenUnion} from './AppUrlConstants.js';
@@ -87,7 +86,7 @@ class App extends Component {
       let CustomPage = null;
 
       if(this.state.CurrPage === 0){
-           CustomPage = DashBoardControlHOC(LogIn, "Login", this.state.CurrPage);
+           CustomPage = DashBoardControlHOC(LogInControl, "Login", this.state.CurrPage);
       } else if (this.state.CurrPage === 1){
            CustomPage = DashBoardControlHOC(StyledCustomizationComponent, "App Configuration", this.state.CurrPage);
       } else if(this.state.CurrPage === 2){

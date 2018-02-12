@@ -75,8 +75,6 @@ const conferencePanelStyle = theme=>({
 })
 
 const ConferencePaperPanels = (props)=>{
-	console.log("My stuff");
-	console.log(props)
 	const {classes} = props;
 	return(
 		<div className={classes.divProps} >

@@ -1,160 +1,98 @@
-import React from 'react'
-import SignUp from './SignUp'
+import React, {Fragment} from 'react'
 import TextField from 'material-ui/TextField';
 import { withStyles } from 'material-ui/styles';
 import Button from 'material-ui/Button';
-import { AppStateActionCreator } from '../Redux/Actions/ActionCreators.js';
-import {CURR_PAGE } from '../Redux/Actions/ActionConstants.js';
-import { connect } from 'react-redux';
-import Grid from 'material-ui/Grid';
-import Paper from 'material-ui/Paper';
-import AppBar from 'material-ui/AppBar';
 import Toolbar from 'material-ui/Toolbar';
 import Typography from 'material-ui/Typography';
 import red from 'material-ui/colors/red';
+import Card, { CardMedia, CardContent, CardActions } from 'material-ui/Card';
+import LoginImage from '../Assets/LoginImage.jpg';
 
-export const loginstyles = theme => ({
-  root: {
-    flexGrow: 1,
-  },
-  paper: {
-    height: 425,
-    width: 400,
-  },
+const loginstyles = theme => ({
+    cardStyle: {
+        width: "450px",
+        height: "210px",
+        marginLeft: "250px",
+        marginTop: "-200px"
+    },
 
-  control: {
-    padding: theme.spacing.unit * 2,
-  },
+    textFieldStyle: {
+        marginLeft: "-230px",
+        marginTop: "-10px"
+    },
+
+    labelStyle:{
+        fontFamily: 'Dosis, sans-serif',
+        fontSize: "28px",
+        marginLeft: "-300px",
+        paddingTop: "10px"
+    },
+
+    buttonStyle: {
+      marginLeft: "20px",
+      marginTop: "-150px"
+    },
+
+    coverImage:{
+        width: "215px",
+        height: "210px",
+        marginLeft: "250px",
+        marginTop: "-120px"
+    },
+
+    instructionText:{
+        fontFamily: 'Dosis, sans-serif',
+        fontSize: "18px",
+        width: "450px",
+        height: "200px",
+        marginLeft: "250px",
+        marginTop: "10px",
+        textAlign: "left"
+    }
 });
 
 
-class LogInPanel extends React.Component {
-<<<<<<< HEAD
-  constructor(props){
-     super(props);
-     this.state = {
-        OSU_Id:"",
-        Password:"",
-      }
-=======
-
-  state={
-    // OSU_Id:"",
-    // Password:"",
-    disabled: true,
-    Token:""
->>>>>>> FE_login_signup
-  }
- 
-  signup_click = (event) => {
-    let payload=2
-    this.props.updatePage(payload);
-  }
-
-  successful_login = e => {
-<<<<<<< HEAD
-    if (this.state.OSU_Id.length != 0 && this.state.Password != 0){
-        e.preventDefault();
-        let payload=3
-        this.props.updatePage(payload);
-    }
-=======
-    if (
-      //this.state.OSU_Id.length != 0 && this.state.Password != 0 &&
-      this.state.disabled==true){e.preventDefault();
-    console.log(JSON.parse(JSON.stringify(this.state)));
-    window.open("https://prometheus.eecs.oregonstate.edu/token/generate?asid=321398945712335&then=","_blank")
-    this.setState( {disabled: !this.state.disabled} )
-  }else if (
-    //this.state.OSU_Id.length != 0 && this.state.Password.length != 0 &&
-    this.state.Token.length==12){
-    let payload=3;
-    this.props.updatePage(payload)
-    console.log(JSON.parse(JSON.stringify(this.state)));
-  }
-
->>>>>>> FE_login_signup
-  }
-
-  render() {
-      const { classes } = this.props;
-<<<<<<< HEAD
-      //const { spacing } = this.state;
-=======
-
->>>>>>> FE_login_signup
-      return(
-        <Grid>
-          <Grid item xs={12}>
-            <Grid container className={classes.demo} justify="center" >
-              {[0].map(value => (
-                <Grid key={value} item>
-                  <Paper className={classes.paper}>
-                    <form class="form-group" >
-                      <div className={classes.root}>
-                          <AppBar position="static" title={<span style={loginstyles.title}>Title</span>} titleStyle={loginstyles.title_color} >
-                            <Toolbar>
-                              <Typography type="Log_In"  color="inherit">
-                                    <h1>Login</h1>
-                              </Typography>
-                          </Toolbar>
-                        </AppBar>
-                    </div>
-                      <br></br>
-                    <br></br>
-                    {/*<div>
-                       <TextField value={this.state.OSU_Id}
-                       placeHolder="Enter OSU ID" label="OSU ID"
-                       onChange={e => this.setState({OSU_Id: (e.target.value)})} required/>
-                    </div>
-
-                    <div>
-                       <TextField value={this.state.Password}
-                         type="Password"
-                         placeHolder="Password"
-                          label="Password"
-                          onChange={e => this.setState({Password: e.target.value})} required/>
-                    </div> */}
-
-                      <div>
-                      <TextField value={this.state.Token}
-                        type="Token"
-                        placeHolder="Token"
-                         label="Add 12 digit Token"
-                         disabled={(this.state.disabled)? "disabled" : false}
-                         onChange={e => this.setState({Token: e.target.value})}/>
-
-                    </div>
-
-                      <br></br>
-                        <br></br>
-                      <Button raised color="primary" onClick={(e) => this.successful_login(e)}>Login</Button>
-
-                      <div>
-                      <br></br>
-                        <br></br>
-                      {/* <a href="#" onClick={this.signup_click}>Dont have an account? Please Sign up </a> */}
-
-                      </div>
-                    </form>
-                </Paper>
-                  <h4>* PLease fill the survey by pressing the Login button <br></br>if token textfield is disabled</h4>
-              </Grid>
-            ))}
-          </Grid>
-        </Grid>
-      </Grid>
-    );
-  }
+const LogInPanel = (props)=>{
+    const { classes } = props;
+    return(
+      <Fragment>
+         <Card className={classes.cardStyle}>
+            <Typography className={classes.labelStyle}>
+                Welcome!
+            </Typography>
+            <CardContent>
+                <TextField 
+                     value={props.TokenField}
+                    type="Token"
+                    placeHolder="Token"
+                    label="Add 12 digit Token"
+                    disabled={(props.disable)? "disabled" : false}
+                    onChange={props.onChangeClick}
+                    className={classes.textFieldStyle}
+                />
+            </CardContent>
+             <CardMedia
+                className={classes.coverImage}
+                image={LoginImage}
+            />
+            <CardActions>
+               <Button 
+                  raised color="primary" 
+                  onClick={(e) => props.successfulLoginFunc(e)}
+                  className={classes.buttonStyle}
+               >
+                  {props.buttonIcon}
+               </Button>
+            </CardActions>
+          </Card>         
+           <Typography className={classes.instructionText}>
+               Please get a token before using this app. You class
+               get a token by clicking the Get Token button.
+               Once you got a token, please enter it into the
+               text field in order to use the app.
+          </Typography>   
+     </Fragment>      
+    )
 }
 
-
-
-const mapDispatchToProps = (dispatch)=>{
-	return ({
-		updatePage: (payLoad)=>{dispatch(AppStateActionCreator(CURR_PAGE, payLoad));},
-	});
-}
-
-let LogIn = connect(null, mapDispatchToProps)(LogInPanel);
-export default withStyles(loginstyles)(LogIn);
+export default withStyles(loginstyles)(LogInPanel);
