@@ -86,10 +86,10 @@ const LogInPanel = (props)=>{
             </CardActions>
           </Card>         
            <Typography className={classes.instructionText}>
-               Please get a token before using this app. You class
+               Please get a token before using this app. You can
                get a token by clicking the Get Token button.
-               Once you got a token, please enter it into the
-               text field in order to use the app.
+               Once you get a token, please paste it onto the
+               text field. Thank you for choosing PaperGene!
           </Typography>   
      </Fragment>      
     )
