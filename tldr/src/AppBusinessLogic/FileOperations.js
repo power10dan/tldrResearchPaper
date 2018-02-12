@@ -18,6 +18,29 @@ export const GetChildrenUnionHeader = ()=>{
 	return dispatchHeader;
 }
 
+export const GetFileHeader = ()=>{
+	var form = new FormData();
+	form.append("file", "");
+	let dispatchHeader = {
+		method: 'GET',
+		headers:{
+			"async": true,
+			"crossDomain": true,
+			"method": "GET",
+			"headers": {
+			  "Cache-Control": "no-cache",
+			  "Postman-Token": "dd2aaa60-3b82-3fec-c97e-b0f606e2108d"
+			},
+			"processData": false,
+			"contentType": false,
+			"mimeType": "multipart/form-data",
+			"data": form
+		},
+	};
+
+	return dispatchHeader;
+}
+
 export const GetChildrenIntersectionHeader = ()=>{
 	let dispatchHeader = {
 		method: 'GET',
@@ -33,13 +56,10 @@ export const GetChildrenIntersectionHeader = ()=>{
 }
 
 export const UploadFileHeader = (paperContent)=>{
-	console.log(paperContent)
 	var form = new FormData();
-	console.log(paperContent)
 	form.append("filename", paperContent.filename);
 	form.append("tempfile", paperContent.tempfile);
 
-	//data.append( "tempfile", JSON.stringify( paperContent.tempfile));
 	let dispatchHeader = {
 		"async": true,
 		 "crossDomain": true,

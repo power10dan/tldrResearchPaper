@@ -9,22 +9,25 @@ function transformDataToNode(originalNode, citedNodes){
 		edges: []
 	}
 
+	let nodeOriginTruncate = originalNode.title[0].substring(0, 10) + "..."
+
 	data.nodes.push({id: originalNode.id, 
-					 widthConstraint: {minimum: 10}, 
-					 heightConstraint: { minimum: 30 }, 
-					 label:originalNode.id.toString(), 
-					 color: '#FF9800', 
-					 font: '15px Dosis' });
+					 widthConstraint: {minimum: 40}, 
+					 heightConstraint: { minimum: 40 }, 
+					 label:nodeOriginTruncate, 
+					 color: '#FFCC80', 
+					 font: '12px Dosis' });
 
 	citedNodes.map((elem)=>{
+		let citedNodeTruncation = elem.title[0].substring(0,8) + "..."
 		data.nodes.push({id:elem.id, 
-						 widthConstraint: {minimum: 10}, 
+						 widthConstraint: {minimum: 30}, 
 						 heightConstraint: { minimum: 30 }, 
-						 label:elem.id.toString(), 
+						 label:citedNodeTruncation, 
 						 color: '#FF9800', 
-						 font: '15px Dosis' 
+						 font: '10px Dosis' 
 					   });
-		data.edges.push({from: originalNode.id, to: elem.id, length: 150});
+		data.edges.push({from: originalNode.id, to: elem.id, length: 250});
 	})
 
 	return data;
@@ -48,10 +51,11 @@ const configGeneration =()=>{
 	return myConfig;
 }
 
-const events = ()=>{
+const events = (getNodesClickedFunction, dataToSearch)=>{
 	let event = {
 		select: (event)=> {
         	const { nodes, edges } = event;
+        	getNodesClickedFunction(nodes, dataToSearch);
     	}
 	}
 	return event;	 
@@ -59,11 +63,21 @@ const events = ()=>{
 
 function GraphComp(props){
 	let data = null;
+	let newEvent = null;
 	if(props.typeOfPap === "Uploaded"){
 		data = transformDataToNode(props.rootNode, props.citedNode);
+		newEvent = events(props.clickNodeCallBack, props.papersDatabase);
 	} else {
+		let citedNodeTruncation = props.node.title[0].substring(0,8) + "..."
 		data = {
-			nodes: [{id: 1, label:props.node.id.toString()}],
+			nodes: [{id: props.node.id, 
+					 label:citedNodeTruncation,
+					 widthConstraint: {minimum: 40}, 
+					 heightConstraint: { minimum: 40 }, 
+					 color: '#FFCC80', 
+					 font: '12px Dosis' 
+				   }],
+
 			edges: []
 		}
 	}
@@ -75,7 +89,7 @@ function GraphComp(props){
 		<Graph 
 			graph={data}
 			options={myConfig}
-			events={eventsCallback}
+			events={newEvent}
 			style={{height: "350px", width: "400px"}}
 		/>
 	);

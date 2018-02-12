@@ -18,7 +18,8 @@ export const AppState = {
 	token: "",
 	typeResearcher: "",
 	prefConferences: [],
-	selectedPaper: ""
+	selectedPaper: "",
+	shouldLoad: false
 };
 
 

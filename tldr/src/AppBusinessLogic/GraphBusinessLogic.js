@@ -16,9 +16,6 @@ class GraphControl extends Component{
 		}
 	}
 
-	onClickFilter = (nodeId)=>{
-		console.log(nodeId);
-	}
 	render(){
 		if(this.state.typeOfPaper === "Uploaded"){
 			return(
@@ -26,13 +23,17 @@ class GraphControl extends Component{
 					rootNode={this.state.currPaper}
 					citedNode={this.state.children[this.state.currPaper.title].children}
 					typeOfPap={this.state.typeOfPaper}
+					clickNodeCallBack={this.props.graphClick}
+					papersDatabase = {this.state.children[this.state.currPaper.title].children}
+
 				/>
 			) 
-		} else {
+		} else { 
 			return(
 				<GraphComp
 					node={this.state.currPaper}
 					typeOfPap={this.state.typeOfPaper}
+					clickNodeCallBack={this.props.graphClick}
 				/>
 			) 	
 		}
@@ -40,10 +41,10 @@ class GraphControl extends Component{
 }
 
 const mapStateToProps = (state)=>{
-	const { cachedPaperOriginalChildren } = state.ReducerPapers
+	const { cachedPaperOriginalChildren} = state.ReducerPapers
 	
 	return {
-		cachedPaperOriginalChildren
+		cachedPaperOriginalChildren,
 	}
 }
 
