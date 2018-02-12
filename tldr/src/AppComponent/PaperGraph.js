@@ -2,37 +2,33 @@ import Graph from 'react-graph-vis';
 import React from 'react';
 
 
-function transformDataToNode(rawData, type){
-	let data = {
-		nodes: [
-					{id: 2, label: "boohoo"}, 
-					{id: 3, label: "mooho"}, 
-					{id: 4, label: "moon"},
-					{id: 5, label: "bae"}
-			   ],
-		edges:[]			
+function transformDataToNode(originalNode, citedNodes){
+	let dictIdNode = {};
+	let data ={
+		nodes: [],
+		edges: []
 	}
 
-	if(type==="Original"){
-		data.nodes.push({id: 6, 
-						 widthConstraint: {minimum: 10}, 
+	let nodeOriginTruncate = originalNode.title[0].substring(0, 10) + "..."
+
+	data.nodes.push({id: originalNode.id, 
+					 widthConstraint: {minimum: 40}, 
+					 heightConstraint: { minimum: 40 }, 
+					 label:nodeOriginTruncate, 
+					 color: '#FFCC80', 
+					 font: '12px Dosis' });
+
+	citedNodes.map((elem)=>{
+		let citedNodeTruncation = elem.title[0].substring(0,8) + "..."
+		data.nodes.push({id:elem.id, 
+						 widthConstraint: {minimum: 30}, 
 						 heightConstraint: { minimum: 30 }, 
-						 label:rawData, 
+						 label:citedNodeTruncation, 
 						 color: '#FF9800', 
-						 font: '15px Dosis' });
-		data.edges.push({from: 6, to: 2})
-		data.edges.push({from: 6, to: 3})
-		data.edges.push({from: 6, to: 4})
-		data.edges.push({from: 6, to: 5})
-	}  else {
-		data.nodes.push({id: 6, 
-						 widthConstraint: {minimum: 10}, 
-						 heightConstraint: { minimum: 30 }, 
-						 label:rawData, 
-						 color: '#FF9800', 
-						 font: '15px Dosis' });
-		data.edges.push({from: 6, to: 2})
-	}
+						 font: '10px Dosis' 
+					   });
+		data.edges.push({from: originalNode.id, to: elem.id, length: 250});
+	})
 
 	return data;
 }
@@ -50,33 +46,51 @@ const configGeneration =()=>{
 		nodes:{
 			size: 25,
 		},
-
-		
 	}
 
 	return myConfig;
 }
 
-const events = ()=>{
+const events = (getNodesClickedFunction, dataToSearch)=>{
 	let event = {
 		select: (event)=> {
         	const { nodes, edges } = event;
+        	getNodesClickedFunction(nodes, dataToSearch);
     	}
 	}
 	return event;	 
 }
 
-
 function GraphComp(props){
-	let data = transformDataToNode(props.data, props.type);
+	let data = null;
+	let newEvent = null;
+	if(props.typeOfPap === "Uploaded"){
+		data = transformDataToNode(props.rootNode, props.citedNode);
+		newEvent = events(props.clickNodeCallBack, props.papersDatabase);
+	} else {
+		let citedNodeTruncation = props.node.title[0].substring(0,8) + "..."
+		data = {
+			nodes: [{id: props.node.id, 
+					 label:citedNodeTruncation,
+					 widthConstraint: {minimum: 40}, 
+					 heightConstraint: { minimum: 40 }, 
+					 color: '#FFCC80', 
+					 font: '12px Dosis' 
+				   }],
+
+			edges: []
+		}
+	}
+
 	let myConfig = configGeneration();
 	let eventsCallback = events();
+
 	return(
 		<Graph 
 			graph={data}
 			options={myConfig}
-			events={eventsCallback}
-			style={{height: "350px", width: "550px"}}
+			events={newEvent}
+			style={{height: "350px", width: "400px"}}
 		/>
 	);
 }

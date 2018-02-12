@@ -2,3 +2,4 @@ export const uploadFile = "https://secret-inlet-27367.herokuapp.com/api/uploadFi
 export const getChildrenUnion = "https://secret-inlet-27367.herokuapp.com/api/getChildrenUnion";
 export const getChildrenIntersection = "https://secret-inlet-27367.herokuapp.com/api/getChildrenInter";
 export const getNumNodes = "https://secret-inlet-27367.herokuapp.com/api/getNumNodes"
+export const getFile = "https://secret-inlet-27367.herokuapp.com/api/getFile";

@@ -9,39 +9,42 @@ class GraphControl extends Component{
 	constructor(props){
 		super(props);
 		this.state = {
-			data: props.data,
-			originalPaperChildren: []
-		}
-		if(props.type === "Original"){
-			this.getChildrenOfOriginalPaper(props.data)
+			data: props.cachedPaperOriginalChildren,
+			currPaper: props.currPaper,
+			typeOfPaper: props.typeOfPaper,
+			children: props.cachedPaperOriginalChildren
 		}
 	}
-
-	onClickFilter = (nodeId)=>{
-		console.log(nodeId);
-	}
-
-    // fetch all of the children of all of the 
-    // original papers 
-    getChildrenOfOriginalPaper = (originalPapers)=>{
-    	let originalPaperUrl = getChildrenUnion;
-    	console.log(originalPapers)
-
-   		let paperQuery = getChildrenUnion + "/" + "?id=" + originalPapers.id+ "/";
-   		this.props.fetchOriginalPapers(paperQuery, originalPapers.id, originalPapers.title);
-    	
-    	//let child = this.props.fetchOriginalPapers(paperQuery, originalPaperId, originalPapersTitle);
-    	//return 
-    }
 
 	render(){
-		return(
-			<GraphComp
-				data={this.props.data}
-				type={this.props.type}
-				nodeCallBack = {this.onClickNode}
-			/>
-		)
+		if(this.state.typeOfPaper === "Uploaded"){
+			return(
+				<GraphComp
+					rootNode={this.state.currPaper}
+					citedNode={this.state.children[this.state.currPaper.title].children}
+					typeOfPap={this.state.typeOfPaper}
+					clickNodeCallBack={this.props.graphClick}
+					papersDatabase = {this.state.children[this.state.currPaper.title].children}
+
+				/>
+			) 
+		} else { 
+			return(
+				<GraphComp
+					node={this.state.currPaper}
+					typeOfPap={this.state.typeOfPaper}
+					clickNodeCallBack={this.props.graphClick}
+				/>
+			) 	
+		}
+	}
+}
+
+const mapStateToProps = (state)=>{
+	const { cachedPaperOriginalChildren} = state.ReducerPapers
+	
+	return {
+		cachedPaperOriginalChildren,
 	}
 }
 
@@ -50,4 +53,4 @@ const mapDispatchToProps = (dispatch)=>{
 		fetchOriginalPapers: (url, paperId, title)=>{dispatch(FetchNumberNodes(url, paperId, title, types.CACHED_PAPER_ORIGINAL_CHILDREN))}
 	})
 }
-export default connect(null, mapDispatchToProps)(GraphControl);
+export default connect(mapStateToProps, mapDispatchToProps)(GraphControl);

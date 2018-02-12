@@ -12,7 +12,7 @@ import Button from 'material-ui/Button';
 import GraphControl from '../AppBusinessLogic/GraphBusinessLogic.js';
 import Divider from 'material-ui/Divider';
 import Chip from 'material-ui/Chip';
-
+import PaperPanel from './PaperIdAndOptions.js';
 
 const conferencePanelStyle = theme=>({
 	divProps:{
@@ -63,48 +63,53 @@ const conferencePanelStyle = theme=>({
 		position: "absolute",
     	right: "95px",
     	top: "20px"
+	},
+
+	border:{
+		background: '#ECEFF1',
+	    padding: '20px', 
+	    width: '400px',
+	    height: '350px', 	
 	}
 
 })
 
 const ConferencePaperPanels = (props)=>{
 	const {classes} = props;
-    let surNameArr = [];
-    props.data.uploadedFile.map((elem)=>{
-    	let surName = elem.surname;
-    	let newSurName = surName[0] + " " + "et al.";
-    	surNameArr.push(newSurName);
-    });
-
 	return(
 		<div className={classes.divProps} >
 			{
-				props.data.uploadedFile.map((elem,idx)=>{
+				props.data.map((elem,idx)=>{
 					return(
 						<Fragment>
-							<ExpansionPanel>
+							<ExpansionPanel 
+								expanded={props.expanded === elem.title[0]} 
+								onChange={props.handleChange(elem.title[0])}
+							>
 								<ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} >
 									<Typography className={classes.heading} >
-										{elem.title}
+										{props.shorterTitleArr[idx]}
 									</Typography>
 									<Typography className={classes.secondaryHeading} >
-										{surNameArr[idx]}
+										{props.surNameArray[idx]}
 									</Typography>
 									<Chip label={elem.labels[0]} className={classes.chip} />
 								</ExpansionPanelSummary>
 								<Divider />
-
 								<ExpansionPanelDetails className={classes.ExpansionPanelDetails}>
-									{
-										elem.labels[0] === "Original" ? <GraphControl
-																			data={props.data.originalCitedSep[0][idx]}
-																			type={elem.labels[0]}
-																		/> : <GraphControl
-																			data={props.data.originalCitedSep[1][idx]}
-																			type={elem.labels[0]}
-																		/>
-
-									}
+									<div className={classes.border}>
+										<GraphControl 
+											currPaper={elem}
+											typeOfPaper={elem.labels[0]}
+											graphClick={props.nodeClick}
+										 />
+									</div>
+									<PaperPanel
+										titleOfPaper={props.selectedCardNodeTitle[0]}
+										authorTitles={props.surName}
+										typeOfPap={props.labelOfSelectedNode}
+										downloadPaper={props.downloadPaper}
+									/>
 								</ExpansionPanelDetails>
 							</ExpansionPanel>
 						</Fragment>

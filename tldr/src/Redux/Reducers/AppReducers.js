@@ -39,6 +39,9 @@ const ReducerAppState = (state = InitialStates.AppState, actions) => {
 			return {...state, prefConference: actions.dataPayload};
 		case types.FILE_TO_UPLOAD:
 			return {...state, selectedFile: actions.dataPayload}
+		case types.APP_ISLOADING:
+
+			return {...state, shouldLoad: actions.dataPayload}
 		default:
 			return state;
 	}
