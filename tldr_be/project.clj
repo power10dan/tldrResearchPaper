@@ -101,7 +101,11 @@
                   :resource-paths ["env/dev/resources"]
                   :repl-options {:init-ns user}
                   :injections [(require 'pjstadig.humane-test-output)
-                               (pjstadig.humane-test-output/activate!)]}
+                               (pjstadig.humane-test-output/activate!)]
+                  :test-refresh {:notify-command ["terminal-notifier" "-title" "Tests" "-message"]
+                   :quiet true
+                   :changes-only true}}}
+
    :project/test {:resource-paths ["env/test/resources"]}
    :project/prod {:resource-paths ["env/prod/resources"]
                   :source-paths ["env/prod/clj"]}
