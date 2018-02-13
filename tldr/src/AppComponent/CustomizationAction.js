@@ -92,6 +92,7 @@ const ResearcherSelection = (props)=>{
 						       
 				    		</CardContent>
 					    	<Button 
+					    		color={"accent"}
 							    className={classes.cardContent}
 							    onClick={props.cardClickFunc}
 							>
@@ -113,7 +114,6 @@ class CustomizationListItems extends React.Component{
 			|| target === "Undergraduate Student"
 			|| target === "Graduate Student"){
 			let payLoad = 2;
-			let researcherPayLoad = target;
 			
 			this.props.updateResearcher(target);
 			this.props.updatePage(payLoad);

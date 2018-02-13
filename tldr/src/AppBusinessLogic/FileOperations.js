@@ -1,8 +1,3 @@
-import * as actionTypes from '../Redux/Actions/ActionConstants.js';
-import * as actionCreators from '../Redux/Actions/ActionCreators.js';
-import { ReducerPapers } from '../Redux/Reducers/AppReducers.js';
-import * as appUrls from '../AppUrlConstants.js';
-
 export const GetChildrenUnionHeader = ()=>{
 	let dispatchHeader = {
 		method: 'GET',
@@ -88,7 +83,3 @@ export const GetNumNodeHeader = ()=>{
 
 	return dispatchHeader;
 }
-
-
-
-

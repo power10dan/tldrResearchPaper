@@ -1,9 +1,7 @@
 import * as actionTypes from './ActionConstants.js';
 import {
           GetChildrenUnionHeader, 
-          GetChildrenIntersectionHeader,
           GetNumNodeHeader,
-          UploadFileHeader,
           GetFileHeader
 
         } from '../../AppBusinessLogic/FileOperations.js';
@@ -33,7 +31,7 @@ export const FetchNumberNodes = (url, numNode)=>{
 			.then((response)=>{
 				return response.json();
 			}).then((res)=>{
-				res.map(elem=>{
+				res.forEach((elem) =>{
 					dispatch(CachedPaperActionCreator(actionTypes.CACHED_PAPERS, elem));
 				});
 			}).catch((err)=>{
@@ -103,7 +101,6 @@ export const FetchPapers = (url, paperId, paperTitle, actionType)=>{
 }
 
 const UploadPaperFunc = (url, filePayLoad)=>{
-	let uploadFileHeader = UploadFileHeader(filePayLoad);
 	return fetch(url, filePayLoad);
 }
 

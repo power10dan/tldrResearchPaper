@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import GraphComp from '../AppComponent/PaperGraph.js';
-import { getChildrenUnion } from '../AppUrlConstants.js';
 import { FetchNumberNodes } from '../Redux/Actions/ActionCreators.js';
 import { connect } from 'react-redux';
 import * as types from '../Redux/Actions/ActionConstants.js'

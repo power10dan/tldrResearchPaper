@@ -1,16 +1,7 @@
-import React, { Fragment } from 'react';
-import Button from 'material-ui/Button';
-import { withStyles } from 'material-ui/styles';
+import React from 'react';
 import Snackbar from 'material-ui/Snackbar';
 
-const style = theme =>({
-	snackbar: {
-       margin: theme.spacing.unit,
-    },
-});
-
 const LoadingSnack = (props)=>{
-	const { classes } = props;
 	return(
 			<Snackbar
 	          anchorOrigin={{
@@ -23,10 +14,10 @@ const LoadingSnack = (props)=>{
 	          SnackbarContentProps={{
 	            'aria-describedby': 'message-id',
 	          }}
-	          message={<span id="message-id">File Uploading, Please Wait</span>}
+	          message={<span id="message-id">{props.messageStatus}</span>}
 	        />
 		
 	)
 }
 
-export default withStyles(style)(LoadingSnack);
+export default LoadingSnack;

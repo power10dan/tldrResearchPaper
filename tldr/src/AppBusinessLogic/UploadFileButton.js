@@ -3,7 +3,6 @@ import { UploadNewPaper, AppStateActionCreator } from '../Redux/Actions/ActionCr
 import { uploadFile } from '../AppUrlConstants.js';
 import { connect } from 'react-redux';
 import ButtonUpload from '../AppComponent/UploadButton.js';
-import { Base64 } from 'js-base64';
 import * as actionTypes from '../Redux/Actions/ActionConstants.js';
 
 class UploadPaperToServer extends Component{
@@ -17,7 +16,6 @@ class UploadPaperToServer extends Component{
 	uploadFileCallBack = (files)=>{
 		 if(files.fileList !== undefined){
 		    let filenametmp = files.fileList[0].name;
-		    let tmpfile = Base64.decode(files.base64.split(",")[1]);
 		    let filePayload = {tempfile: files.fileList[0], filename: filenametmp};
 		    let urlUpload = uploadFile + "/";
 		    this.props.shouldLoad(true);
@@ -27,7 +25,6 @@ class UploadPaperToServer extends Component{
 	}
 
 	render(){
-		const { classes } = this.props;
 		return(
 			<Fragment>
 				<ButtonUpload

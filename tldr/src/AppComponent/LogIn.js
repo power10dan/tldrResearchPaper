@@ -2,9 +2,7 @@ import React, {Fragment} from 'react'
 import TextField from 'material-ui/TextField';
 import { withStyles } from 'material-ui/styles';
 import Button from 'material-ui/Button';
-import Toolbar from 'material-ui/Toolbar';
 import Typography from 'material-ui/Typography';
-import red from 'material-ui/colors/red';
 import Card, { CardMedia, CardContent, CardActions } from 'material-ui/Card';
 import LoginImage from '../Assets/LoginImage.jpg';
 
@@ -62,7 +60,7 @@ const LogInPanel = (props)=>{
             </Typography>
             <CardContent>
                 <TextField 
-                     value={props.TokenField}
+                    value={props.TokenField}
                     type="Token"
                     placeHolder="Token"
                     label="Add 12 digit Token"

@@ -70,7 +70,6 @@ class ConferenceExpansionPanel extends Component{
 
 	render (){
 		const { classes } = this.props;
-		const { expanded } = this.state;
 		let Selection = null;
 
 		if(this.state.typeResearcher === "Professor" 

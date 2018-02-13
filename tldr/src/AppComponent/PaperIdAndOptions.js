@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import { withStyles } from 'material-ui/styles';
-import Card, { CardHeader, CardContent, CardActions } from 'material-ui/Card';
+import Card, { CardContent, CardActions } from 'material-ui/Card';
 import Button from 'material-ui/Button';
 import Typography from 'material-ui/Typography';
 
@@ -47,7 +47,7 @@ const styles = {
 
 const PaperIdAndOptionsPanelCard = ( props ) => {
 	const { classes } = props;
-	let authorStr = "Author:" + " " + props.authorTitles;
+	let authorStr = "Author:".concat(" ", props.authorTitles);
 	return(
 		<Fragment>
 			<Card className={classes.cardStyle} >

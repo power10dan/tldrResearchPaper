@@ -1,9 +1,8 @@
 import React, {Fragment} from 'react';
 import { withStyles } from 'material-ui/styles';
-import Card, { CardContent, CardMedia } from 'material-ui/Card';
+import Card, { CardMedia } from 'material-ui/Card';
 import Grid from 'material-ui/Grid';
 import GridList from 'material-ui/GridList';
-import { FormGroup, FormControlLabel } from 'material-ui/Form';
 import Button from 'material-ui/Button';
 import Chip from 'material-ui/Chip';
 import { connect } from 'react-redux';
@@ -114,11 +113,12 @@ class CheckBoxs extends React.Component{
 						       	<Card 
 						       		className={classes.cardProps}
 						       	>      	
-						       		<CardMedia className={classes.mediaImg}
+						       		<CardMedia 
 							       		className={classes.mediaImg}
 									   	image={this.props.conferenceImage[idx]}
 							       	/>
 							    	<Button 
+							    		color={"accent"}
 									    className={classes.cardContent}
 									    onClick={this.handleClickCard}
 									>

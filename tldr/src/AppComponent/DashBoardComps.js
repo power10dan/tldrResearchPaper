@@ -1,9 +1,8 @@
 import React, { Fragment} from 'react';
 import Drawer from 'material-ui/Drawer';
-import List,  { ListItem, ListItemIcon, ListItemText } from 'material-ui/List';
+import List,  { ListItem,  ListItemText } from 'material-ui/List';
 import { withStyles } from 'material-ui/styles';
 import Divider from 'material-ui/Divider';
-import Button from 'material-ui/Button';
 import IconButton from 'material-ui/IconButton';
 import Typography from 'material-ui/Typography';
 import AppBar from 'material-ui/AppBar';
@@ -112,7 +111,6 @@ const styleOfSideBar = theme => ({
 	},
 
 	subTitleStyle: {
-		paddingTop: "10px",
 		fontFamily: "Dosis, sans-serif",
 		fontSize: "30px",
 		paddingBottom: "12px",

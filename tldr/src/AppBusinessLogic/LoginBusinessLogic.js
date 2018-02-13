@@ -4,7 +4,7 @@ import { CURR_PAGE } from '../Redux/Actions/ActionConstants.js';
 import { connect } from 'react-redux';
 import LogInPanel from '../AppComponent/LogIn.js';
 
-class LogInControl extends React.Component {
+class LogInControl extends Component {
     constructor(props){
         super(props);
         this.state={
@@ -20,12 +20,12 @@ class LogInControl extends React.Component {
     }
   
     successful_login = (event) => {
-      if (this.state.disabled==true){
+      if (this.state.disabled === true){
           event.preventDefault();
           window.open("https://prometheus.eecs.oregonstate.edu/token/generate?asid=321398945712335&then=","_blank")
           this.setState( {disabled: !this.state.disabled} )
       }else if (
-          this.state.Token.length==12){
+          this.state.Token.length === 12){
           let payload=1;
           this.props.updatePage(payload)
       }

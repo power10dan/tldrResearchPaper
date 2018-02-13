@@ -3,12 +3,9 @@ import { withStyles } from 'material-ui/styles';
 import ExpansionPanel, {
 	  ExpansionPanelSummary,
 	  ExpansionPanelDetails,
-	  ExpansionPanelActions
 	} from 'material-ui/ExpansionPanel';
-import Card, {CardContent, CardAction} from 'material-ui/Card';
 import Typography from 'material-ui/Typography';
 import ExpandMoreIcon from 'material-ui-icons/ExpandMore';
-import Button from 'material-ui/Button';
 import GraphControl from '../AppBusinessLogic/GraphBusinessLogic.js';
 import Divider from 'material-ui/Divider';
 import Chip from 'material-ui/Chip';

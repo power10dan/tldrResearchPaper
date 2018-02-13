@@ -3,7 +3,6 @@ import React from 'react';
 
 
 function transformDataToNode(originalNode, citedNodes){
-	let dictIdNode = {};
 	let data ={
 		nodes: [],
 		edges: []
@@ -18,7 +17,7 @@ function transformDataToNode(originalNode, citedNodes){
 					 color: '#FFCC80', 
 					 font: '12px Dosis' });
 
-	citedNodes.map((elem)=>{
+	citedNodes.forEach((elem)=>{
 		let citedNodeTruncation = elem.title[0].substring(0,8) + "..."
 		data.nodes.push({id:elem.id, 
 						 widthConstraint: {minimum: 30}, 
@@ -54,7 +53,7 @@ const configGeneration =()=>{
 const events = (getNodesClickedFunction, dataToSearch)=>{
 	let event = {
 		select: (event)=> {
-        	const { nodes, edges } = event;
+        	const { nodes } = event;
         	getNodesClickedFunction(nodes, dataToSearch);
     	}
 	}
@@ -83,14 +82,13 @@ function GraphComp(props){
 	}
 
 	let myConfig = configGeneration();
-	let eventsCallback = events();
 
 	return(
 		<Graph 
 			graph={data}
 			options={myConfig}
 			events={newEvent}
-			style={{height: "350px", width: "400px"}}
+			style={{height: "370px", width: "410px"}}
 		/>
 	);
 }

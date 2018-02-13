@@ -24,9 +24,9 @@ class MainPageSelectionLogic extends Component{
 		 this.setState({
 		      expanded: expanded ? panelToChange : false,
 		 });
-		 this.state.data.map((elem)=>{
+		 this.state.data.forEach((elem)=>{
 		 	if(elem.title[0] === panelToChange){
-		 		this.state.tempData = elem;
+		 		this.setState({tempData:elem});
 		 	}
 		 });
 	}
@@ -37,30 +37,30 @@ class MainPageSelectionLogic extends Component{
 	}
 
 	clickOnNodeCallBack = (nodeId, dataToSearch)=>{
-		dataToSearch.map((elem)=>{
+		dataToSearch.forEach((elem)=>{
 			if(elem.id === nodeId[0]){
 				this.setState({tempData: elem});
 			}
 		});
 
-		this.state.data.map((elem)=>{
+		this.state.data.forEach((elem)=>{
 			if(elem.id === nodeId[0]){
 				this.setState({tempData: elem})
 			}
-		})
+		});
 	}
 
 	filterBySurName = ()=>{
 		let surNameArr = [];
 	    let shorterTitle = [];
-	    this.state.data.map((elem)=>{
+	    this.state.data.forEach((elem)=>{
 	    	if(elem.title[0].split('').length > 5){
 	    		shorterTitle.push(elem.title.slice(0,4));
 	    	}
 
 	    	if(elem.surname !== undefined){
 		    	let surName = elem.surname;
-		    	let newSurName = surName[0] + " " + "et al.";
+		    	let newSurName = surName[0].concat(" ", "et al.");
 		    	surNameArr.push(newSurName);
 		    } else {
 		    	let surNamePlaceHolder = "No Surname";
@@ -77,7 +77,7 @@ class MainPageSelectionLogic extends Component{
 		if(this.state.tempData.surname === undefined){
 			selectedAuthor = "No surname"
 		} else {
-			selectedAuthor = this.state.tempData.surname[0] + " " + "et al.";
+			selectedAuthor = this.state.tempData.surname[0].concat(" ", "et al.");
 		}
 		
 		return(
@@ -97,6 +97,7 @@ class MainPageSelectionLogic extends Component{
 				{
 					this.state.isLoading === true ? <ErrSnackBar 
 													  open={this.state.isLoading} 
+													  messageStatus={"Uploading File, Please Wait"}
 													/> : null
 				}
 			</Fragment>

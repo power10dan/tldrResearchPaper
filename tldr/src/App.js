@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import DashBoardControlHOC from './AppComponent/DashBoardLogic.js';
 import { withStyles } from 'material-ui/styles';
@@ -7,7 +6,6 @@ import { styles, CustomizationList } from './AppComponent/CustomizationAction.js
 import GetContentFromServer from './AppBusinessLogic/PaperDownloadLogic.js';
 import { DataSubscriptionDummyFunc, DataSubscriptionConference } from './DummyData.js';
 import  ConferenceExpansionPanel from './AppComponent/ExpansionPanelConferences.js';
-import { uploadFile, cachedPaper} from './AppUrlConstants.js';
 import { connect } from 'react-redux';
 import LogInControl  from './AppBusinessLogic/LoginBusinessLogic.js';
 import MainPageSelectionLogic from './AppBusinessLogic/MainSelectionPageBusinessLogic.js';
@@ -41,14 +39,14 @@ class App extends Component {
 
     populateRedux = () => {
         let defaultPopulateNode = 12; 
-        let urlForFetch = getNumNodes + "/"+ "?numNodes=" + defaultPopulateNode;
+        let urlForFetch = getNumNodes.concat("/", "?numNodes=", defaultPopulateNode);
         this.props.getNumNode(urlForFetch, defaultPopulateNode);
     }
 
     seperateChildrenByLabel = ()=>{
          let originalFile = [];
          let citedFile = [];
-         this.state.uploadFileArr.map((elem)=>{
+         this.state.uploadFileArr.forEach((elem)=>{
             if(elem.labels[0] === "Uploaded"){
                 originalFile.push(elem);
             } else {
@@ -61,14 +59,13 @@ class App extends Component {
      // fetch all of the children of all of the 
     // original papers. We are passing this as a prop. 
     getChildrenOfOriginalPaper = (originalPapers)=>{
-          let originalPaperUrl = getChildrenUnion;
-          let paperQuery = getChildrenUnion + "/" + "?id=" + originalPapers.id+ "/";
+          let paperQuery = getChildrenUnion.concat("/", "?id=", originalPapers.id, "/");
           this.props.fetchOriginalPapers(paperQuery, originalPapers.id, originalPapers.title, types.CACHED_PAPER_ORIGINAL_CHILDREN);
     }
 
     render() {
       let arrSeparated = this.seperateChildrenByLabel();
-      arrSeparated[0].map((elem)=>{
+      arrSeparated[0].forEach((elem)=>{
           this.getChildrenOfOriginalPaper(elem);
       })
       
