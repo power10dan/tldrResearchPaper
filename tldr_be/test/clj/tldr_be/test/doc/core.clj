@@ -46,4 +46,4 @@
 
 (deftest bananas-lenses-affils
   (testing "banansh and lenses should always have the same affiliates")
-  (is (= "asdf") (doc/process-affiliates)))
+  (is (= "asdf") (doc/process-affiliates "bananas_lenses")))

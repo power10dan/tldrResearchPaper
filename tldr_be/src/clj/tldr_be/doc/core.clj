@@ -6,8 +6,10 @@
                                      get-doc-filename
                                      create-xml-refs!
                                      create-xml-headers!
+                                     create-xml-affils!
                                      get-xml-refs-by-name
                                      get-xml-headers-by-name
+                                     get-xml-affils-by-name
                                      *neo4j_db*]]
             [clojure.string :refer [split]]
             [byte-streams :as bs]
@@ -131,7 +133,7 @@
 (defn get-fblob
   "pull out a file blob from the database given the name"
   [fname]
-  (-> (assoc {} :filename fname) get-doc-by-filename))
+  (-> {:filename fname} get-doc-by-filename))
 
 
 (defn fname-to-cljmap
@@ -173,14 +175,15 @@
        second))
 
 
-(defn process-affiliates
-  [fname]
-  (->> fname
-       (fname-to-cljmap pdf-to-xml-affiliates)
-       get-sections
-       make-sections
-       (map collect)
-       second))
+;; GROBID REJECTS THIS, dont know why
+;; (defn process-affiliates
+;;   [fname]
+;;   (->> fname
+;;        (fname-to-cljmap pdf-to-xml-affiliates)
+;;        get-sections
+;;        make-sections
+;;        (map collect)
+;;        second))
 
 
 (defn process-refs
