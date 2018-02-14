@@ -3,8 +3,11 @@
             [luminus-migrations.core :as migrations]
             [clojure.test :refer :all]
             [clojure.java.jdbc :as jdbc]
+            [clojure.java.io :as io]
+            [byte-streams :as bs]
             [tldr-be.config :refer [env]]
-            [mount.core :as mount]))
+            [mount.core :as mount]
+            [byte-streams :as bs]))
 
 (use-fixtures
   :once
@@ -15,22 +18,17 @@
     (migrations/migrate ["migrate"] (select-keys env [:database-url]))
     (f)))
 
-(deftest test-users
-  (jdbc/with-db-transaction [t-conn *db*]
-    (jdbc/db-set-rollback-only! t-conn)
-    (is (= 1 (db/create-user!
-               t-conn
-               {:id         "1"
-                :first_name "Sam"
-                :last_name  "Smith"
-                :email      "sam.smith@example.com"
-                :pass       "pass"})))
-    (is (= {:id         "1"
-            :first_name "Sam"
-            :last_name  "Smith"
-            :email      "sam.smith@example.com"
-            :pass       "pass"
-            :admin      nil
-            :last_login nil
-            :is_active  nil}
-           (db/get-user t-conn {:id "1"})))))
+(defn clear
+  [test]
+  (jdbc/with-db-transaction [*db* *db*]
+    (test)
+    (jdbc/db-set-rollback-only! *db*)))
+
+(use-fixtures :each clear)
+
+(deftest insert-bananas-lenses
+  (testing "create doc on bananas_lenses")
+  (let [response (db/create-doc! {:filename "bananas_lenses"
+                                  :title "Function Programming with Bananas, Lenses, Envelopes, and Barbed Wire"
+                                  :filestuff (bs/to-byte-array (io/input-stream "test/papers/bananas_lenses.pdf"))})]
+    (is (= 1 response))))
