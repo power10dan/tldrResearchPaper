@@ -103,16 +103,18 @@ UPDATE summary
 SET votes = votes - 1
 WHERE header = :header AND author = :author AND doc_id = :doc_id
 
+
+
 -- :name create-xml-refs! :! :n
 -- :doc creates a new xml record
 INSERT INTO xml_refs
-(id, filename, xml_content)
-VALUES (:id, :filename, :xml_content)
+(pgid, filename, xml_content)
+VALUES (:pgid, :filename, :xml_content)
 
 -- :name get-xml-refs :? :1
 -- :doc retrieves an xml doc record given the id
 SELECT * FROM xml_refs
-WHERE id = :id
+WHERE pgid = :pgid
 
 -- :name get-xml-refs-by-name :? :1
 -- :doc retrieves an xml doc given the file name
@@ -122,15 +124,32 @@ WHERE filename = :filename
 -- :name create-xml-headers! :! :n
 -- :doc creates a new xml record
 INSERT INTO xml_headers
-(id, filename, xml_content)
-VALUES (:id, :filename, :xml_content)
+(pgid, filename, xml_content)
+VALUES (:pgid, :filename, :xml_content)
 
 -- :name get-xml-headers:? :1
 -- :doc retrieves an xml doc record given the id
 SELECT * FROM xml_headers
-WHERE id = :id
+WHERE pgid = :pgid
 
 -- :name get-xml-headers-by-name :? :1
 -- :doc retrieves an xml doc given the file name
 SELECT * FROM xml_headers
+WHERE filename = :filename
+
+
+-- :name create-xml-affils! :! :n
+-- :doc creates a new xml record
+INSERT INTO xml_affils
+(pgid, filename, xml_content)
+VALUES (:pgid, :filename, :xml_content)
+
+-- :name get-xml-affils :? :1
+-- :doc retrieves an xml affiliate doc record given the id
+SELECT * FROM xml_affils
+WHERE pgid = :pgid
+
+-- :name get-xml-affils-by-name :? :1
+-- :doc retrieves an xml affiliate doc given the file name
+SELECT * FROM xml_affils
 WHERE filename = :filename

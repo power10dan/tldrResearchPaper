@@ -1,4 +1,4 @@
-CREATE TABLE xml_headers
+CREATE TABLE xml_affils
 (id INT PRIMARY KEY,
 pgid INT,
 filename VARCHAR(300),

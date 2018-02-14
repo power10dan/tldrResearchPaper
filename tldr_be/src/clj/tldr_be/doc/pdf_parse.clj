@@ -21,16 +21,24 @@
     (catch Exception ex
       (log/error ex "There was some problem with Grobid!"))))
 
+
 (defn pdf-ref-parser
   "given a byte array, fileblob, this function packages up the blob to send
-  restfully to the pdf parser. Returns a response with the parsed xml in the
-  body"
+  restfully to the pdf parser selecting the option to parse references. Returns
+  a response with the parsed xml in the body"
   [fileblob]
   (pdf-engine fileblob :grobid-ref))
 
 (defn pdf-header-parser
   "given a byte array, fileblob, this function packages up the blob to send
-  restfully to the pdf parser. Returns a response with the parsed xml in the
-  body"
+  restfully to the pdf parser selecting the option to parse the header. Returns
+  a response with the parsed xml in the body"
   [fileblob]
   (pdf-engine fileblob :grobid-hed))
+
+(defn pdf-affil-parser
+  "given a byte array, fileblob, this function packages up the blob to send
+  restfully to the pdf parser selecting the option to parse affiliates. Returns
+  a response with the parsed xml in the body"
+  [fileblob]
+  (pdf-engine fileblob :grobid-aff))

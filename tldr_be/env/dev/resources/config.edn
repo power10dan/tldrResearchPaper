@@ -3,6 +3,7 @@
  ;; when :nrepl-port is set the application starts with nREPL server on load
  :grobid-ref "http://localhost:8080/processReferences"
  :grobid-hed "http://localhost:8080/processHeaderDocument"
+ :grobid-aff "http://localhost:8080/processAffiliations"
  ;; :grobid-ref "http://52.170.38.218:8080/processReferences"
  ;; :grobid-hed "http://52.170.38.218:8080/processHeaderDocument"
  }

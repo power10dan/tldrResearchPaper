@@ -61,6 +61,13 @@
   (eng/insert-xml-engine id fname xml_content create-xml-headers!))
 
 
+(defn insert-xml-affiliates!
+  "Given params from a request, pull the filename and a xml of file data, insert
+  that xml into the xml affiliates table in the db"
+  [pgid fname xml_content]
+  (eng/insert-xml-engine pgid fname xml_content create-xml-affils!))
+
+
 (defn get-xml-refs-by-filename
   "Given the name of a file, if the filename is good
   then query the db for the corresponding xml references by the filename"
@@ -73,6 +80,13 @@
   then query the db for the corresponding xml headers by the filename"
   [name]
   (eng/get-xml-engine name get-xml-headers-by-name))
+
+
+(defn get-xml-affiliates-by-filename
+  "Given the name of a file, if the filename is good
+  then query the db for the corresponding xml affiliates by the filename"
+  [name]
+  (eng/get-xml-engine name get-xml-affils-by-name))
 
 
 (defn pdf-to-xml-refs
@@ -93,6 +107,16 @@
                          get-xml-headers-by-filename
                          insert-xml-headers!
                          pdf/pdf-header-parser))
+
+
+(defn pdf-to-xml-affiliates
+  "Given a filemap, like: {:id id :filename \"filename\" :filestuff bytea} process
+  the file and return the papers affiliates"
+  [filemap]
+  (eng/pdf-to-xml-engine filemap
+                         get-xml-affiliates-by-filename
+                         insert-xml-headers!
+                         pdf/pdf-affil-parser))
 
 
 (defn xml-to-map
@@ -147,6 +171,17 @@
        make-sections
        (map collect)
        second))
+
+
+(defn process-affiliates
+  [fname]
+  (->> fname
+       (fname-to-cljmap pdf-to-xml-affiliates)
+       get-sections
+       make-sections
+       (map collect)
+       second))
+
 
 (defn process-refs
   [fname]

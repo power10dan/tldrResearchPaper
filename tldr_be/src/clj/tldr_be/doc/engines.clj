@@ -5,10 +5,10 @@
   "Given required fields id, filename, and xml content, and a function. Use the
   supplied function to insert the xml in the database that the function
   specifies"
-  [id filename xml_content f]
-  (when (and id filename xml_content)
+  [pgid filename xml_content f]
+  (when (and pgid filename xml_content)
     (do ;; if we have all parameters, create an entry
-      (f {:id id
+      (f {:pgid pgid
           :filename filename
           :xml_content xml_content})
       "Your document successfully uploaded")))
