@@ -5,11 +5,10 @@
   "Given required fields id, filename, and xml content, and a function. Use the
   supplied function to insert the xml in the database that the function
   specifies"
-  [pgid filename xml_content f]
-  (when (and pgid filename xml_content)
+  [filename xml_content f]
+  (when (and filename xml_content)
     (do ;; if we have all parameters, create an entry
-      (f {:pgid pgid
-          :filename filename
+      (f {:filename filename
           :xml_content xml_content})
       "Your document successfully uploaded")))
 
@@ -28,10 +27,10 @@
   parser, check if the file has already been processed via db_f, if not then
   process it with pdf_parser_f"
   [filemap db_get db_put pdf_parser_f]
-  (let [{id :id fname :filename fileblob :filestuff} filemap
+  (let [{id :id fname :filename fileblob :filestuff title :title} filemap
         cached_xml (db_get fname)]
     (if cached_xml
       (:xml_content cached_xml)
       (let [{xml_file :body} (pdf_parser_f fileblob)]
-        (db_put id fname xml_file)
+        (db_put fname xml_file)
         xml_file))))

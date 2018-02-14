@@ -19,19 +19,6 @@
             [tldr-be.utils.core :refer [collect]]
             [clojure.java.io :as io]))
 
-(defn insert-doc!
-  "Given params from a request, pull the filename and a blob of file data, insert
-  that blob into the db after transforming blob to byte-array"
-  [params]
-  (let [filename (get-in params [:file :filename])
-        file_blob (get-in params [:file :tempfile])]
-    (if (and filename file_blob)
-      (do ;; if we have both filename and blob then perform the effect
-        (create-doc! {:filename (first (split filename #"\.")) ;;fname is basename
-                      :filestuff (bs/to-byte-array file_blob)})
-        [true "Your document successfully uploaded"])
-      [false "Request Malformed"])))
-
 
 (defn get-doc
   "Given the params of a request, try to pull out the filename, if that fails try
@@ -57,8 +44,8 @@
 (defn insert-xml-headers!
   "Given params from a request, pull the filename and a xml of file data, insert
   that xml into the xml headers table in the db"
-  [id fname xml_content]
-  (eng/insert-xml-engine id fname xml_content create-xml-headers!))
+  [fname xml_content]
+  (eng/insert-xml-engine fname xml_content create-xml-headers!))
 
 
 (defn get-xml-refs-by-filename
@@ -116,6 +103,12 @@
   (-> fname get-fblob f xml-to-map))
 
 
+(defn fblob-to-cljmap
+  "make a clojure map given filename as string"
+  [f fblob]
+  (-> fblob f xml-to-map))
+
+
 (defn get-sections
  "take a nested xml clojure representation and pull out
   tags and respective content when content is a string"
@@ -139,14 +132,36 @@
        (filter #(not (= :title (first %))))
        (map #(doall (cons :title %)))))
 
+
 (defn process-headers
-  [fname]
-  (->> fname
-       (fname-to-cljmap pdf-to-xml-headers)
+  [fmap]
+  (->> fmap
+       pdf-to-xml-headers
        get-sections
        make-sections
        (map collect)
        second))
+
+
+(defn insert-doc!
+  "Given params from a request, pull the filename and a blob of file data, insert
+  that blob into the db after transforming blob to byte-array"
+  [params]
+  (let [filename (get-in params [:file :filename])
+        file_blob (get-in params [:file :tempfile])]
+    (println (process-headers {:filename filename
+                               :filestuff file_blob}))
+    (if (and filename file_blob)
+      ;; if we have both filename and blob then perform the effect
+      ;; we have to hit grobid everytime to get the title because filenames aren't trustworthy
+      (when-let [title (:title (process-headers {:filename filename
+                                                 :filestuff file_blob}))]
+        (do
+          (create-doc! {:filename (first (split filename #"\.")) ;;fname is basename
+                        :filestuff (bs/to-byte-array file_blob)
+                        :title (process-headers title)})
+          [true "Your document successfully uploaded"]))
+      [false "Request Malformed"])))
 
 
 (defn process-refs

@@ -45,8 +45,8 @@ WHERE id = :id
 -- :name create-doc! :! :n
 -- :doc creates a new document record
 INSERT INTO docs
-(filename, filestuff)
-VALUES (:filename, :filestuff)
+(pgid, filename, filestuff)
+VALUES (:pgid, :filename, :filestuff)
 
 -- :name get-doc-by-filename :? :1
 -- :doc retrieves a document given the file name
@@ -56,56 +56,27 @@ WHERE filename = :filename
 -- :name get-doc-by-id :? :1
 -- :doc retrieves a document given the
 SELECT * FROM docs
-WHERE id = :id
+WHERE pgid = :pgid
 
 -- :name get-doc-id :? :1
 -- :doc given a filename retrieve that docs doc_id
-SELECT id from docs
+SELECT pgid from docs
 where filename = :filename
 
 -- :name get-doc-filename :? :1
 -- :doc given a doc_id retrieve the doc's filename
 SELECT filename from docs
-where id = :id
+where pgid = :pgid
 
 -- :name delete-doc! :! :n
 -- :doc deletes a document record given the id
 DELETE FROM docs
-WHERE id = :id
+WHERE pgid = :pgid
 
 -- :name get-doc-title :? :1
 -- :doc given a doc_id retrieve the doc's filename
 SELECT title from docs
 where title  = :title
-
--- :name create-summary! :! :n
--- :doc creates a new summary record
-INSERT INTO summary
-(header, author, summary, doc_id)
-VALUES (:header, :author, :summary, :doc_id)
-
--- :name get-summary :? :1
--- :doc retrieves a summary record given the id
-SELECT * FROM summary
-WHERE id = :id
-
--- :name delete-summary! :! :n
--- :doc deletes a summary record given the id
-DELETE FROM summary
-WHERE id = :id
-
--- :name up-votes! :! :n
--- :doc increments a vote count by author filename summary and doc id
-UPDATE summary
-SET votes = votes + 1
-WHERE header = :header AND author = :author AND  doc_id = :doc_id
-
--- :name down-votes! :! :n
--- :doc decrements a vote count by author filename summary and doc id
-UPDATE summary
-SET votes = votes - 1
-WHERE header = :header AND author = :author AND doc_id = :doc_id
-
 
 
 -- :name create-xml-refs! :! :n
@@ -127,8 +98,8 @@ WHERE filename = :filename
 -- :name create-xml-headers! :! :n
 -- :doc creates a new xml record
 INSERT INTO xml_headers
-(pgid, filename, xml_content)
-VALUES (:pgid, :filename, :xml_content)
+(filename, xml_content)
+VALUES (:filename, :xml_content)
 
 -- :name get-xml-headers:? :1
 -- :doc retrieves an xml doc record given the id
@@ -139,3 +110,14 @@ WHERE pgid = :pgid
 -- :doc retrieves an xml doc given the file name
 SELECT * FROM xml_headers
 WHERE filename = :filename
+
+
+-- :name get-xml-headers-by-title :? :1
+-- :doc retrieves an xml doc given the file name
+SELECT * FROM xml_headers
+WHERE title = :title
+
+-- :name get-doc-id :? :1
+-- :doc given a title retrieve that docs doc_id
+SELECT pgid from docs
+where title = :title
