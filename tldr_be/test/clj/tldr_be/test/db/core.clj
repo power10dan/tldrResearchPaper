@@ -32,3 +32,13 @@
                                   :title "Function Programming with Bananas, Lenses, Envelopes, and Barbed Wire"
                                   :filestuff (bs/to-byte-array (io/input-stream "test/papers/bananas_lenses.pdf"))})]
     (is (= 1 response))))
+
+(deftest get-id-bananas-lenses
+  (testing "check to make sure bananas_lenses is in the db")
+  (let [response (db/get-doc-id {:filename "bananas_lenses"})]
+    (is (= 1 (:id response)))))
+
+(deftest get-bananas-lenses
+  (testing "get bananas_lenses file out of the db")
+  (let [response (db/get-doc-by-filename {:filename "bananas_lenses"})]
+    (is (> 1 (count response)))))
