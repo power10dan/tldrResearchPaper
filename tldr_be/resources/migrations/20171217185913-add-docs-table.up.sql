@@ -1,5 +1,5 @@
 CREATE TABLE docs
 (id SERIAL PRIMARY KEY,
  filename VARCHAR(300),
- title VARCHAR(300),
- filestuff BYTEA);
+ title VARCHAR(300) UNIQUE,
+ filestuff BYTEA NOT NULL);

@@ -73,7 +73,10 @@ where id = :id
 DELETE FROM docs
 WHERE id = :id
 
-
+-- :name get-doc-title :? :1
+-- :doc given a doc_id retrieve the doc's filename
+SELECT title from docs
+where title  = :title
 
 -- :name create-summary! :! :n
 -- :doc creates a new summary record
