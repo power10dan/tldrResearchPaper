@@ -136,20 +136,3 @@ WHERE pgid = :pgid
 -- :doc retrieves an xml doc given the file name
 SELECT * FROM xml_headers
 WHERE filename = :filename
-
-
--- :name create-xml-affils! :! :n
--- :doc creates a new xml record
-INSERT INTO xml_affils
-(pgid, filename, xml_content)
-VALUES (:pgid, :filename, :xml_content)
-
--- :name get-xml-affils :? :1
--- :doc retrieves an xml affiliate doc record given the id
-SELECT * FROM xml_affils
-WHERE pgid = :pgid
-
--- :name get-xml-affils-by-name :? :1
--- :doc retrieves an xml affiliate doc given the file name
-SELECT * FROM xml_affils
-WHERE filename = :filename

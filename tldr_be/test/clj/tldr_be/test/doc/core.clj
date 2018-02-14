@@ -43,8 +43,3 @@
 (deftest bananas-lenses-refs
   (testing "bananas and lenses should always have the same number of references"
     (is (= 31 (count (doc/process-refs "bananas_lenses"))))))
-
-;; always fails due to grobid
-;; (deftest bananas-lenses-affils
-;;   (testing "banansh and lenses should always have the same affiliates")
-;;   (is (= "asdf") (doc/process-affiliates "bananas_lenses")))

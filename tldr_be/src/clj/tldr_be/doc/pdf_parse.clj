@@ -35,10 +35,3 @@
   a response with the parsed xml in the body"
   [fileblob]
   (pdf-engine fileblob :grobid-hed))
-
-(defn pdf-affil-parser
-  "given a byte array, fileblob, this function packages up the blob to send
-  restfully to the pdf parser selecting the option to parse affiliates. Returns
-  a response with the parsed xml in the body"
-  [fileblob]
-  (pdf-engine fileblob :grobid-aff))
