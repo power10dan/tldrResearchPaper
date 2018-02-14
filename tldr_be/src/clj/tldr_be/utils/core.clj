@@ -1,5 +1,6 @@
 (ns tldr-be.utils.core
-  (:require [clojure.string :as str]))
+  (:require [clojure.string :as str]
+            [ring.util.http-response :as http]))
 
 (defn collect
   "Given a flat lazy seq like :key0 value0 :key0 value1 :key1 v2 where duplicate
@@ -41,3 +42,33 @@
     (if (not k)
       acc
       (recur ks vs (assoc acc (f k) v)))))
+
+
+(defn massage-req
+  "Given a request pull out titles and ids and process them returns a collection
+  of valid titles and ids"
+  [req]
+  ;; TODO: Convert to middleware
+  (let [to-vec (fn [a] (cond (coll? a) a (not-nil? a) (vector a) :else nil))
+        massage-str (fn [a] (map #(format "'%s'" (str/replace % "\"" "")) a))
+        ts (to-vec (get-in req [:query-params "title"]))
+        is (to-vec (get-in req [:query-params "id"]))
+        fs (to-vec (get-in req [:query-params "forename"]))
+        ss (to-vec (get-in req [:query-params "surname"]))]
+    (distinct (concat
+               (when ts (massage-str ts))
+               (when is (map parse-int is))
+               (when fs (massage-str fs))
+               (when ss (massage-str ss))))))
+
+
+(defn response-wrapper
+  "Given a function and a function to feed the first one and request call the
+  function and wrap the response appropriately"
+  [req f g]
+  (let [[ok? res] (apply f g (massage-req req))]
+    (if ok?
+      {:status 200
+       :headers {"Content-Type" "application/json"}
+       :body res}
+      (http/bad-request res))))

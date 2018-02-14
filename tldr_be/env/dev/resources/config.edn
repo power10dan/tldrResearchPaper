@@ -1,5 +1,5 @@
 {:dev true
- :port 3000
+ :port 9678
  ;; when :nrepl-port is set the application starts with nREPL server on load
  :grobid-ref "http://localhost:8080/processReferences"
  :grobid-hed "http://localhost:8080/processHeaderDocument"
