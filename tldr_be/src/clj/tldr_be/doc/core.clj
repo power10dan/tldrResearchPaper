@@ -89,7 +89,6 @@
   "Given a filemap, like: {:id id :filename \"filename\" :filestuff bytea} process
   the file and return the parsed xml headers from the file"
   [filemap]
-  (println "Running headers on: " filemap)
   (eng/pdf-to-xml-engine filemap
                          get-xml-headers-by-filename
                          insert-xml-headers!

@@ -35,7 +35,11 @@
     (is (= 1 response))))
 
 (deftest get-title-bananas-lenses
-  (testing "bananas and lenses title can be parsed by grobid")
+  (testing "bananas and lenses title can be parsed by grobid and matched exactly")
   (let [response (db/get-doc-by-id {:id 1})]
-    (is (= "Function Programming with Bananas, Lenses, Envelopes, and Barbed Wire"
-           (doc/process-refs "bananas_lenses")))))
+    (is (= "Functional Programming with Bananas, Lenses, Envelopes and Barbed Wire"
+           (first (:title (doc/process-headers "bananas_lenses")))))))
+
+(deftest bananas-lenses-refs
+  (testing "bananas and lenses should always have the same number of references"
+    (is (= 31 (count (doc/process-refs "bananas_lenses"))))))
