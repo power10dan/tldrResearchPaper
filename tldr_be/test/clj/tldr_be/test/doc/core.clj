@@ -1,4 +1,4 @@
-(ns tldr-be.test.db.core
+(ns tldr-be.test.doc.core
   (:require [tldr-be.db.core :refer [*db*] :as db]
             [tldr-be.doc.core :as doc]
             [luminus-migrations.core :as migrations]
@@ -14,8 +14,8 @@
   :once
   (fn [f]
     (mount/start
-      #'tldr-be.config/env
-      #'tldr-be.db.core/*db*)
+     #'tldr-be.config/env
+     #'tldr-be.db.core/*db*)
     (migrations/migrate ["migrate"] (select-keys env [:database-url]))
     (f)))
 
@@ -34,12 +34,8 @@
                                   :filestuff (bs/to-byte-array (io/input-stream "test/papers/bananas_lenses.pdf"))})]
     (is (= 1 response))))
 
-(deftest get-id-bananas-lenses
-  (testing "check to make sure bananas_lenses is in the db")
-  (let [response (db/get-doc-id {:filename "bananas_lenses"})]
-    (is (= 1 (response :id)))))
-
-(deftest get-bananas-lenses
-  (testing "get bananas_lenses file out of the db")
-  (let [response (db/get-doc-by-filename {:filename "bananas_lenses"})]
-    (is (< 1 (-> response :filestuff count )))))
+(deftest get-title-bananas-lenses
+  (testing "bananas and lenses title can be parsed by grobid")
+  (let [response (db/get-doc-by-id {:id 1})]
+    (is (= "Function Programming with Bananas, Lenses, Envelopes, and Barbed Wire"
+           (doc/process-refs "bananas_lenses")))))
