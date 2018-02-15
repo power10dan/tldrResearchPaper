@@ -1,5 +1,6 @@
 CREATE TABLE xml_headers
 (pgid SERIAL PRIMARY KEY,
-filename VARCHAR(300),
-title VARCHAR(300) UNIQUE,
+filename VARCHAR(300) NOT NULL,
+title VARCHAR(300) UNIQUE NOT NULL,
+abstract VARCHAR(2000),
 xml_content VARCHAR);
