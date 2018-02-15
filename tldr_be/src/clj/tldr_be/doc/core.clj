@@ -40,8 +40,8 @@
 (defn insert-xml-refs!
   "Given params from a request, pull the filename and a xml of file data, insert
   that xml into the xml reference table in the db"
-  ([id fname xml_content]
-   (eng/insert-xml-engine create-xml-refs! id xml_content)))
+  ([fmap]
+   (eng/insert-xml-engine create-xml-refs! fmap)))
 
 
 (defn insert-xml-headers!
@@ -100,16 +100,16 @@
   "Given params from a request, pull the filename and a blob of file data, insert
   that blob into the db after transforming blob to byte-array"
   [filename file_blob]
-  (when (and filename file_blob)
+  (if (and filename file_blob)
     ;; if we have both filename and blob then perform the effect
     ;; we have to hit grobid everytime to get the title because filenames aren't trustworthy
     (when-let [heds (process-headers {:filename filename
                                       :filestuff file_blob})]
       (let [{pgid :pgid} (get-headers-id-by-title (select-keys heds [:title]))]
-        (if (empty? (get-doc-by-id {:pgid pgid}))
-          (do (create-doc! {:filestuff (bs/to-byte-array file_blob) :pgid pgid})
-              [true "Your document successfully uploaded"])
-          [false "Request Malformed"])))))
+        (when (empty? (get-doc-by-id {:pgid pgid})) ;; when empty insert the doc
+          (create-doc! {:filestuff (bs/to-byte-array file_blob) :pgid pgid}))
+        [true "Your document successfully uploaded"]))
+    [false "Request Malformed"]))
 
 
 (defn workhorse

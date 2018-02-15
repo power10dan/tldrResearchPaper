@@ -16,6 +16,7 @@
   (let [fname (get-basename (get-in req [:params :file :filename]))
         tempfile (get-in req [:params :file :tempfile])
         [ok? res] (doc/insert-doc! fname tempfile)]
+    (println res)
     (if ok?
       (do
         (insert-neo4j fname tempfile)

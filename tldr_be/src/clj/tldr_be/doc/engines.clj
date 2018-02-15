@@ -29,18 +29,19 @@
   [filemap db_get db_put pdf_parser_f]
   (when filemap
     (do
-      (when-let [c (db_get filemap)] c) ;; if cached return
-      (let [{xml_str :body} (pdf_parser_f (:filestuff filemap)) ;; if not the process
-            __result (->> xml_str
-                         string->xml
-                         get-sections
-                         make-sections
-                         (map collect)
-                         second)
-            _result (update-in __result [:title] first)
-            result (assoc _result :filename (:filename filemap))] ;; remove title from vector
-        (if-let [cached (db_get (:title result))] ;; then we've cached it else make it
-          cached
-          (do
-            (db_put result) ;; add to cache
-            (db_get result))))))) ;; and now return with gen'd pgid from db
+      (if-let [c (db_get filemap)] ;; if given correct title in filemap
+        c ;; cached return
+        (let [{xml_str :body} (pdf_parser_f (:filestuff filemap)) ;; if not the process
+              __result (->> xml_str
+                            string->xml
+                            get-sections
+                            make-sections
+                            (map collect)
+                            second)
+              _result (update-in __result [:title] first)
+              result (assoc _result :filename (:filename filemap))] ;; remove title from vector
+          (if-let [cached (db_get (:title result))] ;; then we've cached it else make it
+            cached
+            (do
+              (db_put result) ;; add to cache
+              (db_get result)))))))) ;; and now return with gen'd pgid from db

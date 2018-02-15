@@ -80,7 +80,7 @@
 (defn get-basename
   "Given a file path, retrieve the basename (the stuff before the extension)"
   [filepath]
-  (first (split filepath #"\.")))
+  (when filepath (first (split filepath #"\."))))
 
 
 (defn get-sections
