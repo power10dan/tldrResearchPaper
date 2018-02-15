@@ -1,5 +1,6 @@
 (ns tldr-be.utils.core
   (:require [clojure.string :as str]
+            [clojure.string :refer [split]]
             [ring.util.http-response :as http]))
 
 (defn collect
@@ -72,3 +73,32 @@
        :headers {"Content-Type" "application/json"}
        :body res}
       (http/bad-request res))))
+
+(defn get-basename
+  "Given a file path, retrieve the basename (the stuff before the extension)"
+  [filepath]
+  (first (split filepath #"\.")))
+
+
+(defn get-sections
+  "take a nested xml clojure representation and pull out
+  tags and respective content when content is a string"
+  [grobid-map]
+  (for [x (xml-seq grobid-map)
+        :when (string? (first (:content x)))]
+    [(if (= (:tag x) :biblScope)
+       (-> x :attrs :unit keyword)
+       (:tag x))
+     (first (:content x))]))
+
+
+;; TODO fix all this post processing
+(defn make-sections
+  "Given a vector of vectors, like the output of get-sections, group by title
+  and add the title keyword to each entry"
+  [vec_o_vecs]
+  (->> vec_o_vecs
+       flatten
+       (partition-by #(= :title %))
+       (filter #(not (= :title (first %))))
+       (map #(doall (cons :title %)))))
