@@ -45,55 +45,32 @@ WHERE id = :id
 -- :name create-doc! :! :n
 -- :doc creates a new document record
 INSERT INTO docs
-(pgid, filename, filestuff)
-VALUES (:pgid, :filename, :filestuff)
-
--- :name get-doc-by-filename :? :1
--- :doc retrieves a document given the file name
-SELECT * FROM docs
-WHERE filename = :filename
+(pgid, filestuff)
+VALUES (:pgid, :filestuff)
 
 -- :name get-doc-by-id :? :1
 -- :doc retrieves a document given the
 SELECT * FROM docs
 WHERE pgid = :pgid
 
--- :name get-doc-id :? :1
--- :doc given a filename retrieve that docs doc_id
-SELECT pgid from docs
-where filename = :filename
-
--- :name get-doc-filename :? :1
--- :doc given a doc_id retrieve the doc's filename
-SELECT filename from docs
-where pgid = :pgid
-
 -- :name delete-doc! :! :n
 -- :doc deletes a document record given the id
 DELETE FROM docs
 WHERE pgid = :pgid
 
--- :name get-doc-title :? :1
--- :doc given a doc_id retrieve the doc's filename
-SELECT title from docs
-where title  = :title
-
 
 -- :name create-xml-refs! :! :n
 -- :doc creates a new xml record
 INSERT INTO xml_refs
-(pgid, filename, xml_content)
-VALUES (:pgid, :filename, :xml_content)
+(pgid, xml_content)
+VALUES (:pgid, :xml_content)
 
 -- :name get-xml-refs :? :1
 -- :doc retrieves an xml doc record given the id
 SELECT * FROM xml_refs
 WHERE pgid = :pgid
 
--- :name get-xml-refs-by-name :? :1
--- :doc retrieves an xml doc given the file name
-SELECT * FROM xml_refs
-WHERE filename = :filename
+
 
 -- :name create-xml-headers! :! :n
 -- :doc creates a new xml record

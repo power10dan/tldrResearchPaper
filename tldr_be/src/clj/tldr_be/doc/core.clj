@@ -1,12 +1,9 @@
 (ns tldr-be.doc.core
   (:require [tldr-be.db.core :refer [create-doc!
-                                     get-doc-by-filename
                                      get-doc-by-id
-                                     get-doc-id
-                                     get-doc-filename
                                      create-xml-refs!
                                      create-xml-headers!
-                                     get-xml-refs-by-name
+                                     get-xml-refs
                                      get-xml-headers-by-title
                                      get-headers-id-by-title
                                      *neo4j_db*]]
@@ -19,43 +16,47 @@
             [tldr-be.utils.core :refer [collect
                                         get-basename
                                         make-sections
+                                        string->xml
                                         get-sections]]
             [clojure.java.io :as io]))
 
 
 (defn get-doc
-  "Given the params of a request, try to pull out the filename, if that fails try
+  "Given the params of a request, try to pull out the title, if that fails try
   to pull out the postgres id (pgid), with either pull out the file, if neither
   works return failure"
   [params]
   (log/info "getting " params)
-  (let [fname (get params "filename")
+  (let [title (get params "title")
         pgid (get params "pgid")]
-    (if (or pgid fname)
+    (if (or pgid title)
       [true (cond pgid (get-doc-by-id {:id (parse-int pgid)})
-                  fname (get-doc-by-filename {:filename fname}))]
+                  title (-> {:title title}
+                            get-xml-headers-by-title
+                            :pgid
+                            get-doc-by-id))]
       [false ("file could not be found")])))
 
 
 (defn insert-xml-refs!
   "Given params from a request, pull the filename and a xml of file data, insert
   that xml into the xml reference table in the db"
-  [id fname xml_content]
-  (eng/insert-xml-engine id fname xml_content create-xml-refs!))
+  ([id fname xml_content]
+   (eng/insert-xml-engine create-xml-refs! id xml_content)))
 
 
 (defn insert-xml-headers!
   "Given params from a request, pull the filename and a xml of file data, insert
   that xml into the xml headers table in the db"
-  [fname xml_content title]
-  (eng/insert-xml-engine fname xml_content title create-xml-headers!))
+  [fmap]
+  (eng/insert-xml-engine fmap create-xml-headers!))
 
 
-(defn get-xml-refs-by-filename
+(defn get-xml-refs-by-id
   "Given the name of a file, if the filename is good
   then query the db for the corresponding xml references by the filename"
-  [name]
-  (eng/get-xml-engine name get-xml-refs-by-name))
+  [pgid]
+  (eng/get-xml-engine name get-xml-refs))
 
 
 (defn get-headers-by-title
@@ -70,7 +71,7 @@
   the file and return the parsed xml references from the file"
   [filemap]
   (eng/pdf-to-xml-engine filemap
-                         get-xml-refs-by-filename
+                         get-xml-refs-by-id
                          insert-xml-refs!
                          pdf/pdf-ref-parser))
 
@@ -94,31 +95,13 @@
       xml/parse))
 
 
-(defn get-fblob
-  "pull out a file blob from the database given the name"
-  [fname]
-  (-> {:filename fname} get-doc-by-filename))
-
-
-(defn fname-to-cljmap
- "make a clojure map given filename as string"
-  [f fname]
-  (-> fname get-fblob f xml-to-map))
-
-
-(defn fblob-to-cljmap
-  "make a clojure map given filename as string"
-  [f fblob]
-  (-> fblob f xml-to-map))
-
-
 (defn process-headers
+  "Given a file map, pass the file_blob to whatever restful service to get the
+  headers, convert the headers to xml and then accumulate the results"
   [fmap]
   (->> fmap
        pdf-to-xml-headers
-       .getBytes
-       io/input-stream
-       xml/parse
+       string->xml
        get-sections
        make-sections
        (map collect)
@@ -135,22 +118,20 @@
       ;; if we have both filename and blob then perform the effect
       ;; we have to hit grobid everytime to get the title because filenames aren't trustworthy
       (when-let [heds (process-headers {:filename filename
-                                            :filestuff file_blob})]
+                                        :filestuff file_blob})]
         (let [title (-> heds :title first)
               {pgid :pgid} (get-headers-id-by-title {:title title})]
           (if (empty? (get-doc-by-id {:pgid pgid}))
-            (create-doc! {:filename (get-basename filename) ;;fname is basename
-                          :filestuff (bs/to-byte-array file_blob)
-                          :title title
+            (create-doc! {:filestuff (bs/to-byte-array file_blob)
                           :pgid pgid})
             [true "Your document successfully uploaded"])))
       [false "Request Malformed"])))
 
 
 (defn process-refs
-  [fname]
-  (->> fname
-       (fname-to-cljmap pdf-to-xml-refs)
+  [fmap]
+  (->> fmap
+       pdf-to-xml-refs
        get-sections
        make-sections
        (map collect)

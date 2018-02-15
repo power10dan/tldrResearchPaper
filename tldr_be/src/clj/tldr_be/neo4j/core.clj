@@ -1,8 +1,5 @@
 (ns tldr-be.neo4j.core
-  (:require [tldr-be.db.core :refer [get-doc-id
-                                     get-doc-filename
-                                     get-doc-by-filename
-                                     *neo4j_db*]]
+  (:require [tldr-be.db.core :refer [*neo4j_db*]]
             [tldr-be.doc.core :refer [workhorse process-headers process-refs]]
             [tldr-be.utils.core :refer [escape-string map-keys]]
             [clojure.walk :refer [stringify-keys postwalk]]
@@ -132,7 +129,7 @@
   "Given a filename get the document id for the file out of postgres, then get the
   headers and references for the file, create the nodes in the neo4j uniquely
   and then add edges, uniquely"
-  [fname]
+  [pgid]
   (try
     (when-let [heds (process-headers fname)]
       (when-not (-> heds :title first original-exists?)

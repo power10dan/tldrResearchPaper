@@ -12,12 +12,10 @@
   "Given required fields id, filename, and xml content, and a function. Use the
   supplied function to insert the xml in the database that the function
   specifies"
-  [filename xml_content title f]
-  (when (and filename xml_content title)
-    (if (empty? (get-headers-id-by-title {:title title})) ;; if doc doesnt exist
-      (f {:filename filename
-          :xml_content xml_content
-          :title title})
+  [f & args]
+  (when (not-empty args)
+    (if (empty? (get-headers-id-by-title {:title (:title args)})) ;; if doc doesnt exist
+      (f args)
       "Your document successfully uploaded")))
 
 
@@ -40,13 +38,11 @@
     (if cached_xml
       (:xml_content cached_xml) ;; if cached return
       (let [{xml_str :body} (pdf_parser_f fileblob) ;; if not the process
-            title (->> xml_str
+            result (->> xml_str
                        string->xml
                        get-sections
                        make-sections
                        (map collect)
-                       second
-                       :title
-                       first)]
-        (db_put fname xml_str title) ;; add to cache
+                       second)]
+        (db_put result) ;; add to cache
         xml_str)))) ;; and now return

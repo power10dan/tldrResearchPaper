@@ -107,5 +107,6 @@
        (map #(doall (cons :title %)))))
 
 (defn string->xml
+  "Converts a string to an xml string"
   [string]
   (->> string .getBytes io/input-stream xml/parse))

@@ -83,13 +83,11 @@
                    tldr-be.doc.engines
                    tldr-be.routes.services
                    tldr-be.routes.home]
-             ;; :source-paths ["env/prod/clj"]
-             ;; :env {:production true}
              }
 
    :prod          [:project/prod :profiles/prod]
    :dev           [:project/dev :profiles/dev]
-   :test          [:project/dev :project/test :profiles/test]
+   :test          [:project/test :profiles/test]
 
    :project/dev  {:dependencies [[prone "1.1.4"]
                                  [ring/ring-mock "0.3.2"]

@@ -1,5 +1,3 @@
 CREATE TABLE docs
 (pgid INT PRIMARY KEY,
- filename VARCHAR(300),
- title VARCHAR(300) UNIQUE,
  filestuff BYTEA NOT NULL);
