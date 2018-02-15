@@ -3,6 +3,7 @@
             [ring.util.http-response :as http]
             [clojure.string :refer [split]]
             [tldr-be.neo4j.core :refer [insert-neo4j]]
+            [tldr-be.utils.core :refer [get-basename]]
             [clojure.java.io :as io]
             [clojure.tools.logging :as log]
             [clojure.string :as str]))
@@ -12,12 +13,13 @@
   "Given a request that specifies a summary information, validate summary and
    if good, add to database, otherwise give a bad request"
   [req]
-  (let [[ok? res] (doc/insert-doc! (:params req))] ;;params gen'd by middleware
+  (let [fname (get-basename (get-in req [:params :file :filename]))
+        tempfile (get-in req [:params :file :tempfile])
+        [ok? res] (doc/insert-doc! fname tempfile)]
     (if ok?
       (do
-        (insert-neo4j (#(first (split % #"\."))
-                           (get-in req [:params :file :filename])))
-        (http/created res res));; (http/created url body)
+        (insert-neo4j fname tempfile)
+        (http/created res res)) ;; (http/created url body)
       (http/bad-request res))))
 
 

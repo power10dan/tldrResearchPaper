@@ -12,37 +12,35 @@
   "Given required fields id, filename, and xml content, and a function. Use the
   supplied function to insert the xml in the database that the function
   specifies"
-  [f & args]
-  (when (not-empty args)
-    (if (empty? (get-headers-id-by-title {:title (:title args)})) ;; if doc doesnt exist
-      (f args)
+  [f data]
+  (when (not-empty data)
+    (if (empty? (get-headers-id-by-title (select-keys data [:title]))) ;; if doc doesnt exist
+      (f data)
       "Your document successfully uploaded")))
-
-
-(defn get-xml-engine
-  "given the name of a file and a function that dictates a database. Use the
-  supplied function to pull out the xml from the appropriate database table"
-  [title f]
-  (when title (f {:title title})))
 
 
 (defn pdf-to-xml-engine
   "given a filemap: {:id id :filename \"filename\" :filestuff bytea}, a function
   to pull out a file from a database by filename, db_get, a function to insert
   into a database, db_put, and a function that connects to the restful pdf
-  parser, check if the file has already been processed via db_f, if not then
-  process it with pdf_parser_f"
+  parser, check if the file title exists in the database, if it does then return
+  the entry, if not then parse the pdf get a trusted title and then check the db
+  again if cached then return, else make it "
   [filemap db_get db_put pdf_parser_f]
-  (let [{id :id fname :filename fileblob :filestuff title :title} filemap
-        cached_xml (db_get title)]
-    (if cached_xml
-      (:xml_content cached_xml) ;; if cached return
-      (let [{xml_str :body} (pdf_parser_f fileblob) ;; if not the process
-            result (->> xml_str
-                       string->xml
-                       get-sections
-                       make-sections
-                       (map collect)
-                       second)]
-        (db_put result) ;; add to cache
-        xml_str)))) ;; and now return
+  (when filemap
+    (do
+      (when-let [c (db_get filemap)] c) ;; if cached return
+      (let [{xml_str :body} (pdf_parser_f (:filestuff filemap)) ;; if not the process
+            __result (->> xml_str
+                         string->xml
+                         get-sections
+                         make-sections
+                         (map collect)
+                         second)
+            _result (update-in __result [:title] first)
+            result (assoc _result :filename (:filename filemap))] ;; remove title from vector
+        (if-let [cached (db_get (:title result))] ;; then we've cached it else make it
+          cached
+          (do
+            (db_put result) ;; add to cache
+            (db_get result))))))) ;; and now return with gen'd pgid from db

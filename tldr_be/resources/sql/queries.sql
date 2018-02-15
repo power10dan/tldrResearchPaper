@@ -75,8 +75,8 @@ WHERE pgid = :pgid
 -- :name create-xml-headers! :! :n
 -- :doc creates a new xml record
 INSERT INTO xml_headers
-(title, filename, xml_content)
-VALUES (:title, :filename, :xml_content)
+(title, filename, forename, surname)
+VALUES (:title, :filename, :forename, :surname)
 
 -- :name get-xml-headers:? :1
 -- :doc retrieves an xml doc record given the id

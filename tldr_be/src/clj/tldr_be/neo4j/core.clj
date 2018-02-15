@@ -129,14 +129,12 @@
   "Given a filename get the document id for the file out of postgres, then get the
   headers and references for the file, create the nodes in the neo4j uniquely
   and then add edges, uniquely"
-  [pgid]
+  [fname file_blob]
   (try
-    (when-let [heds (process-headers fname)]
-      (when-not (-> heds :title first original-exists?)
+    (when-let [heds (process-headers {:filename fname :filestuff file_blob})]
+      (when-not (-> heds :title original-exists?)
         (let [refs (process-refs fname)
-              id (get-doc-id {:filename fname})
-              parent (nn/create *neo4j_db* (assoc heds :pgid (:id id)
-                                                  :filename fname))
+              parent (nn/create *neo4j_db* (assoc heds :filename fname))
               ;; WARNING THIS LINE ENSURES CREATED CITED NODES ARE REFERENCED IF
               ;; YOU USE A NORMAL CREATE CALL YOU'LL GET A CONSTRAIN ERROR
               ;; HERE THERE BE DRAGON

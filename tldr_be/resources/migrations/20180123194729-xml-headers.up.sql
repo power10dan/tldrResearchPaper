@@ -3,5 +3,5 @@ CREATE TABLE xml_headers
 filename VARCHAR(300) NOT NULL,
 title VARCHAR(300) UNIQUE NOT NULL,
 abstract VARCHAR,
-forenames text[],
-surnames text[]);
+forename text[],
+surname text[]);

@@ -14,7 +14,6 @@
             [tldr-be.doc.pdf-parse :as pdf]
             [tldr-be.doc.engines :as eng]
             [tldr-be.utils.core :refer [collect
-                                        get-basename
                                         make-sections
                                         string->xml
                                         get-sections]]
@@ -49,21 +48,21 @@
   "Given params from a request, pull the filename and a xml of file data, insert
   that xml into the xml headers table in the db"
   [fmap]
-  (eng/insert-xml-engine fmap create-xml-headers!))
+  (eng/insert-xml-engine create-xml-headers! fmap))
 
 
 (defn get-xml-refs-by-id
-  "Given the name of a file, if the filename is good
-  then query the db for the corresponding xml references by the filename"
-  [pgid]
-  (eng/get-xml-engine name get-xml-refs))
+  "Given a filemap try to get the references for the file based on pgid return nil
+  if not existent"
+  [filemap]
+  (get-xml-refs (not-empty {:pgid (:pgid filemap)})))
 
 
 (defn get-headers-by-title
-  "Given the name of a file, if the filename is good
-  then query the db for the corresponding xml headers by the filename"
-  [title]
-  (eng/get-xml-engine title get-xml-headers-by-title))
+  "Given a filemap try to get the headers for the file by title, return nil if not
+  existent"
+  [filemap]
+  (get-xml-headers-by-title (not-empty {:title (:title filemap)})))
 
 
 (defn pdf-to-xml-refs
@@ -76,7 +75,7 @@
                          pdf/pdf-ref-parser))
 
 
-(defn pdf-to-xml-headers
+(defn process-headers
   "Given a filemap, like: {:id id :filename \"filename\" :filestuff bytea} process
   the file and return the parsed xml headers from the file"
   [filemap]
@@ -86,62 +85,37 @@
                          pdf/pdf-header-parser))
 
 
-(defn xml-to-map
-  "Given a grobid response, converts the xml to a deeply nested map"
-  [grobidres]
-  (-> grobidres
-      bs/to-byte-array
-      io/input-stream
-      xml/parse))
+(defn process-refs
+  "Given a filemap, like: {:id id :filename \"filename\" :filestuff bytea} process
+  the file and return the parsed xml headers from the file"
+  [filemap]
+  (eng/pdf-to-xml-engine filemap
+                         get-xml-refs-by-id
+                         insert-xml-headers!
+                         pdf/pdf-header-parser))
 
-
-(defn process-headers
-  "Given a file map, pass the file_blob to whatever restful service to get the
-  headers, convert the headers to xml and then accumulate the results"
-  [fmap]
-  (->> fmap
-       pdf-to-xml-headers
-       string->xml
-       get-sections
-       make-sections
-       (map collect)
-       second))
 
 
 (defn insert-doc!
   "Given params from a request, pull the filename and a blob of file data, insert
   that blob into the db after transforming blob to byte-array"
-  [params]
-  (let [filename (get-in params [:file :filename])
-        file_blob (get-in params [:file :tempfile])]
-    (if (and filename file_blob)
-      ;; if we have both filename and blob then perform the effect
-      ;; we have to hit grobid everytime to get the title because filenames aren't trustworthy
-      (when-let [heds (process-headers {:filename filename
-                                        :filestuff file_blob})]
-        (let [title (-> heds :title first)
-              {pgid :pgid} (get-headers-id-by-title {:title title})]
-          (if (empty? (get-doc-by-id {:pgid pgid}))
-            (create-doc! {:filestuff (bs/to-byte-array file_blob)
-                          :pgid pgid})
-            [true "Your document successfully uploaded"])))
-      [false "Request Malformed"])))
-
-
-(defn process-refs
-  [fmap]
-  (->> fmap
-       pdf-to-xml-refs
-       get-sections
-       make-sections
-       (map collect)
-       (filter #(contains? % :surname))))
+  [filename file_blob]
+  (when (and filename file_blob)
+    ;; if we have both filename and blob then perform the effect
+    ;; we have to hit grobid everytime to get the title because filenames aren't trustworthy
+    (when-let [heds (process-headers {:filename filename
+                                      :filestuff file_blob})]
+      (let [{pgid :pgid} (get-headers-id-by-title (select-keys heds [:title]))]
+        (if (empty? (get-doc-by-id {:pgid pgid}))
+          (do (create-doc! {:filestuff (bs/to-byte-array file_blob) :pgid pgid})
+              [true "Your document successfully uploaded"])
+          [false "Request Malformed"])))))
 
 
 (defn workhorse
   "given a filename, grab the file bytea blob out of the db, parse the headers and
   the references and then collect like keys, this function returns 2-tuple where
   the fst is the filename headers, and snd is a collection of references"
-  [fname]
-  (log/info "performing workhorse on " fname)
-  [(process-headers fname) (process-refs fname)])
+  [fmap]
+  (log/info "performing workhorse on " fmap)
+  [(process-headers fmap) (process-refs fmap)])
