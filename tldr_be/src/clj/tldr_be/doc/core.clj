@@ -136,12 +136,14 @@
       ;; we have to hit grobid everytime to get the title because filenames aren't trustworthy
       (when-let [heds (process-headers {:filename filename
                                             :filestuff file_blob})]
-        (let [title (-> heds :title first)]
-          (create-doc! {:filename (get-basename filename) ;;fname is basename
-                        :filestuff (bs/to-byte-array file_blob)
-                        :title title
-                        :pgid (:pgid (get-headers-id-by-title {:title title}))})
-          [true "Your document successfully uploaded"]))
+        (let [title (-> heds :title first)
+              {pgid :pgid} (get-headers-id-by-title {:title title})]
+          (if (empty? (get-doc-by-id {:pgid pgid}))
+            (create-doc! {:filename (get-basename filename) ;;fname is basename
+                          :filestuff (bs/to-byte-array file_blob)
+                          :title title
+                          :pgid pgid})
+            [true "Your document successfully uploaded"])))
       [false "Request Malformed"])))
 
 

@@ -1,7 +1,9 @@
 (ns tldr-be.utils.core
   (:require [clojure.string :as str]
             [clojure.string :refer [split]]
-            [ring.util.http-response :as http]))
+            [ring.util.http-response :as http]
+            [clojure.java.io :as io]
+            [clojure.xml :as xml]))
 
 (defn collect
   "Given a flat lazy seq like :key0 value0 :key0 value1 :key1 v2 where duplicate
@@ -103,3 +105,7 @@
        (partition-by #(= :title %))
        (filter #(not (= :title (first %))))
        (map #(doall (cons :title %)))))
+
+(defn string->xml
+  [string]
+  (->> string .getBytes io/input-stream xml/parse))

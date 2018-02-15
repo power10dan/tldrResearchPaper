@@ -2,7 +2,10 @@
   (:require [clojure.java.io :as io]
             [clojure.xml :as xml]
             [tldr-be.db.core :refer [get-headers-id-by-title]]
-            [tldr-be.utils.core :refer [collect get-sections make-sections]]))
+            [tldr-be.utils.core :refer [collect
+                                        get-sections
+                                        make-sections
+                                        string->xml]]))
 
 
 (defn insert-xml-engine
@@ -35,16 +38,15 @@
   (let [{id :id fname :filename fileblob :filestuff title :title} filemap
         cached_xml (db_get title)]
     (if cached_xml
-      (:xml_content cached_xml)
-      (let [{xml_file :body} (pdf_parser_f fileblob)
-            title (->> xml_file
-                       .getBytes
-                       io/input-stream
-                       xml/parse get-sections
+      (:xml_content cached_xml) ;; if cached return
+      (let [{xml_str :body} (pdf_parser_f fileblob) ;; if not the process
+            title (->> xml_str
+                       string->xml
+                       get-sections
                        make-sections
                        (map collect)
                        second
                        :title
                        first)]
-        (db_put fname xml_file title)
-        xml_file))))
+        (db_put fname xml_str title) ;; add to cache
+        xml_str)))) ;; and now return
