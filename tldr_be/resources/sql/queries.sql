@@ -111,13 +111,12 @@ WHERE pgid = :pgid
 SELECT * FROM xml_headers
 WHERE filename = :filename
 
-
 -- :name get-xml-headers-by-title :? :1
 -- :doc retrieves an xml doc given the file name
 SELECT * FROM xml_headers
 WHERE title = :title
 
--- :name get-doc-id :? :1
--- :doc given a title retrieve that docs doc_id
-SELECT pgid from docs
+-- :name get-headers-id-by-title :? :1
+-- :doc given a title retrieve that header's pgid
+SELECT pgid from xml_headers
 where title = :title
