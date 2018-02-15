@@ -9,17 +9,18 @@
   vector pair e.g. (lazy-seq (k0 v0 k1 v1 k0 v2)) => {k0 [v0 v1] k1 v2}. Usage
   in this document should be: (map #(collect %) y)"
   ([coll]
-   (let [add (fn [a b c] (if (not (vector? (a c)))
-                          (update c a #(conj [%] b))
-                          (update c a #(conj % b))))
-         add-new (fn [a b c] (conj c {a [b]}))]
-     (loop [[x y & tail] coll
-            acc {}]
-       (if (not x)
-         acc
-         (recur tail (cond
-                       (contains? acc x) (add x y acc)
-                       :else (add-new x y acc))))))))
+   (when coll
+     (let [add (fn [a b c] (if (not (vector? (a c)))
+                            (update c a #(conj [%] b))
+                            (update c a #(conj % b))))
+           add-new (fn [a b c] (conj c {a [b]}))]
+       (loop [[x y & tail] coll
+              acc {}]
+         (if (not x)
+           acc
+           (recur tail (cond
+                         (contains? acc x) (add x y acc)
+                         :else (add-new x y acc)))))))))
 
 (defn escape-string
   "function accepts a string and returns one with specified characters removed."

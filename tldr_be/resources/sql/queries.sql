@@ -98,8 +98,8 @@ WHERE filename = :filename
 -- :name create-xml-headers! :! :n
 -- :doc creates a new xml record
 INSERT INTO xml_headers
-(filename, xml_content)
-VALUES (:filename, :xml_content)
+(title, filename, xml_content)
+VALUES (:title, :filename, :xml_content)
 
 -- :name get-xml-headers:? :1
 -- :doc retrieves an xml doc record given the id
