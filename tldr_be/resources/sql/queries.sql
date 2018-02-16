@@ -78,7 +78,7 @@ INSERT INTO xml_headers
 (title, filename, forename, surname)
 VALUES (:title, :filename, :forename, :surname)
 
--- :name get-xml-headers:? :1
+-- :name get-xml-headers :? :1
 -- :doc retrieves an xml doc record given the id
 SELECT * FROM xml_headers
 WHERE pgid = :pgid

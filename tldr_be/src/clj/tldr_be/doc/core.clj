@@ -37,20 +37,6 @@
       [false ("file could not be found")])))
 
 
-(defn insert-xml-refs!
-  "Given params from a request, pull the filename and a xml of file data, insert
-  that xml into the xml reference table in the db"
-  ([fmap]
-   (eng/insert-xml-engine create-xml-refs! fmap)))
-
-
-(defn insert-xml-headers!
-  "Given params from a request, pull the filename and a xml of file data, insert
-  that xml into the xml headers table in the db"
-  [fmap]
-  (eng/insert-xml-engine create-xml-headers! fmap))
-
-
 (defn get-xml-refs-by-id
   "Given a filemap try to get the references for the file based on pgid return nil
   if not existent"
@@ -65,34 +51,33 @@
   (get-xml-headers-by-title (not-empty {:title (:title filemap)})))
 
 
-(defn pdf-to-xml-refs
-  "Given a filemap, like: {:id id :filename \"filename\" :filestuff bytea} process
-  the file and return the parsed xml references from the file"
-  [filemap]
-  (eng/pdf-to-xml-engine filemap
-                         get-xml-refs-by-id
-                         insert-xml-refs!
-                         pdf/pdf-ref-parser))
-
-
 (defn process-headers
   "Given a filemap, like: {:id id :filename \"filename\" :filestuff bytea} process
   the file and return the parsed xml headers from the file"
   [filemap]
-  (eng/pdf-to-xml-engine filemap
-                         get-headers-by-title
-                         insert-xml-headers!
-                         pdf/pdf-header-parser))
+  (eng/pdf-to-xml-headers filemap
+                          get-headers-by-title
+                          create-xml-headers!
+                          pdf/pdf-header-parser))
 
 
 (defn process-refs
   "Given a filemap, like: {:id id :filename \"filename\" :filestuff bytea} process
   the file and return the parsed xml headers from the file"
   [filemap]
-  (eng/pdf-to-xml-engine filemap
-                         get-xml-refs-by-id
-                         insert-xml-headers!
-                         pdf/pdf-header-parser))
+  (-> filemap (eng/pdf-to-xml-refs
+               get-xml-refs-by-id
+               create-xml-refs!
+               pdf/pdf-ref-parser)
+      :xml_content
+      bs/to-byte-array
+      io/input-stream
+      xml/parse
+      get-sections
+      make-sections
+      collect
+      second
+      (filter #(contains? % :surname))))
 
 
 
@@ -108,14 +93,5 @@
       (let [{pgid :pgid} (get-headers-id-by-title (select-keys heds [:title]))]
         (when (empty? (get-doc-by-id {:pgid pgid})) ;; when empty insert the doc
           (create-doc! {:filestuff (bs/to-byte-array file_blob) :pgid pgid}))
-        [true "Your document successfully uploaded"]))
-    [false "Request Malformed"]))
-
-
-(defn workhorse
-  "given a filename, grab the file bytea blob out of the db, parse the headers and
-  the references and then collect like keys, this function returns 2-tuple where
-  the fst is the filename headers, and snd is a collection of references"
-  [fmap]
-  (log/info "performing workhorse on " fmap)
-  [(process-headers fmap) (process-refs fmap)])
+        [true "Your document successfully uploaded" pgid]))
+    [false "Request Malformed" nil]))

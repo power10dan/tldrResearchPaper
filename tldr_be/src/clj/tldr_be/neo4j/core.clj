@@ -1,6 +1,8 @@
 (ns tldr-be.neo4j.core
-  (:require [tldr-be.db.core :refer [*neo4j_db*]]
-            [tldr-be.doc.core :refer [workhorse process-headers process-refs]]
+  (:require [tldr-be.db.core :refer [*neo4j_db*
+                                     get-xml-headers
+                                     get-xml-refs]]
+            [tldr-be.doc.core :refer [process-headers process-refs]]
             [tldr-be.utils.core :refer [escape-string map-keys]]
             [clojure.walk :refer [stringify-keys postwalk]]
             [clojure.set :refer [rename-keys]]
@@ -125,32 +127,61 @@
     [false "Malformed request! Check for mischievous gnomes!"]))
 
 
+;; (defn insert-neo4j
+;;   "Given a {:pgid pgid} to retrieve a document from postgres, get the
+;;   headers and references for the file, create the nodes in the neo4j uniquely
+;;   and then add edges, uniquely"
+;;   [fmap]
+;;   (try
+;;     (when-let [heds (get-xml-headers fmap)]
+;;       (when-not (-> heds :title original-exists?)
+;;         (let [refs (process-refs fmap)
+;;               parent (nn/create *neo4j_db* heds)
+;;               ;; WARNING THIS LINE ENSURES CREATED CITED NODES ARE REFERENCED IF
+;;               ;; YOU USE A NORMAL CREATE CALL YOU'LL GET A CONSTRAIN ERROR
+;;               ;; HERE THERE BE DRAGON
+;;               children (map
+;;                         #(nn/create-unique-in-index
+;;                           *neo4j_db*
+;;                           "by-title"
+;;                           "title"
+;;                           (:title %)
+;;                           %)
+;;                         refs)]
+;;           (println "NEO$JNNNNNNNNNNNNNNNN" heds (count refs))
+;;           ;; add label to parent
+;;           (nl/add *neo4j_db* parent @parent-label)
+;;           ;; add label to children, doall forces evaluations
+;;           (doall (map #(nl/add *neo4j_db* % @child-label) children))
+;;           ;; smart add the edges between parent and children
+;;           (doall (nrl/create-many *neo4j_db* parent children @cites)))))
+;;       (catch Exception ex
+;;         (println "ASHAHAHAHAHA" ex))))
+
 (defn insert-neo4j
-  "Given a filename get the document id for the file out of postgres, then get the
+  "Given a {:pgid pgid} to retrieve a document from postgres, get the
   headers and references for the file, create the nodes in the neo4j uniquely
   and then add edges, uniquely"
-  [fname file_blob]
-  (try
-    (when-let [heds (process-headers {:filename fname :filestuff file_blob})]
-      (when-not (-> heds :title original-exists?)
-        (let [refs (process-refs fname)
-              parent (nn/create *neo4j_db* (assoc heds :filename fname))
-              ;; WARNING THIS LINE ENSURES CREATED CITED NODES ARE REFERENCED IF
-              ;; YOU USE A NORMAL CREATE CALL YOU'LL GET A CONSTRAIN ERROR
-              ;; HERE THERE BE DRAGON
-              children (map
-                        #(nn/create-unique-in-index
-                          *neo4j_db*
-                          "by-title"
-                          "title"
-                          (:title %)
-                          %)
-                        refs)]
-          ;; add label to parent
-          (nl/add *neo4j_db* parent @parent-label)
-          ;; add label to children, doall forces evaluations
-          (doall (map #(nl/add *neo4j_db* % @child-label) children))
-          ;; smart add the edges between parent and children
-          (doall (nrl/create-many *neo4j_db* parent children @cites)))))
-      (catch Exception ex
-        (println "ASHAHAHAHAHA" ex))))
+  [fmap]
+  (when-let [heds (get-xml-headers fmap)]
+    (when-not (-> heds :pgid original-exists?)
+      (let [refs (process-refs fmap)
+            parent (nn/create *neo4j_db* heds)
+            ;; WARNING THIS LINE ENSURES CREATED CITED NODES ARE REFERENCED IF
+            ;; YOU USE A NORMAL CREATE CALL YOU'LL GET A CONSTRAIN ERROR
+            ;; HERE THERE BE DRAGON
+            children (map
+                      #(nn/create-unique-in-index
+                        *neo4j_db*
+                        "by-title"
+                        "title"
+                        (:title %)
+                        %)
+                      refs)]
+        (println "NEO$JNNNNNNNNNNNNNNNN" heds (count refs))
+        ;; add label to parent
+        (nl/add *neo4j_db* parent @parent-label)
+        ;; add label to children, doall forces evaluations
+        (doall (map #(nl/add *neo4j_db* % @child-label) children))
+        ;; smart add the edges between parent and children
+        (doall (nrl/create-many *neo4j_db* parent children @cites))))))

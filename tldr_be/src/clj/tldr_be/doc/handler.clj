@@ -15,11 +15,10 @@
   [req]
   (let [fname (get-basename (get-in req [:params :file :filename]))
         tempfile (get-in req [:params :file :tempfile])
-        [ok? res] (doc/insert-doc! fname tempfile)]
-    (println res)
+        [ok? res pgid] (doc/insert-doc! fname tempfile)]
     (if ok?
       (do
-        (insert-neo4j fname tempfile)
+        (insert-neo4j {:pgid pgid :filestuff tempfile} )
         (http/created res res)) ;; (http/created url body)
       (http/bad-request res))))
 

@@ -109,19 +109,19 @@
       wrap-webjars
       wrap-flash
       (wrap-session {:cookie-attrs {:http-only true}})
-      (wrap-defaults
-       (-> site-defaults
-           (assoc-in [:security :anti-forgery] false)
-           (dissoc :session)
-           (assoc-in [:params :multipart]
-                     {:progress-fn
-                      (fn [request bytes-read content-length item-count]
-                        (log/info "bytes read:" bytes-read
-                                  "\ncontent length:" content-length
-                                  "\nitem count:" item-count))})))
       ;; (wrap-defaults
-      ;;   (-> site-defaults
-      ;;       (assoc-in [:security :anti-forgery] false)
-      ;;       (dissoc :session)))
+      ;;  (-> site-defaults
+      ;;      (assoc-in [:security :anti-forgery] false)
+      ;;      (dissoc :session)
+      ;;      (assoc-in [:params :multipart]
+      ;;                {:progress-fn
+      ;;                 (fn [request bytes-read content-length item-count]
+      ;;                   (log/info "bytes read:" bytes-read
+      ;;                             "\ncontent length:" content-length
+      ;;                             "\nitem count:" item-count))})))
+      (wrap-defaults
+        (-> site-defaults
+            (assoc-in [:security :anti-forgery] false)
+            (dissoc :session)))
       wrap-context
       wrap-internal-error))
