@@ -28,13 +28,12 @@
   (log/info "getting " params)
   (let [title (get params "title")
         pgid (get params "pgid")]
+    (println "KDJFLSJDFKLJD" (count title))
     (if (or pgid title)
-      [true (cond pgid (get-doc-by-id {:id (parse-int pgid)})
-                  title (-> {:title title}
-                            get-xml-headers-by-title
-                            :pgid
-                            get-doc-by-id))]
-      [false ("file could not be found")])))
+      [true (cond pgid (get-doc-by-id {:pgid (parse-int pgid)})
+                  title (let [fmap (get-xml-headers-by-title {:title title})]
+                          (get-doc-by-id {:pgid (:pgid fmap)})))]
+      [false "file could not be found"])))
 
 
 (defn get-xml-refs-by-id

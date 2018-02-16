@@ -28,10 +28,11 @@
   corresponding to that filename from the db"
   [req]
   (let [_args (get req :query-params)
-        args (if (contains? _args "filename")
-               (update-in _args ["filename"] (fn [a] (str/replace a "\"" "")))
+        args (if (contains? _args "title")
+               (update-in _args ["title"] (fn [a] (str/replace a "\"" "")))
                _args)
         [ok? res] (doc/get-doc args)]
+    (println args ok? res)
     (if ok?
       {:status 200
        :headers {"Content-Type" "application/pdf"}
