@@ -3,6 +3,7 @@
           [clj-http.util :refer [url-encode]]
           [clojure.data.xml :as xml]
           [cheshire.core :as csh]
+          [tldr-be.config :refer [env]]
           [tldr-be.utils.core :refer [not-nil?]]
           [clojure.data.json :as json]))
 
@@ -24,10 +25,11 @@
 
 
 ;; use like (search :web "propositions as types")
-(defn search
+(defn _search
   "https request to bing api, returns {:result <parsed body> :response <http
-  response map>} Example use: (search :web \"propositions as types\")"
-  ([bing-key inf term] (search inf term {}))
+  response map>} Example use: (search (:bing-key env) :web \"propositions as types\") Returns a
+  clojure map of the parsed response"
+  ([bing-key inf term] (search bing-key inf term {}))
   ([bing-key inf term opts]
    (if bing-key
      (let [params (parse-opts (dissoc opts :encode))
