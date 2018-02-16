@@ -39,7 +39,7 @@
   [arg]
   (let [q0 (cond
              (string? arg) (format "MATCH (n:%s) where n.title = '%s' OR n.filename = '%s' RETURN n UNION MATCH (n:%s) WHERE n.title = '%s' or n.filename= '%s' RETURN n" @parent-label arg arg @child-label arg arg)
-             (number? arg) (format "MATCH (n:%s) where ID(n) = %d RETURN n UNION MATCH (n:%s) WHERE ID(n) = %d RETURN n" @parent-label arg @child-label arg))
+             (number? arg) (format "MATCH (n:%s) where ID(n) = %d OR n.pgid = %d RETURN n UNION MATCH (n:%s) WHERE ID(n) = %d RETURN n" @parent-label arg arg @child-label arg))
         result (-> (cy/tquery *neo4j_db* q0) first (get "n"))]
     (when result (massage-node result))))
 
@@ -166,7 +166,7 @@
   (when-let [heds (get-xml-headers fmap)]
     (when-not (-> heds :pgid original-exists?)
       (let [refs (process-refs fmap)
-            parent (nn/create *neo4j_db* heds)
+            parent (nn/create *neo4j_db* (into {} (filter second heds))) ;;filter possible nils
             ;; WARNING THIS LINE ENSURES CREATED CITED NODES ARE REFERENCED IF
             ;; YOU USE A NORMAL CREATE CALL YOU'LL GET A CONSTRAIN ERROR
             ;; HERE THERE BE DRAGON
@@ -177,8 +177,9 @@
                         "title"
                         (:title %)
                         %)
-                      refs)]
-        (println "NEO$JNNNNNNNNNNNNNNNN" heds (count refs))
+                      refs)
+            ]
+        (println "NEO$JNNNNNNNNNNNNNNNN" heds "DDDDDDDDDD" (count refs))
         ;; add label to parent
         (nl/add *neo4j_db* parent @parent-label)
         ;; add label to children, doall forces evaluations

@@ -65,20 +65,17 @@
   "Given a filemap, like: {:id id :filename \"filename\" :filestuff bytea} process
   the file and return the parsed xml headers from the file"
   [filemap]
-  (-> filemap (eng/pdf-to-xml-refs
-               get-xml-refs-by-id
-               create-xml-refs!
-               pdf/pdf-ref-parser)
-      :xml_content
-      bs/to-byte-array
-      io/input-stream
-      xml/parse
-      get-sections
+  (->> (eng/pdf-to-xml-refs ;; get the xml out of the db or create it
+        filemap
+        get-xml-refs-by-id
+        create-xml-refs!
+        pdf/pdf-ref-parser)
+      :xml_content ;; grab the actual content from return file map
+      string->xml  ;; parse it to xml
+      get-sections ;; run post processing to get a nice clj map
       make-sections
-      collect
-      second
+      (map collect)
       (filter #(contains? % :surname))))
-
 
 
 (defn insert-doc!
