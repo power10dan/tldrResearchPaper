@@ -127,6 +127,14 @@
     [false "Malformed request! Check for mischievous gnomes!"]))
 
 
+(defn get-sparse-children
+  "Given nothing return children nodes that have the least amount of connections
+  in the graph"
+  []
+  (query-neo4j "Match (p:Uploaded)-[r]->(c:Cited) return c.title, count(r) as
+  connections Order by connections"))
+
+
 (defn insert-neo4j
   "Given a {:pgid pgid} to retrieve a document from postgres, get the
   headers and references for the file, create the nodes in the neo4j uniquely
