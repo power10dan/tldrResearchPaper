@@ -1,11 +1,9 @@
 (ns tldr-be.search.core
 (:require [clj-http.client :as http]
           [clj-http.util :refer [url-encode]]
-          [clojure.data.xml :as xml]
           [cheshire.core :as csh]
           [tldr-be.config :refer [env]]
-          [tldr-be.utils.core :refer [not-nil?]]
-          [clojure.data.json :as json]))
+          [tldr-be.utils.core :refer [not-nil?]]))
 
 
 (defn parse-opts
@@ -25,7 +23,7 @@
 
 
 ;; use like (search :web "propositions as types")
-(defn _search
+(defn search
   "https request to bing api, returns {:result <parsed body> :response <http
   response map>} Example use: (search (:bing-key env) :web \"propositions as types\") Returns a
   clojure map of the parsed response"
