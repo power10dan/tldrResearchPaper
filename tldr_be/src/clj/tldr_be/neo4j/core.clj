@@ -71,7 +71,6 @@
   "Given any list of strings that represent a cypher query, run the query then
   post process"
   [& strs]
-  (println (apply str strs))
   (map massage-node (-> (cy/query *neo4j_db* (apply str strs))
                         (get-in [:data])
                         flatten)))
@@ -128,11 +127,11 @@
 
 
 (defn get-sparse-children
-  "Given nothing return children nodes that have the least amount of connections
-  in the graph"
-  []
-  (query-neo4j "Match (p:Uploaded)-[r]->(c:Cited) return c.title, count(r) as
-  connections Order by connections"))
+  "Given an integer return children nodes that have the least amount of connections
+  in the graph limited by the integer"
+  [n]
+  (->> (cy/tquery *neo4j_db* (format "Match (p:Uploaded)-[r]->(c:Cited) return c.title, count(r) as connections Order by connections LIMIT %d" n))
+       (map (comp first first vals))))
 
 
 (defn insert-neo4j
