@@ -7,7 +7,7 @@ import Grid from 'material-ui/Grid';
 import ConferenceExpansionPanel from './ExpansionPanelConferences.js';
 import Button from 'material-ui/Button';
 import { CURR_PAGE, TYPE_OF_RESEARCHER} from '../Redux/Actions/ActionConstants.js';
-import { connect } from 'react-redux'; 
+import { connect } from 'react-redux';
 import { AppStateActionCreator } from '../Redux/Actions/ActionCreators.js';
 
 export const styles = theme =>({
@@ -67,36 +67,36 @@ export const styles = theme =>({
 const ResearcherSelection = (props)=>{
 	const {classes} = props;
 	return(
-		<GridList 
-			cellHeight={285}  
-			cols={2.5} 
-			height={550} 
+		<GridList
+			cellHeight={285}
+			cols={2.5}
+			height={550}
 			className={classes.gridList}
 		>
-			{ 	
+			{
 			 	props.element.selectionContent.map((content, idx)=> (
-				   	<Grid 
-				   		item 
+				   	<Grid
+				   		item
 				   		className={classes.gridList}
 				   	>
-				       	<Card 
+				       	<Card
 				       		className={classes.cardProps}
-				       	>      		
-					      	<CardContent 
+				       	>
+					      	<CardContent
 					      		className={classes.cardContent}
 					        >
 						        <CardMedia
 							    	className={classes.mediaImg}
 								    image={props.element.selectionImage[idx]}
 								/>
-						       
+
 				    		</CardContent>
-					    	<Button 
+					    	<Button
 							    className={classes.cardContent}
 							    onClick={props.cardClickFunc}
 							>
 								{content}
-							</Button> 
+							</Button>
 				       	</Card>
 				    </Grid>
 				))
@@ -108,13 +108,13 @@ const ResearcherSelection = (props)=>{
 class CustomizationListItems extends React.Component{
 	onClickCard = ( event)=>{
 		let target = event.target.innerHTML;
-		if(target === "Professor" 
+		if(target === "Professor"
 			|| target === "Post-Doc"
 			|| target === "Undergraduate Student"
 			|| target === "Graduate Student"){
 			let payLoad = 2;
 			let researcherPayLoad = target;
-			
+
 			this.props.updateResearcher(target);
 			this.props.updatePage(payLoad);
 		}
@@ -125,17 +125,17 @@ class CustomizationListItems extends React.Component{
 		const {classes} = this.props;
 		return(
 			<div className={classes.root} >
-				{	
+				{
 					this.props.data.map(elem=>(
 						<div className={classes.divProp}>
 						    <Typography className={classes.tutorialTextStyle}>
 							 		{elem.sectionLabel}
-							</Typography> 
+							</Typography>
 							<Divider className={classes.dividerProps} />
 								{
 									this.props.dataSelect === "ConfSelect" ?
-										<ConferenceExpansionPanel 
-											{...this.props}  
+										<ConferenceExpansionPanel
+											{...this.props}
 										/> : <ResearcherSelection
 												{...this.props}
 												element={elem}
@@ -144,7 +144,7 @@ class CustomizationListItems extends React.Component{
 								}
 						</div>
 					))
-				}			
+				}
 			</div>
 		)
 
@@ -155,7 +155,7 @@ function mapDispatchToProps(dispatch){
 	return({
 		updatePage: (payLoad)=>{dispatch(AppStateActionCreator(CURR_PAGE,payLoad));},
 		updateResearcher : (payLoad)=>{dispatch(AppStateActionCreator(TYPE_OF_RESEARCHER, payLoad))}
-	});	
+	});
 };
 
 const CustomizationList = connect(null, mapDispatchToProps)(CustomizationListItems);

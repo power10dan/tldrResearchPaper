@@ -12,7 +12,7 @@ const DashBoardControlHOC = (DashBoardElem, typeOfDashContent, CurrPage) =>{
 					currentPage: 0,
 				}
 				this.marginLeft="";
-				
+
 			}
 
 			componentWillReceiveProps(){
@@ -41,18 +41,18 @@ const DashBoardControlHOC = (DashBoardElem, typeOfDashContent, CurrPage) =>{
 							handleDrawerClose={this.handleDrawerClose}
 							open={this.state.open}
 							FilterData={this.state.filterData}
-							actionBarTitle={typeOfDashContent} 
+							actionBarTitle={typeOfDashContent}
 							currPage={CurrPage}
-						/>	
-						<DashBoardElem 
+						/>
+						<DashBoardElem
 							{...this.props}
 							marginLeftBorder={this.marginLeft}
-						/>						
+						/>
 					</div>
 				);
 			}
 		}
 	);
 }
-	
+
 export default DashBoardControlHOC

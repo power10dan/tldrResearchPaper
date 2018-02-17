@@ -11,6 +11,7 @@ import { uploadFile, cachedPaper} from './AppUrlConstants.js';
 import { connect } from 'react-redux';
 import LogIn  from './AppComponent/LogIn.js';
 import SignUp from './AppComponent/SignUp.js';
+import Searchbar from './AppComponent/Searchbar.js';
 import ConferencePaperPanels from './AppComponent/MainSelectionPage.js';
 import { FetchPapers, FetchNumberNodes} from './Redux/Actions/ActionCreators.js';
 import { getNumNodes, getChildrenUnion} from './AppUrlConstants.js';

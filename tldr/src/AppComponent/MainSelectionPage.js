@@ -14,6 +14,11 @@ import Divider from 'material-ui/Divider';
 import Chip from 'material-ui/Chip';
 
 
+import TextField from 'material-ui/TextField';
+
+
+
+
 const conferencePanelStyle = theme=>({
 	divProps:{
 		marginTop: "-260px",
@@ -52,7 +57,7 @@ const conferencePanelStyle = theme=>({
 		height: "10px",
 	},
 
-	
+
 	expandSummary:{
 		width: "800px"
 	},
@@ -67,6 +72,7 @@ const conferencePanelStyle = theme=>({
 
 })
 
+
 const ConferencePaperPanels = (props)=>{
 	const {classes} = props;
     let surNameArr = [];
@@ -76,8 +82,25 @@ const ConferencePaperPanels = (props)=>{
     	surNameArr.push(newSurName);
     });
 
+		// let filterelem = props.data.uploadedFile.filter(
+		// 	(elem) => {
+		// 		return elem.title.toLowerCase().indexOf(props.search_value.toLowerCase()) != -1;
+		// 	}
+		// );
+
+
 	return(
-		<div className={classes.divProps} >
+		<div className={classes.divProps}>
+			<TextField
+			label="Search any paper"
+
+			value={props.search_value}
+			onChange={props.search_input_value}
+			required/>
+
+			<br></br>
+			<br></br>
+			<br></br>
 			{
 				props.data.uploadedFile.map((elem,idx)=>{
 					return(
