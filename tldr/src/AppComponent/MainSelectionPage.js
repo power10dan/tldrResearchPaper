@@ -1,4 +1,5 @@
 import React, {Fragment} from 'react';
+import TextField from 'material-ui/TextField';
 import { withStyles } from 'material-ui/styles';
 import ExpansionPanel, {
 	  ExpansionPanelSummary,
@@ -52,7 +53,7 @@ const conferencePanelStyle = theme=>({
 		height: "10px",
 	},
 
-	
+
 	expandSummary:{
 		width: "800px"
 	},
@@ -67,9 +68,9 @@ const conferencePanelStyle = theme=>({
 
 	border:{
 		background: '#ECEFF1',
-	    padding: '20px', 
+	    padding: '20px',
 	    width: '400px',
-	    height: '350px', 	
+	    height: '350px',
 	}
 
 })
@@ -78,12 +79,20 @@ const ConferencePaperPanels = (props)=>{
 	const {classes} = props;
 	return(
 		<div className={classes.divProps} >
+		<TextField value={props.Search_value}
+			placeHolder="Search paper Name"
+			onChange={props.search_input_value}
+			/>
+
+			<br></br>
+			<br></br>
+			<br></br>
 			{
 				props.data.map((elem,idx)=>{
 					return(
 						<Fragment>
-							<ExpansionPanel 
-								expanded={props.expanded === elem.title[0]} 
+							<ExpansionPanel
+								expanded={props.expanded === elem.title[0]}
 								onChange={props.handleChange(elem.title[0])}
 							>
 								<ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} >
@@ -98,7 +107,7 @@ const ConferencePaperPanels = (props)=>{
 								<Divider />
 								<ExpansionPanelDetails className={classes.ExpansionPanelDetails}>
 									<div className={classes.border}>
-										<GraphControl 
+										<GraphControl
 											currPaper={elem}
 											typeOfPaper={elem.labels[0]}
 											graphClick={props.nodeClick}

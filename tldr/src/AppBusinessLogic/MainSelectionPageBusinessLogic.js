@@ -12,12 +12,30 @@ class MainPageSelectionLogic extends Component{
 			data: props.data,
 			tempData: props.data[0],
 			expanded: "",
-			isLoading: props.shouldLoad
+			isLoading: props.shouldLoad,
+			search_value:""
 		}
 	}
 
+
 	componentWillReceiveProps(nextProp){
 		this.setState({isLoading: nextProp.shouldLoad});
+	}
+
+	searchfilterfunc(value){
+		this.props.data.forEach((paper) =>{
+			if (paper.title[0].toLowerCase().indexOf(value.toLowerCase()) != -1){
+				 console.log(paper.title)
+			}else{
+				console.log(paper)
+			}
+		}
+	)
+	}
+
+	changesearchvalue = (e)=>{
+		this.setState({search_value: e.target.value});
+		this.searchfilterfunc(this.state.search_value);
 	}
 
 	handlePanelChange = panelToChange => (event, expanded) =>{
@@ -72,6 +90,7 @@ class MainPageSelectionLogic extends Component{
 	}
 
 	render(){
+		//const filteredStuff = this.searchfilterfunc();
 		const filterSurNames = this.filterBySurName();
 		let selectedAuthor = null
 		if(this.state.tempData.surname === undefined){
@@ -79,13 +98,14 @@ class MainPageSelectionLogic extends Component{
 		} else {
 			selectedAuthor = this.state.tempData.surname[0] + " " + "et al.";
 		}
-		
+
 		return(
 			<Fragment>
 				<ConferencePaperPanel
 					handleChange = {this.handlePanelChange}
 					expanded = {this.state.expanded}
 					data = {this.state.data}
+					filter_fuction = {this.filteredStuff}
 					shorterTitleArr = {filterSurNames[1]}
 					surNameArray = {filterSurNames[0]}
 					downloadPaper = {this.downloadCallBack}
@@ -93,10 +113,11 @@ class MainPageSelectionLogic extends Component{
 					selectedCardNodeTitle = {this.state.tempData.title}
 					labelOfSelectedNode = {this.state.tempData.labels[0]}
 					surName = {selectedAuthor}
+					search_input_value={this.changesearchvalue}
 				/>
 				{
-					this.state.isLoading === true ? <ErrSnackBar 
-													  open={this.state.isLoading} 
+					this.state.isLoading === true ? <ErrSnackBar
+													  open={this.state.isLoading}
 													/> : null
 				}
 			</Fragment>
@@ -107,7 +128,7 @@ class MainPageSelectionLogic extends Component{
 const mapStateToProps = (state)=>{
 	const { shouldLoad } = state.ReducerAppState;
 	return {
-		shouldLoad 
+		shouldLoad
 	}
 }
 

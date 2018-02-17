@@ -61,7 +61,7 @@ const LogInPanel = (props)=>{
                 Welcome!
             </Typography>
             <CardContent>
-                <TextField 
+                <TextField
                      value={props.TokenField}
                     type="Token"
                     placeHolder="Token"
@@ -76,22 +76,22 @@ const LogInPanel = (props)=>{
                 image={LoginImage}
             />
             <CardActions>
-               <Button 
-                  raised color="primary" 
+               <Button
+                  raised color="primary"
                   onClick={(e) => props.successfulLoginFunc(e)}
                   className={classes.buttonStyle}
                >
                   {props.buttonIcon}
                </Button>
             </CardActions>
-          </Card>         
+          </Card>
            <Typography className={classes.instructionText}>
                Please get a token before using this app. You can
                get a token by clicking the Get Token button.
                Once you get a token, please paste it onto the
                text field. Thank you for choosing PaperGene!
-          </Typography>   
-     </Fragment>      
+          </Typography>
+     </Fragment>
     )
 }
 
