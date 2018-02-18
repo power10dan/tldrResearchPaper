@@ -109,4 +109,11 @@
 (defn string->xml
   "Converts a string to an xml string"
   [string]
-  (->> string .getBytes io/input-stream xml/parse))
+  (when string (->> string .getBytes io/input-stream xml/parse)))
+
+(defn doseq-interval
+  "Map over a collection and wait the specified interval between evaluations"
+  [f coll interval]
+  (doseq [x coll]
+    (Thread/sleep interval)
+    (f x)))
