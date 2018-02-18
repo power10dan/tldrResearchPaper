@@ -47,6 +47,10 @@
       acc
       (recur ks vs (assoc acc (f k) v)))))
 
+(defn nil-in?
+  [coll keyvec] (nil? (get-in coll keyvec)))
+
+(def not-nil-in? (complement nil-in?))
 
 (defn massage-req
   "Given a request pull out titles and ids and process them returns a collection
@@ -113,7 +117,7 @@
 
 (defn doseq-interval
   "Map over a collection and wait the specified interval between evaluations"
-  [f coll interval]
+  [coll f interval]
   (doseq [x coll]
     (Thread/sleep interval)
     (f x)))
