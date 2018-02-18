@@ -37,6 +37,7 @@
                  [clj-http "2.3.0"]
                  [byte-streams "0.2.3"]
                  [selmer "1.11.3"]
+                 [jarohen/chime "0.2.2"]
                  [tuddman/neocons "3.2.1-SNAPSHOT"]]
 
   :min-lein-version "2.0.0"
