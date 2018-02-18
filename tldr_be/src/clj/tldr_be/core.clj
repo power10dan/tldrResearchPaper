@@ -4,9 +4,11 @@
             [luminus.http-server :as http]
             [luminus-migrations.core :as migrations]
             [tldr-be.config :refer [env]]
+            [tldr-be.crawler.runner :refer [run-schedule]]
             [cider.nrepl :refer [cider-nrepl-handler]]
             [clojure.tools.cli :refer [parse-opts]]
             [clojure.tools.logging :as log]
+            [clojure.core.async :refer [thread]]
             [mount.core :as mount])
   (:gen-class))
 
@@ -46,7 +48,8 @@
                         mount/start-with-args
                         :started)]
     (log/info component "started"))
-  (.addShutdownHook (Runtime/getRuntime) (Thread. stop-app)))
+  (.addShutdownHook (Runtime/getRuntime) (Thread. stop-app))
+  (thread run-schedule))
 
 (defn -main [& args]
   (cond
