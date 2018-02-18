@@ -1,6 +1,6 @@
 (defproject tldr_be "0.1.0-SNAPSHOT"
 
-  :description "FIXME: write description"
+  :description "Backend luminus server for paper gene"
   :url "http://example.com/FIXME"
 
   :dependencies [[buddy "2.0.0"]
@@ -55,11 +55,6 @@
             [lein-immutant "2.1.0"]
             [lein-heroku "0.5.3"]]
 
-  :heroku {:app-name "afternoon-ocean-38536"
-           :jdk-version "1.8"
-           :include-files ["target/tldr_be.jar"]}
-
-
   :profiles
   {:uberjar {
              ;; :omit-source true
@@ -74,6 +69,10 @@
                    tldr-be.neo4j.handler
                    tldr-be.core
                    tldr-be.utils.core
+                   tldr-be.utils.macros
+                   tldr-be.search.core
+                   tldr-be.crawler.core
+                   tldr-be.crawler.runner
                    tldr-be.middleware
                    tldr-be.handler
                    tldr-be.db.core
@@ -83,12 +82,12 @@
                    tldr-be.doc.handler
                    tldr-be.doc.engines
                    tldr-be.routes.services
-                   tldr-be.routes.home]
-             }
+                   tldr-be.routes.home]}
 
-   :prod          [:project/prod :profiles/prod]
-   :dev           [:project/dev :profiles/dev]
-   :test          [:project/test :profiles/test]
+   :prod          [:project/prod    :profiles/prod]
+   :staging       [:project/staging :profiles/staging]
+   :dev           [:project/dev     :profiles/dev]
+   :test          [:project/test    :profiles/test]
 
    :project/dev  {:dependencies [[prone "1.1.4"]
                                  [ring/ring-mock "0.3.2"]
@@ -107,6 +106,9 @@
    :project/test {:resource-paths ["env/test/resources"]}
    :project/prod {:resource-paths ["env/prod/resources"]
                   :source-paths ["env/prod/clj"]}
+   :project/staging {:resource-paths ["env/staging/resources"]
+                     :source-paths ["env/staging/clj"]}
    :profiles/dev {}
    :profiles/test {}
+   :profiles/staging {}
    :profiles/prod {}})
