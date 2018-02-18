@@ -4,7 +4,7 @@
             [luminus.http-server :as http]
             [luminus-migrations.core :as migrations]
             [tldr-be.config :refer [env]]
-            [tldr-be.crawler.runner :refer [run-schedule]]
+            [tldr-be.crawler.runner :refer [run-schedule populate]]
             [cider.nrepl :refer [cider-nrepl-handler]]
             [clojure.tools.cli :refer [parse-opts]]
             [clojure.tools.logging :as log]
@@ -49,7 +49,7 @@
                         :started)]
     (log/info component "started"))
   (.addShutdownHook (Runtime/getRuntime) (Thread. stop-app))
-  (run-schedule))
+  (run-schedule populate))
 
 (defn -main [& args]
   (cond
