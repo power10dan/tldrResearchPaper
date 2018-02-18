@@ -2,6 +2,7 @@
   (:require [tldr-be.search.core :as src]
             [tldr-be.config :refer [env]]
             [clj-http.client :as http]
+            [clojure.tools.logging :as log]
             [tldr-be.utils.macros :refer [swallow-exceptions]]
             [clojure.string :refer [join split]]
             [tldr-be.neo4j.core :as neo]))
@@ -43,9 +44,9 @@
   "Given a paper title, search for the pdf via bing, get the top hit with a pdf
   tag, download that paper and add it to our database"
   [title]
-  (println "TRYING TO ADD " title)
+  (log/info "TRYING TO ADD: " title)
   (let [res (src/search (:bing-key env) :web title)
         url (get-top-url res)]
-    (println "URL" url)
+    (log/info "Using URL: " url)
     (when url
       (insert-searched-paper url))))

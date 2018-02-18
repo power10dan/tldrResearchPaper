@@ -22,7 +22,6 @@
     (str "%27" term "%27")))
 
 
-;; use like (search :web "propositions as types")
 (defn search
   "https request to bing api, returns {:result <parsed body> :response <http
   response map>} Example use: (search (:bing-key env) :web \"propositions as types\") Returns a
