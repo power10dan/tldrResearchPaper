@@ -49,7 +49,7 @@
                         :started)]
     (log/info component "started"))
   (.addShutdownHook (Runtime/getRuntime) (Thread. stop-app))
-  (thread run-schedule))
+  (run-schedule))
 
 (defn -main [& args]
   (cond
@@ -64,5 +64,4 @@
       (migrations/migrate args (select-keys env [:database-url]))
       (System/exit 0))
     :else
-    (start-app args))
-  )
+    (start-app args)))
