@@ -126,11 +126,11 @@
     [false "Malformed request! Check for mischievous gnomes!"]))
 
 
-(defn get-sparse-children
+(defn get-sparse-nodes
   "Given an integer return children nodes that have the least amount of connections
   in the graph limited by the integer"
   [n]
-  (->> (cy/tquery *neo4j_db* (format "Match (p:Uploaded)-[r]->(c:Cited) return c.title, count(r) as connections Order by connections LIMIT %d" n))
+  (->> (cy/tquery *neo4j_db* (format "Match (p:Uploaded)-[r]-(c:Cited) return c.title, count(r) as connections Order by connections LIMIT %d" n))
        (map (comp first first vals))))
 
 
