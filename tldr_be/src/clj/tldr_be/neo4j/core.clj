@@ -161,31 +161,6 @@
        (map (comp first first vals))))
 
 
-;; (defn insert-neo4j
-;;   "Given a {:pgid pgid} to retrieve a document from postgres, get the
-;;   headers and references for the file, create the nodes in the neo4j uniquely
-;;   and then add edges, uniquely"
-;;   [fmap]
-;;   (when-let [heds (into {}
-;;                         (filter
-;;                          second
-;;                          (get-xml-headers fmap)))] ;;filter possible nils
-;;     (when-not (-> heds :pgid original-exists?)
-;;       (let [refs (process-refs fmap)
-;;             parent (nn/create-unique-in-index
-;;                     *neo4j_db* "by-title" "title" (:title heds) heds)
-;;             ;; WARNING THIS LINE ENSURES CREATED CITED NODES ARE REFERENCED IF
-;;             ;; YOU USE A NORMAL CREATE CALL YOU'LL GET A CONSTRAIN ERROR
-;;             ;; HERE THERE BE DRAGON
-;;             children (map #(nn/create-unique-in-index *neo4j_db* "by-title"
-;;                                                       "title" (:title %) %) refs)]
-;;         ;; add label to parent
-;;         (nl/add *neo4j_db* parent @parent-label)
-;;         ;; add label to children, doall forces evaluations
-;;         (doall (map #(nl/add *neo4j_db* % @child-label) children))
-;;         ;; smart add the edges between parent and children
-;;         (doall (nrl/create-many *neo4j_db* parent children @cites))))))
-
 (defn insert-neo4j
   "Given a {:pgid pgid} to retrieve a document from postgres, get the
   headers and references for the file, create the nodes in the neo4j uniquely
