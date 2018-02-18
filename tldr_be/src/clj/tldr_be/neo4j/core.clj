@@ -10,7 +10,8 @@
             [clojurewerkz.neocons.rest.labels :as nl]
             [clojurewerkz.neocons.rest.relationships :as nrl]
             [clojurewerkz.neocons.rest.cypher :as cy]
-            [clojurewerkz.neocons.rest :as nr]))
+            [clojurewerkz.neocons.rest :as nr]
+            [clojure.string :as str]))
 
 ;; globals for neo4j node labels
 (def parent-label (atom "Uploaded"))
@@ -23,7 +24,7 @@
   cypher query langauge"
   [m]
   (->> (stringify-keys m)
-       (map-keys #(-> (str % ":")))))
+       (map-keys #(-> (str ":" % ":")))))
 
 
 (defn massage-node
@@ -55,6 +56,32 @@
   [arg]
   (let [node (find-node arg)]
     (some #(= % @parent-label) (:labels node))))
+
+
+(defn create-uploaded
+  "given a filemap create an uploaded node, if it already exists match on it and
+  update its parameters"
+  [fmap]
+  (let [post-process (fn [string] (-> string
+                                     (str/replace #":\"" ":")
+                                     (str/replace #"\":" "")
+                                     (str/replace #"\",\"" ",")))
+        _fmap (-> fmap
+                  (update-in [:forename] #(into [] (interpose "," %)))
+                  (update-in [:surname] #(into [] (interpose "," %)))
+                  keys-to-neo4j)
+        q0 (format "Merge (u:Uploaded %s) " (select-keys _fmap [":title:"]))
+        q1 (format "ON CREATE SET u = %s " _fmap)
+        q2 (format "ON CREATE SET u += %s" _fmap)
+        q3 (format "Match (u:Uploaded %s) return u" (post-process (select-keys _fmap [":pgid:"])))]
+    ;; make the node
+    (cy/query *neo4j_db* (post-process (str q0 q1 q2)))
+    ;; return the node via a query by getting the neo4j id and using neocons
+    ;; return the properly formatted information. This is needed to make the
+    ;; edges using neocons in insert-neo4j
+    (let [node (get (first (cy/tquery *neo4j_db* (post-process q3))) "u")
+          n4j_id (get-in node [:metadata :id])]
+      (nn/get *neo4j_db* n4j_id))))
 
 
 (defn core-wrapper
@@ -134,22 +161,50 @@
        (map (comp first first vals))))
 
 
+;; (defn insert-neo4j
+;;   "Given a {:pgid pgid} to retrieve a document from postgres, get the
+;;   headers and references for the file, create the nodes in the neo4j uniquely
+;;   and then add edges, uniquely"
+;;   [fmap]
+;;   (when-let [heds (into {}
+;;                         (filter
+;;                          second
+;;                          (get-xml-headers fmap)))] ;;filter possible nils
+;;     (when-not (-> heds :pgid original-exists?)
+;;       (let [refs (process-refs fmap)
+;;             parent (nn/create-unique-in-index
+;;                     *neo4j_db* "by-title" "title" (:title heds) heds)
+;;             ;; WARNING THIS LINE ENSURES CREATED CITED NODES ARE REFERENCED IF
+;;             ;; YOU USE A NORMAL CREATE CALL YOU'LL GET A CONSTRAIN ERROR
+;;             ;; HERE THERE BE DRAGON
+;;             children (map #(nn/create-unique-in-index *neo4j_db* "by-title"
+;;                                                       "title" (:title %) %) refs)]
+;;         ;; add label to parent
+;;         (nl/add *neo4j_db* parent @parent-label)
+;;         ;; add label to children, doall forces evaluations
+;;         (doall (map #(nl/add *neo4j_db* % @child-label) children))
+;;         ;; smart add the edges between parent and children
+;;         (doall (nrl/create-many *neo4j_db* parent children @cites))))))
+
 (defn insert-neo4j
   "Given a {:pgid pgid} to retrieve a document from postgres, get the
   headers and references for the file, create the nodes in the neo4j uniquely
   and then add edges, uniquely"
   [fmap]
-  (when-let [heds (get-xml-headers fmap)]
+  (when-let [heds (into {}
+                        (filter
+                         second
+                         (get-xml-headers fmap)))] ;;filter possible nils
     (when-not (-> heds :pgid original-exists?)
       (let [refs (process-refs fmap)
-            parent (nn/create *neo4j_db* (into {} (filter second heds))) ;;filter possible nils
+            ;; parent (nn/create-unique-in-index
+            ;;         *neo4j_db* "by-title" "title" (:title heds) heds)
+            parent (create-uploaded heds)
             ;; WARNING THIS LINE ENSURES CREATED CITED NODES ARE REFERENCED IF
             ;; YOU USE A NORMAL CREATE CALL YOU'LL GET A CONSTRAIN ERROR
             ;; HERE THERE BE DRAGON
             children (map #(nn/create-unique-in-index *neo4j_db* "by-title"
                                                       "title" (:title %) %) refs)]
-        ;; add label to parent
-        (nl/add *neo4j_db* parent @parent-label)
         ;; add label to children, doall forces evaluations
         (doall (map #(nl/add *neo4j_db* % @child-label) children))
         ;; smart add the edges between parent and children
