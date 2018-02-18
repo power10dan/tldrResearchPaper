@@ -63,8 +63,6 @@
                    tldr-be.config
                    tldr-be.auth.core
                    tldr-be.auth.handler
-                   tldr-be.summary.core
-                   tldr-be.summary.handler
                    tldr-be.neo4j.core
                    tldr-be.neo4j.handler
                    tldr-be.core
