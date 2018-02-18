@@ -2,19 +2,15 @@
   (:require [tldr-be.search.core :as src]
             [tldr-be.config :refer [env]]
             [clj-http.client :as http]
+            [tldr-be.utils.macros :refer [swallow-exceptions]]
             [clojure.string :refer [join split]]
             [tldr-be.neo4j.core :as neo]))
 
-;; grab children nodes
-;; create a work queue with titles
-;; search with bing for pdfs
-;; filter the results for pdfs
-;; hit the insert paper url
 
 (defn check-for-pdf
-  "given a string check the last three characters for the pdf extension"
-  [string]
-  #(= "pdf" (join (take-last 3 (:url %)))))
+  "given a bing web site result map, check the url to see if its a pdf file"
+  [result_map]
+  (= "pdf" (join (take-last 3 (:url result_map)))))
 
 
 (defn get-filename
@@ -35,16 +31,21 @@
 (defn insert-searched-paper
   "Given a url that specifies a url, download the paper and try to insert it"
   [url]
-  (when (check-for-pdf url)
-    (http/post
-     (str (:hostname env) ":" (:port env) "/api/uploadFile/")
-     {:multipart [{:name "file" :content (clojure.java.io/input-stream url)}]})))
+  (swallow-exceptions
+           (when url
+             (http/post
+              (str (:hostname env) ":" (:port env) "/api/uploadFile/")
+              {:multipart [{:name "file"
+                            :content (clojure.java.io/input-stream url)}]}))))
 
 
 (defn add-paper
   "Given a paper title, search for the pdf via bing, get the top hit with a pdf
   tag, download that paper and add it to our database"
   [title]
+  (println "TRYING TO ADD " title)
   (let [res (src/search (:bing-key env) :web title)
         url (get-top-url res)]
-    (insert-searched-paper url)))
+    (println "URL" url)
+    (when url
+      (insert-searched-paper url))))

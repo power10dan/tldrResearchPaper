@@ -5,6 +5,7 @@
             [tldr-be.utils.core :refer [collect
                                         get-sections
                                         make-sections
+                                        not-nil-in?
                                         string->xml]]))
 
 
@@ -27,11 +28,15 @@
                             make-sections
                             (map collect)
                             second)
-              _result (update-in __result [:title] first) ;; remove title from vector
-              result (conj _result filemap)]
+              _result (update-in __result [:title] first) ;; remove title from
+              ;; if forname and surname do not exist create them, if they
+              ;; do then save the values. Dummy values are required for neo4j
+              result (merge {:forename ["dummy"]}
+                            {:surname ["dummy"]}
+                            _result filemap )]
           (if-let [cached (db_get result)] ;; then we've cached it else make it
             cached
-            (do
+            (when (not-nil-in? result [:title])
               (db_put result) ;; add to cache
               (db_get result)))))))) ;; and now return with gen'd pgid from db
 
