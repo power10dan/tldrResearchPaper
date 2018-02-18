@@ -59,28 +59,31 @@
   {:uberjar {
              ;; :omit-source true
              :uberjar-name "tldr_be.jar"
-             :aot [tldr-be.env
-                   tldr-be.config
-                   tldr-be.auth.core
-                   tldr-be.auth.handler
-                   tldr-be.neo4j.core
-                   tldr-be.neo4j.handler
-                   tldr-be.core
-                   tldr-be.utils.core
-                   tldr-be.utils.macros
-                   tldr-be.search.core
-                   tldr-be.crawler.core
-                   tldr-be.crawler.runner
-                   tldr-be.middleware
-                   tldr-be.handler
-                   tldr-be.db.core
-                   tldr-be.layout
-                   tldr-be.doc.core
-                   tldr-be.doc.pdf-parse
-                   tldr-be.doc.handler
-                   tldr-be.doc.engines
-                   tldr-be.routes.services
-                   tldr-be.routes.home]}
+             :aot :all
+             ;; :aot [tldr-be.env
+             ;;       tldr-be.config
+             ;;       tldr-be.auth.core
+             ;;       tldr-be.auth.handler
+             ;;       tldr-be.neo4j.core
+             ;;       tldr-be.neo4j.handler
+             ;;       tldr-be.core
+             ;;       tldr-be.utils.core
+             ;;       tldr-be.utils.macros
+             ;;       tldr-be.search.core
+             ;;       tldr-be.crawler.core
+             ;;       tldr-be.crawler.runner
+             ;;       tldr-be.middleware
+             ;;       tldr-be.handler
+             ;;       tldr-be.db.core
+             ;;       tldr-be.layout
+             ;;       tldr-be.doc.core
+             ;;       tldr-be.doc.pdf-parse
+             ;;       tldr-be.doc.handler
+             ;;       tldr-be.doc.engines
+             ;;       tldr-be.routes.services
+             ;;       tldr-be.routes.home]
+
+             }
 
    :prod          [:project/prod    :profiles/prod]
    :staging       [:project/staging :profiles/staging]
