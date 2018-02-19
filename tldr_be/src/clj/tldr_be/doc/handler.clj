@@ -32,7 +32,6 @@
                (update-in _args ["title"] (fn [a] (str/replace a "\"" "")))
                _args)
         [ok? res] (doc/get-doc args)]
-    (println args ok? res)
     (if ok?
       {:status 200
        :headers {"Content-Type" "application/pdf"}

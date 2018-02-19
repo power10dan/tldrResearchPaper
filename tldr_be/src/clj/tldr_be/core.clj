@@ -4,11 +4,10 @@
             [luminus.http-server :as http]
             [luminus-migrations.core :as migrations]
             [tldr-be.config :refer [env]]
-            [tldr-be.crawler.runner :refer [run-schedule populate]]
+            [tldr-be.crawler.runner :refer [run-schedule]]
             [cider.nrepl :refer [cider-nrepl-handler]]
             [clojure.tools.cli :refer [parse-opts]]
             [clojure.tools.logging :as log]
-            [clojure.core.async :refer [thread]]
             [mount.core :as mount])
   (:gen-class))
 
@@ -36,7 +35,6 @@
                 (when repl-server
                   (repl/stop repl-server)))
 
-
 (defn stop-app []
   (doseq [component (:stopped (mount/stop))]
     (log/info component "stopped"))
@@ -48,8 +46,7 @@
                         mount/start-with-args
                         :started)]
     (log/info component "started"))
-  (.addShutdownHook (Runtime/getRuntime) (Thread. stop-app))
-  (run-schedule populate))
+  (.addShutdownHook (Runtime/getRuntime) (Thread. stop-app)))
 
 (defn -main [& args]
   (cond
@@ -57,6 +54,7 @@
     (do
       (mount/start #'tldr-be.config/env)
       (migrations/init (select-keys env [:database-url :init-script]))
+      (run-schedule)
       (System/exit 0))
     (some #{"migrate" "rollback"} args)
     (do

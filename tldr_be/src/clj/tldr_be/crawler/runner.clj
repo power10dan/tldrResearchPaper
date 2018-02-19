@@ -4,7 +4,7 @@
             [tldr-be.utils.core :refer [doseq-interval]]
             [clj-time.core :as time]
             [clj-time.periodic :as per]
-            [chime :refer [chime-at]]
+            [immutant.scheduling :refer :all]
             [tldr-be.neo4j.core :as neo]
             [clojure.tools.logging :as log])
   (:import [org.joda.time DateTimeZone]))
@@ -16,19 +16,8 @@
   [] (-> (neo/get-sparse-nodes 10) (doseq-interval add-paper 3000)))
 
 
-(def populate-schedule
-  "Run some function at 3:26 am every day"
-  (->> (per/periodic-seq
-        (.. (time/now)
-            (withZone (DateTimeZone/forID "America/Los_Angeles"))
-            (withTime 3 26 0 0)) ;; not sure this actually works
-        (-> 1 time/days))))
-
 (defn run-schedule
   "run some function that takes no args at the defined schedule"
   [f]
-  (chime-at populate-schedule
-            (fn [time]
-              (log/info "Beginning Scheduled function: " f)
-              (f)
-              (log/info "All Done running: " f))))
+  (let [t (time/today-at 3 00)]
+    (schedule f (-> (at t) :every :day))))
