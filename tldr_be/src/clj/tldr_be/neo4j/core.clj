@@ -17,6 +17,7 @@
 (def parent-label (atom "Uploaded"))
 (def child-label (atom "Cited"))
 (def cites (atom ":cites"))
+(def err (atom "Malformed request! Check for mischievous gnomes!"))
 
 
 (defn keys-to-neo4j
@@ -150,7 +151,7 @@
                (-> (cy/query *neo4j_db* (str "MATCH (n) RETURN n LIMIT " n))
                    (get-in [:data])
                    flatten))]
-    [false "Malformed request! Check for mischievous gnomes!"]))
+    [false @err]))
 
 
 (defn get-sparse-nodes
@@ -159,6 +160,18 @@
   [n]
   (->> (cy/tquery *neo4j_db* (format "Match (p:Uploaded)-[r]-(c:Cited) return c.title, count(r) as connections Order by connections LIMIT %d" n))
        (map (comp first first vals))))
+
+
+(defn get-subgraph-by-node
+  "Given an integer, n, and a node identifier pgid or title, return a subgraph n-legs around the node, returning the graph on success, nil of failure"
+  [n ts]
+  (if (and n ts)
+    (let [q0 (format "With [%s] as ts %n" (apply str (interpose "," ts)))
+         q1 "Match (n) where n.pgid in ts or n.title in ts "
+         q2 (format "Match (a)-[*1..%d]-(n)-[*1..%d]-(m) " n n)
+         q3 "Return a, m, n"]
+      [true (query-neo4j q0 q1 q2 q3)])
+    [false @err]))
 
 
 (defn insert-neo4j

@@ -8,6 +8,11 @@
             [clojure.string :as str]))
 
 
+(defn make-handler
+  [req f g]
+  (response-wrapper req f g))
+
+
 (defn get-all-children
   "Given a request that specifies a n-many paper titles get all children for each
   paper with no duplicates"
@@ -30,6 +35,16 @@
 (defn get-all-children-by
   [req]
   (response-wrapper req neo/core-wrapper neo/get-all-children-by))
+
+
+(defn get-subgraph
+  [req]
+  (let [[ok? res] (neo/get-subgraph-by-node
+                   (->> (get-in req [:query-params "n"]) parse-int)
+                   (massage-req req))]
+    (if ok?
+      (http/ok res)
+      (http/bad-request res))))
 
 
 (defn get-nodes

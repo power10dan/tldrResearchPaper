@@ -32,6 +32,7 @@
   (GET  "/api/getChildrenUnionBy/" [] neo/get-all-children-by)
   (GET  "/api/getChildrenInterBy/" [] neo/get-all-shared-children-by)
   (GET  "/api/getNumNodes/"      [] neo/get-nodes)
+  (GET "/api/getSubGraph/"       [] neo/get-subgraph)
   (POST "/login/" [] auth_handler/create-auth-token)
   (GET "/get-user" [] (restrict auth_handler/get-user {:handler auth/is-auth?
                                                        :on-error on-error})))

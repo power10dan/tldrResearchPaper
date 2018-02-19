@@ -56,7 +56,7 @@
   "Given a request pull out titles and ids and process them returns a collection
   of valid titles and ids"
   [req]
-  ;; TODO: Convert to middleware
+  ;; TODO: Convert to middleware or macro
   (let [to-vec (fn [a] (cond (coll? a) a (not-nil? a) (vector a) :else nil))
         massage-str (fn [a] (map #(format "'%s'" (str/replace % "\"" "")) a))
         ts (to-vec (get-in req [:query-params "title"]))
