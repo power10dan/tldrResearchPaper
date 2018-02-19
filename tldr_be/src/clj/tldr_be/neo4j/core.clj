@@ -165,10 +165,12 @@
 (defn get-subgraph-by-node
   "Given an integer, n, and a node identifier pgid or title, return a subgraph n-legs around the node, returning the graph on success, nil of failure"
   [n ts]
-  (if (and n ts)
+  (if ts
     (let [q0 (format "With [%s] as ts %n" (apply str (interpose "," ts)))
          q1 "Match (n) where n.pgid in ts or n.title in ts "
-         q2 (format "Match (a)-[*1..%d]-(n)-[*1..%d]-(m) " n n)
+          q2 (if n
+               (format "Match (a)-[*1..%d]-(n)-[*1..%d]-(m) " n n)
+               "Match (a)--(n)--(m) ")
          q3 "Return a, m, n"]
       [true (query-neo4j q0 q1 q2 q3)])
     [false @err]))
