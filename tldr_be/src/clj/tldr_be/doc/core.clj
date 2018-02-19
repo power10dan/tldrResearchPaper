@@ -15,6 +15,7 @@
             [tldr-be.doc.engines :as eng]
             [tldr-be.utils.core :refer [collect
                                         make-sections
+                                        distinct-by
                                         string->xml
                                         get-sections]]
             [clojure.java.io :as io]))
@@ -74,7 +75,8 @@
       get-sections ;; run post processing to get a nice clj map
       make-sections
       (map collect)
-      (filter #(contains? % :surname))))
+      (filter #(contains? % :surname))
+      (distinct-by :title)))
 
 
 (defn insert-doc!
