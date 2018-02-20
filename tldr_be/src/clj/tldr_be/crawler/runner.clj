@@ -18,6 +18,6 @@
 
 
 (defn run-schedule
-  "run some function that takes no args at the defined schedule"
+  "run some function that takes no args at 3 am every day"
   [f]
   (let [t (time/today-at 3 00)] (schedule f (-> (at t) :every :day))))
