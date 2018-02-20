@@ -123,6 +123,17 @@
     (query-neo4j q0 q1 q2)))
 
 
+(defn get-recommended-children
+  "Given the pgid or titles of nodes get the most influential children nodes"
+  [& ts]
+  (let [q0 (format "Match (node:%s)-[]->(c)" @parent-label)
+        q1 (format "Where node.pgid in [%s] or node.title in [%s]" (apply str (interpose "," ts)) (apply str (interpose "," ts)))
+        q2 "WITH COLLECT(c) AS nodes CALL apoc.algo.pageRank(nodes) YIELD node, score"
+        q3 "RETURN node "
+        q4 "Order By score DESC "]
+    (query-neo4j q0 q1 q2 q3 q4)))
+
+
 (defn get-all-shared-children
   [& ts]
   (let [q0 (format "WITH [%s] as ts %n" (apply str (interpose "," ts)))
