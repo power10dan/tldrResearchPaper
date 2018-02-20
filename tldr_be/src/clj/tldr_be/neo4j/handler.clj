@@ -32,6 +32,11 @@
   (response-wrapper req neo/core-wrapper neo/get-all-shared-children-by))
 
 
+(defn get-recommended-children
+  [req]
+  (response-wrapper req neo/core-wrapper neo/get-recommended-children))
+
+
 (defn get-all-children-by
   [req]
   (response-wrapper req neo/core-wrapper neo/get-all-children-by))
