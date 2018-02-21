@@ -2,7 +2,9 @@
   (:require [selmer.parser :as parser]
             [clojure.tools.logging :as log]
             [tldr-be.crawler.runner :refer [run-schedule populate]]
-            ;; [immutant.scheduling :refer :all]
+            [immutant.scheduling :refer :all]
+            [immutant.scheduling.joda :refer :all]
+            [clj-time.core :as time]
             [tldr-be.dev-middleware :refer [wrap-dev]]))
 
 (def defaults

@@ -4,10 +4,11 @@
             [luminus.http-server :as http]
             [luminus-migrations.core :as migrations]
             [tldr-be.config :refer [env]]
-            [tldr-be.crawler.runner :refer [run-schedule]]
             [cider.nrepl :refer [cider-nrepl-handler]]
             [clojure.tools.cli :refer [parse-opts]]
             [clojure.tools.logging :as log]
+            [tldr-be.crawler.runner :refer [run-schedule populate]]
+            [immutant.scheduling :refer :all]
             [mount.core :as mount])
   (:gen-class))
 
@@ -54,7 +55,6 @@
     (do
       (mount/start #'tldr-be.config/env)
       (migrations/init (select-keys env [:database-url :init-script]))
-      (run-schedule)
       (System/exit 0))
     (some #{"migrate" "rollback"} args)
     (do
