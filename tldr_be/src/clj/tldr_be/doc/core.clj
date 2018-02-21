@@ -6,6 +6,8 @@
                                      get-xml-refs
                                      get-xml-headers-by-title
                                      get-headers-id-by-title
+                                     search-by-term
+                                     check-spelling
                                      *neo4j_db*]]
             [byte-streams :as bs]
             [clojure.xml :as xml]
@@ -93,3 +95,21 @@
           (create-doc! {:filestuff (bs/to-byte-array file_blob) :pgid pgid}))
         [true "Your document successfully uploaded" pgid]))
     [false "Request Malformed" nil]))
+
+(defn check-spelling!
+  "given a word, check the spelling and return the closest word, otherwise,
+   return nothing"
+  [input_word]
+ (let [spell_map (check-spelling {:s_word input_word})]
+  (if spell_map
+    (get spell_map :word)
+    input_word)))
+
+(defn search-by-term!
+  "Given title or author name, return a paper form the database."
+  [params]
+  (let [input_string (get params "search_query")]
+    (let [result (search-by-term {:q_string (clojure.string/join " & " (map check-spelling! (clojure.string/split input_string #" ")))})]
+      (if (empty? result)
+       [false "No matches found."]
+       [true result]))))

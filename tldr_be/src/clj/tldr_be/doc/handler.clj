@@ -37,3 +37,18 @@
        :headers {"Content-Type" "application/pdf"}
        :body (io/input-stream (:filestuff res))}
       (http/bad-request res))))
+
+(defn search-postgres
+  "Given a request that specifies search_query in the params, retrieve first 10
+   results from the search function"
+  [req]
+  (let [_args (get req :query-params)
+        args (if (contains? _args "search_query")
+               (update-in _args ["search_query"] (fn [a] (str/replace a "\"" "")))
+               _args)
+       [ok? res] (doc/search-by-term! args)]
+     (if ok?
+       {:status 200
+        :headers {"Content-Type" "application/json"}
+        :body (vec res)}
+       (http/bad-request res))))

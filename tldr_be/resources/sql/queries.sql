@@ -97,3 +97,22 @@ WHERE title = :title
 -- :doc given a title retrieve that header's pgid
 SELECT pgid from xml_headers
 where title = :title
+
+
+-- :name search-by-term :? :10
+-- :doc search by title or author
+SELECT pgid, p_title
+FROM (SELECT xml_headers.pgid as pgid,
+              unaccent(xml_headers.title) as p_title,
+              to_tsvector('simple', unaccent(xml_headers.title)) ||
+              to_tsvector('simple', unaccent(replace(array_to_string(zip(xml_headers.forename::text[], xml_headers.surname::text[]), ', ', ' '), ',',''))) as document
+      FROM xml_headers
+      GROUP BY xml_headers.pgid) p_search
+WHERE p_search.document @@ to_tsquery(:q_string)
+ORDER BY ts_rank(p_search.document, to_tsquery(:q_string)) DESC;
+
+-- :name check-spelling :? :1
+SELECT word FROM unique_lexeme
+WHERE similarity(word, :s_word) > 0.4
+ORDER BY word <-> :s_word
+LIMIT 1;
