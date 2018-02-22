@@ -18,4 +18,4 @@
 (defn run-schedule
   "run some function that takes no args at 3 am every day"
   [f]
-  (schedule f (-> (in 1 :hour) (every :day))))
+  (schedule f (-> (in (:update-time) :minutes) (every :day))))
