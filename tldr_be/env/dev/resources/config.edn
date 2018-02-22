@@ -9,4 +9,5 @@
  ;; :grobid-hed "http://52.170.38.218:8080/processHeaderDocument"
  :bing-key "2a493356fd824c84818eb80581c3f468"
  :bing-limit 3
+ :update-time 60
  :hostname "http://localhost"}
