@@ -131,7 +131,20 @@
         q2 "WITH COLLECT(c) AS nodes CALL apoc.algo.pageRank(nodes) YIELD node, score "
         q3 "RETURN node "
         q4 "Order By score DESC "]
-    (println (apply str q0 q1 q2 q3 q4))
+    (query-neo4j q0 q1 q2 q3 q4)))
+
+(defn get-recommended
+  "Given the pgid or titles of nodes get the most influential nodes around within 1 leg around them"
+  [& ts]
+  (let [q0 "Match (g)-[]->(node)-[]->(c) "
+        q1 (format "Where (node:%s or node:%s) and (node.pgid in [%s] or node.title in [%s]) "
+                   @parent-label
+                   @child-label
+                   (apply str (interpose "," ts))
+                   (apply str (interpose "," ts)))
+        q2 "WITH COLLECT(DISTINCT c) + COLLECT(DISTINCT g) AS gs CALL apoc.algo.pageRank(gs) YIELD node, score "
+        q3 "RETURN node "
+        q4 "Order By score DESC "]
     (query-neo4j q0 q1 q2 q3 q4)))
 
 
