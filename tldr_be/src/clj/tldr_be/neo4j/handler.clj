@@ -37,7 +37,7 @@
   (response-wrapper req neo/core-wrapper neo/get-recommended-children))
 
 
-(defn get-recommended-children
+(defn get-recommended
   [req]
   (response-wrapper req neo/core-wrapper neo/get-recommended))
 

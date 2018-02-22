@@ -11,7 +11,8 @@
             [clojurewerkz.neocons.rest.relationships :as nrl]
             [clojurewerkz.neocons.rest.cypher :as cy]
             [clojurewerkz.neocons.rest :as nr]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [clojure.tools.logging :as log]))
 
 ;; globals for neo4j node labels
 (def parent-label (atom "Uploaded"))
@@ -144,8 +145,11 @@
                    (apply str (interpose "," ts)))
         q2 "WITH COLLECT(DISTINCT c) + COLLECT(DISTINCT g) AS gs CALL apoc.algo.pageRank(gs) YIELD node, score "
         q3 "RETURN node "
-        q4 "Order By score DESC "]
-    (query-neo4j q0 q1 q2 q3 q4)))
+        q4 "Order By score DESC "
+        res (query-neo4j q0 q1 q2 q3 q4)]
+    (if (empty? res)
+      (apply get-recommended-children ts)
+      res)))
 
 
 (defn get-all-shared-children
