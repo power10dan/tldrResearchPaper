@@ -17,6 +17,7 @@
 ;; globals for neo4j node labels
 (def parent-label (atom "Uploaded"))
 (def child-label (atom "Cited"))
+(def child-label (atom "UnTouched"))
 (def cites (atom ":cites"))
 (def err (atom "Malformed request! Check for mischievous gnomes!"))
 
@@ -187,7 +188,11 @@
   "Given an integer return children nodes that have the least amount of connections
   in the graph limited by the integer"
   [n]
-  (->> (cy/tquery *neo4j_db* (format "Match (p:Uploaded)-[r]-(c:Cited) return c.title, count(r) as connections Order by connections LIMIT %d" n))
+  (->> (cy/tquery *neo4j_db* (format "Match (p:%s)-[r]-(c) where c:%s or c:%s return c.title, count(r) as connections Order by connections LIMIT %d"
+                                     @parent-label
+                                     @child-label
+                                     @untouchd-label
+                                     n))
        (map (comp first first vals))))
 
 
