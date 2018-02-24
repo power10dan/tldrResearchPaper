@@ -1,0 +1,1 @@
+export RickPic from './RickPic.png';
