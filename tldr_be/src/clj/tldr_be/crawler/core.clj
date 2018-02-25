@@ -35,7 +35,9 @@
   (try
     (when url
       (http/post
-       (str (:hostname env) ":" (:port env) "/api/uploadFile/")
+       (str (:hostname env)
+            (when (:port env) ":" (:port env))
+            "/api/uploadFile/")
        {:multipart [{:name "file"
                      :content (clojure.java.io/input-stream url)}]}))
     ;; (catch Exception ex
