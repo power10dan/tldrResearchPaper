@@ -1,9 +1,12 @@
 import React, { Component, Fragment } from 'react';
 import ConferencePaperPanel from '../AppComponent/MainSelectionPage.js';
-import { getFile } from '../AppUrlConstants.js';
+import { getFile, searchFile, getRecommendation } from '../AppUrlConstants.js';
 import { connect } from 'react-redux';
-import { downloadPaper } from '../Redux/Actions/ActionCreators.js';
+import { downloadPaper, GetSearchedPaper, GetRecommendation } from '../Redux/Actions/ActionCreators.js';
 import ErrSnackBar from '../AppComponent/LoadingSnackBar.js';
+import SearchBar from '../AppComponent/SearchBar.js';
+import SearchRecView from '../AppComponent/SearchRecommendView.js';
+
 
 class MainPageSelectionLogic extends Component{
 	constructor(props){
@@ -12,12 +15,27 @@ class MainPageSelectionLogic extends Component{
 			data: props.data,
 			tempData: props.data[0],
 			expanded: "",
-			isLoading: props.shouldLoad
+			isLoading: props.shouldLoad,
+			defaultHeader : "Papers Currently In The Database.",
+			searchedItem: "",
+			searchResult: "",
+			recommends: ""
 		}
 	}
 
 	componentWillReceiveProps(nextProp){
 		this.setState({isLoading: nextProp.shouldLoad});
+		this.setState({searchResult: nextProp.cachedSearchedPaper})
+		this.setState({recommends: nextProp.cachedRecommendedPaper})
+	}
+
+	textFieldOnChange = (event) => {
+		this.setState({searchedItem: event.target.value})
+	}
+
+	searchButtonCallBack = ()=>{
+		let searchUrl = searchFile + "/?search_query=" + this.state.searchedItem;
+		this.props.searchForPaper(searchUrl);
 	}
 
 	handlePanelChange = panelToChange => (event, expanded) =>{
@@ -74,26 +92,27 @@ class MainPageSelectionLogic extends Component{
 	render(){
 		const filterSurNames = this.filterBySurName();
 		let selectedAuthor = null
+		let recState = null
 		if(this.state.tempData.surname === undefined){
 			selectedAuthor = "No surname"
 		} else {
 			selectedAuthor = this.state.tempData.surname[0].concat(" ", "et al.");
 		}
-		
+
 		return(
 			<Fragment>
-				<ConferencePaperPanel
-					handleChange = {this.handlePanelChange}
-					expanded = {this.state.expanded}
-					data = {this.state.data}
-					shorterTitleArr = {filterSurNames[1]}
-					surNameArray = {filterSurNames[0]}
-					downloadPaper = {this.downloadCallBack}
-					nodeClick = {this.clickOnNodeCallBack}
-					selectedCardNodeTitle = {this.state.tempData.title}
-					labelOfSelectedNode = {this.state.tempData.labels[0]}
-					surName = {selectedAuthor}
-				/>
+				 <SearchBar 
+				 	onClickCallBack = {this.searchButtonCallBack}
+				 	textInput={this.textFieldOnChange}
+				 />
+				 {
+				 	this.state.searchResult !== "" ? <SearchRecView
+														searchResult = {this.state.searchResult}
+													 /> : null
+
+
+				 }
+	
 				{
 					this.state.isLoading === true ? <ErrSnackBar 
 													  open={this.state.isLoading} 
@@ -107,14 +126,19 @@ class MainPageSelectionLogic extends Component{
 
 const mapStateToProps = (state)=>{
 	const { shouldLoad } = state.ReducerAppState;
+	const { cachedSearchedPaper, cachedRecommendedPaper } = state.ReducerPapers;
 	return {
-		shouldLoad 
+		shouldLoad,
+		cachedSearchedPaper,
+		cachedRecommendedPaper
 	}
 }
 
 const mapDispatchToProps = (dispatch)=>{
 	return({
 		downloadPaper : (paperUrl, title)=>{dispatch(downloadPaper(paperUrl, title))},
+		searchForPaper : (url, urlRec)=>{dispatch(GetSearchedPaper(url, urlRec))},
+		getPaperRecommendation : (url)=>{dispatch(GetRecommendation(url))}
 	});
 }
 

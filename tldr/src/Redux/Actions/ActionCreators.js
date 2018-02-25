@@ -2,10 +2,13 @@ import * as actionTypes from './ActionConstants.js';
 import {
           GetChildrenUnionHeader, 
           GetNumNodeHeader,
-          GetFileHeader
+          GetFileHeader,
+          GetRecommendedHeader,
+          SearchByTerm
 
         } from '../../AppBusinessLogic/FileOperations.js';
 import fetchStream from 'fetch-readablestream';
+
 
 export const CachedPaperActionCreator = (actionType, dataPayload) =>{
 	let actionPayLoad = {};
@@ -117,8 +120,7 @@ export const UploadNewPaper = (url, fileToUpload)=>{
 	              mode:'cors'
 	          },
 	          body: form}
-	      )
-	     .then((response)=>{
+	     ).then((response)=>{
 	     	dispatch(AppStateActionCreator(actionTypes.APP_ISLOADING, false));
 	        if(response.ok){
 	            return response;
@@ -128,3 +130,49 @@ export const UploadNewPaper = (url, fileToUpload)=>{
 	      });
 	}
 }
+
+const SearchFunction = (url)=>{
+	return fetch(url, SearchByTerm())
+}
+
+export const GetSearchedPaper = (url) =>{
+	return dispatch =>{
+		SearchFunction(url)
+			.then((resp)=>{
+				return resp.json()
+			}).then((data)=>{
+				dispatch(CachedPaperActionCreator(actionTypes.SEARCHED_PAPER, data));
+			}).catch((err)=>{
+				console.log(err);
+			})
+	}
+}
+
+const GetRecommendedPaper = (url)=>{
+	return fetch(url, GetRecommendedHeader())
+}
+
+export const GetRecommendation = (url)=>{
+	return dispatch =>{
+		GetRecommendedPaper(url)
+			.then((resp)=>{
+				return resp.json()
+			}).then((data)=>{
+				dispatch(CachedPaperActionCreator(actionTypes.RECOMMENDED_PAPER, data));
+			}).catch((err)=>{
+				console.log(err);
+			})
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+

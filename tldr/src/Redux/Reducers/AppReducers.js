@@ -15,9 +15,12 @@ const ReducerPapers = (state=InitialStates.CachedPapers, actions) =>{
 
 		case types.CACHED_PAPER_CITED:
 			return {...state, cachedPaperCited: {...state.cachedPaperCited, [actions.data.title]:actions.data}};
-
 		case types.CACHED_PAPER_ORIGINAL_CHILDREN:
 			return {...state, cachedPaperOriginalChildren: {...state.cachedPaperOriginalChildren, [actions.data.title]:actions.data}};
+		case types.SEARCHED_PAPER:
+			return {...state, cachedSearchedPaper:  actions.data}
+		case types.RECOMMENDED_PAPER:
+			return {...state, cachedRecommendedPaper: actions.data}
 		default:
 			return state;
 	}
@@ -40,7 +43,6 @@ const ReducerAppState = (state = InitialStates.AppState, actions) => {
 		case types.FILE_TO_UPLOAD:
 			return {...state, selectedFile: actions.dataPayload}
 		case types.APP_ISLOADING:
-
 			return {...state, shouldLoad: actions.dataPayload}
 		default:
 			return state;

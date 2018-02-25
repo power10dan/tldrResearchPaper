@@ -22,6 +22,7 @@ export const GetFileHeader = ()=>{
 			"async": true,
 			"crossDomain": true,
 			"method": "GET",
+			"mode": 'cors',
 			"headers": {
 			  "Cache-Control": "no-cache",
 			  "Postman-Token": "dd2aaa60-3b82-3fec-c97e-b0f606e2108d"
@@ -83,3 +84,31 @@ export const GetNumNodeHeader = ()=>{
 
 	return dispatchHeader;
 }
+
+
+export const SearchByTerm = ()=>{
+	let dispatchHeader = {
+		method: 'GET',
+		headers: { 
+     		'Cache-Control': 'no-cache' 
+ 		}
+
+	}
+
+	return dispatchHeader;
+}
+
+export const GetRecommendedHeader = ()=>{
+	let dispatchHeader = {
+		method: 'GET',
+		headers: {
+			mode: 'cors',
+			'Content-Type': 'application/json'
+		}
+	}
+
+	return dispatchHeader;
+}
+
+
+

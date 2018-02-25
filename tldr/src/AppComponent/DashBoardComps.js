@@ -131,7 +131,7 @@ const DashboardAppBar = (props)=>{
 	const {classes } = props;
 	// we don't want to wrap app bar in another container, so we use React Fragment here
 	let innerComp = null;
-	if(props.CurrPage > 2){
+	/*if(props.CurrPage > 2){
 		innerComp = <Fragment>
 						<IconButton
 			                color="contrast"
@@ -145,11 +145,11 @@ const DashboardAppBar = (props)=>{
 			                	{props.actionBarTitle}
 			             </Typography>
 			        </Fragment>
-	} else {
-		innerComp =  <Typography className= {classes.titleStyle} type="title" color="inherit" noWrap>
+	} else {*/
+	innerComp =  <Typography className= {classes.titleStyle} type="title" color="inherit" noWrap>
 		                	{props.actionBarTitle}
 		              </Typography>
-	}
+	
 
 
 	return(
@@ -210,14 +210,14 @@ const SideDrawer = (props)=>{
 
 const DashBoardComp = (props)=>{
 	const {classes} = props;
-	let sideBar = null;
+	/*let sideBar = null;
 	if(props.currPage > 2){
 		sideBar = <SideDrawer 
 					{...props}
 				 />
 	} else {
 		sideBar = null;
-	}
+	}*/
 
 	return (
 		<Fragment>
@@ -226,9 +226,7 @@ const DashBoardComp = (props)=>{
 					{...props}
 					CurrPage = {props.currPage}
 				/>
-
-				{ sideBar }
-				
+			
 				 <Divider className={classes.dividerBottom} />
 			</div>
 		</Fragment>

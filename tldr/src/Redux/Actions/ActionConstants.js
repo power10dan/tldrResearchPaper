@@ -16,3 +16,5 @@ export const APP_ISLOADING = "APP_ISLOADING";
 // Constants for tutorial related filters
 export const CONFERENCE_FILTER = "CONFERENCE_FILTER";
 export const RESEARCHER_FILTER = "RESEARCHER_FILTER";
+export const SEARCHED_PAPER = "SEARCHED_PAPER";
+export const RECOMMENDED_PAPER = "RECOMMENDED_PAPER";

@@ -15,7 +15,7 @@ const conferencePanelStyle = theme=>({
 	divProps:{
 		marginTop: "-260px",
 		width: "800px",
-		marginLeft: "160px",
+		marginLeft: "60px",
 	},
 	heading: {
 		fontSize: theme.typography.pxToRem(15),
@@ -75,6 +75,9 @@ const ConferencePaperPanels = (props)=>{
 	const {classes} = props;
 	return(
 		<div className={classes.divProps} >
+			<Typography className={classes.heading}>
+				{props.textHeader}
+			</Typography>
 			{
 				props.data.map((elem,idx)=>{
 					return(
