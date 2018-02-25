@@ -1,6 +1,7 @@
 (ns tldr-be.crawler.core
   (:require [tldr-be.search.core :as src]
             [tldr-be.config :refer [env]]
+            [tldr-be.doc.core :refer [insert-doc!]]
             [clj-http.client :as http]
             [clojure.tools.logging :as log]
             [tldr-be.utils.macros :refer [swallow-exceptions]]
@@ -35,16 +36,10 @@
   (println "THE HOST IS" (:my-hostname env) (:host env))
   (try
     (when url
-      (http/post
-       (str (:my-hostname env)
-            (when (:port env) ":" (:port env))
-            "/api/uploadFile/")
-       {:multipart [{:name "file"
-                     :content (clojure.java.io/input-stream url)}]}))
+      (insert-doc! "crawled_file" (clojure.java.io/input-stream url))
     ;; (catch Exception ex
     ;;   (neo/touch-node-by-title title))
-    ))
-
+    )))
 
 (defn add-paper
   "Given a paper title, search for the pdf via bing, get the top hit with a pdf
