@@ -27,17 +27,17 @@
 
 (defroutes bus-routes ;;business-routes
   (POST "/api/uploadFile/"         [] d/insert-doc!)
-  (GET "/api/getFile/"             [] d/get-doc)
-  (GET "/api/searchByTerm/"        [] d/search-postgres)
+  (GET  "/api/getFile/"            [] d/get-doc)
+  (GET  "/api/searchByTerm/"       [] d/search-postgres)
   (GET  "/api/getChildrenUnion/"   [] neo/get-all-children)
   (GET  "/api/getChildrenInter/"   [] neo/get-all-shared-children)
   (GET  "/api/getChildrenUnionBy/" [] neo/get-all-children-by)
   (GET  "/api/getChildrenInterBy/" [] neo/get-all-shared-children-by)
   (GET  "/api/getNumNodes/"        [] neo/get-nodes)
-  (GET "/api/getSubGraph/"         [] neo/get-subgraph)
-  (GET "/api/getRecChildren/"      [] neo/get-recommended-children)
-  (GET "/api/getRec/"              [] neo/get-recommended)
+  (GET  "/api/getSubGraph/"        [] neo/get-subgraph)
+  (GET  "/api/getRecChildren/"     [] neo/get-recommended-children)
+  (GET  "/api/getRec/"             [] neo/get-recommended)
   (POST "/login/"                  [] auth_handler/create-auth-token)
-  (POST "runDispatcher"            [] (run-schedule populate))
-  (GET "/get-user" [] (restrict auth_handler/get-user {:handler auth/is-auth?
+  (POST "/runDispatcher/"            [] (run-schedule populate))
+  (GET  "/get-user" [] (restrict auth_handler/get-user {:handler auth/is-auth?
                                                        :on-error on-error})))
