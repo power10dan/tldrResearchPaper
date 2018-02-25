@@ -48,9 +48,11 @@
   tag, download that paper and add it to our database"
   [title]
   (log/info "TRYING TO ADD: " title)
+  (println "TRYING TO ADD: " title)
   (let [res (src/search (:bing-key env) :web title)
         url (get-top-url res)]
     (log/info "Using URL: " url)
+    (println "Using URL: " url)
     (if url
       (insert-searched-paper url title)
       ;; (neo/touch-node-by-title title)
