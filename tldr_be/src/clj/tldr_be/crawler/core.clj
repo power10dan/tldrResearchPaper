@@ -35,7 +35,7 @@
   (try
     (when url
       (http/post
-       (str (:hostname env)
+       (str (:my-hostname env)
             (when (:port env) ":" (:port env))
             "/api/uploadFile/")
        {:multipart [{:name "file"

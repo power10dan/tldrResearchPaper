@@ -10,4 +10,4 @@
  :bing-key "2a493356fd824c84818eb80581c3f468"
  :bing-limit 3
  :update-time 600
- :hostname "http://localhost"}
+ :my-hostname "http://localhost"}

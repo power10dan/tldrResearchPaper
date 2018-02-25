@@ -5,5 +5,5 @@
  :bing-key "2a493356fd824c84818eb80581c3f468"
  :bing-limit 100
  :update-time 60
- :hostname "https://secret-inlet-27367.herokuapp.com/"}
+ :my-hostname "https://secret-inlet-27367.herokuapp.com/"}
  }
