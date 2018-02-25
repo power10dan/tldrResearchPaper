@@ -33,7 +33,6 @@
 (defn insert-searched-paper
   "Given a response that specifies a url, download the paper and try to insert it"
   [url title]
-  (println "THE HOST IS" (:my-hostname env) (:host env))
   (try
     (when url
       (insert-doc! "crawled_file" (clojure.java.io/input-stream url))
