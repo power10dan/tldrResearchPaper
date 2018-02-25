@@ -116,3 +116,6 @@ SELECT word FROM unique_lexeme
 WHERE similarity(word, :s_word) > 0.4
 ORDER BY word <-> :s_word
 LIMIT 1;
+
+-- :name update-lexemes :? :1
+REFRESH MATERIALIZED VIEW unique_lexeme;
