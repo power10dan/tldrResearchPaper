@@ -19,17 +19,13 @@
   "run some function right now"
   [f]
   (do
-    (schedule f (-> (in 1 :minutes)))
+    (schedule f)
     (update-lexemes)))
 
 (defn run-schedule
   "run some function that takes no args at 3 am every day"
-  [f]
-  (schedule f (-> (in (:update-time env) :minutes) (every :day))))
+  [f] (schedule f (-> (in (:update-time env) :minutes) (every :day))))
 
 (defn run-lexeme-update
   "schedule the server to run an update on the lexemes for search"
-  []
-  (schedule update-lexemes (-> (in (time/plus
-                                    (:update-time env)
-                                    (time/hours 1))))))
+  [] (schedule update-lexemes (-> (in (+ (:update-time env) 1) :hours))))
