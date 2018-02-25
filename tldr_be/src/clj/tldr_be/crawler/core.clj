@@ -30,14 +30,16 @@
 
 
 (defn insert-searched-paper
-  "Given a url that specifies a url, download the paper and try to insert it"
-  [url]
-  (swallow-exceptions
-           (when url
-             (http/post
-              (str (:hostname env) ":" (:port env) "/api/uploadFile/")
-              {:multipart [{:name "file"
-                            :content (clojure.java.io/input-stream url)}]}))))
+  "Given a response that specifies a url, download the paper and try to insert it"
+  [url title]
+  (try
+    (when url
+      (http/post
+       (str (:hostname env) ":" (:port env) "/api/uploadFile/")
+       {:multipart [{:name "file"
+                     :content (clojure.java.io/input-stream url)}]}))
+    (catch Exception ex
+      (neo/touch-node-by-title title))))
 
 
 (defn add-paper
@@ -48,5 +50,6 @@
   (let [res (src/search (:bing-key env) :web title)
         url (get-top-url res)]
     (log/info "Using URL: " url)
-    (when url
-      (insert-searched-paper url))))
+    (if url
+      (insert-searched-paper url title)
+      (neo/touch-node-by-title title))))

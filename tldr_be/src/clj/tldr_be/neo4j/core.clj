@@ -61,6 +61,13 @@
     (some #(= % @parent-label) (:labels node))))
 
 
+;; (defn touch-node-by-title
+;;   "Given the title of a node color the node as Touched which means the crawler has
+;;   tried to find a pdf of it already"
+;;   [title]
+;;   ())
+
+
 (defn create-uploaded
   "given a filemap create an uploaded node, if it already exists match on it and
   update its parameters"
@@ -221,8 +228,6 @@
                          (get-xml-headers fmap)))] ;;filter possible nils
     (when-not (-> heds :pgid original-exists?)
       (let [refs (process-refs fmap)
-            ;; parent (nn/create-unique-in-index
-            ;;         *neo4j_db* "by-title" "title" (:title heds) heds)
             parent (create-uploaded heds)
             ;; WARNING THIS LINE ENSURES CREATED CITED NODES ARE REFERENCED IF
             ;; YOU USE A NORMAL CREATE CALL YOU'LL GET A CONSTRAIN ERROR
