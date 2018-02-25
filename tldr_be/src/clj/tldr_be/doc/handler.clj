@@ -2,7 +2,7 @@
   (:require [tldr-be.doc.core :as doc]
             [ring.util.http-response :as http]
             [clojure.string :refer [split]]
-            [tldr-be.neo4j.core :refer [insert-neo4j]]
+            [tldr-be.neo4j.core :refer [insert-neo4j get-recommended]]
             [tldr-be.utils.core :refer [get-basename]]
             [clojure.java.io :as io]
             [clojure.tools.logging :as log]
@@ -17,9 +17,8 @@
         tempfile (get-in req [:params :file :tempfile])
         [ok? res pgid] (doc/insert-doc! fname tempfile)]
     (if ok?
-      (do
-        (insert-neo4j {:pgid pgid :filestuff tempfile} )
-        (http/created res res)) ;; (http/created url body)
+      (do (insert-neo4j {:pgid pgid :filestuff tempfile})
+          (http/ok (get-recommended pgid))) ;; return recommended on paper upload
       (http/bad-request res))))
 
 

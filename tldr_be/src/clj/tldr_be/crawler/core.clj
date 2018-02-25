@@ -38,8 +38,9 @@
        (str (:hostname env) ":" (:port env) "/api/uploadFile/")
        {:multipart [{:name "file"
                      :content (clojure.java.io/input-stream url)}]}))
-    (catch Exception ex
-      (neo/touch-node-by-title title))))
+    ;; (catch Exception ex
+    ;;   (neo/touch-node-by-title title))
+    ))
 
 
 (defn add-paper
@@ -52,4 +53,6 @@
     (log/info "Using URL: " url)
     (if url
       (insert-searched-paper url title)
-      (neo/touch-node-by-title title))))
+      ;; (neo/touch-node-by-title title)
+      nil
+      )))

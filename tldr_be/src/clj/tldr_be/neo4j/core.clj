@@ -17,7 +17,8 @@
 ;; globals for neo4j node labels
 (def parent-label (atom "Uploaded"))
 (def child-label (atom "Cited"))
-(def child-label (atom "UnTouched"))
+(def untouched-label (atom "UnTouched"))
+(def touched-label (atom "Touched"))
 (def cites (atom ":cites"))
 (def err (atom "Malformed request! Check for mischievous gnomes!"))
 
@@ -198,7 +199,7 @@
   (->> (cy/tquery *neo4j_db* (format "Match (p:%s)-[r]-(c) where c:%s or c:%s return c.title, count(r) as connections Order by connections LIMIT %d"
                                      @parent-label
                                      @child-label
-                                     @untouchd-label
+                                     @untouched-label
                                      n))
        (map (comp first first vals))))
 
