@@ -13,9 +13,9 @@
   "Given nothing, grab the most sparse children in the graph and try to find
   their pdfs, then add them to the neo4j database"
   []
-  (println "I HAVE THIS MANY " (count (neo/get-sparse-nodes (:bing-limit env))))
+  (println "testing laziness")
   (-> (neo/get-sparse-nodes (:bing-limit env))
-         (doseq-interval add-paper 3000)))
+      (doall (doseq-interval add-paper 3000))))
 
 
 (defn run-schedule-now
