@@ -17,6 +17,7 @@
   (-> (neo/get-sparse-nodes (:bing-limit env))
          (doseq-interval add-paper 3000)))
 
+
 (defn run-schedule-now
   "run some function right now"
   [f]

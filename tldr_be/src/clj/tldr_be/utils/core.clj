@@ -119,7 +119,7 @@
   "Map over a collection and wait the specified interval between evaluations"
   [coll f interval]
   (doseq [x coll]
-    (Thread/sleep interval)
+    ;; (Thread/sleep interval)
     (f x)))
 
 
