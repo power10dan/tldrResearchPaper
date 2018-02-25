@@ -38,6 +38,8 @@
   (GET  "/api/getRecChildren/"     [] neo/get-recommended-children)
   (GET  "/api/getRec/"             [] neo/get-recommended)
   (POST "/login/"                  [] auth_handler/create-auth-token)
-  (POST "/runDispatcher/"          [] (run-schedule-now populate))
+  (POST "/runDispatcher/"          [] (do
+                                        (run-schedule-now populate)
+                                        (http/ok "I'll get to it when I do")))
   (GET  "/get-user" [] (restrict auth_handler/get-user {:handler auth/is-auth?
                                                        :on-error on-error})))
