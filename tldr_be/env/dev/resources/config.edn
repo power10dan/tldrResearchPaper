@@ -1,13 +1,13 @@
 {:dev true
  :port 9678
  ;; when :nrepl-port is set the application starts with nREPL server on load
- ;;:grobid-ref "http://localhost:8080/processReferences"
- ;;:grobid-hed "http://localhost:8080/processHeaderDocument"
- :grobid-ref "http://192.168.99.100:8080/processReferences"
- :grobid-hed "http://192.168.99.100:8080/processHeaderDocument"
+ :grobid-ref "http://localhost:8080/processReferences"
+ :grobid-hed "http://localhost:8080/processHeaderDocument"
+ ;; :grobid-ref "http://192.168.99.100:8080/processReferences"
+ ;; :grobid-hed "http://192.168.99.100:8080/processHeaderDocument"
  ;; :grobid-ref "http://52.170.38.218:8080/processReferences"
  ;; :grobid-hed "http://52.170.38.218:8080/processHeaderDocument"
  :bing-key "2a493356fd824c84818eb80581c3f468"
  :bing-limit 3
- :update-time 60
+ :update-time 600
  :hostname "http://localhost"}
