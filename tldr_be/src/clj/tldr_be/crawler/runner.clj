@@ -15,7 +15,7 @@
   []
   (println "testing laziness")
   (-> (neo/get-sparse-nodes (:bing-limit env))
-      (doall (doseq-interval add-paper 3000))))
+      (doseq-interval add-paper 3000)))
 
 
 (defn run-schedule-now
