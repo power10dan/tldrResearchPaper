@@ -33,12 +33,15 @@
 (defn insert-searched-paper
   "Given a response that specifies a url, download the paper and try to insert it"
   [url title]
+  (println "Inserting!" title)
   (try
     (when url
       (insert-doc! "crawled_file" (clojure.java.io/input-stream url))
     ;; (catch Exception ex
     ;;   (neo/touch-node-by-title title))
-    )))
+      )
+    (catch Exception ex
+      (println ex))))
 
 (defn add-paper
   "Given a paper title, search for the pdf via bing, get the top hit with a pdf
