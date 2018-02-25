@@ -118,9 +118,8 @@
 (defn doseq-interval
   "Map over a collection and wait the specified interval between evaluations"
   [coll f interval]
-  (println "THE COLL IS" coll)
   (doseq [x coll]
-    (Thread/sleep interval)
+    ;; (Thread/sleep interval)
     (f x)))
 
 
