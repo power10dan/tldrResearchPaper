@@ -8,6 +8,7 @@ import {
 
         } from '../../AppBusinessLogic/FileOperations.js';
 import fetchStream from 'fetch-readablestream';
+import { getRecommendation } from '../../AppUrlConstants.js';
 
 
 export const CachedPaperActionCreator = (actionType, dataPayload) =>{
@@ -139,9 +140,20 @@ export const GetSearchedPaper = (url) =>{
 	return dispatch =>{
 		SearchFunction(url)
 			.then((resp)=>{
+				if(resp.status === 400 || resp.status === 500){
+					dispatch(AppStateActionCreator(actionTypes.ERROR, "No Papers Found"))
+					return;
+				}
 				return resp.json()
 			}).then((data)=>{
+
 				dispatch(CachedPaperActionCreator(actionTypes.SEARCHED_PAPER, data));
+				let appUrl = getRecommendation + "?id=" + data[0].pgid
+				data.map((item, idx)=>{
+					let appUrl = getRecommendation + "/?id=" + item.pgid
+					dispatch(GetRecommendation(appUrl))
+				})
+				
 			}).catch((err)=>{
 				console.log(err);
 			})

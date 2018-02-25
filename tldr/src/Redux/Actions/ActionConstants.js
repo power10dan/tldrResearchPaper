@@ -13,6 +13,7 @@ export const TYPE_OF_RESEARCHER = "TYPE_OF_RESEARCHER";
 export const PREF_CONFERENCE = "PREFERENCE_CONFERENCE";
 export const FILE_TO_UPLOAD = "FILE_TO_UPLOAD";
 export const APP_ISLOADING = "APP_ISLOADING";
+export const ERROR = "ERROR";
 // Constants for tutorial related filters
 export const CONFERENCE_FILTER = "CONFERENCE_FILTER";
 export const RESEARCHER_FILTER = "RESEARCHER_FILTER";

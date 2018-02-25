@@ -4,4 +4,4 @@ export const getChildrenIntersection = "https://secret-inlet-27367.herokuapp.com
 export const getNumNodes = "https://secret-inlet-27367.herokuapp.com/api/getNumNodes"
 export const getFile = "https://secret-inlet-27367.herokuapp.com/api/getFile";
 export const searchFile = "https://secret-inlet-27367.herokuapp.com/api/searchByTerm";
-export const getRecommendation = "https://secret-inlet-27367.herokuapp.com/api/getRecChildren/"
+export const getRecommendation = "https://secret-inlet-27367.herokuapp.com/api/getRec";

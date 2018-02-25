@@ -44,6 +44,8 @@ const ReducerAppState = (state = InitialStates.AppState, actions) => {
 			return {...state, selectedFile: actions.dataPayload}
 		case types.APP_ISLOADING:
 			return {...state, shouldLoad: actions.dataPayload}
+		case types.ERROR:
+			return {...state, papersNotFound: actions.dataPayload}
 		default:
 			return state;
 	}

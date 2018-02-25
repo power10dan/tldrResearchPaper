@@ -99,14 +99,17 @@ export const SearchByTerm = ()=>{
 }
 
 export const GetRecommendedHeader = ()=>{
+	var form = new FormData();
+	form.append("file", "");
 	let dispatchHeader = {
-		method: 'GET',
-		headers: {
-			mode: 'cors',
-			'Content-Type': 'application/json'
-		}
+		"method": "GET",
+		 "headers": {
+		    "Content-Type": "application/json",
+		    "mode": "cors",
+		    "Cache-Control": "no-cache",
+		    "Postman-Token": "c20719b9-9477-4dec-5ccf-a3c0633cb501"
+		 },
 	}
-
 	return dispatchHeader;
 }
 

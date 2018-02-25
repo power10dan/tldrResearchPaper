@@ -15,11 +15,12 @@ class MainPageSelectionLogic extends Component{
 			data: props.data,
 			tempData: props.data[0],
 			expanded: "",
-			isLoading: props.shouldLoad,
+			shouldOpen: true,
 			defaultHeader : "Papers Currently In The Database.",
 			searchedItem: "",
 			searchResult: "",
-			recommends: ""
+			recommends: "",
+			error_message: props.papersNotFound
 		}
 	}
 
@@ -27,6 +28,7 @@ class MainPageSelectionLogic extends Component{
 		this.setState({isLoading: nextProp.shouldLoad});
 		this.setState({searchResult: nextProp.cachedSearchedPaper})
 		this.setState({recommends: nextProp.cachedRecommendedPaper})
+		this.setState({error_message: nextProp.papersNotFound})
 	}
 
 	textFieldOnChange = (event) => {
@@ -68,6 +70,10 @@ class MainPageSelectionLogic extends Component{
 		});
 	}
 
+	setOnClose = ()=>{
+		this.setState({shouldOpen: false})
+	}
+
 	filterBySurName = ()=>{
 		let surNameArr = [];
 	    let shorterTitle = [];
@@ -92,45 +98,51 @@ class MainPageSelectionLogic extends Component{
 	render(){
 		const filterSurNames = this.filterBySurName();
 		let selectedAuthor = null
-		let recState = null
+		let errState = null
+
 		if(this.state.tempData.surname === undefined){
 			selectedAuthor = "No surname"
 		} else {
 			selectedAuthor = this.state.tempData.surname[0].concat(" ", "et al.");
 		}
 
+		if(this.state.searchResult === undefined || this.state.searchResult === undefined){
+			errState =  <ErrSnackBar 
+							 open={this.state.shouldOpen} 
+							 messageStatus={this.state.error_message}
+							 onClose = {this.setOnClose}
+						/> 
+		} 
 		return(
 			<Fragment>
 				 <SearchBar 
 				 	onClickCallBack = {this.searchButtonCallBack}
 				 	textInput={this.textFieldOnChange}
 				 />
+				 { errState}
 				 {
-				 	this.state.searchResult !== "" ? <SearchRecView
+
+				 	Object.keys(this.state.recommends).length > 0 ? <SearchRecView
 														searchResult = {this.state.searchResult}
+														searchRecommended = {this.state.recommends}
 													 /> : null
 
 
 				 }
 	
-				{
-					this.state.isLoading === true ? <ErrSnackBar 
-													  open={this.state.isLoading} 
-													  messageStatus={"Uploading File, Please Wait"}
-													/> : null
-				}
 			</Fragment>
 		)
 	}
 }
 
 const mapStateToProps = (state)=>{
-	const { shouldLoad } = state.ReducerAppState;
+	const { shouldLoad, papersNotFound } = state.ReducerAppState;
 	const { cachedSearchedPaper, cachedRecommendedPaper } = state.ReducerPapers;
 	return {
 		shouldLoad,
 		cachedSearchedPaper,
-		cachedRecommendedPaper
+		cachedRecommendedPaper,
+		papersNotFound
 	}
 }
 
