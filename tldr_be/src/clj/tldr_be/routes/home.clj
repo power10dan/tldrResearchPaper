@@ -6,6 +6,7 @@
             [tldr-be.auth.handler :as auth_handler]
             [tldr-be.auth.core :as auth]
             [tldr-be.doc.handler :as d]
+            [tldr-be.crawler.runner :refer [run-schedule populate]]
             [tldr-be.neo4j.handler :as neo]
             [clojure.java.io :as io]))
 
@@ -37,5 +38,6 @@
   (GET "/api/getRecChildren/"       [] neo/get-recommended-children)
   (GET "/api/getRec/"       [] neo/get-recommended)
   (POST "/login/" [] auth_handler/create-auth-token)
+  (Post "runDispatcher" [] (run-schedule populate))
   (GET "/get-user" [] (restrict auth_handler/get-user {:handler auth/is-auth?
                                                        :on-error on-error})))

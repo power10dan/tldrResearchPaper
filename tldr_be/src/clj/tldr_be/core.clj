@@ -7,7 +7,6 @@
             [cider.nrepl :refer [cider-nrepl-handler]]
             [clojure.tools.cli :refer [parse-opts]]
             [clojure.tools.logging :as log]
-            [tldr-be.crawler.runner :refer [run-schedule populate]]
             [immutant.scheduling :refer :all]
             [mount.core :as mount])
   (:gen-class))
