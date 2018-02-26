@@ -1,1 +1,4 @@
-DROP TABLE xml_headers;
+DROP TABLE xml_headers CASCADE;
+DROP EXTENSION unaccent;
+DROP EXTENSION pg_trgm;
+DROP MATERIALIZED VIEW unique_lexeme;
