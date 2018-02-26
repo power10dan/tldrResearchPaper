@@ -95,7 +95,7 @@
         (when (empty? (get-doc-by-id {:pgid pgid})) ;; when empty insert the doc
           (create-doc! {:filestuff (bs/to-byte-array file_blob) :pgid pgid})
           (insert-neo4j {:pgid pgid
-                         :refs (process-refs {:filestuff file_blob})}))
+                         :refs (process-refs {:pgid pgid :filestuff file_blob})}))
         [true "Your document successfully uploaded" pgid]))
     [false "Request Malformed" nil]))
 
