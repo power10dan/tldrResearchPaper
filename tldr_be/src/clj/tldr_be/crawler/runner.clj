@@ -13,8 +13,7 @@
   "Given nothing, grab the most sparse children in the graph and try to find
   their pdfs, then add them to the neo4j database"
   []
-  ;; (-> (neo/get-sparse-nodes (:bing-limit env))
-  (-> (neo/get-sparse-nodes 10)
+  (-> (neo/get-sparse-nodes (:bing-limit env))
       (doseq-interval add-paper 3000)))
 
 
