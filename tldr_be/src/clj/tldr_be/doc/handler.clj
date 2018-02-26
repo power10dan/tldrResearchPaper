@@ -17,8 +17,7 @@
         tempfile (get-in req [:params :file :tempfile])
         [ok? res pgid] (doc/insert-doc! fname tempfile)]
     (if ok?
-      (do (insert-neo4j {:pgid pgid :filestuff tempfile})
-          (http/ok (get-recommended pgid))) ;; return recommended on paper upload
+      (http/ok (get-recommended pgid)) ;; return recommended on paper upload
       (http/bad-request res))))
 
 

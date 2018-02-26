@@ -92,9 +92,11 @@
                                       :filestuff file_blob})]
       (let [{pgid :pgid} (get-headers-id-by-title (select-keys heds [:title]))]
         (when (empty? (get-doc-by-id {:pgid pgid})) ;; when empty insert the doc
-          (create-doc! {:filestuff (bs/to-byte-array file_blob) :pgid pgid}))
+          (create-doc! {:filestuff (bs/to-byte-array file_blob) :pgid pgid})
+          (tldr-be.neo4j.core/insert-neo4j {:pgid pgid :filestuff file_blob}))
         [true "Your document successfully uploaded" pgid]))
     [false "Request Malformed" nil]))
+
 
 (defn check-spelling!
   "given a word, check the spelling and return the closest word, otherwise,
@@ -104,6 +106,7 @@
   (if spell_map
     (get spell_map :word)
     input_word)))
+
 
 (defn search-by-term!
   "Given title or author name, return a paper form the database."
