@@ -93,10 +93,10 @@
                                       :filestuff file_blob})]
       (let [{pgid :pgid} (get-headers-id-by-title (select-keys heds [:title]))]
         (when (empty? (get-doc-by-id {:pgid pgid})) ;; when empty insert the doc
-          (create-doc! {:filestuff (bs/to-byte-array file_blob) :pgid pgid})
-          (insert-neo4j {:pgid pgid
-                         :refs (process-refs {:pgid pgid :filestuff file_blob})}))
-        [true "Your document successfully uploaded" pgid]))
+          (do (create-doc! {:filestuff (bs/to-byte-array file_blob) :pgid pgid})
+              (insert-neo4j
+               {:pgid pgid :refs (process-refs {:pgid pgid :filestuff file_blob})}))
+          [true "Your document successfully uploaded" pgid])))
     [false "Request Malformed" nil]))
 
 

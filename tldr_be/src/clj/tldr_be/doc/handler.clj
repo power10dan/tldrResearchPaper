@@ -16,6 +16,7 @@
   (let [fname (get-basename (get-in req [:params :file :filename]))
         tempfile (get-in req [:params :file :tempfile])
         [ok? res pgid] (doc/insert-doc! fname tempfile)]
+    (println ok? req pgid)
     (if ok?
       (http/ok (get-recommended pgid)) ;; return recommended on paper upload
       (http/bad-request res))))
