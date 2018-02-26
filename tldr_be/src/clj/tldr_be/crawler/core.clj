@@ -36,7 +36,7 @@
   (println "Inserting!" title)
   (try
     (when url
-      (insert-doc! "crawled_file" (clojure.java.io/input-stream url))
+      (insert-doc! "crawled_file" (doall (clojure.java.io/input-stream url)))
     ;; (catch Exception ex
     ;;   (neo/touch-node-by-title title))
       )
