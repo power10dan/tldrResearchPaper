@@ -2,7 +2,6 @@
   (:require [tldr-be.db.core :refer [*neo4j_db*
                                      get-xml-headers
                                      get-xml-refs]]
-            [tldr-be.doc.core :refer [process-headers process-refs]]
             [tldr-be.utils.core :refer [escape-string map-keys]]
             [clojure.walk :refer [stringify-keys postwalk]]
             [clojure.set :refer [rename-keys]]
@@ -228,7 +227,7 @@
                          second
                          (get-xml-headers fmap)))] ;;filter possible nils
     (when-not (-> heds :pgid original-exists?)
-      (let [refs (process-refs fmap)
+      (let [refs (:refs fmap)
             parent (create-uploaded heds)
             ;; WARNING THIS LINE ENSURES CREATED CITED NODES ARE REFERENCED IF
             ;; YOU USE A NORMAL CREATE CALL YOU'LL GET A CONSTRAIN ERROR

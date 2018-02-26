@@ -15,6 +15,7 @@
             [tldr-be.utils.core :refer [parse-int]]
             [tldr-be.doc.pdf-parse :as pdf]
             [tldr-be.doc.engines :as eng]
+            [tldr-be.neo4j.core :refer [insert-neo4j]]
             [tldr-be.utils.core :refer [collect
                                         make-sections
                                         distinct-by
@@ -93,7 +94,8 @@
       (let [{pgid :pgid} (get-headers-id-by-title (select-keys heds [:title]))]
         (when (empty? (get-doc-by-id {:pgid pgid})) ;; when empty insert the doc
           (create-doc! {:filestuff (bs/to-byte-array file_blob) :pgid pgid})
-          (tldr-be.neo4j.core/insert-neo4j {:pgid pgid :filestuff file_blob}))
+          (insert-neo4j {:pgid pgid
+                         :refs (process-refs {:filestuff file_blob})}))
         [true "Your document successfully uploaded" pgid]))
     [false "Request Malformed" nil]))
 
