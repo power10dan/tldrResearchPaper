@@ -8,8 +8,7 @@
   {:init
    (fn []
      (log/info "\n-=[tldr_be started successfully]=-")
-     (run-schedule populate)
-     (run-lexeme-update))
+     (run-schedule populate))
    :stop
    (fn []
      (log/info "\n-=[tldr_be has shut down successfully]=-"))

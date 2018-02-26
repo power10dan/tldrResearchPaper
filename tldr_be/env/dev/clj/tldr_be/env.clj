@@ -9,9 +9,7 @@
    (fn []
      (parser/cache-off!)
      (log/info "\n-=[tldr_be started successfully using the development profile]=-")
-     (run-schedule populate)
-     (run-lexeme-update)
-     )
+     (run-schedule populate))
    :stop
    (fn []
      (log/info "\n-=[tldr_be has shut down successfully]=-"))

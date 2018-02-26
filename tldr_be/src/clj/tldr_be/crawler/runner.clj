@@ -14,7 +14,8 @@
   their pdfs, then add them to the neo4j database"
   []
   (-> (neo/get-sparse-nodes (:bing-limit env))
-      (doseq-interval add-paper 3000)))
+      (doseq-interval add-paper 3000))
+  (update-lexemes))
 
 
 (defn run-schedule-now
