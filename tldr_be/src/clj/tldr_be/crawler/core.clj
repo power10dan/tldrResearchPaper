@@ -37,7 +37,7 @@
   (println "Inserting!" title)
   (try
     (when url
-      (with-open [file (io/input-stream url)]
+      (with-open [file (io/file url)]
         (insert-doc! "crawled_file" file))
     ;; (catch Exception ex
     ;;   (neo/touch-node-by-title title))
