@@ -6,7 +6,8 @@
             [clojure.tools.logging :as log]
             [tldr-be.utils.macros :refer [swallow-exceptions]]
             [clojure.string :refer [join split]]
-            [tldr-be.neo4j.core :as neo]))
+            [tldr-be.neo4j.core :as neo]
+            [clojure.java.io :as io]))
 
 
 (defn check-for-pdf
@@ -36,7 +37,8 @@
   (println "Inserting!" title)
   (try
     (when url
-      (insert-doc! "crawled_file" (slurp (clojure.java.io/input-stream url)))
+      (with-open [file (io/input-stream url)]
+        (insert-doc! "crawled_file" file))
     ;; (catch Exception ex
     ;;   (neo/touch-node-by-title title))
       )
