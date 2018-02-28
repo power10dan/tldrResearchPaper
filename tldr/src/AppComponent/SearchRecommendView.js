@@ -32,7 +32,7 @@ const SearchRecView = (props)=>{
 	return(
 		<div className={classes.divStyle} >
 			<Typography className={classes.typeStyleTwo}>
-				Your Searched Result
+				Search results that best matches your query.
 			</Typography>
 			{
 				props.searchResult.map((data, idx)=>{
@@ -45,7 +45,7 @@ const SearchRecView = (props)=>{
 			}
 
 			<Typography className={classes.typeStyleTwo} >
-				Your Recommended Result 
+				The top most influential papers relative to the search results
 			</Typography>
 			{
 				props.searchRecommended.map((data, idx)=>{

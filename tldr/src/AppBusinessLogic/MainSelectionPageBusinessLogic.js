@@ -126,8 +126,6 @@ class MainPageSelectionLogic extends Component{
 														searchResult = {this.state.searchResult}
 														searchRecommended = {this.state.recommends}
 													 /> : null
-
-
 				 }
 	
 			</Fragment>

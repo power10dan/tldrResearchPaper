@@ -23,7 +23,7 @@ const SearchBar = (props)=>{
        <div className={classes.searchBarPosition}>
          <TextField
               id="search"
-              label="Search field"
+              label="Search for your papers here"
               type="search"
               className={classes.textField}
               onChange = { props.textInput}

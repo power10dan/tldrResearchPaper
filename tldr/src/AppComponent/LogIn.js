@@ -87,7 +87,8 @@ const LogInPanel = (props)=>{
                Please get a token before using this app. You can
                get a token by clicking the Get Token button.
                Once you get a token, please paste it onto the
-               text field. Thank you for choosing PaperGene!
+               text field. Currently, we only support Chrome Web-browser.
+               (Sorry Firefox and Safari people!) Thank you for choosing PaperGene!
           </Typography>   
      </Fragment>      
     )
