@@ -18,7 +18,7 @@ class App extends Component {
     }
 
     getHeader = ()=>{
-        let options = { 
+        let options = {
             method: 'GET',
             mode: 'cors',
         };
@@ -29,7 +29,7 @@ class App extends Component {
     getRickData = ()=>{
        let fetch_url = "https://radiant-wildwood-67970.herokuapp.com/rick/";
        let headerOptions = this.getHeader()
-       fetch(fetch_url, 
+       fetch(fetch_url,
              headerOptions)
        .then(result=>{
               console.log(result)
@@ -44,7 +44,7 @@ class App extends Component {
     getMortyData = ()=>{
       let fetch_url = "https://radiant-wildwood-67970.herokuapp.com/morty/";
        let headerOptions = this.getHeader()
-       fetch(fetch_url, 
+       fetch(fetch_url,
              headerOptions)
        .then(result=>{
             return result.json()
@@ -64,21 +64,21 @@ class App extends Component {
     render() {
       let pageState = null;
       if(this.state.pageState === 1){
-          pageState = 
+          pageState =
           <Fragment>
-             <img 
-                   src={RickPic} 
-                   alt="rick_pic" 
-                   height="250" 
-                   width="250" 
+             <img
+                   src={RickPic}
+                   alt="rick_pic"
+                   height="250"
+                   width="250"
                    vspace="150"
                    hspace="150"
               />
-              <img 
-                   src={Morty} 
-                   alt="rick_pic" 
-                   height="250" 
-                   width="150" 
+              <img
+                   src={Morty}
+                   alt="rick_pic"
+                   height="250"
+                   width="150"
                    vspace="150"
                    hspace="150"
               />
@@ -89,7 +89,7 @@ class App extends Component {
               <button onClick={this.getRickData}>
                   Activate Rick
               </button>
-              
+
                <p align="center">
                 Morty:
                 { " " + this.state.my_morty}
@@ -100,14 +100,18 @@ class App extends Component {
         </Fragment>
 
       } else {
-          pageState = <a  
-                          target="_blank" 
-                          vspace="150" 
-                          href="https://prometheus.eecs.oregonstate.edu/token/generate?asid=321398945712335&then=" 
+          pageState =<Fragment>
+                    <h2>Rick and Morty Text Generator</h2>
+                      <button><a
+                          target="_blank"
+                          vspace="150"
+                          href="https://prometheus.eecs.oregonstate.edu/token/generate?asid=321398945712335&then="
                           onClick={this.setPage}
                           class="button" >
                           Get Token
-                      </a>           
+                      </a></button>
+                    <h4>Once you are logged in, return to this page.</h4>
+                    </Fragment>
       }
 
       return (
