@@ -1,7 +1,7 @@
 {:nrepl-port 7000
  :production true
- :grobid-ref "http://52.170.38.218:8080/processReferences"
- :grobid-hed "http://52.170.38.218:8080/processHeaderDocument"
+ :grobid-ref "http://104.209.46.195:8080/processReferences"
+ :grobid-hed "http://104.209.46.195:8080/processHeaderDocument"
  :bing-key "2a493356fd824c84818eb80581c3f468"
  :bing-limit 100
  :update-time 60}

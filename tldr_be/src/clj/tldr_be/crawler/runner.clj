@@ -20,10 +20,7 @@
 
 (defn run-schedule-now
   "run some function right now"
-  [f]
-  (do
-    (schedule f)
-    (update-lexemes)))
+  [f] (schedule f))
 
 (defn run-schedule
   "run some function that takes no args at 3 am every day"
