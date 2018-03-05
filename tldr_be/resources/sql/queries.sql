@@ -104,8 +104,8 @@ where title = :title
 SELECT pgid, p_title
 FROM (SELECT xml_headers.pgid as pgid,
               unaccent(xml_headers.title) as p_title,
-              to_tsvector('simple', unaccent(xml_headers.title)) ||
-              to_tsvector('simple', unaccent(replace(array_to_string(zip(xml_headers.forename::text[], xml_headers.surname::text[]), ', ', ' '), ',',''))) as document
+              to_tsvector(unaccent(xml_headers.title)) ||
+              to_tsvector(unaccent(replace(array_to_string(zip(xml_headers.forename::text[], xml_headers.surname::text[]), ', ', ' '), ',',''))) as document
       FROM xml_headers
       GROUP BY xml_headers.pgid) p_search
 WHERE p_search.document @@ to_tsquery(:q_string)

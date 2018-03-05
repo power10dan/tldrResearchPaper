@@ -15,7 +15,7 @@
   []
   (-> (neo/get-sparse-nodes (:bing-limit env))
       (doseq-interval add-paper 3000))
-  (update-lexemes))
+  (doseq update-lexemes))
 
 
 (defn run-schedule-now
