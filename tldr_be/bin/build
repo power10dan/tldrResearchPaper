@@ -1,3 +1,6 @@
 #! /bin/bash
-echo "Its happening!"
+echo "Its BUILDING PRODUCTION!"
 lein with-profile prod uberjar
+
+# echo "Its BUILDING STAGING!"
+# lein with-profile staging uberjar

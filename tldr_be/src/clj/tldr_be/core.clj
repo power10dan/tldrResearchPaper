@@ -7,6 +7,7 @@
             [cider.nrepl :refer [cider-nrepl-handler]]
             [clojure.tools.cli :refer [parse-opts]]
             [clojure.tools.logging :as log]
+            [immutant.scheduling :refer :all]
             [mount.core :as mount])
   (:gen-class))
 
@@ -34,7 +35,6 @@
                 (when repl-server
                   (repl/stop repl-server)))
 
-
 (defn stop-app []
   (doseq [component (:stopped (mount/stop))]
     (log/info component "stopped"))
@@ -61,5 +61,4 @@
       (migrations/migrate args (select-keys env [:database-url]))
       (System/exit 0))
     :else
-    (start-app args))
-  )
+    (start-app args)))

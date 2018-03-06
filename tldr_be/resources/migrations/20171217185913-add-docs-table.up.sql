@@ -1,4 +1,3 @@
 CREATE TABLE docs
-(id SERIAL PRIMARY KEY,
- filename VARCHAR(300),
- filestuff BYTEA);
+(pgid INT PRIMARY KEY,
+ filestuff BYTEA NOT NULL);

@@ -1,167 +1,120 @@
 (ns tldr-be.doc.core
   (:require [tldr-be.db.core :refer [create-doc!
-                                     get-doc-by-filename
                                      get-doc-by-id
-                                     get-doc-id
-                                     get-doc-filename
                                      create-xml-refs!
                                      create-xml-headers!
-                                     get-xml-refs-by-name
-                                     get-xml-headers-by-name
+                                     get-xml-refs
+                                     get-xml-headers-by-title
+                                     get-headers-id-by-title
+                                     search-by-term
+                                     check-spelling
                                      *neo4j_db*]]
-            [clojure.string :refer [split]]
             [byte-streams :as bs]
             [clojure.xml :as xml]
             [clojure.tools.logging :as log]
             [tldr-be.utils.core :refer [parse-int]]
             [tldr-be.doc.pdf-parse :as pdf]
             [tldr-be.doc.engines :as eng]
-            [tldr-be.utils.core :refer [collect]]
+            [tldr-be.neo4j.core :refer [insert-neo4j]]
+            [tldr-be.utils.core :refer [collect
+                                        make-sections
+                                        distinct-by
+                                        string->xml
+                                        get-sections]]
             [clojure.java.io :as io]))
-
-(defn insert-doc!
-  "Given params from a request, pull the filename and a blob of file data, insert
-  that blob into the db after transforming blob to byte-array"
-  [params]
-  (let [filename (get-in params [:file :filename])
-        file_blob (get-in params [:file :tempfile])]
-    (if (and filename file_blob)
-      (do ;; if we have both filename and blob then perform the effect
-        (create-doc! {:filename (first (split filename #"\.")) ;;fname is basename
-                      :filestuff (bs/to-byte-array file_blob)})
-        [true "Your document successfully uploaded"])
-      [false "Request Malformed"])))
 
 
 (defn get-doc
-  "Given the params of a request, try to pull out the filename, if that fails try
+  "Given the params of a request, try to pull out the title, if that fails try
   to pull out the postgres id (pgid), with either pull out the file, if neither
   works return failure"
   [params]
   (log/info "getting " params)
-  (let [fname (get params "filename")
+  (let [title (get params "title")
         pgid (get params "pgid")]
-    (if (or pgid fname)
-      [true (cond pgid (get-doc-by-id {:id (parse-int pgid)})
-                  fname (get-doc-by-filename {:filename fname}))]
-      [false ("file could not be found")])))
+    (println "KDJFLSJDFKLJD" (count title))
+    (if (or pgid title)
+      [true (cond pgid (get-doc-by-id {:pgid (parse-int pgid)})
+                  title (let [fmap (get-xml-headers-by-title {:title title})]
+                          (get-doc-by-id {:pgid (:pgid fmap)})))]
+      [false "file could not be found"])))
 
 
-(defn insert-xml-refs!
-  "Given params from a request, pull the filename and a xml of file data, insert
-  that xml into the xml reference table in the db"
-  [id fname xml_content]
-  (eng/insert-xml-engine id fname xml_content create-xml-refs!))
-
-
-(defn insert-xml-headers!
-  "Given params from a request, pull the filename and a xml of file data, insert
-  that xml into the xml headers table in the db"
-  [id fname xml_content]
-  (eng/insert-xml-engine id fname xml_content create-xml-headers!))
-
-
-(defn get-xml-refs-by-filename
-  "Given the name of a file, if the filename is good
-  then query the db for the corresponding xml references by the filename"
-  [name]
-  (eng/get-xml-engine name get-xml-refs-by-name))
-
-
-(defn get-xml-headers-by-filename
-  "Given the name of a file, if the filename is good
-  then query the db for the corresponding xml headers by the filename"
-  [name]
-  (eng/get-xml-engine name get-xml-headers-by-name))
-
-
-(defn pdf-to-xml-refs
-  "Given a filemap, like: {:id id :filename \"filename\" :filestuff bytea} process
-  the file and return the parsed xml references from the file"
+(defn get-xml-refs-by-id
+  "Given a filemap try to get the references for the file based on pgid return nil
+  if not existent"
   [filemap]
-  (eng/pdf-to-xml-engine filemap
-                         get-xml-refs-by-filename
-                         insert-xml-refs!
-                         pdf/pdf-ref-parser))
+  (get-xml-refs (not-empty {:pgid (:pgid filemap)})))
 
 
-(defn pdf-to-xml-headers
+(defn get-headers-by-title
+  "Given a filemap try to get the headers for the file by title, return nil if not
+  existent"
+  [filemap]
+  (get-xml-headers-by-title (not-empty {:title (:title filemap)})))
+
+
+(defn process-headers
   "Given a filemap, like: {:id id :filename \"filename\" :filestuff bytea} process
   the file and return the parsed xml headers from the file"
   [filemap]
-  (println "Running headers on: " filemap)
-  (eng/pdf-to-xml-engine filemap
-                         get-xml-headers-by-filename
-                         insert-xml-headers!
-                         pdf/pdf-header-parser))
+  (eng/pdf-to-xml-headers filemap
+                          get-headers-by-title
+                          create-xml-headers!
+                          pdf/pdf-header-parser))
 
-
-(defn xml-to-map
-  "Given a grobid response, converts the xml to a deeply nested map"
-  [grobidres]
-  (-> grobidres
-      bs/to-byte-array
-      io/input-stream
-      xml/parse))
-
-
-(defn get-fblob
-  "pull out a file blob from the database given the name"
-  [fname]
-  (-> (assoc {} :filename fname) get-doc-by-filename))
-
-
-(defn fname-to-cljmap
- "make a clojure map given filename as string"
-  [f fname]
-  (-> fname get-fblob f xml-to-map))
-
-
-(defn get-sections
- "take a nested xml clojure representation and pull out
-  tags and respective content when content is a string"
-  [grobid-map]
-  (for [x (xml-seq grobid-map)
-        :when (string? (first (:content x)))]
-    [(if (= (:tag x) :biblScope)
-       (-> x :attrs :unit keyword)
-       (:tag x))
-     (first (:content x))]))
-
-
-;; TODO fix all this post processing
-(defn make-sections
-  "Given a vector of vectors, like the output of get-sections, group by title
-  and add the title keyword to each entry"
-  [vec_o_vecs]
-  (->> vec_o_vecs
-       flatten
-       (partition-by #(= :title %))
-       (filter #(not (= :title (first %))))
-       (map #(doall (cons :title %)))))
-
-(defn process-headers
-  [fname]
-  (->> fname
-       (fname-to-cljmap pdf-to-xml-headers)
-       get-sections
-       make-sections
-       (map collect)
-       second))
 
 (defn process-refs
-  [fname]
-  (->> fname
-       (fname-to-cljmap pdf-to-xml-refs)
-       get-sections
-       make-sections
-       (map collect)
-       (filter #(contains? % :surname))))
+  "Given a filemap, like: {:id id :filename \"filename\" :filestuff bytea} process
+  the file and return the parsed xml headers from the file"
+  [filemap]
+  (->> (eng/pdf-to-xml-refs ;; get the xml out of the db or create it
+        filemap
+        get-xml-refs-by-id
+        create-xml-refs!
+        pdf/pdf-ref-parser)
+      :xml_content ;; grab the actual content from return file map
+      string->xml  ;; parse it to xml
+      get-sections ;; run post processing to get a nice clj map
+      make-sections
+      (map collect)
+      (filter #(contains? % :surname))
+      (distinct-by :title)))
 
-(defn workhorse
-  "given a filename, grab the file bytea blob out of the db, parse the headers and
-  the references and then collect like keys, this function returns 2-tuple where
-  the fst is the filename headers, and snd is a collection of references"
-  [fname]
-  (log/info "performing workhorse on " fname)
-  [(process-headers fname) (process-refs fname)])
+
+(defn insert-doc!
+  "Given params from a request, pull the filename and a blob of file data, insert
+  that blob into the db after transforming blob to byte-array"
+  [filename file_blob]
+  (if (and filename file_blob)
+    ;; if we have both filename and blob then perform the effect
+    ;; we have to hit grobid everytime to get the title because filenames aren't trustworthy
+    (when-let [heds (process-headers {:filename filename
+                                      :filestuff file_blob})]
+      (let [{pgid :pgid} (get-headers-id-by-title (select-keys heds [:title]))]
+        (when (empty? (get-doc-by-id {:pgid pgid})) ;; when empty insert the doc
+          (do (create-doc! {:filestuff (bs/to-byte-array file_blob) :pgid pgid})
+              (insert-neo4j
+               {:pgid pgid :refs (process-refs {:pgid pgid :filestuff file_blob})}))
+          [true "Your document successfully uploaded" pgid])))
+    [false "Request Malformed" nil]))
+
+
+(defn check-spelling!
+  "given a word, check the spelling and return the closest word, otherwise,
+   return nothing"
+  [input_word]
+ (let [spell_map (check-spelling {:s_word input_word})]
+  (if spell_map
+    (get spell_map :word)
+    input_word)))
+
+
+(defn search-by-term!
+  "Given title or author name, return a paper form the database."
+  [params]
+  (let [input_string (get params "search_query")]
+    (let [result (search-by-term {:q_string (clojure.string/join " & " (map check-spelling! (clojure.string/split input_string #" ")))})]
+      (if (empty? result)
+       [false "No matches found."]
+       [true result]))))

@@ -1,9 +1,7 @@
 (ns tldr-be.neo4j.core
-  (:require [tldr-be.db.core :refer [get-doc-id
-                                     get-doc-filename
-                                     get-doc-by-filename
-                                     *neo4j_db*]]
-            [tldr-be.doc.core :refer [workhorse process-headers process-refs]]
+  (:require [tldr-be.db.core :refer [*neo4j_db*
+                                     get-xml-headers
+                                     get-xml-refs]]
             [tldr-be.utils.core :refer [escape-string map-keys]]
             [clojure.walk :refer [stringify-keys postwalk]]
             [clojure.set :refer [rename-keys]]
@@ -11,12 +9,17 @@
             [clojurewerkz.neocons.rest.labels :as nl]
             [clojurewerkz.neocons.rest.relationships :as nrl]
             [clojurewerkz.neocons.rest.cypher :as cy]
-            [clojurewerkz.neocons.rest :as nr]))
+            [clojurewerkz.neocons.rest :as nr]
+            [clojure.string :as str]
+            [clojure.tools.logging :as log]))
 
 ;; globals for neo4j node labels
 (def parent-label (atom "Uploaded"))
 (def child-label (atom "Cited"))
+(def untouched-label (atom "UnTouched"))
+(def touched-label (atom "Touched"))
 (def cites (atom ":cites"))
+(def err (atom "Malformed request! Check for mischievous gnomes!"))
 
 
 (defn keys-to-neo4j
@@ -24,7 +27,7 @@
   cypher query langauge"
   [m]
   (->> (stringify-keys m)
-       (map-keys #(-> (str % ":")))))
+       (map-keys #(-> (str ":" % ":")))))
 
 
 (defn massage-node
@@ -40,7 +43,7 @@
   [arg]
   (let [q0 (cond
              (string? arg) (format "MATCH (n:%s) where n.title = '%s' OR n.filename = '%s' RETURN n UNION MATCH (n:%s) WHERE n.title = '%s' or n.filename= '%s' RETURN n" @parent-label arg arg @child-label arg arg)
-             (number? arg) (format "MATCH (n:%s) where ID(n) = %d RETURN n UNION MATCH (n:%s) WHERE ID(n) = %d RETURN n" @parent-label arg @child-label arg))
+             (number? arg) (format "MATCH (n:%s) where ID(n) = %d OR n.pgid = %d RETURN n UNION MATCH (n:%s) WHERE ID(n) = %d RETURN n" @parent-label arg arg @child-label arg))
         result (-> (cy/tquery *neo4j_db* q0) first (get "n"))]
     (when result (massage-node result))))
 
@@ -58,6 +61,39 @@
     (some #(= % @parent-label) (:labels node))))
 
 
+;; (defn touch-node-by-title
+;;   "Given the title of a node color the node as Touched which means the crawler has
+;;   tried to find a pdf of it already"
+;;   [title]
+;;   ())
+
+
+(defn create-uploaded
+  "given a filemap create an uploaded node, if it already exists match on it and
+  update its parameters"
+  [fmap]
+  (let [post-process (fn [string] (-> string
+                                     (str/replace #":\"" ":")
+                                     (str/replace #"\":" "")
+                                     (str/replace #"\",\"" ",")))
+        _fmap (-> fmap
+                  (update-in [:forename] #(into [] (interpose "," %)))
+                  (update-in [:surname] #(into [] (interpose "," %)))
+                  keys-to-neo4j)
+        q0 (format "Merge (u:Uploaded %s) " (select-keys _fmap [":title:"]))
+        q1 (format "ON CREATE SET u = %s " _fmap)
+        q2 (format "ON CREATE SET u += %s" _fmap)
+        q3 (format "Match (u:Uploaded %s) return u" (post-process (select-keys _fmap [":pgid:"])))]
+    ;; make the node
+    (cy/query *neo4j_db* (post-process (str q0 q1 q2)))
+    ;; return the node via a query by getting the neo4j id and using neocons
+    ;; return the properly formatted information. This is needed to make the
+    ;; edges using neocons in insert-neo4j
+    (let [node (get (first (cy/tquery *neo4j_db* (post-process q3))) "u")
+          n4j_id (get-in node [:metadata :id])]
+      (nn/get *neo4j_db* n4j_id))))
+
+
 (defn core-wrapper
   "Given a function that performs a neo4j query. Wrap the function nice and pretty
   for the handler"
@@ -72,7 +108,6 @@
   "Given any list of strings that represent a cypher query, run the query then
   post process"
   [& strs]
-  (println (apply str strs))
   (map massage-node (-> (cy/query *neo4j_db* (apply str strs))
                         (get-in [:data])
                         flatten)))
@@ -95,6 +130,34 @@
         q1 (format "MATCH (p:%s)-[]->(c:%s) \n" @parent-label @child-label)
         q2 "WHERE (p.title in ts OR ID(p) in ts) AND ANY(x in c.surname where x in ts) RETURN c\n"]
     (query-neo4j q0 q1 q2)))
+
+
+(defn get-recommended-children
+  "Given the pgid or titles of nodes get the most influential children nodes"
+  [& ts]
+  (let [q0 (format "Match (node:%s)-[]->(c) " @parent-label)
+        q1 (format "Where node.pgid in [%s] or node.title in [%s] " (apply str (interpose "," ts)) (apply str (interpose "," ts)))
+        q2 "WITH COLLECT(c) AS nodes CALL apoc.algo.pageRank(nodes) YIELD node, score "
+        q3 "RETURN node "
+        q4 "Order By score DESC "]
+    (query-neo4j q0 q1 q2 q3 q4)))
+
+(defn get-recommended
+  "Given the pgid or titles of nodes get the most influential nodes around within 1 leg around them"
+  [& ts]
+  (let [q0 "Match (g)-[]->(node)-[]->(c) "
+        q1 (format "Where (node:%s or node:%s) and (node.pgid in [%s] or node.title in [%s]) "
+                   @parent-label
+                   @child-label
+                   (apply str (interpose "," ts))
+                   (apply str (interpose "," ts)))
+        q2 "WITH COLLECT(DISTINCT c) + COLLECT(DISTINCT g) AS gs CALL apoc.algo.pageRank(gs) YIELD node, score "
+        q3 "RETURN node "
+        q4 "Order By score DESC "
+        res (query-neo4j q0 q1 q2 q3 q4)]
+    (if (empty? res)
+      (apply get-recommended-children ts)
+      res)))
 
 
 (defn get-all-shared-children
@@ -125,37 +188,53 @@
                (-> (cy/query *neo4j_db* (str "MATCH (n) RETURN n LIMIT " n))
                    (get-in [:data])
                    flatten))]
-    [false "Malformed request! Check for mischievous gnomes!"]))
+    [false @err]))
+
+
+(defn get-sparse-nodes
+  "Given an integer return children nodes that have the least amount of connections
+  in the graph limited by the integer"
+  [n]
+  (->> (cy/tquery *neo4j_db* (format "Match (p:%s)-[r]-(c) where c:%s or c:%s return c.title, count(r) as connections Order by connections LIMIT %d"
+                                     @parent-label
+                                     @child-label
+                                     @untouched-label
+                                     n))
+       (map (comp first first vals))))
+
+
+(defn get-subgraph-by-node
+  "Given an integer, n, and a node identifier pgid or title, return a subgraph n-legs around the node, returning the graph on success, nil of failure"
+  [n ts]
+  (if ts
+    (let [q0 (format "With [%s] as ts %n" (apply str (interpose "," ts)))
+         q1 "Match (n) where n.pgid in ts or n.title in ts "
+          q2 (if n
+               (format "Match (a)-[*1..%d]-(n)-[*1..%d]-(m) " n n)
+               "Match (a)--(n)--(m) ")
+         q3 "Return a, m, n"]
+      [true (query-neo4j q0 q1 q2 q3)])
+    [false @err]))
 
 
 (defn insert-neo4j
-  "Given a filename get the document id for the file out of postgres, then get the
+  "Given a {:pgid pgid} to retrieve a document from postgres, get the
   headers and references for the file, create the nodes in the neo4j uniquely
   and then add edges, uniquely"
-  [fname]
-  (try
-    (when-let [heds (process-headers fname)]
-      (when-not (-> heds :title first original-exists?)
-        (let [refs (process-refs fname)
-              id (get-doc-id {:filename fname})
-              parent (nn/create *neo4j_db* (assoc heds :pgid (:id id)
-                                                  :filename fname))
-              ;; WARNING THIS LINE ENSURES CREATED CITED NODES ARE REFERENCED IF
-              ;; YOU USE A NORMAL CREATE CALL YOU'LL GET A CONSTRAIN ERROR
-              ;; HERE THERE BE DRAGON
-              children (map
-                        #(nn/create-unique-in-index
-                          *neo4j_db*
-                          "by-title"
-                          "title"
-                          (:title %)
-                          %)
-                        refs)]
-          ;; add label to parent
-          (nl/add *neo4j_db* parent @parent-label)
-          ;; add label to children, doall forces evaluations
-          (doall (map #(nl/add *neo4j_db* % @child-label) children))
-          ;; smart add the edges between parent and children
-          (doall (nrl/create-many *neo4j_db* parent children @cites)))))
-      (catch Exception ex
-        (println "ASHAHAHAHAHA" ex))))
+  [fmap]
+  (when-let [heds (into {}
+                        (filter
+                         second
+                         (get-xml-headers fmap)))] ;;filter possible nils
+    (when-not (-> heds :pgid original-exists?)
+      (let [refs (:refs fmap)
+            parent (create-uploaded heds)
+            ;; WARNING THIS LINE ENSURES CREATED CITED NODES ARE REFERENCED IF
+            ;; YOU USE A NORMAL CREATE CALL YOU'LL GET A CONSTRAIN ERROR
+            ;; HERE THERE BE DRAGON
+            children (map #(nn/create-unique-in-index *neo4j_db* "by-title"
+                                                      "title" (:title %) %) refs)]
+        ;; add label to children, doall forces evaluations
+        (doall (map #(nl/add *neo4j_db* % @child-label) children))
+        ;; smart add the edges between parent and children
+        (doall (nrl/create-many *neo4j_db* parent children @cites))))))

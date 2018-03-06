@@ -4,11 +4,10 @@
             [ring.util.http-response :as http]
             [buddy.auth.accessrules :refer [restrict]]
             [tldr-be.auth.handler :as auth_handler]
-            [tldr-be.summary.handler :as sum_handler]
             [tldr-be.auth.core :as auth]
             [tldr-be.doc.handler :as d]
+            [tldr-be.crawler.runner :refer [run-schedule-now populate]]
             [tldr-be.neo4j.handler :as neo]
-            [tldr-be.summary.core :as summary]
             [clojure.java.io :as io]))
 
 (defn home-page []
@@ -27,16 +26,20 @@
   (GET "/about" [] (about-page)))
 
 (defroutes bus-routes ;;business-routes
-  (POST "/api/uploadFile/"       [] d/insert-doc!)
-  (GET "/api/getFile/"           [] d/get-doc)
-  (GET  "/api/getChildrenUnion/" [] neo/get-all-children)
-  (GET  "/api/getChildrenInter/" [] neo/get-all-shared-children)
+  (POST "/api/uploadFile/"         [] d/insert-doc!)
+  (GET  "/api/getFile/"            [] d/get-doc)
+  (GET  "/api/searchByTerm/"       [] d/search-postgres)
+  (GET  "/api/getChildrenUnion/"   [] neo/get-all-children)
+  (GET  "/api/getChildrenInter/"   [] neo/get-all-shared-children)
   (GET  "/api/getChildrenUnionBy/" [] neo/get-all-children-by)
   (GET  "/api/getChildrenInterBy/" [] neo/get-all-shared-children-by)
-  (GET  "/api/getNumNodes/"      [] neo/get-nodes)
-  ;; (POST "/api/addSummary/"    [] sum_handler/insert-sum)
-  ;; (POST "/api/sumUpVote/"     [] sum_handler/up-vote-sum)
-  ;; (POST "/api/sumDownVote/"   [] sum_handler/down-vote-sum)
-  (POST "/login/" [] auth_handler/create-auth-token)
-  (GET "/get-user" [] (restrict auth_handler/get-user {:handler auth/is-auth?
+  (GET  "/api/getNumNodes/"        [] neo/get-nodes)
+  (GET  "/api/getSubGraph/"        [] neo/get-subgraph)
+  (GET  "/api/getRecChildren/"     [] neo/get-recommended-children)
+  (GET  "/api/getRec/"             [] neo/get-recommended)
+  (POST "/login/"                  [] auth_handler/create-auth-token)
+  (POST "/runDispatcher/"          [] (do
+                                        (run-schedule-now populate)
+                                        (http/ok "I'll get to it when I do")))
+  (GET  "/get-user" [] (restrict auth_handler/get-user {:handler auth/is-auth?
                                                        :on-error on-error})))

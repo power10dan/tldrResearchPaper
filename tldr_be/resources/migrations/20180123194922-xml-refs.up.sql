@@ -1,4 +1,3 @@
 CREATE TABLE xml_refs
-(id INT PRIMARY KEY,
-filename VARCHAR(300),
+(pgid INT PRIMARY KEY,
 xml_content VARCHAR);

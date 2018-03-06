@@ -1,6 +1,6 @@
 (defproject tldr_be "0.1.0-SNAPSHOT"
 
-  :description "FIXME: write description"
+  :description "Backend luminus server for paper gene"
   :url "http://example.com/FIXME"
 
   :dependencies [[buddy "2.0.0"]
@@ -37,6 +37,7 @@
                  [clj-http "2.3.0"]
                  [byte-streams "0.2.3"]
                  [selmer "1.11.3"]
+                 [org.immutant/scheduling "2.1.10"]
                  [tuddman/neocons "3.2.1-SNAPSHOT"]]
 
   :min-lein-version "2.0.0"
@@ -54,42 +55,40 @@
             [lein-immutant "2.1.0"]
             [lein-heroku "0.5.3"]]
 
-  :heroku {:app-name "afternoon-ocean-38536"
-           :jdk-version "1.8"
-           :include-files ["target/tldr_be.jar"]}
-
-
   :profiles
   {:uberjar {
              ;; :omit-source true
              :uberjar-name "tldr_be.jar"
-             :aot [tldr-be.env
-                   tldr-be.config
-                   tldr-be.auth.core
-                   tldr-be.auth.handler
-                   tldr-be.summary.core
-                   tldr-be.summary.handler
-                   tldr-be.neo4j.core
-                   tldr-be.neo4j.handler
-                   tldr-be.core
-                   tldr-be.utils.core
-                   tldr-be.middleware
-                   tldr-be.handler
-                   tldr-be.db.core
-                   tldr-be.layout
-                   tldr-be.doc.core
-                   tldr-be.doc.pdf-parse
-                   tldr-be.doc.handler
-                   tldr-be.doc.engines
-                   tldr-be.routes.services
-                   tldr-be.routes.home]
-             ;; :source-paths ["env/prod/clj"]
-             ;; :env {:production true}
+             :aot :all
+             ;; :aot [tldr-be.env
+             ;;       tldr-be.config
+             ;;       tldr-be.auth.core
+             ;;       tldr-be.auth.handler
+             ;;       tldr-be.neo4j.core
+             ;;       tldr-be.neo4j.handler
+             ;;       tldr-be.core
+             ;;       tldr-be.utils.core
+             ;;       tldr-be.utils.macros
+             ;;       tldr-be.search.core
+             ;;       tldr-be.crawler.core
+             ;;       tldr-be.crawler.runner
+             ;;       tldr-be.middleware
+             ;;       tldr-be.handler
+             ;;       tldr-be.db.core
+             ;;       tldr-be.layout
+             ;;       tldr-be.doc.core
+             ;;       tldr-be.doc.pdf-parse
+             ;;       tldr-be.doc.handler
+             ;;       tldr-be.doc.engines
+             ;;       tldr-be.routes.services
+             ;;       tldr-be.routes.home]
+
              }
 
-   :prod          [:project/prod :profiles/prod]
-   :dev           [:project/dev :profiles/dev]
-   :test          [:project/dev :project/test :profiles/test]
+   :prod          [:project/prod    :profiles/prod]
+   :staging       [:project/staging :profiles/staging]
+   :dev           [:project/dev     :profiles/dev]
+   :test          [:project/test    :profiles/test]
 
    :project/dev  {:dependencies [[prone "1.1.4"]
                                  [ring/ring-mock "0.3.2"]
@@ -101,10 +100,16 @@
                   :resource-paths ["env/dev/resources"]
                   :repl-options {:init-ns user}
                   :injections [(require 'pjstadig.humane-test-output)
-                               (pjstadig.humane-test-output/activate!)]}
+                               (pjstadig.humane-test-output/activate!)]
+                  :test-refresh {:quiet true
+                                 :changes-only true}}
+
    :project/test {:resource-paths ["env/test/resources"]}
    :project/prod {:resource-paths ["env/prod/resources"]
                   :source-paths ["env/prod/clj"]}
+   :project/staging {:resource-paths ["env/staging/resources"]
+                     :source-paths ["env/staging/clj"]}
    :profiles/dev {}
    :profiles/test {}
+   :profiles/staging {}
    :profiles/prod {}})
