@@ -12,13 +12,14 @@ export const TutorialSettings = {
 };
 
 export const AppState = {
-	CurrPage: 1,
+	CurrPage: 0,
 	isGetToken: false,
 	isLogin: false,
 	token: "",
 	typeResearcher: "",
 	prefConferences: [],
-	selectedPaper: ""
+	selectedPaper: "",
+	shouldLoad: false
 };
 
 
