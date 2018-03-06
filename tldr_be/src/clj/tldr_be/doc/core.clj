@@ -114,7 +114,7 @@
   "Given title or author name, return a paper form the database."
   [params]
   (let [input_string (get params "search_query")]
-    (let [result (search-by-term {:q_string (clojure.string/join " & " (map check-spelling! (clojure.string/split input_string #" ")))})]
+    (let [result (search-by-term {:q_string (clojure.string/join " | " (map check-spelling! (clojure.string/split input_string #" ")))})]
       (if (empty? result)
        [false "No matches found."]
        [true result]))))
